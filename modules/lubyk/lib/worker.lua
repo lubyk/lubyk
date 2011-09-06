@@ -36,6 +36,5 @@ function mt:spawn(code, args)
   end
 
   local args = string.format("yaml.load [%s[\n%s\n]%s]", sep, dump, sep)
-
   return spawn(self, string.format(code, args))
 end

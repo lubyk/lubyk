@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 2.6.2)
 # ==============================================================================
 
 project (LUBYK)
-set(LUBYK_VERSION "0.8")
+set(LUBYK_VERSION "0.5")
 
 # ==============================================================================
 #
@@ -25,6 +25,7 @@ if(UNIX)
   add_definitions(-DLUA_USE_LINUX)
   if(APPLE)
     set(PLAT "macosx")
+    set(LUBYK_LIB ${LUBYK_SOURCE_DIR}/deploy/macosx/Lubyk_dmg/Lubyk.app/Contents/Resources/lib)
     # add_definitions(-DLUA_USE_MACOSX)
     add_definitions(-D__MACOSX_CORE__)
     # CoreFoundation needed by Midi and cannot be added in dylib
@@ -104,13 +105,6 @@ endif()
 # ==============================================================================
 add_custom_target(modules ALL)
 add_subdirectory(modules)
-
-# ==============================================================================
-#
-#  Build mimas app
-#
-# ==============================================================================
-add_subdirectory(Mimas)
 
 # ==============================================================================
 #

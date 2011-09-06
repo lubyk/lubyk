@@ -23,7 +23,6 @@ lua:
     widget->setParent(self);
     widget->move(x, y);
     widget->show();
-    return 0;
 
   size: |
     QRect rect = self->geometry();
@@ -33,11 +32,9 @@ lua:
 
   setStyle: |
     self->setStyleSheet(QString(".%1 { %2 }").arg(self->cssClass()).arg(text));
-    return 0;
 
   setStyleSheet: |
     self->setStyleSheet(text);
-    return 0;
 
   textSize: |
     lua_pushnumber(L, self->fontMetrics().width(text));
@@ -47,7 +44,6 @@ lua:
   setSizeHint: |
     self->size_hint_ = QSize(w, h);
     self->updateGeometry();
-    return 0;
 
   setSizePolicy: |
     self->setSizePolicy((QSizePolicy::Policy)horizontal, (QSizePolicy::Policy)vertical);
@@ -66,7 +62,6 @@ lua:
     } else {
       self->showNormal();
     }
-    return 0;
 
   swapFullScreen: |
     bool enable = !self->isFullScreen();
@@ -75,7 +70,6 @@ lua:
     } else {
       self->showNormal();
     }
-    return 0;
 
   globalPosition: |
     QPoint pt = self->mapToGlobal(QPoint(0, 0));
@@ -89,5 +83,4 @@ lua:
         self->mapFromGlobal(QPoint(x, y))
       )
     );
-    return 0;
 

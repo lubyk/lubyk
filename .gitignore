@@ -15,7 +15,7 @@
 *.nki
 *.aiff
 /build
-/lib
+/deploy/macosx/Lubyk_dmg/Lubyk.app/Contents/Resources/lib
 /zcpp/doc/prototypes/test
 /tmp
 /rename.rb

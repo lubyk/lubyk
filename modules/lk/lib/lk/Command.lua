@@ -19,17 +19,13 @@ local getTarget
 setmetatable(lib, {
   -- new method
  __call = function(lib, url, ...)
-  local zone = 'default' --lk.Setting('zone', 'default')
 
   local self = {
-    zone  = zone,
-    zones = {},
+    processes = {},
     -- private flag to find more processes
     find_more = true,
   }
   setmetatable(self, lib)
-  self.zones[zone] = {}
-  self.current = self.zones[zone]
 
   if url then
     url = self:specialCommand(url, ...)
@@ -96,42 +92,35 @@ end
 function lib:call(url, ...)
   local target_name, cmd = getTarget(url)
   if target_name == '*' then
-    for _, service in pairs(self.current) do
-      print(service.req:send(cmd, ...))
+    for _, process in pairs(self.processes) do
+      print(process.req:send(cmd, ...))
     end
   elseif target_name then
-    local service = self.current[target_name]
-    if service then
-      print(service.req:send(cmd, ...))
+    local process = self.processes[target_name]
+    if process then
+      print(process.req:send(cmd, ...))
     else
       print(string.format("Process '%s' not found.", target_name))
     end
   else
-    print(string.format("Bad url '%s' (could not find process name)."))
+    print(string.format("Bad url '%s' (could not find process name).", url))
   end
 end
 
 --================================================== lk.ProcessWatch delegate
 
-function lib:addService(service)
+function lib:processConnected(process)
+  print("Found", process.name)
   self.find_more = true
-  local zone = self.zones[service.zone]
-  if not zone then
-    self.zones[service.zone] = {}
-    zone = {}
-  end
-  zone[service.name] = service
-  if self.target and service.zone == self.zone and service.name == self.target then
+  self.processes[process.name] = process
+  if self.target and process.name == self.target then
     self:call(unpack(self.cmd))
     self.abort = true
   end
 end
 
-function lib:removeService(service)
-  local zone = self.zones[service.zone]
-  if zone then
-    zone[service.name] = nil
-  end
+function lib:removeService(process)
+  self.processes[process.name] = nil
 end
 
 --================================================== Special commands
@@ -161,7 +150,7 @@ function lib:specialCommand(cmd, ...)
     dlg:show()
     app:exec()
     return nil
-  elseif action == 'halt' then
+  elseif cmd == 'halt' then
     return '/*/lk/quit'
   else
     return cmd

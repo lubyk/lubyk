@@ -33,24 +33,19 @@ end
 
 setmetatable(lib, {
   -- new method
- __call = function(lib, opts)
+ __call = function(lib, name, is_process)
   local self  = {
-    zone              = opts.zone,
-    name              = opts.name,
+    name              = name,
     nodes             = {},
     pending_nodes     = {},
-    pending_processes = {},
-    found_processes   = {},
   }
   setmetatable(self, lib)
 
-  -- TODO: Why would we want to start a Process without a Morph server ?
-  --       Do we need to keep this compatibility with localfile based asset
-  --       fetching ?
-  --       We could make the Process without Morph some specialized version
-  --       of this one by reimplementing some kind of 'getCode' callback.
-  --
-  if self.zone then
+  if is_process then
+    -- When we load from morph, we must set file loader to be the
+    -- remote morph server. (find code)
+    self.is_process = true
+
     -- Create processes watch before loading code (to resolve remote
     -- processes).
     --
@@ -59,20 +54,6 @@ setmetatable(lib, {
     self.process_watch = lk.ProcessWatch():addDelegate(self)
   end
 
-  if opts.patch then
-    -- set filepath to the script containing calling lk.Patch()
-    -- this is where the content will be saved
-    if zone then
-      -- this is a process
-      -- When we load from morph, we must set file loader to be the
-      -- remote morph server. (find code)
-      self.is_process = true
-    end
-
-    -- store full script in filepath
-    --- ??? self.inline   = true
-    loadFromYaml(self, opts.patch)
-  end
   return self
 end})
 
@@ -331,18 +312,12 @@ function lib:notify(changes)
 end
 
 --- In order to resolve cross-process links, return a process by a given name.
-function lib:findProcess(process_name)
-  if process_name == self.name then
+function lib:findProcess(name)
+  if name == self.name then
     return self
   elseif self.process_watch then
     -- RemoteProcess
-    local process = self.found_processes[process_name] or
-                    self.pending_processes[process_name]
-    if not process then
-      process = lk.RemoteProcess(process_name)
-      self.pending_processes[process_name] = process
-    end
-    return process
+    return self.process_watch:process(name)
   else
     -- TODO: better error handling
     print(string.format("Cannot find process '%s' (no lk.ProcessWatch).", process_name))
@@ -360,9 +335,9 @@ function lib:url()
 end
 
 --- We found the morph server, load patch
-function lib:setMorph(service)
-  if service then
-    self.morph = service.req
+function lib:setMorph(process)
+  if process then
+    self.morph = process.req
     self:sync()
   else
     self.morph = nil
@@ -383,34 +358,17 @@ end
 --=============================================== ProcessWatch delegate
 
 -- Callback on found process in ProcessWatch. Not used for the moment.
-function lib:addService(remote_service)
-  if remote_service.zone ~= self.zone then
-    -- not in our zone: ignore
-    return
-  end
-
-  local service_name = remote_service.name
-  if service_name ~= '' then
+function lib:processConnected(remote_process)
+  if remote_process.name ~= '' then
     -- this is a process
-    local process = self.pending_processes[service_name]
-
-    if process then
-      -- connect
-      self.pending_processes[service_name] = nil
-    else
-      -- create new
-      process = lk.RemoteProcess(service_name, remote_service)
-    end
-    self.found_processes[service_name] = process
-    process:connect(remote_service)
   else
     -- this is the morph server
-    self:setMorph(remote_service)
+    self:setMorph(remote_process)
   end
 end
 
 -- Callback on removed process in ProcessWatch. Not used for the moment.
-function lib:removeService(remote_service)
+function lib:processDisconnected(remote_process)
   if remote_service.zone ~= self.zone then
     -- not in our zone: ignore
     return
@@ -418,14 +376,7 @@ function lib:removeService(remote_service)
 
   local service_name = remote_service.name
   if service_name ~= '' then
-    -- process
-    -- transform to pending process
-    local process = self.found_processes[service_name]
-    if process then
-      process:disconnect()
-      self.found_processes[service_name] = nil
-      self.pending_processes[service_name] = process
-    end
+    -- process: noop
   else
     -- morph going offline
     self:setMorph(nil)

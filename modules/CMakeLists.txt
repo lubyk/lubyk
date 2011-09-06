@@ -52,14 +52,14 @@ add_custom_target(dub
 
 macro(build_sub_module SUB_MODULE_NAME)
   # create lib/name directory
-  file(MAKE_DIRECTORY ${LUBYK_SOURCE_DIR}/lib/${MODULE_NAME})
+  file(MAKE_DIRECTORY ${LUBYK_LIB}/${MODULE_NAME})
 
   # create name/[SUB_MOD_NAME].so library
   add_library("${MODULE_NAME}_${SUB_MODULE_NAME}" MODULE ${ARGN}) # ARGN = list of arguments passed after SUB_MODULE_NAME
   set_target_properties("${MODULE_NAME}_${SUB_MODULE_NAME}"
     PROPERTIES OUTPUT_NAME ${SUB_MODULE_NAME}
     LINK_FLAGS ${PLAT_OBJ_FLAGS}
-    LIBRARY_OUTPUT_DIRECTORY ${LUBYK_SOURCE_DIR}/lib/${MODULE_NAME}
+    LIBRARY_OUTPUT_DIRECTORY ${LUBYK_LIB}/${MODULE_NAME}
     PREFIX ""
     SUFFIX ".so"
   )
@@ -88,14 +88,14 @@ endmacro(build_sub_module_with_defaults)
 # ==============================================================================
 macro(build_module MODULE_NAME)
   # make lib directory
-  file(MAKE_DIRECTORY ${LUBYK_SOURCE_DIR}/lib)
+  file(MAKE_DIRECTORY ${LUBYK_LIB})
 
   # create name.so library
   add_library(${MODULE_NAME} MODULE ${ARGN})
   set_target_properties(${MODULE_NAME}
     PROPERTIES OUTPUT_NAME ${MODULE_NAME}
     LINK_FLAGS ${PLAT_OBJ_FLAGS}
-    LIBRARY_OUTPUT_DIRECTORY ${LUBYK_SOURCE_DIR}/lib
+    LIBRARY_OUTPUT_DIRECTORY ${LUBYK_LIB}
     PREFIX ""
     SUFFIX ".so"
   )
@@ -167,7 +167,7 @@ foreach (MODULE ${MODULES})
       file (GLOB MODULE_SOURCES ${MODULE}/lib/*)
 
       add_custom_target("${MODULE_NAME}_lib" ALL
-         COMMAND ${CMAKE_COMMAND} -E copy_directory ${MODULE}/lib ${LUBYK_SOURCE_DIR}/lib)
+         COMMAND ${CMAKE_COMMAND} -E copy_directory ${MODULE}/lib ${LUBYK_LIB})
 
       add_dependencies(${MODULE_NAME} "${MODULE_NAME}_lib")
 

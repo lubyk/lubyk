@@ -55,7 +55,7 @@ setmetatable(lib, {
 
         process:connect(service)
         for _, delegate in ipairs(self.delegates) do
-          delegate:processConnected(name)
+          delegate:processConnected(process)
         end
       end
     elseif url == lubyk.rem_service_url then
@@ -64,7 +64,7 @@ setmetatable(lib, {
         -- disconnect
         process:disconnect()
         for _, delegate in ipairs(self.delegates) do
-          delegate:processDisconnected(name)
+          delegate:processDisconnected(process)
         end
       end
     end
@@ -78,8 +78,8 @@ end})
 
 function lib:addDelegate(delegate)
   table.insert(self.delegates, delegate)
-  for _, service in pairs(self.processes) do
-    delegate:addService(service)
+  for _, process in pairs(self.processes) do
+    delegate:processConnected(process)
   end
   return self
 end

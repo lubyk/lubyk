@@ -12,33 +12,13 @@
 local lib    = {type='editor.Zone'}
 lib.__index  = lib
 editor.Zone  = lib
-
---=============================================== PRIVATE
-local function setupLibrary(self)
-  -- delegate in Library is used by LibraryView for drag&drop operations.
-  self.library = editor.Library(nil, self)
-  -- Update library
-  self.library:sync()
-end
-
-local function setupProcessWatch(self, process_watch)
-  -- Start listening for processes and zones on the network
-  self.process_watch = process_watch:addDelegate(self)
-end
-
-local function setupView(self)
-  local view = editor.ZoneView(self)
-  self.main_view = view
-  self.process_list_view = view.process_list_view
-  view:show()
-end
+local private= {}
 
 --=============================================== PUBLIC
 setmetatable(lib, {
   -- new method
- __call = function(lib, zone, process_watch)
+ __call = function(lib, process_watch)
   local self = {
-    zone                = zone,
     selected_node_views = {},
     -- files edited in external editor
     observed_files      = {},
@@ -49,11 +29,11 @@ setmetatable(lib, {
   }
   setmetatable(self, lib)
 
-  setupLibrary(self)
+  private.setupLibrary(self)
 
-  setupProcessWatch(self, process_watch or lk.ProcessWatch())
+  private.setupProcessWatch(self, process_watch or lk.ProcessWatch())
 
-  setupView(self)
+  private.setupView(self)
 
   function self.file_observer.pathChanged(obs, path)
     self:pathChanged(path)
@@ -89,8 +69,8 @@ function lib:toggleView(process)
   end
 end
 
-local work_path = _lubyk_settings.editor.work_path or
-                  string.format('%s/.lubyk/editor/tmp', os.getenv('HOME'))
+local work_path = (Lubyk.editor or {}).work_path or
+                  string.format('%s/tmp_lubyk/editor/tmp', os.getenv('HOME'))
 
 lk.makePath(work_path)
 
@@ -98,7 +78,7 @@ function lib:workPath()
   return work_path
 end
 
-local editor_cmd = _lubyk_settings.editor.editor_cmd
+local editor_cmd = (Lubyk.editor or {}).editor_cmd or 'vim'
 
 function lib:editFile(filepath, node)
   -- FIXME: holds node reference (make it weak ?)
@@ -183,43 +163,20 @@ function lib:findProcess(process_name)
 end
 
 --=============================================== lk.ProcessWatch delegate
-local function addZone(self, remote_service)
-  if remote_service == self.zone then
-    -- TODO: create editor.Morph to proxy calls to morph server
-    self.morph = remote_service
-    -- TODO: create editor.MorphView to show morph server
-  end
-end
-
-local function removeZone(self, remote_service)
-  if remote_service.zone == self.zone then
-    -- TODO: disconnect morph
-    self.morph = nil
-    self.morph_view = nil
-  end
-end
-
-function lib:addService(remote_service)
-  local service_name = remote_service.name
-  if service_name ~= '' then
+function lib:processConnected(remote_process)
+  local name = remote_process.name
+  if name ~= '' then
     -- process
-    if remote_service.zone ~= self.zone then
-      -- not in our zone: ignore
-      return
-    end
-
-    local process = self.pending_processes[service_name]
+    local process = self.pending_processes[name]
 
     if process then
       -- pending process will be connected
-      self.pending_processes[service_name] = nil
+      self.pending_processes[name] = nil
     else
       -- create new
-      process = editor.Process(service_name)
+      process = editor.Process(name)
     end
-
-    process:connect(remote_service, self)
-
+    process:connect(remote_process, self)
 
     --- Update views
     if self.process_list_view then
@@ -228,31 +185,27 @@ function lib:addService(remote_service)
         -- FIXME: use updateView()
         self.process_list_view:addProcess(process)
         self.main_view:placeElements()
-        self.found_processes[service_name] = process
+        self.found_processes[name] = process
       end)
     else
-      self.found_processes[service_name] = process
+      self.found_processes[name] = process
     end
     app:post(function()
       self:toggleView(process)
     end)
   else
-    -- morph
-    -- found new zone
-    addZone(self, remote_service)
+    -- found morph server
+    -- TODO: create editor.Morph to proxy calls to morph server
+    self.morph = process
+    -- TODO: create editor.MorphView to show morph server
   end
 end
 
-function lib:removeService(remote_service)
-  local service_name = remote_service.name
-  if service_name ~= '' then
+function lib:processDisconnected(process)
+  local name = process.name
+  if name ~= '' then
     -- process
-    if remote_service.zone ~= self.zone then
-      -- not in our zone: ignore
-      return
-    end
-
-    local process = self.found_processes[service_name]
+    local process = self.found_processes[name]
     if process then
       process:disconnect()
       --- Update views
@@ -263,7 +216,7 @@ function lib:removeService(remote_service)
           process:deleteView()
         end
         self.main_view:placeElements()
-        self.found_processes[service_name] = nil
+        self.found_processes[name] = nil
         -- this could run anywhere but it has to run after the process is removed
         -- from process_list
         for _, p in pairs(self.found_processes) do
@@ -273,8 +226,30 @@ function lib:removeService(remote_service)
       end)
     end
   else
-    -- morph
-    removeZone(self, remote_service)
+    -- morph server going offline
+    -- TODO: disconnect morph
+    self.morph = nil
+    self.morph_view = nil
   end
+end
+
+--=============================================== PRIVATE
+function private.setupLibrary(self)
+  -- delegate in Library is used by LibraryView for drag&drop operations.
+  self.library = editor.Library(nil, self)
+  -- Update library
+  self.library:sync()
+end
+
+function private.setupProcessWatch(self, process_watch)
+  -- Start listening for processes and zones on the network
+  self.process_watch = process_watch:addDelegate(self)
+end
+
+function private.setupView(self)
+  local view = editor.ZoneView(self)
+  self.main_view = view
+  self.process_list_view = view.process_list_view
+  view:show()
 end
 

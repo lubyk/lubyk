@@ -15,9 +15,8 @@ lk.Process  = lib
 
 setmetatable(lib, {
   -- new method
- __call = function(lib, opts)
-  opts.zone = opts.zone or 'default'
-  local self = lk.Patch(opts)
+ __call = function(lib, name)
+  local self = lk.Patch(name, true)
   local opts = {
     callback = function(...)
       return self:callback(...)
@@ -25,7 +24,7 @@ setmetatable(lib, {
 
   }
 
-  self.service = lk.Service(self.zone .. ':' .. self.name, opts)
+  self.service = lk.Service(Lubyk.zone .. ':' .. self.name, opts)
 
   return self
 end})

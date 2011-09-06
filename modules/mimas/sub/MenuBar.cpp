@@ -147,7 +147,6 @@ static int QWidget_addWidget(lua_State *L) {
     widget->move(x, y);
     widget->show();
     return 0;
-
   } catch (std::exception &e) {
     lua_pushfstring(L, "addWidget: %s", e.what());
   } catch (...) {
@@ -211,7 +210,6 @@ static int QWidget_globalMove(lua_State *L) {
       )
     );
     return 0;
-
   } catch (std::exception &e) {
     lua_pushfstring(L, "globalMove: %s", e.what());
   } catch (...) {
@@ -232,7 +230,6 @@ static int QWidget_globalPosition(lua_State *L) {
     lua_pushnumber(L, pt.x());
     lua_pushnumber(L, pt.y());
     return 2;
-
   } catch (std::exception &e) {
     lua_pushfstring(L, "globalPosition: %s", e.what());
   } catch (...) {
@@ -364,7 +361,6 @@ static int QObject_name(lua_State *L) {
     MenuBar *self = *((MenuBar**)dubL_checksdata(L, 1, "mimas.MenuBar"));
     lua_pushstring(L, self->objectName().toUtf8().data());
     return 1;
-
   } catch (std::exception &e) {
     lua_pushfstring(L, "name: %s", e.what());
   } catch (...) {
@@ -384,7 +380,6 @@ static int QObject_object(lua_State *L) {
     QObject * retval__ = self;
     lua_pushclass<QObject>(L, retval__, "mimas.QObject");
     return 1;
-
   } catch (std::exception &e) {
     lua_pushfstring(L, "object: %s", e.what());
   } catch (...) {
@@ -481,7 +476,6 @@ static int QObject_setName(lua_State *L) {
     const char *name = dubL_checkstring(L, 2);
     self->setObjectName(QString(name));
     return 0;
-
   } catch (std::exception &e) {
     lua_pushfstring(L, "setName: %s", e.what());
   } catch (...) {
@@ -522,7 +516,6 @@ static int QWidget_setSizeHint(lua_State *L) {
     self->size_hint_ = QSize(w, h);
     self->updateGeometry();
     return 0;
-
   } catch (std::exception &e) {
     lua_pushfstring(L, "setSizeHint: %s", e.what());
   } catch (...) {
@@ -543,7 +536,7 @@ static int QWidget_setSizePolicy(lua_State *L) {
     int vertical = dubL_checkint(L, 3);
     self->setSizePolicy((QSizePolicy::Policy)horizontal, (QSizePolicy::Policy)vertical);
     self->updateGeometry();
-
+    return 0;
   } catch (std::exception &e) {
     lua_pushfstring(L, "setSizePolicy: %s", e.what());
   } catch (...) {
@@ -563,7 +556,6 @@ static int QWidget_setStyle(lua_State *L) {
     const char *text = dubL_checkstring(L, 2);
     self->setStyleSheet(QString(".%1 { %2 }").arg(self->cssClass()).arg(text));
     return 0;
-
   } catch (std::exception &e) {
     lua_pushfstring(L, "setStyle: %s", e.what());
   } catch (...) {
@@ -583,7 +575,6 @@ static int QWidget_setStyleSheet(lua_State *L) {
     const char *text = dubL_checkstring(L, 2);
     self->setStyleSheet(text);
     return 0;
-
   } catch (std::exception &e) {
     lua_pushfstring(L, "setStyleSheet: %s", e.what());
   } catch (...) {
@@ -631,7 +622,6 @@ static int QWidget_showFullScreen(lua_State *L) {
       self->showNormal();
     }
     return 0;
-
   } catch (std::exception &e) {
     lua_pushfstring(L, "showFullScreen: %s", e.what());
   } catch (...) {
@@ -652,7 +642,6 @@ static int QWidget_size(lua_State *L) {
     lua_pushnumber(L, rect.width());
     lua_pushnumber(L, rect.height());
     return 2;
-
   } catch (std::exception &e) {
     lua_pushfstring(L, "size: %s", e.what());
   } catch (...) {
@@ -676,7 +665,6 @@ static int QWidget_swapFullScreen(lua_State *L) {
       self->showNormal();
     }
     return 0;
-
   } catch (std::exception &e) {
     lua_pushfstring(L, "swapFullScreen: %s", e.what());
   } catch (...) {
@@ -697,7 +685,6 @@ static int QWidget_textSize(lua_State *L) {
     lua_pushnumber(L, self->fontMetrics().width(text));
     lua_pushnumber(L, self->fontMetrics().height());
     return 2;
-
   } catch (std::exception &e) {
     lua_pushfstring(L, "textSize: %s", e.what());
   } catch (...) {
@@ -735,7 +722,6 @@ static int QWidget_widget(lua_State *L) {
     QWidget* retval__ = self;
     lua_pushclass<QWidget>(L, retval__, "mimas.QWidget");
     return 1;
-
   } catch (std::exception &e) {
     lua_pushfstring(L, "widget: %s", e.what());
   } catch (...) {

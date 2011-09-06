@@ -211,30 +211,30 @@ end
 end
 
 -- Process is coming online.
-function lib:connect(remote_service, delegate)
+function lib:connect(remote_process, delegate)
   -- The delegate is used by views.
   self.delegate       = delegate
-  self.push           = remote_service.push
-  self.req            = remote_service.req
+  self.push           = remote_process.push
+  self.req            = remote_process.req
 
-  self.hue = remote_service.info.hue or 0.5
+  self.hue = remote_process.info.hue or 0.5
 
   --======================================= SUB client
   self.sub = zmq.SimpleSub(function(changes)
     -- we receive notifications, update content
     self:set(changes)
   end)
-  self.sub:connect(remote_service.sub_url)
+  self.sub:connect(remote_process.sub_url)
 
   self:sync()
 end
 
 -- A process is going offline, disconnect all links to this dying
 -- process and mark them as pending.
-function lib:disconnectProcess(process_name)
+function lib:disconnectProcess(remote_process)
   -- Disconnect all linked inlets
   for _, node in pairs(self.nodes) do
-    node:disconnectProcess(process_name)
+    node:disconnectProcess(remote_process.name)
   end
 end
 

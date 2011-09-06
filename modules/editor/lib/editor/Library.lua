@@ -74,22 +74,19 @@ setmetatable(lib, {
     delegate = delegate,
     -- Dir patterns to glob for files.
     sources = {
-      lubyk = _lubyk_settings.lubyk_lib_path .. '/lua/lubyk',
+      lubyk = Lubyk.lib .. '/lua/lubyk',
     },
   }
   if db then
     self.db = db
   else
-    self.filepath = _lubyk_settings.editor.library_path or
-                    string.format('%s/.lubyk/editor/library.sqlite3', os.getenv('HOME'))
+    self.filepath = Lubyk.prototypes_lib
     lk.makePath(lk.directory(self.filepath))
     self.db = sqlite3.open(self.filepath)
   end
   prepare_db(self)
-  if _lubyk_settings.editor.library_sources then
-    for lib_name, path in pairs(_lubyk_settings.editor.library_sources) do
-      self.sources[lib_name] = path
-    end
+  for lib_name, path in pairs(Lubyk.library_sources) do
+    self.sources[lib_name] = path
   end
   setmetatable(self, lib)
   return self

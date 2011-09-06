@@ -87,7 +87,6 @@ static int QObject_name(lua_State *L) {
     Action *self = *((Action**)dubL_checksdata(L, 1, "mimas.Action"));
     lua_pushstring(L, self->objectName().toUtf8().data());
     return 1;
-
   } catch (std::exception &e) {
     lua_pushfstring(L, "name: %s", e.what());
   } catch (...) {
@@ -107,7 +106,6 @@ static int QObject_object(lua_State *L) {
     QObject * retval__ = self;
     lua_pushclass<QObject>(L, retval__, "mimas.QObject");
     return 1;
-
   } catch (std::exception &e) {
     lua_pushfstring(L, "object: %s", e.what());
   } catch (...) {
@@ -127,7 +125,6 @@ static int QObject_setName(lua_State *L) {
     const char *name = dubL_checkstring(L, 2);
     self->setObjectName(QString(name));
     return 0;
-
   } catch (std::exception &e) {
     lua_pushfstring(L, "setName: %s", e.what());
   } catch (...) {
@@ -185,7 +182,6 @@ static int QAction_text(lua_State *L) {
     Action *self = *((Action**)dubL_checksdata(L, 1, "mimas.Action"));
     lua_pushstring(L, self->text().toUtf8().data());
     return 1;
-
   } catch (std::exception &e) {
     lua_pushfstring(L, "text: %s", e.what());
   } catch (...) {

@@ -28,6 +28,7 @@ setmetatable(lib, {
 end})
 
 function lib:connect(remote_service)
+  self.info = remote_service.info
   self.sub_url = remote_service.sub_url
   self.push = remote_service.push
   self.req  = remote_service.req
@@ -39,6 +40,7 @@ function lib:connect(remote_service)
 end
 
 function lib:disconnect()
+  self.info = nil
   self.sub_url = nil
   self.push = nil
   self.req  = nil

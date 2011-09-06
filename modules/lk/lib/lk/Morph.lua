@@ -89,17 +89,18 @@ end
 --=============================================== lk.ProcessWatch delegate
 
 --- When services are brought online
-function lib:processConnected(name)
+function lib:processConnected(process)
   -- We need to receive notifications from this process so that
   -- we can write the changes to file.
-  local process = self.processes[name]
+  local process = self.processes[process.name]
   if process then
+    -- we are interested in this process
     private.process.connect(self, process)
   end
 end
 
-function lib:processDisconnected(name)
-  local process = self.processes[name]
+function lib:processDisconnected(process)
+  local process = self.processes[process.name]
   if process then
     private.process.disconnect(self, process)
   end
@@ -329,8 +330,7 @@ end
 -- Spawn a new process that will callback to get data (yml definition, assets).
 -- This is private but we need to modify it during testing so we
 -- make it accessible from 'self'.
-function lib.spawn(self, process_name)
-  print('Starting', process_name)
+function lib.spawn(self, name)
   -- spawn Process
   -- We start a mimas.Application in case the process needs GUI elements.
   worker:spawn([[
@@ -338,10 +338,7 @@ function lib.spawn(self, process_name)
   app     = mimas.Application()
   process = lk.Process(%s)
   app:exec()
-  ]], {
-    name = process_name,
-    zone = Lubyk.zone,
-  })
+  ]], name)
   -- TODO: We might make things faster by giving the ip/port stuff to the
   -- process...
   -- the process will find the morph's ip/port by it's own service discovery

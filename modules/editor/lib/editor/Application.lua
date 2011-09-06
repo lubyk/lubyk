@@ -7,11 +7,13 @@
   windows (editor.Zone). This class has no public methods.
 
 --]]------------------------------------------------------
-
+require 'mimas'
+require 'mimas.Application'
 local lib          = lk.SubClass(mimas, 'Application')
 lib.type           = 'editor.Application'
 lib.__index        = lib
 editor.Application = lib
+local private      = {}
 
 local function testApp(self)
   self.win = mimas.MainWindow()
@@ -38,8 +40,6 @@ function lib:init()
   self.zones     = {}
   -- list of found zones
   self.zone_list = {}
-  -- found morph by zone name
-  self.morphs     = {}
   -- hosts
   self.host_list = {'localhost'}
 
@@ -62,43 +62,23 @@ function lib:init()
 end
 
 --=============================================== ProcessWatch delegate
-local function addZone(self, remote_service)
-  table.insert(self.zone_list, remote_service.zone)
-  -- TODO: use editor.Morph and share with editor.Zone ?
-  self.morphs[remote_service.zone] = remote_service
-  -- update zone list
-  self.zone_data:reset()
-end
-
-local function removeZone(self, remote_service)
-  self.morphs[remote_service.zone] = nil
-  -- update zone list
-  for i, zone in ipairs(self.zone_list) do
-    if zone == remote_service.zone then
-      table.remove(self.zone_list, i)
-      break
-    end
-  end
-  self.zone_data:reset()
-end
-
-function lib:addService(remote_service)
-  local service_name = remote_service.name
+function lib:processConnected(process)
+  local service_name = process.name
   if service_name == '' then
     -- morph
     -- found new zone
-    addZone(self, remote_service)
+    -- private.connectMorph(self, process)
   else
     -- process
     -- we are not interested in processes in Main
   end
 end
 
-function lib:removeService(remote_service)
-  local service_name = remote_service.name
+function lib:removeService(process)
+  local service_name = process.name
   if service_name == '' then
     -- morph
-    removeZone(self, remote_service)
+    -- private.disconnectMorph(self, process)
   else
     -- process
     -- we are not interested in processes in Main
@@ -116,35 +96,40 @@ function lib:hostsDataSource()
 end
 
 function lib:selectZone(zone_name)
-  local zone = editor.Zone(zone_name, self.process_watch)
+  local zone = editor.Zone(self.process_watch)
   self.zones[zone_name] = zone
-  self.splash_view:close()
-  self.splash_view = nil
+  if self.splash_view then
+    self.splash_view:close()
+    self.splash_view = nil
+  end
 end
 
-function lib:startZone(zone_name, host_name, path)
+function lib:startZone(path)
   -- spawn Morph server
   -- TODO: Could we replace mimas.Application by something else worker:join() or worker:run() ?
-  worker:spawn([[
+  self.morph_pid = worker:spawn([[
   require 'lubyk'
+  print("Starting morph server...")
   app = mimas.Application()
   morph = lk.Morph(%s)
   app:exec()
-  ]], {
-    zone = zone_name,
-    path = path
-  })
+  ]], path)
 
   -- Maybe we should make sure it started ok before selecting the zone.
-  self:selectZone(zone_name)
+  self:selectZone(Lubyk.zone)
 end
 
 --=============================================== Receive an openFile event
 
 function lib:openFile(path)
   if string.match(path, '.lkp$') then
-    print("open file in editor", path)
-  else
-    print("junk", path)
+    if self.morph_pid then
+      -- kill it
+      self.morph.req(lubyk.quit_url)
+      worker:waitpid(self.morph_pid)
+      self.morph_pid = nil
+      self.morph     = nil
+    end
+    self:startZone(path)
   end
 end
