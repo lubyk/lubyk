@@ -7,11 +7,6 @@
   changed and loads Lubyk essentials.
 
 --]]------------------------------------------------------
-require 'Autoload'
-lk    = Autoload('lk')
--- Add defaults to user settings
-Lubyk = lk.Lubyk(Lubyk)
-
 -- =========  SETUP LOAD PATHS ===========================
 -- These paths already come loaded with lubyk lib path
 -- through the lubyk loader "require 'lubyk'"
@@ -35,6 +30,11 @@ package.path  = package.path  .. lua_paths
 package.cpath = package.cpath .. lua_cpaths
 
 -- =========  LOAD MINIMAL LIBS ==========================
+require 'Autoload'
+lk    = Autoload('lk')
+-- Add defaults to user settings
+Lubyk = lk.Lubyk(Lubyk)
+
 lubyk = Autoload('lubyk')
 -- autoload stuff in _G
 Autoload.global()
