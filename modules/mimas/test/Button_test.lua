@@ -25,7 +25,7 @@ function withUser.should.connectToCallback(t)
 
   t.callback:connect(t.btn, 'clicked')
   t.win:show()
-  t:timeout(function(done)
+  t:guiTimeout(function(done)
     if done or t.continue then
       t.win:close()
       assertTrue(t.continue)
@@ -47,7 +47,7 @@ function withUser.should.createWithFunction(t)
   -- the button's env
   t.lay:addWidget(t.btn)
   t.win:show()
-  t:timeout(function(done)
+  t:guiTimeout(function(done)
     if done or t.continue then
       t.win:close()
       assertTrue(t.continue)

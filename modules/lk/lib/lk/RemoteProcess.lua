@@ -28,19 +28,23 @@ setmetatable(lib, {
 end})
 
 function lib:connect(remote_service)
+  self.sub_url = remote_service.sub_url
   self.push = remote_service.push
   self.req  = remote_service.req
   -- replace dummy 'send'
   self.send = function(...)
     remote_service.push:send(...)
   end
+  self.online = true
 end
 
 function lib:disconnect()
+  self.sub_url = nil
   self.push = nil
   self.req  = nil
   -- dummy
   self.send = lib.send
+  self.online = false
 end
 
 function lib.send(url, ...)

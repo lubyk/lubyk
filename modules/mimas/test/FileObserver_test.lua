@@ -36,7 +36,7 @@ function should.observeFiles(t)
   end)
   -- we edit the file
   lk.writeall(filepath, 'World!')
-  t:timeout(function(done)
+  t:guiTimeout(function(done)
     if done or t.continue then
       assertTrue(t.continue)
       return true

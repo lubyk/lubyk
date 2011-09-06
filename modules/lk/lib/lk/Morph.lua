@@ -21,94 +21,183 @@ local lib = {type='lk.Morph'}
 lib.__index = lib
 lk.Morph    = lib
 
-local processProxy   = {}
-processProxy.__index = processProxy
+local private = {}
 
 setmetatable(lib, {
   -- new method
  __call = function(lib, filepath)
   local self = {
-    zone = opts.zone,
+    -- Version of lubyk used to create project
+    lubyk     = {version = Lubyk.version},
     -- Holds the list of all the processes that need to be running
-    -- for the project to work (not just the once actually running).
-    process_list = {},
+    -- for the project to work (not just the ones actually running).
+    processes = {},
   }
   setmetatable(self, lib)
-  -- We need to watch for stem cells (or other ways to spawn new
-  -- processes that are not local) and we need to know which processes
-  -- are already running and which ones we need to create.
-  --
-  -- This is similar to a file open...
+
+  private.start(self)
+  if filepath then
+    self:open(filepath)
+  end
+  return self
+end})
+
+function lib:open(filepath)
+  self:close()
+  self.dir = lk.directory(filepath)
+  self.path = filepath
+  private.readFile(self)
+end
+
+function lib:close()
+  -- TODO: close all processes in same zone
+  -- clear
+  self.processes = {}
+  self.path = nil
+  self.dir  = nil
+  self.cache = {}
+end
+
+--- Return the content of the file at the given path in the
+-- current project.
+function lib:get(path)
+  local code = self.cache[path]
+  if not code then
+    code = lk.readall(self.dir .. '/' .. path)
+    self.cache[path] = code
+  end
+  return code
+end
+--============================================= lk.Service delegate
+
+--- Answering requests to Morph.
+function lib:callback(url, ...)
+  if url == lubyk.dump_url then
+    return private.dumpAll(self)
+  elseif url == lubyk.update_url then
+    local data = ...
+    -- async call, no return value
+    -- update state
+  elseif url == lubyk.get_url then
+    return self:get(...)
+  else
+    -- ignore
+    print('Bad message to lk.Morph', url)
+  end
+end
+
+--=============================================== lk.ProcessWatch delegate
+
+--- When services are brought online
+function lib:processConnected(name)
+  -- We need to receive notifications from this process so that
+  -- we can write the changes to file.
+  local process = self.processes[name]
+  if process then
+    private.process.connect(self, process)
+  end
+end
+
+function lib:processDisconnected(name)
+  local process = self.processes[name]
+  if process then
+    private.process.disconnect(self, process)
+  end
+end
+
+--=============================================== PRIVATE
+local DUMP_KEYS = {'lubyk', 'processes'}
+private.dump = {}
+private.set  = {}
+private.process = {}
+
+--- Start service and launch processes.
+function private:start(process_watch)
+  process_watch = process_watch or lk.ProcessWatch()
+  self.process_watch = process_watch:addDelegate(self)
   local srv_opts = {
     callback = function(...)
       return self:callback(...)
     end,
   }
-
-  self:open(opts.filepath)
-  return self
-end})
-
---- Start services and processes.
-function lib:start()
-  -- TODO: implement callbacks before enabling
-  -- self.process_watch = lk.ProcessWatch():addDelegate(self)
-  -- TODO: If registration returns something else the 'zone:' = there is
-  -- another lk.Morph for the same zone and we should either change zone or
-  -- quit...
-  self.service = lk.Service(self.zone .. ':', srv_opts)
+  -- TODO: make sure we are the only morph server in this zone (registration
+  -- name is not 'zone:-1'...
+  self.service = lk.Service(Lubyk.zone .. ':', srv_opts)
 end
 
-function lib:openProject(path)
-  -- TODO: close currently opened project (stop remote processes)
-  self.dir = lk.Dir(path)
-  -- Find the list of processes. A process is a folder with a patch definition:
-  -- .../foo/_patch.yml
-  -- .../bar/_patch.yml
-  self:startProcesses()
-end
 
-function lib:startProcesses()
-  self.process_list = {}
-  print('startProcesses', self.dir.path)
-  for file in self.dir:glob('[^/]+/_patch.yml') do
-    print('FILE', file)
-    local basepath, _ = lk.directory(file)
-    local _, basename = lk.directory(basepath)
-    -- Read mapping (process_name --> hostname)...
-    -- Spawn new process
-    self:spawn('localhost', basename)
+-- Reads and parses the content of the lkp file. This creates the file
+-- if it does not exist.
+function private:readFile()
+  local path = self.path
+  if not lk.exist(path) then
+    private.writeFile(self)
+  else
+    local def = yaml.loadpath(self.path)
+    local h = private.set
+    for _, k in ipairs(DUMP_KEYS) do
+      -- private.set.lubyk(self, def.lubyk)
+      h[k](self, def[k])
+    end
   end
-  print('OK')
 end
 
--- Spawn a new process that will callback to get data (yml definition, assets).
-function lib:spawn(host_name, process_name)
-  print('Starting', process_name)
-  -- spawn Process
-  -- We start a mimas.Application in case the process needs GUI elements.
-  worker:spawn([[
-  require 'lubyk'
-  app     = mimas.Application()
-  process = lk.Process(%s)
-  app:exec()
-  ]], {
-    name = process_name,
-    zone = self.zone,
-  })
-  -- the process will find the morph's ip/port by it's own service discovery
+function private:dumpAll()
+  local dump = {}
+  local h = private.dump
+  for _, k in ipairs(DUMP_KEYS) do
+    h[k](self, dump)
+  end
+  return dump
 end
 
-function lib:newProcess(name)
-  -- Create a new process proxy
-  local process = {name = name}
-  setmetatable(process, processProxy)
-  return process
+function private:writeFile()
+  lk.writeall(self.path, yaml.dump(private.dumpAll(self)))
 end
 
-local function write(self, url, data)
-  print(string.format('======================================= %s\n%s\n=======================================', url, data))
+function private.set:lubyk(lubyk)
+  if lubyk and lubyk.version then
+    self.lubyk = lubyk
+  else  
+    self.lubyk = {version = Lubyk.version}
+  end
 end
+
+function private.dump:lubyk(dump)
+  dump.lubyk = self.lubyk
+end
+
+function private.set:processes(processes)
+  for name, process_info in pairs(processes or {}) do
+    if process_info == '' then
+      process_info = {}
+    end
+    private.process.add(self, name, process_info, true)
+  end
+end
+
+function private.dump:processes(dump)
+  local processes = {}
+  dump.processes = processes
+  for name, process in pairs(self.processes) do
+    local p, empty = {}, true
+    if process.host ~= 'localhost' then
+      p.host = process.host
+      empty = false
+    end
+    if process.dir ~= name then
+      p.dir = process.dir
+      empty = false
+    end
+    if empty then
+      processes[name] = ''
+    else
+      processes[name] = p
+    end
+  end
+end
+
+--=============================================== TODO: cleanup, fix
 
 local function setCode(self, code_cache, node_url, code)
   local url = self.name .. '/' .. node_url .. '.lua'
@@ -120,42 +209,6 @@ local function setCode(self, code_cache, node_url, code)
   else
     code_cache[url] = nil
   end
-end
-
-local function writePatch(self)
-  local url = self.name .. '/' .. '_patch.yml'
-  write(self, self.name .. '/' .. '_patch.yml', yaml.dump(self.cache))
-end
-
-local function getCache(self, remote_service)
-  self.cache = self.req:request(lubyk.dump_url)
-  local code_cache = {}
-  self.code_cache = code_cache
-  -- move code into code cache (so that it is not in the dump)
-  local nodes = self.cache.nodes
-  if nodes then
-    for name, node in pairs(nodes) do
-      setCode(self, code_cache, name, node.code)
-      node.code = nil
-    end
-  end
-  writePatch(self)
-end
-
-function processProxy:connect(remote_service)
-  self.req   = remote_service.req
-  getCache(self, remote_service)
-  --======================================= SUB client
-  self.sub = zmq.SimpleSub(function(changes)
-    -- we receive notifications, update content
-    self:write(changes)
-  end)
-  self.sub:connect(remote_service.sub_url)
-end
-
-function processProxy:disconnect()
-  self.req = nil
-  self.sub = nil
 end
 
 local function deepMerge(base, key, value)
@@ -181,58 +234,118 @@ local function deepMerge(base, key, value)
   end
 end
 
-function processProxy:write(changes)
-  local patch_changed = false
-  local cache = self.cache
-  local code_cache = self.code_cache
-  for base_k, base_v in pairs(changes) do
-    if base_k == 'nodes' then
-      local nodes = base_v
-      local cache_nodes = cache[base_k] or {}
-      for name,node in pairs(nodes) do
-        local cache_node = cache_nodes[name] or {}
-        for k, v in pairs(node) do
-          if k == 'code' then
-            setCode(self, code_cache, name, v)
-          else
-            patch_changed = deepMerge(cache_node, k, v) or patch_changed
-          end
-        end
-      end
-    else
-      patch_changed = deepMerge(cache, base_k, base_v) or patch_changed
-    end
+--=============================================== PRIVATE process
+
+function private.process:connect(process)
+  local p = {process = process, cache = {}, code_cache = {}}
+  process.sub = zmq.SimpleSub(function(changes)
+    -- we receive notifications, update content
+    private.process.changed(self, process, changes)
+  end)
+  process.sub:connect(process.sub_url)
+end
+
+function private.process:disconnect(process)
+  self.process.sub = nil
+end
+
+function private.process.changed(self, process, changes)
+  if true then
+    print("private.process.changed TODO")
+    return
   end
-  if patch_changed then
-    writePatch(self)
-  end
+  -- write changes to file    
+  -- local cache = p.cache
+  -- local code_cache = self.code_cache
+  -- for base_k, base_v in pairs(changes) do
+  --   if base_k == 'nodes' then
+  --     local nodes = base_v
+  --     local cache_nodes = cache[base_k] or {}
+  --     for name,node in pairs(nodes) do
+  --       local cache_node = cache_nodes[name] or {}
+  --       for k, v in pairs(node) do
+  --         if k == 'code' then
+  --           setCode(self, code_cache, name, v)
+  --         else
+  --           patch_changed = deepMerge(cache_node, k, v) or patch_changed
+  --         end
+  --       end
+  --     end
+  --   else
+  --     patch_changed = deepMerge(cache, base_k, base_v) or patch_changed
+  --   end
+  -- end
+  -- if patch_changed then
+  --   writePatch(self)
+  -- end                                         
 end
 
-function lib:addProcess(process)
-  -- do nothing
-end
-
---- Return the content of the file at the given path in the
--- current project.
-function lib:get(path)
-  return lk.readall(self.dir.path .. '/' .. path)
-end
---============================================= lk.Service delegate
-
---- Answering requests to Morph.
-function lib:callback(url, ...)
-  if url == lubyk.dump_url then
-    return {
-      zone = self.zone,
-    }
-  elseif url == lubyk.update_url then
-    local data = ...
-    -- async call, no return value
-    -- update state
-  elseif url == lubyk.get_url then
-    return self:get(...)
+function private.process.readFile(process)
+  if lk.exist(process.patchpath) then
+    process.cache = yaml.loadpath(process.patchpath)
   else
-    -- ignore
-    print('Bad message to lk.Morph', url)
+    process.cache = {}
   end
 end
+
+function private.process.writeFile(process)
+  lk.writeall(process.patchpath, yaml.dump(process.nodes))
+end
+
+--=============================================== add/remove process
+
+-- When reading a file 'reading_lkp' is set so we know that we must not
+-- write to lkp file.
+function private.process.add(self, name, info, reading_lkp)
+  local process = self.process_watch:process(name)
+  self.processes[name] = process
+  process.host = info.host or 'localhost'
+  process.dir  = info.dir  or name
+  process.absdir = self.dir .. '/' .. process.dir
+  lk.makePath(process.absdir)
+  process.patchpath = process.absdir .. '/_patch.yml'
+  private.process.readFile(process)
+  private.process.start(self, process)
+  if not reading_lkp then
+    -- This is a new process
+    private.writeFile(self)
+    private.process.writeFile(process)
+  end
+end
+
+function private.process:start(process)
+  assert(not process.online)
+  -- Read mapping (process_name --> hostname)...
+  if process.host == Lubyk.host or process.host == 'localhost' then
+    -- Spawn new process
+    self:spawn(process.name)
+  else
+    -- TODO: find/wait for remote host
+    -- local stem = self.process_watch:stem(process.host)
+    -- stem:spawn(process.name) [ will be done on connect ]
+  end
+end
+
+-- Spawn a new process that will callback to get data (yml definition, assets).
+-- This is private but we need to modify it during testing so we
+-- make it accessible from 'self'.
+function lib.spawn(self, process_name)
+  print('Starting', process_name)
+  -- spawn Process
+  -- We start a mimas.Application in case the process needs GUI elements.
+  worker:spawn([[
+  require 'lubyk'
+  app     = mimas.Application()
+  process = lk.Process(%s)
+  app:exec()
+  ]], {
+    name = process_name,
+    zone = Lubyk.zone,
+  })
+  -- TODO: We might make things faster by giving the ip/port stuff to the
+  -- process...
+  -- the process will find the morph's ip/port by it's own service discovery
+end
+
+-- We need this for testing
+lib.private = private

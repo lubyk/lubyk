@@ -13,13 +13,20 @@ function lib:testWithUser()
   return lib.UserSuite(self._info.name)
 end
 
-function lib:timeout(func)
+function lib:guiTimeout(func)
   self.timeout = lk.Thread(function()
     local now = worker:now()
     while not func(worker:now() >= now + self.TIMEOUT) do
       sleep(100)
     end
   end)
+end
+
+function lib:timeout(func)
+  local now = worker:now()
+  while not func(worker:now() >= now + self.TIMEOUT) do
+    sleep(100)
+  end
 end
 
 function lib.Suite(name)

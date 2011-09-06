@@ -144,10 +144,11 @@ end
 
 --- Remove a directory recursively
 function lk.rmTree(path)
-  assert(false)
   local fullpath = lk.absolutizePath(path)
-  return lfs.rmdir(fullpath)
-  --os.execute(string.format("rm -rf '%s'", path))
+  if fullpath ~= '/' then
+    -- bug paranoia
+    return lfs.rmdir(fullpath)
+  end
 end
 
 function lk.rmFile(path)

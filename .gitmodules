@@ -1,3 +1,0 @@
-[submodule "zcpp/vendor/oscit"]
-	path = zcpp/vendor/oscit
-	url = git://github.com/rubyk/oscit.git

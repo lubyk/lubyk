@@ -7,5 +7,5 @@ processes:
   inline:
   # This is on another machine
   foobar: 
-    host: 'saturne'
+    host: 'saturn'
     dir: 'inline'

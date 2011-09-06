@@ -5,7 +5,11 @@
 
   Watches for other lk.Process and creates new
   lk.RemoteProcess when one is found. This is used to
-  handle inter process messages.
+  handle inter process messages. The delegate should
+  respond to:
+
+    * processConnected(name)
+    * processDisconnected(name)
 
 --]]------------------------------------------------------
 
@@ -16,12 +20,12 @@ lk.ProcessWatch = lib
 setmetatable(lib, {
   -- new method
  __call = function(lib)
-  local service_type = lubyk.service_type
+  local service_type = Lubyk.service_type
   local self = {
-    browser        = lk.ServiceBrowser(service_type),
-    found_services = {},
+    browser   = lk.ServiceBrowser(service_type),
+    processes = {},
     -- weak table
-    delegates      = setmetatable({}, {__mode = 'v'}),
+    delegates = setmetatable({}, {__mode = 'v'}),
   }
   setmetatable(self, lib)
 
@@ -29,36 +33,38 @@ setmetatable(lib, {
   self.sub = zmq.SimpleSub(function(...)
     -- receive message from local ServiceBrowser
     local url, service_name = ...
+    local zone, name = string.match(service_name, '^([^:]+):(.*)$')
+    if not zone then
+      print('Error in ProcessWatch: found service without zone', service_name)
+      return
+    elseif zone ~= Lubyk.zone then
+      -- ignore
+      return
+    end
+
     if url == lubyk.add_service_url then
-      -- resolve pending
-      if self.found_services[service_name] then
+
+      local process = self:process(name)
+      if process.online then
         -- allready found
         return
-      end
+      else
+        local service = self.browser.services[service_name]
+        service.zone = zone
+        service.name = name
 
-      local service = self.browser.services[service_name]
-      local zone, name = string.match(service_name, '^([^:]+):(.*)$')
-      
-      if not zone then
-        print('Error in ProcessWatch: found service without zone', service_name)
-        return
-      end
-
-      service.zone = zone
-      service.name = name
-
-      self.found_services[service_name] = service
-
-      for _, delegate in ipairs(self.delegates) do
-        delegate:addService(service)
+        process:connect(service)
+        for _, delegate in ipairs(self.delegates) do
+          delegate:processConnected(name)
+        end
       end
     elseif url == lubyk.rem_service_url then
-      local service = self.found_services[service_name]
-      if service then
-        -- remove
-        self.found_services[service_name] = nil
+      local process = self.processes[name]
+      if process then
+        -- disconnect
+        process:disconnect()
         for _, delegate in ipairs(self.delegates) do
-          delegate:removeService(service)
+          delegate:processDisconnected(name)
         end
       end
     end
@@ -72,8 +78,19 @@ end})
 
 function lib:addDelegate(delegate)
   table.insert(self.delegates, delegate)
-  for _, service in pairs(self.found_services) do
+  for _, service in pairs(self.processes) do
     delegate:addService(service)
   end
   return self
 end
+
+--- Return the remote process or create a disconnected process.
+function lib:process(name)
+  local process = self.processes[name]
+  if not process then
+    process = lk.RemoteProcess(name)
+    self.processes[name] = process
+  end
+  return process
+end
+
