@@ -1,0 +1,11 @@
+lubyk:
+  version:
+    major: 0
+    minor: 3
+processes:
+  bang: 
+  inline:
+  # This is on another machine
+  foobar: 
+    host: 'saturne'
+    dir: 'inline'
