@@ -21,8 +21,9 @@ end
 
 setmetatable(lib, {
   -- new method
- __call = function(lib, port)
+ __call = function(lib, port, rootpath)
   local self = {
+    cache      = setmetatable({}, {__mode = 'v'}),
     should_run = true,
     server     = lk.Socket(),
   }
@@ -31,39 +32,73 @@ setmetatable(lib, {
   self.host, self.port = self.server:localHost(), self.server:localPort()
   self.href_base = 'http://' .. self.host .. ':' .. self.port
   setmetatable(self, lib)
+  if rootpath then
+    self.root = lk.FileResource(rootpath, rootpath)
+  else
+    -- if no root path is provided, all the functions (find, findChildren,
+    -- update, create, delete and move) should be implemented.
+  end
   return self
 end})
 
---=============================================== Functions to rewrite.
-function lib:find(path)
-  error("'find(path)' callback not implemented for DAVServer")
+--=============================================== Functions to sub-class
+function lib:find(href)
+  local rez = self.cache[href]
+  if not rez then
+    -- this only happens on special files because we list children
+    -- (and cache result) before we are asked for a path.
+    rez = lk.FileResource(self.root.path .. href, self.root.path)
+    self.cache[href] = rez
+  end
+  return rez
 end
 
 function lib:findChildren(resource)
-  error("'findChildren(resource)' callback not implemented for DAVServer")
-end
-
-function lib:create(path, content)
-  -- forbidden
-  return nil, {status = "403"}
+  local children = resource:children()
+  if not children.cached then
+    for _, child in ipairs(children) do
+      self.cache[child.href] = child
+    end
+    children.cached = true
+  end
+  return children
 end
 
 function lib:update(resource, content)
-  -- forbidden
-  return nil, {status = "403"}
+  if resource:update(content) then
+    return nil, {status = '200'}
+  else
+    return nil, {status = '400'}
+  end
+end
+
+function lib:create(parent, name, content)
+  -- create resource
+  if parent:createChild(name, content) then
+    return nil, {status = '201'}
+  end
+  return nil, {status = '400'}
 end
 
 function lib:delete(parent, resource)
-  -- forbidden
-  return nil, {status = '403'}
+  if parent:deleteChild(resource) then
+    -- clear cache
+    collectgarbage()
+    return nil, {status = '204'}
+  end
+  return nil, {status = '400'}
 end
 
 function lib:move(parent, resource, dest_parent, dest_name)
-  -- forbidden
-  return nil, {status = '403'}
+  if parent:moveChild(resource, dest_parent, dest_name) then
+    return nil, {status = '201'}
+  else
+    return nil, {status = '400'}
+  end
 end
 
---------------------- PRIVATE
+--=============================================== PRIVATE
+
 local DATE_FORMAT_HTTP_DATE = '!%a, %d %b %Y %H:%M:%S GMT'
 lib.DATE_FORMAT_HTTP_DATE = DATE_FORMAT_HTTP_DATE
 
@@ -192,7 +227,7 @@ end
 
 local function getParent(self, path)
   local base, name = lk.directory(path)
-  return srv:find(base), name
+  return self:find(base), name
 end
   
 function lib:PUT(request)

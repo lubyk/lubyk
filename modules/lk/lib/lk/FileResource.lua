@@ -75,7 +75,7 @@ function lib:update(content)
   if self.is_dir then
     return false
   else
-    lk.writeall(self.path, content)
+    lk.writeall(self.path, content or '')
     self:sync()
     return true
   end
@@ -83,7 +83,7 @@ end
 
 function lib:delete()
   if self.is_dir then
-    lk.rmTree(self.path)
+    lk.rmTree(self.path, true)
   else
     lk.rmFile(self.path)
   end

@@ -72,7 +72,7 @@ local function buildReply(body, headers)
   local status = tostring(headers.status or "200")
   local status_msg = lib.STATUS_CODES[status]
   if not status_msg then
-    print("Bad HTTP status", status)
+    --print("Bad HTTP status", status)
     return nil
   end
   local res = string.format("HTTP/1.1 %s %s\r\n", status, status_msg)
@@ -90,22 +90,23 @@ local function buildReply(body, headers)
   else
     res = res .. "Content-Length: 0\r\n"
   end
-  print("--------------------------------------------------")
-  print(res)
+  --print("--------------------------------------------------")
+  --print(res)
   return res
 end
 
 -- TODO: protection against DOS attack ?
 local function getRequest(client)
   local request = {}
-  print("==================================================")
+  --print("==================================================")
   local line, err = client:recv()
   if err then
     return nil, err
   end
-  print('STATUS', line)
+  --print('STATUS', line)
   -- GET /foo/bar.html HTTP/1.1
   request.method, request.path, request.http = string.match(line, '(%S+)%s+(%S+)%s+(%S+)')
+  request.path = string.match(request.path, '^(.*)/$') or request.path
 
   local headers = {}
   request.headers = headers
@@ -114,7 +115,7 @@ local function getRequest(client)
     if err then
       return nil, err
     end
-    print('HEADER', line)
+    --print('HEADER', line)
 
     local key, value = string.match(line, '([^:]+): (.*)')
     if key then
@@ -130,7 +131,7 @@ local function getRequest(client)
     if err then
       return nil, err
     end
-    print('BODY', request.body)
+    --print('BODY', request.body)
   end
   return request
 end

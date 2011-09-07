@@ -19,15 +19,40 @@ function should.absolutizePath()
 end
 
 function should.makePath()
-  local path = 'foo/bar/baz'
-  lk.rmTree('foo')
+  local path = fixture.path('tmp/foo/bar/baz')
+  lk.rmTree(fixture.path('tmp'), true)
   assertPass(function()
-    lk.makePath('foo/bar/baz')
+    lk.makePath(path)
   end)
-  assertEqual('directory', lk.fileType('foo'))
-  assertEqual('directory', lk.fileType('foo/bar'))
-  assertEqual('directory', lk.fileType('foo/bar/baz'))
-  lk.rmTree('foo')
+  assertEqual('directory', lk.fileType(fixture.path('tmp/foo')))
+  assertEqual('directory', lk.fileType(fixture.path('tmp/foo/bar')))
+  assertEqual('directory', lk.fileType(fixture.path('tmp/foo/bar/baz')))
+  lk.rmTree(fixture.path('tmp'), true)
+end
+
+function should.notRmTreeRecursive()
+  local path = fixture.path('tmp/fo"o/bar/baz')
+  assertPass(function()
+    lk.makePath(path)
+  end)
+  assertEqual('directory', lk.fileType(fixture.path('tmp/fo"o')))
+  assertEqual('directory', lk.fileType(fixture.path('tmp/fo"o/bar')))
+  assertEqual('directory', lk.fileType(fixture.path('tmp/fo"o/bar/baz')))
+  assertFalse(lk.rmTree(fixture.path('tmp/fo"o')))
+  assertTrue(lk.exist(fixture.path('tmp/fo"o')))
+  lk.rmTree(fixture.path('tmp'), true)
+end
+
+function should.rmTree()
+  local path = fixture.path('tmp/fo"o/bar/baz')
+  assertPass(function()
+    lk.makePath(path)
+  end)
+  assertEqual('directory', lk.fileType(fixture.path('tmp/fo"o')))
+  assertEqual('directory', lk.fileType(fixture.path('tmp/fo"o/bar')))
+  assertEqual('directory', lk.fileType(fixture.path('tmp/fo"o/bar/baz')))
+  lk.rmTree(fixture.path('tmp/fo"o'), true)
+  assertFalse(lk.exist(fixture.path('tmp/fo"o')))
 end
 
 function should.rmFile()
@@ -42,12 +67,13 @@ function should.rmFile()
 end
 
 function should.writeall()
-  lk.rmTree('foo')
-  local tmp_path = 'foo/bar/lk_test_writeall.txt'
+  local foo = fixture.path('tmp/foo')
+  lk.rmTree(foo, true)
+  local tmp_path = foo .. '/bar/lk_test_writeall.txt'
   os.remove(tmp_path)
   lk.writeall(tmp_path, 'This is the message')
   assertEqual('This is the message', lk.readall(tmp_path))
-  lk.rmTree('foo')
+  lk.rmTree(foo, true)
 end
 
 function should.change_dir_before_dofile()
@@ -110,6 +136,14 @@ end
 
 function should.findCodeInLibs()
   assertMatch('Triggers regular bangs', lk.findCode(lk.dir(), 'lubyk.Metro'))
+end
+
+function should.shellQuote()
+  assertEqual('"foo"', lk.shellQuote('foo'))
+  -- foo 25"  --> "foo 25\""
+  assertEqual('"foo 25\\\""', lk.shellQuote('foo 25"'))
+  -- foo 25\" --> "foo 25\\\""
+  assertEqual('"foo 25\\\\\\\""', lk.shellQuote('foo 25\\"'))
 end
 
 test.all()
