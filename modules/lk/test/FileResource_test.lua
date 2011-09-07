@@ -12,6 +12,8 @@ local should = test.Suite('lk.FileResource')
 
 function should.teardown()
   lk.rmFile(fixture.path('project/FileResource.tmp'))
+  lk.rmFile(fixture.path('project/OneFileResource.tmp'))
+  lk.rmTree(fixture.path('project/folder'))
 end
 
 function should.autoload()
@@ -43,13 +45,13 @@ function should.mapDirectory()
 end
 
 function should.listChildren()
-  local path = fixture.path('project')
+  local path = lk.absolutizePath(fixture.path('project'))
   local rez = lk.FileResource(path)
   local children = rez:children()
   assertEqual(5, #children)
   assertEqual('bang', children[1].name)
   -- should propagate rootpath
-  assertEqual(fixture.path('project'), children[2].rootpath)
+  assertEqual(path, children[2].rootpath)
   assertEqual('example.lkp', children[2].name)
 end
 
@@ -127,7 +129,6 @@ function should.createChildDir()
   assertTrue(child.is_dir)
   children = rez:children()
   assertEqual(6, #children)
-  lk.rmTree(childpath)
 end
 
 function should.update()

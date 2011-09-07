@@ -11,53 +11,46 @@
 
 local private = {}
 
-function lk.DavMorph(...)
-  local self = lk.Morph(...)
-  private.setupDav(self)
+function lk.DavMorph(filepath)
+  local self = lk.Morph()
+  self.openFile = private.openFile
+  self.delete   = private.delete
+  if filepath then
+    self:openFile(filepath)
+  end
   return self
 end
 
 --=============================================== PRIVATE
 
-function private.setupDav(self)
-  self.dav = lk.DavServer(Lubyk.dav_port)
-  self.dav.morph = self
-  for _, k in ipairs({'find', 'findChildren', 'create', 'update', 'delete'}) do
-    self.dav[k]= private[k]
+--=============================================== Morph
+
+function private:openFile(filepath)
+
+  print("DAV")
+  -- super
+  lk.Morph.openFile(self, filepath)
+  -- setup server
+  if self.dav then
+    self.dav:setRoot(self.root)
+  else
+    print("Creating DavServer")
+    self.dav = lk.DavServer(Lubyk.dav_port, self.root)
+    self.dav_thread = lk.Thread(function()
+      print(string.format("Starting server on port %i...\nConnect with: http://localhost:%i", self.dav.port, self.dav.port))
+      self.dav:listen()
+      print('DONE?')
+    end)
   end
-  self.openFile = private.openFile
+  -- share cache
+  self.dav.cache = self.resources
 end
 
 --=============================================== WebDAV
-function private:find(path)
-  error("'find(path)' callback not implemented for DAVServer")
-end
+-- All callbacks are defined by Morph on the FileResource
+-- nothing to do here.
 
-function private:findChildren(resource)
-  error("'findChildren(resource)' callback not implemented for DAVServer")
-end
-
-function private:create(path, content)
-  -- forbidden
-  return nil, {status = "403"}
-end
-
-function pribate:update(resource, content)
-  -- forbidden
-  return nil, {status = "403"}
-end
-
-function private:delete(resource)
-  error("'delete(resource)' callback not implemented for DAVServer")
-end
-
---=============================================== Morph
-
-function private:openFile(path)
-  -- super
-  lk.Morph.open(self, path)
-  -- setup server
-  self.dav.dir = self.dir
-  -- share cache
-  self.dav.cache = self.cache
+function private:delete(parent, resource)
+  -- refuse delete (or we loose Morph link)
+  return nil, {status = '400'}
 end

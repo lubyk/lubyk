@@ -109,9 +109,9 @@ function lib:startZone(path)
   -- TODO: Could we replace mimas.Application by something else worker:join() or worker:run() ?
   self.morph_pid = worker:spawn([[
   require 'lubyk'
-  print("Starting morph server...")
+  print("Starting DAV Morph server...")
   app = mimas.Application()
-  morph = lk.Morph(%s)
+  morph = lk.DavMorph(%s)
   app:exec()
   ]], path)
 

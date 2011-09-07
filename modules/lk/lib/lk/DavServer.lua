@@ -21,9 +21,8 @@ end
 
 setmetatable(lib, {
   -- new method
- __call = function(lib, port, rootpath)
+ __call = function(lib, port, root)
   local self = {
-    cache      = setmetatable({}, {__mode = 'v'}),
     should_run = true,
     server     = lk.Socket(),
   }
@@ -32,14 +31,23 @@ setmetatable(lib, {
   self.host, self.port = self.server:localHost(), self.server:localPort()
   self.href_base = 'http://' .. self.host .. ':' .. self.port
   setmetatable(self, lib)
-  if rootpath then
-    self.root = lk.FileResource(rootpath, rootpath)
+  if root then
+    self:setRoot(root)
   else
     -- if no root path is provided, all the functions (find, findChildren,
     -- update, create, delete and move) should be implemented.
   end
   return self
 end})
+
+function lib:setRoot(root)
+  if type(root) == 'string' then
+    self.root  = lk.FileResource(root, root)
+  else
+    self.root = root
+  end
+  self.cache = setmetatable({}, {__mode = 'v'})
+end
 
 --=============================================== Functions to sub-class
 function lib:find(href)

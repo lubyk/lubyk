@@ -16,6 +16,8 @@ end
 function should.absolutizePath()
   assertEqual(lfs.currentdir() .. '/foo/bar', lk.absolutizePath('foo/bar'))
   assertEqual('/foo/bar', lk.absolutizePath('/foo/bar'))
+  -- assertEqual('/One/two/foo/bar', lk.absolutizePath('foo/bar', '/One/two'))
+  -- assertEqual('/foo/bar', lk.absolutizePath('/foo/bar', '/One/two'))
 end
 
 function should.makePath()

@@ -21,7 +21,11 @@ setmetatable(lib, {
   if not lk.exist(path) then
     return nil
   end
-  local self = {path = path, rootpath = rootpath or path}
+  local self  = {
+    path      = path,
+    rootpath  = rootpath or path,
+    callbacks = {},
+  }
   setmetatable(self, lib)
   return self:sync()
 end})
@@ -72,11 +76,13 @@ function lib:body()
 end
 
 function lib:update(content)
+  print('update', self.path)
   if self.is_dir then
     return false
   else
     lk.writeall(self.path, content or '')
     self:sync()
+    self:triggerCallbacks('update')
     return true
   end
 end
@@ -97,6 +103,31 @@ function lib:move(new_path)
     return true
   end
   return false
+end
+
+--=============================================== Callbacks
+-- These are manually triggered by the controllers (typically
+-- the WebDAV controller when it updates files.
+
+function lib:addCallback(op, func, ...)
+  local clb = {..., self}
+  local callbacks = self.callbacks[op]
+  if not callbacks then
+    callbacks = {}
+    self.callbacks[op] = callbacks
+  end
+  table.insert(callbacks, {func, clb})
+end
+
+function lib:triggerCallbacks(op)
+  local callbacks = self.callbacks[op]
+  if callbacks then
+    for _, clbk in ipairs(callbacks) do
+      clbk[1](unpack(clbk[2]))
+    end
+  else
+    print('no callback for', op, self.path)
+  end
 end
 
 --=============================================== Children

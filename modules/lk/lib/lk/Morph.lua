@@ -44,8 +44,15 @@ end})
 
 function lib:openFile(filepath)
   self:close()
-  self.dir = lk.directory(filepath)
-  self.path = filepath
+  self.root = nil
+  local base, name = lk.directory(filepath)
+  if not lk.exist(filepath) then
+    lk.makePath(base)
+    lk.writeall(filepath, '')
+  end
+  self.root     = lk.FileResource(base)
+  self.lkp_file = lk.FileResource(filepath, self.root.path)
+  print("openFile", self.root.path, self.lkp_file.name)
   private.readFile(self)
 end
 
@@ -53,20 +60,20 @@ function lib:close()
   -- TODO: close all processes in same zone
   -- clear
   self.processes = {}
-  self.path = nil
-  self.dir  = nil
-  self.resources = {}
+  self.root = nil
+  self.resources = setmetatable({}, {__mode = 'v'})
 end
 
 --- Return the content of the file at the given path in the
 -- current project.
-function lib:get(path)
-  local resource = self.resources[path]
+function lib:get(href)
+  print('get', href)
+  local resource = self.resources[href]
   if not resource then
-    resource = lk.FileResource(self.dir .. '/' .. path)
-    self.resources[path] = resource
+    resource = lk.FileResource(self.root.path .. href, self.root.path)
+    self.resources[href] = resource
   end
-  return resource.body
+  return resource:body()
 end
 --============================================= lk.Service delegate
 
@@ -127,19 +134,13 @@ function private:start(process_watch)
 end
 
 
--- Reads and parses the content of the lkp file. This creates the file
--- if it does not exist.
+-- Reads and parses the content of the lkp file.
 function private:readFile()
-  local path = self.path
-  if not lk.exist(path) then
-    private.writeFile(self)
-  else
-    local def = yaml.loadpath(self.path)
-    local h = private.set
-    for _, k in ipairs(DUMP_KEYS) do
-      -- private.set.lubyk(self, def.lubyk)
-      h[k](self, def[k])
-    end
+  local def = yaml.load(self.lkp_file:body()) or {}
+  local h = private.set
+  for _, k in ipairs(DUMP_KEYS) do
+    -- private.set.lubyk(self, def.lubyk)
+    h[k](self, def[k])
   end
 end
 
@@ -153,7 +154,7 @@ function private:dumpAll()
 end
 
 function private:writeFile()
-  lk.writeall(self.path, yaml.dump(private.dumpAll(self)))
+  self.lkp_file:update(private.dumpAll(self))
 end
 
 function private.set:lubyk(lubyk)
@@ -186,8 +187,8 @@ function private.dump:processes(dump)
       p.host = process.host
       empty = false
     end
-    if process.dir ~= name then
-      p.dir = process.dir
+    if process.dir.name ~= name then
+      p.dir = process.dir.name
       empty = false
     end
     if empty then
@@ -281,19 +282,46 @@ function private.process.changed(self, process, changes)
   -- end                                         
 end
 
+function private.nodeCallback(process, node_name, resource)
+  if process.online then
+    process.push:send(lubyk.update_url, {
+      nodes = {
+        [node_name] = resource:body()
+      }
+    })
+  end
+end
+
 function private.process.readFile(process)
-  if lk.exist(process.patchpath) then
-    process.cache = yaml.loadpath(process.patchpath)
-  else
-    process.cache = {}
+  process.cache = yaml.load(process.patch:body()) or {}
+  local nodes = process.cache.nodes or {}
+  for name, def in pairs(nodes) do
+    local resource = private.findOrMakeResource(self, process.dir.path .. '/' .. name .. '.lua')
+    resource:addCallback(private.nodeCallback, process, name)
   end
 end
 
 function private.process.writeFile(process)
-  lk.writeall(process.patchpath, yaml.dump(process.nodes))
+  process.patch:update(yaml.dump(process.nodes))
 end
 
 --=============================================== add/remove process
+function private.findOrMakeResource(self, relpath, is_dir)
+  local href = '/' .. relpath
+  local resource = self.resources[href]
+  if not resource then
+    local fullpath = self.root.path .. href
+    if is_dir then
+      lk.makePath(fullpath)
+    else
+      lk.makePath(lk.directory(fullpath))
+      lk.writeall(fullpath, '')
+    end
+    resource = lk.FileResource(fullpath, self.root.path)
+    self.resources[href] = resource
+  end
+  return resource
+end
 
 -- When reading a file 'reading_lkp' is set so we know that we must not
 -- write to lkp file.
@@ -301,10 +329,10 @@ function private.process.add(self, name, info, reading_lkp)
   local process = self.process_watch:process(name)
   self.processes[name] = process
   process.host = info.host or 'localhost'
-  process.dir  = info.dir  or name
-  process.absdir = self.dir .. '/' .. process.dir
-  lk.makePath(process.absdir)
-  process.patchpath = process.absdir .. '/_patch.yml'
+  -- set resource
+  process.dir = private.findOrMakeResource(self, info.dir or name, true)
+  process.patch = private.findOrMakeResource(self, process.dir.path .. '/_patch.yml')
+
   private.process.readFile(process)
   private.process.start(self, process)
   if not reading_lkp then
