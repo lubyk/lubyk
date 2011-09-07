@@ -24,3 +24,4 @@ Lubyk.version = version
 Lubyk.service_type = '_lubyk._tcp'
 Lubyk.prototypes_lib = string.format('%s/Documents/lubyk.sqlite3', os.getenv('HOME'))
 Lubyk.library_sources = {}
+Lubyk.dav_port = 8103 -- BLOK

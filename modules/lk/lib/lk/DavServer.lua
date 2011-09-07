@@ -34,6 +34,29 @@ setmetatable(lib, {
   return self
 end})
 
+--=============================================== Functions to rewrite.
+function lib:find(path)
+  error("'find(path)' callback not implemented for DAVServer")
+end
+
+function lib:findChildren(resource)
+  error("'findChildren(resource)' callback not implemented for DAVServer")
+end
+
+function lib:create(path, content)
+  -- forbidden
+  return nil, {status = "403"}
+end
+
+function lib:update(resource, content)
+  -- forbidden
+  return nil, {status = "403"}
+end
+
+function lib:delete(resource)
+  error("'delete(resource)' callback not implemented for DAVServer")
+end
+
 --------------------- PRIVATE
 local DATE_FORMAT_HTTP_DATE = '!%a, %d %b %Y %H:%M:%S GMT'
 lib.DATE_FORMAT_HTTP_DATE = DATE_FORMAT_HTTP_DATE
@@ -92,7 +115,7 @@ local function makeResponse(self, resource, prop_list)
   end
   return {
     xml = 'response',
-    {xml = 'href', self.href_base .. resource:davProperty('path')},
+    {xml = 'href', self.href_base .. resource:davProperty('href')},
     {xml = 'propstat',
       prop,
       {xml = 'status', "HTTP/1.1 200 OK"},
@@ -156,17 +179,27 @@ function lib:GET(request)
     return nil, {status = '404'}
   end
 
-  return resource.body, {status=200, 
+  return resource.body(), {status=200, 
     ['Content-type']=resource:davProperty('contenttype') or 'text/plain'
   }
 end
 
+local function getParent(self, path)
+  local base, name = lk.directory(request.path)
+  return srv:find(base), name
+end
+  
 function lib:PUT(request)
   local resource = self:find(request.path)
   if resource then
     return self:update(resource, request.body)
   else
-    return self:create(request.path, request.body)
+    local parent, name = getParent(self, request.path)
+    if parent then
+      return self:create(parent, name, request.body)
+    else
+      return nil, {status = '400'}
+    end
   end
 end
 
@@ -175,27 +208,10 @@ function lib:DELETE(request)
   if not resource then
     return nil, {status = '204'}
   end
-  return self:delete(resource)
-end
-
-function lib:find(path)
-  error("'find(path)' callback not implemented for DAVServer")
-end
-
-function lib:find(path)
-  error("'findChildren(path)' callback not implemented for DAVServer")
-end
-
-function lib:create(path, content)
-  -- forbidden
-  return nil, {status = "403"}
-end
-
-function lib:update(resource, content)
-  -- forbidden
-  return nil, {status = "403"}
-end
-
-function lib:delete(resource)
-  error("'delete(resource)' callback not implemented for DAVServer")
+  local parent, name = getParent(self, request.path)
+  if parent then
+    return self:delete(parent, name)
+  else
+    return nil, {status = '400'}
+  end
 end

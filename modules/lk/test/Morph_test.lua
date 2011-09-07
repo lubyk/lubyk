@@ -14,7 +14,7 @@ local function makeMorph(filepath)
   local morph = lk.Morph()
   morph.spawn = function() end -- do not spawn when testing
   if filepath then
-    morph:open(filepath)
+    morph:openFile(filepath)
   end
   return morph
 end

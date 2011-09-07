@@ -37,12 +37,12 @@ setmetatable(lib, {
 
   private.start(self)
   if filepath then
-    self:open(filepath)
+    self:openFile(filepath)
   end
   return self
 end})
 
-function lib:open(filepath)
+function lib:openFile(filepath)
   self:close()
   self.dir = lk.directory(filepath)
   self.path = filepath
@@ -55,18 +55,18 @@ function lib:close()
   self.processes = {}
   self.path = nil
   self.dir  = nil
-  self.cache = {}
+  self.resources = {}
 end
 
 --- Return the content of the file at the given path in the
 -- current project.
 function lib:get(path)
-  local code = self.cache[path]
-  if not code then
-    code = lk.readall(self.dir .. '/' .. path)
-    self.cache[path] = code
+  local resource = self.resources[path]
+  if not resource then
+    resource = lk.FileResource(self.dir .. '/' .. path)
+    self.resources[path] = resource
   end
-  return code
+  return resource.body
 end
 --============================================= lk.Service delegate
 
