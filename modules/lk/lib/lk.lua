@@ -151,6 +151,13 @@ function lk.rmTree(path)
   end
 end
 
+-- Move a file or directory
+function lk.move(path, new_path)
+  local base = lk.directory(new_path)
+  lk.makePath(base)
+  return os.rename(path, new_path)
+end
+
 function lk.rmFile(path)
   if lk.fileType(path) == 'file' then
     os.remove(path)

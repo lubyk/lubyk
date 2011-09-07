@@ -53,8 +53,14 @@ function lib:update(resource, content)
   return nil, {status = "403"}
 end
 
-function lib:delete(resource)
-  error("'delete(resource)' callback not implemented for DAVServer")
+function lib:delete(parent, resource)
+  -- forbidden
+  return nil, {status = '403'}
+end
+
+function lib:move(parent, resource, dest_parent, dest_name)
+  -- forbidden
+  return nil, {status = '403'}
 end
 
 --------------------- PRIVATE
@@ -165,7 +171,7 @@ function lib:PROPFIND(request)
 
   headers = {
     status = 207,
-    Etag   = etag(body),
+    Etag   = etag('%s', body),
     ['Content-Type']  = 'text/xml; charset="utf-8"',
     --['Last-Modified'] =  os.date(DATE_FORMAT, last_mod)
   }
@@ -179,13 +185,13 @@ function lib:GET(request)
     return nil, {status = '404'}
   end
 
-  return resource.body(), {status=200, 
+  return resource:body(), {status=200, 
     ['Content-type']=resource:davProperty('contenttype') or 'text/plain'
   }
 end
 
 local function getParent(self, path)
-  local base, name = lk.directory(request.path)
+  local base, name = lk.directory(path)
   return srv:find(base), name
 end
   
@@ -196,7 +202,7 @@ function lib:PUT(request)
   else
     local parent, name = getParent(self, request.path)
     if parent then
-      return self:create(parent, name, request.body)
+      return self:create(parent, name, request.body or '')
     else
       return nil, {status = '400'}
     end
@@ -208,10 +214,33 @@ function lib:DELETE(request)
   if not resource then
     return nil, {status = '204'}
   end
-  local parent, name = getParent(self, request.path)
+  local parent = getParent(self, request.path)
   if parent then
-    return self:delete(parent, name)
+    return self:delete(parent, resource)
   else
     return nil, {status = '400'}
   end
+end
+
+function lib:MOVE(request)
+  local resource = self:find(request.path)
+  local destination = request.headers['Destination'] or ''
+  destination = string.match(destination, 'http://[^/]+(/.+)$')
+  if destination then
+    local parent = getParent(self, request.path)
+    local dest_parent, dest_name = getParent(self, destination)
+    return self:move(parent, resource, dest_parent, dest_name)
+  end
+  return nil, {status = '400'}
+end
+
+function lib:MKCOL(request)
+  local resource = self:find(request.path)
+  if not resource then
+    local parent, name = getParent(self, request.path)
+    return self:create(parent, name)
+  elseif resource.is_dir then
+    return nil, {status = '201'}
+  end
+  return nil, {status = '400'}
 end

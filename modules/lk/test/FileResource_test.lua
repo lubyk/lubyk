@@ -53,6 +53,47 @@ function should.listChildren()
   assertEqual('example.lkp', children[2].name)
 end
 
+function should.delete()
+  local path = fixture.path('project/FileResource.tmp')
+  lk.writeall(path, 'one two')
+  assertTrue(lk.exist(path))
+  local rez = lk.FileResource(path)
+  assertTrue(rez:delete())
+  assertFalse(lk.exist(path))
+end
+
+function should.deleteChildResource()
+  local path = fixture.path('project')
+  local rez = lk.FileResource(path)
+  local childpath = fixture.path('project/FileResource.tmp')
+  lk.writeall(childpath, 'one two')
+  assertTrue(lk.exist(path))
+  -- create children cache
+  local children = rez:children()
+  assertEqual(6, #children)
+
+  assertTrue(rez:deleteChild(lk.FileResource(childpath, rez.rootpath)))
+  children = rez:children()
+  assertEqual(5, #children)
+  assertFalse(lk.exist(childpath))
+end
+
+function should.deleteChildName()
+  local path = fixture.path('project')
+  local rez = lk.FileResource(path)
+  local childpath = fixture.path('project/FileResource.tmp')
+  lk.writeall(childpath, 'one two')
+  assertTrue(lk.exist(path))
+  -- create children cache
+  local children = rez:children()
+  assertEqual(6, #children)
+
+  assertTrue(rez:deleteChild('FileResource.tmp'))
+  children = rez:children()
+  assertEqual(5, #children)
+  assertFalse(lk.exist(childpath))
+end
+
 function should.createChild()
   local path = fixture.path('project')
   local rez = lk.FileResource(path)
@@ -71,6 +112,24 @@ function should.createChild()
   assertEqual(6, #children)
 end
 
+function should.createChildDir()
+  local path = fixture.path('project')
+  local rez = lk.FileResource(path)
+  -- create children cache
+  local children = rez:children()
+  assertEqual(5, #children)
+
+  local childpath = fixture.path('project/folder')
+  assertTrue(rez:createChild('folder'))
+  local child = lk.FileResource(childpath, path)
+  assertEqual('folder', child.name)
+  assertEqual('/folder', child.href)
+  assertTrue(child.is_dir)
+  children = rez:children()
+  assertEqual(6, #children)
+  lk.rmTree(childpath)
+end
+
 function should.update()
   local path = fixture.path('project')
   local rez = lk.FileResource(path)
@@ -82,6 +141,21 @@ function should.update()
   assertTrue(child:update('Something else'))
   assertEqual('Something else', child:body())
   assertEqual('Something else', lk.readall(fixture.path('project/FileResource.tmp')))
+end
+
+function should.moveChild()
+  local path = fixture.path('project')
+  local rez = lk.FileResource(path)
+  local childpath = fixture.path('project/OneFileResource.tmp')
+  assertTrue(rez:createChild('OneFileResource.tmp', 'One World'))
+  assertTrue(lk.exist(fixture.path('project/OneFileResource.tmp')))
+  local child = lk.FileResource(childpath, path)
+  assertEqual('One World', child:body())
+
+  assertTrue(rez:moveChild(child, rez, 'FileResource.tmp'))
+  assertEqual('One World', child:body())
+  assertEqual('One World', lk.readall(fixture.path('project/FileResource.tmp')))
+  assertFalse(lk.exist(fixture.path('project/OneFileResource.tmp')))
 end
 
 function should.mapRoot()

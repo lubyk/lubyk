@@ -1,7 +1,7 @@
 require 'lubyk'
 
 srv = lk.DavServer(1024)
-root = lk.ResourceFile(arg[1])
+root = lk.FileResource(arg[1])
 srv.cache = {
  ['/'] = root,
 }
@@ -13,7 +13,7 @@ function srv:find(href)
   if not rez then
     -- this only happens on special files because we list children
     -- (and cache result) before we are asked for a path.
-    rez = lk.ResourceFile(root.path .. href, root.path)
+    rez = lk.FileResource(root.path .. href, root.path)
     srv.cache[href] = rez
   end
   return rez
@@ -39,22 +39,28 @@ function srv:update(resource, content)
 end
 
 function srv:create(parent, name, content)
-  if string.match(name, '[a-z]+.lua$') then
-    -- create resource
-    if parent:createChild(name, content) then
-      return nil, {status = '201'}
-    end
+  -- create resource
+  if parent:createChild(name, content) then
+    return nil, {status = '201'}
   end
   return nil, {status = '400'}
 end
 
-function srv:delete(parent, name)
-  if parent:deleteChild(name) then
+function srv:delete(parent, resource)
+  if parent:deleteChild(resource) then
     -- clear cache
     collectgarbage()
     return nil, {status = '204'}
   end
   return nil, {status = '400'}
+end
+
+function srv:move(parent, resource, dest_parent, dest_name)
+  if parent:moveChild(resource, dest_parent, dest_name) then
+    return nil, {status = '201'}
+  else
+    return nil, {status = '400'}
+  end
 end
 
 print(string.format("Starting server on port %i...\nConnect with: http://localhost:%i", srv.port, srv.port))

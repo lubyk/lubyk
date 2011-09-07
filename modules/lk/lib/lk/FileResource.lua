@@ -81,6 +81,24 @@ function lib:update(content)
   end
 end
 
+function lib:delete()
+  if self.is_dir then
+    lk.rmTree(self.path)
+  else
+    lk.rmFile(self.path)
+  end
+  return true
+end
+
+function lib:move(new_path)
+  if lk.move(self.path, new_path) then
+    self.path = new_path
+    self:sync()
+    return true
+  end
+  return false
+end
+
 --=============================================== Children
 function lib:children()
   if not self.is_dir then
@@ -103,9 +121,38 @@ end
 
 function lib:createChild(name, body)
   local fullpath = self.path .. '/' .. name
-  lk.writeall(fullpath, body)
+  if body then
+    lk.writeall(fullpath, body)
+  else
+    lk.makePath(fullpath)
+  end
   self:sync()
   return true
+end
+
+function lib:deleteChild(res_or_name)
+  local rez 
+  if type(res_or_name) == 'string' then
+    local fullpath = self.path .. '/' .. res_or_name
+    rez = lib(fullpath, self.rootpath)
+  else
+    rez = res_or_name
+  end
+  if not rez or rez:delete() then
+    self:sync()
+    return true
+  end
+  return false
+end
+
+function lib:moveChild(child, dest_parent, dest_name)
+  local new_path = dest_parent.path .. '/' .. dest_name
+  if child:move(new_path) then
+    self:sync()
+    dest_parent:sync()
+    return true
+  end
+  return false
 end
 
 --=============================================== PRIVATE
