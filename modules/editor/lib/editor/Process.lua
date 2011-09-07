@@ -195,7 +195,7 @@ function lib:newNode(definition)
     definition.code = definition.code or [=[
 --[[
 inlet('input', 'Information on input [type].')
-output = outlet('output', 'Information on output [type].')
+outlet('output', 'Information on output [type].')
 
 function inlet.input(val)
   -- print and pass through
@@ -234,7 +234,7 @@ end
 function lib:disconnectProcess(remote_process)
   -- Disconnect all linked inlets
   for _, node in pairs(self.nodes) do
-    node:disconnectProcess(remote_process.name)
+    node:disconnectProcess(remote_process)
   end
 end
 

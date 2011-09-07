@@ -50,8 +50,7 @@ setmetatable(lib, {
       if app then
         app:quit()
       else
-        -- just clear this process
-        self:quit()
+        self.callback(...)
       end
     else
       -- handle requests here. Maybe we need two different callbacks

@@ -105,14 +105,12 @@ function lib:selectZone(zone_name)
 end
 
 function lib:startZone(path)
-  -- spawn Morph server
-  -- TODO: Could we replace mimas.Application by something else worker:join() or worker:run() ?
+  -- Spawn Morph server
   self.morph_pid = worker:spawn([[
   require 'lubyk'
   print("Starting DAV Morph server...")
-  app = mimas.Application()
   morph = lk.DavMorph(%s)
-  app:exec()
+  morph:join()
   ]], path)
 
   -- Maybe we should make sure it started ok before selecting the zone.

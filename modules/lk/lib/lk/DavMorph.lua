@@ -15,6 +15,10 @@ function lk.DavMorph(filepath)
   local self = lk.Morph()
   self.openFile = private.openFile
   self.delete   = private.delete
+  self.quit     = private.quit
+  self.join = function(self)
+    self.dav_thread:join()
+  end
   if filepath then
     self:openFile(filepath)
   end
@@ -26,31 +30,25 @@ end
 --=============================================== Morph
 
 function private:openFile(filepath)
-
-  print("DAV")
   -- super
   lk.Morph.openFile(self, filepath)
   -- setup server
   if self.dav then
     self.dav:setRoot(self.root)
   else
-    print("Creating DavServer")
     self.dav = lk.DavServer(Lubyk.dav_port, self.root)
     self.dav_thread = lk.Thread(function()
-      print(string.format("Starting server on port %i...\nConnect with: http://localhost:%i", self.dav.port, self.dav.port))
       self.dav:listen()
-      print('DONE?')
     end)
   end
-  -- share cache
-  self.dav.cache = self.resources
 end
 
+function private:quit()
+  lk.Morph.quit(self)
+  if self.dav_thread then
+    self.dav_thread:kill()
+  end
+end
 --=============================================== WebDAV
 -- All callbacks are defined by Morph on the FileResource
 -- nothing to do here.
-
-function private:delete(parent, resource)
-  -- refuse delete (or we loose Morph link)
-  return nil, {status = '400'}
-end

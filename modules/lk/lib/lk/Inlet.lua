@@ -35,8 +35,8 @@ setmetatable(lib, {
       -- set node
       self.node = node
       node.inlets[name] = self
-      table.insert(node.sorted_inlets, self)
     end
+    table.insert(node.sorted_inlets, self)
     self:set(name, ...)
   end
 

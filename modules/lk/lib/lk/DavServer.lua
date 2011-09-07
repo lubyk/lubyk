@@ -22,6 +22,8 @@ end
 setmetatable(lib, {
   -- new method
  __call = function(lib, port, root)
+  -- make sure we run with 'C' locale (because of HTTP date parsing)
+  os.setlocale('C')
   local self = {
     should_run = true,
     server     = lk.Socket(),
@@ -42,34 +44,27 @@ end})
 
 function lib:setRoot(root)
   if type(root) == 'string' then
-    self.root  = lk.FileResource(root, root)
+    self.root  = lk.FileResource(root)
   else
     self.root = root
   end
-  self.cache = setmetatable({}, {__mode = 'v'})
+  -- FIXME: how long do we keep these around ?
+  self.deleted = {}
 end
 
 --=============================================== Functions to sub-class
-function lib:find(href)
-  local rez = self.cache[href]
+function lib:find(url)
+  local rez = self.root.cache[url]
   if not rez then
     -- this only happens on special files because we list children
     -- (and cache result) before we are asked for a path.
-    rez = lk.FileResource(self.root.path .. href, self.root.path)
-    self.cache[href] = rez
+    rez = lk.FileResource(url, self.root)
   end
   return rez
 end
 
 function lib:findChildren(resource)
-  local children = resource:children()
-  if not children.cached then
-    for _, child in ipairs(children) do
-      self.cache[child.href] = child
-    end
-    children.cached = true
-  end
-  return children
+  return resource:children()
 end
 
 function lib:update(resource, content)
@@ -82,6 +77,19 @@ end
 
 function lib:create(parent, name, content)
   -- create resource
+  local url = parent.url .. '/' .. name
+  local resource = self.deleted[url]
+  if resource then
+    if content and not resource.is_dir then
+      if resource:update(content) then
+        self.root.cache[url] = resource
+        self.deleted[url] = nil
+        return nil, {status = '201'}
+      end
+    else
+      self.deleted[url] = nil
+    end
+  end
   if parent:createChild(name, content) then
     return nil, {status = '201'}
   end
@@ -89,6 +97,9 @@ function lib:create(parent, name, content)
 end
 
 function lib:delete(parent, resource)
+  -- we use this in case the remote uses a delete
+  -- and create to update
+  self.deleted[resource.url] = resource
   if parent:deleteChild(resource) then
     -- clear cache
     collectgarbage()
@@ -110,7 +121,7 @@ end
 local DATE_FORMAT_HTTP_DATE = '!%a, %d %b %Y %H:%M:%S GMT'
 lib.DATE_FORMAT_HTTP_DATE = DATE_FORMAT_HTTP_DATE
 
-local DATE_FORMAT_ISO_8601 = '%Y-%m-%dT%H:%M:%SZ'
+local DATE_FORMAT_ISO_8601 = '!%Y-%m-%dT%H:%M:%SZ'
 lib.DATE_FORMAT_ISO_8601 = DATE_FORMAT_ISO_8601
 
 -- More status codes for WebDav
@@ -148,6 +159,10 @@ local function isDirectory(resource)
   end
 end
 
+local function httpDateNoLocale(time)
+  DATE_FORMAT_HTTP_DATE = '!%a, %d %b %Y %H:%M:%S GMT'
+end
+
 local function makeResponse(self, resource, prop_list)
   local prop = {xml='prop'}
   for _, k in ipairs(prop_list) do
@@ -157,6 +172,8 @@ local function makeResponse(self, resource, prop_list)
       if k == 'creationdate' then
         v = os.date(DATE_FORMAT_ISO_8601, v)
       elseif k == 'getlastmodified' then
+        -- This format is a stupid: it renders differently depending on the
+        -- locale: this is why we need setlocale('C')
         v = os.date(DATE_FORMAT_HTTP_DATE, v)
       end
     end
@@ -164,7 +181,7 @@ local function makeResponse(self, resource, prop_list)
   end
   return {
     xml = 'response',
-    {xml = 'href', self.href_base .. resource:davProperty('href')},
+    {xml = 'href', self.href_base .. resource:davProperty('url')},
     {xml = 'propstat',
       prop,
       {xml = 'status', "HTTP/1.1 200 OK"},
@@ -239,6 +256,10 @@ local function getParent(self, path)
 end
   
 function lib:PUT(request)
+  -- forget about ._ (resource fork on Mac OS X)
+  if string.match(request.path, '^._') then
+    return nil, {status = '400'}
+  end
   local resource = self:find(request.path)
   if resource then
     return self:update(resource, request.body)
@@ -275,6 +296,10 @@ function lib:MOVE(request)
     return self:move(parent, resource, dest_parent, dest_name)
   end
   return nil, {status = '400'}
+end
+
+function lib:LOCK(request)
+  return nil
 end
 
 function lib:MKCOL(request)

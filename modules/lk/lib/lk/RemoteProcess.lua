@@ -28,6 +28,7 @@ setmetatable(lib, {
 end})
 
 function lib:connect(remote_service)
+  self.ip = remote_service.ip
   self.info = remote_service.info
   self.sub_url = remote_service.sub_url
   self.push = remote_service.push

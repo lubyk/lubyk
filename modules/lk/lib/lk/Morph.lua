@@ -44,15 +44,13 @@ end})
 
 function lib:openFile(filepath)
   self:close()
-  self.root = nil
   local base, name = lk.directory(filepath)
   if not lk.exist(filepath) then
     lk.makePath(base)
     lk.writeall(filepath, '')
   end
   self.root     = lk.FileResource(base)
-  self.lkp_file = lk.FileResource(filepath, self.root.path)
-  print("openFile", self.root.path, self.lkp_file.name)
+  self.lkp_file = lk.FileResource('/' .. name, self.root)
   private.readFile(self)
 end
 
@@ -61,17 +59,14 @@ function lib:close()
   -- clear
   self.processes = {}
   self.root = nil
-  self.resources = setmetatable({}, {__mode = 'v'})
 end
 
 --- Return the content of the file at the given path in the
 -- current project.
-function lib:get(href)
-  print('get', href)
-  local resource = self.resources[href]
+function lib:get(url)
+  local resource = lk.FileResource(url, self.root)
   if not resource then
-    resource = lk.FileResource(self.root.path .. href, self.root.path)
-    self.resources[href] = resource
+    return nil
   end
   return resource:body()
 end
@@ -87,10 +82,16 @@ function lib:callback(url, ...)
     -- update state
   elseif url == lubyk.get_url then
     return self:get(...)
+  elseif url == lubyk.quit_url then
+    self:quit()
   else
     -- ignore
     print('Bad message to lk.Morph', url)
   end
+end
+
+function lib:quit()
+  self.service:quit()
 end
 
 --=============================================== lk.ProcessWatch delegate
@@ -118,6 +119,7 @@ local DUMP_KEYS = {'lubyk', 'processes'}
 private.dump = {}
 private.set  = {}
 private.process = {}
+private.node = {}
 
 --- Start service and launch processes.
 function private:start(process_watch)
@@ -199,19 +201,7 @@ function private.dump:processes(dump)
   end
 end
 
---=============================================== TODO: cleanup, fix
-
-local function setCode(self, code_cache, node_url, code)
-  local url = self.name .. '/' .. node_url .. '.lua'
-  if code_cache[url] == code then
-    -- same, ignore
-  elseif code then
-    code_cache[url] = code
-    write(self, url, code)
-  else
-    code_cache[url] = nil
-  end
-end
+--=============================================== Utility
 
 local function deepMerge(base, key, value)
   local base_v = base[key]
@@ -239,7 +229,6 @@ end
 --=============================================== PRIVATE process
 
 function private.process:connect(process)
-  local p = {process = process, cache = {}, code_cache = {}}
   process.sub = zmq.SimpleSub(function(changes)
     -- we receive notifications, update content
     private.process.changed(self, process, changes)
@@ -248,77 +237,89 @@ function private.process:connect(process)
 end
 
 function private.process:disconnect(process)
-  self.process.sub = nil
+  process.sub = nil
 end
 
 function private.process.changed(self, process, changes)
-  if true then
-    print("private.process.changed TODO")
-    return
-  end
   -- write changes to file    
-  -- local cache = p.cache
-  -- local code_cache = self.code_cache
-  -- for base_k, base_v in pairs(changes) do
-  --   if base_k == 'nodes' then
-  --     local nodes = base_v
-  --     local cache_nodes = cache[base_k] or {}
-  --     for name,node in pairs(nodes) do
-  --       local cache_node = cache_nodes[name] or {}
-  --       for k, v in pairs(node) do
-  --         if k == 'code' then
-  --           setCode(self, code_cache, name, v)
-  --         else
-  --           patch_changed = deepMerge(cache_node, k, v) or patch_changed
-  --         end
-  --       end
-  --     end
-  --   else
-  --     patch_changed = deepMerge(cache, base_k, base_v) or patch_changed
-  --   end
-  -- end
-  -- if patch_changed then
-  --   writePatch(self)
-  -- end                                         
+  -- nodes:
+  --   fo:
+  --     y: 54
+  --     x: 36
+  --     has_all_slots: true
+  --     code: "--[[\ninlet('input', 'Information on input [type].')\noutput = outlet('output',
+  --       'Information on output [type].')\n\nfunction inlet.input(val)\n  -- print and
+  --       pass through\n  print(val)\n  output(val)\nend\n--]]\n\n\n"
+  local cache = process.cache
+  for base_k, base_v in pairs(changes) do
+    if base_k == 'nodes' then
+      local nodes = base_v
+      local cache_nodes = cache[base_k] or {}
+      for name,node in pairs(nodes) do
+        local cache_node = cache_nodes[name]
+        if not cache_node then
+          -- new node
+          local resource = process.dir:createChild(name .. '.lua', node.code or '')
+          resource:addCallback('update', private.node.updateCallback, process, name)
+          cache_node = {}
+          cache_nodes[name] = cache_node
+        end
+
+        for k, v in pairs(node) do
+          if k == 'code' then
+            -- ignore code change notifications (we sent the code)
+          else
+            patch_changed = deepMerge(cache_node, k, v) or patch_changed
+          end
+        end
+      end
+    else
+      patch_changed = deepMerge(cache, base_k, base_v) or patch_changed
+    end
+  end
+  if patch_changed then
+    private.process.writeFile(process)
+  end                                         
 end
 
-function private.nodeCallback(process, node_name, resource)
+-- This is called when we do an update on the resource.
+function private.node.updateCallback(process, node_name, resource)
   if process.online then
     process.push:send(lubyk.update_url, {
       nodes = {
-        [node_name] = resource:body()
+        [node_name] = { code = resource:body()}
       }
     })
   end
 end
 
-function private.process.readFile(process)
+function private.process.readFile(self, process)
   process.cache = yaml.load(process.patch:body()) or {}
   local nodes = process.cache.nodes or {}
   for name, def in pairs(nodes) do
-    local resource = private.findOrMakeResource(self, process.dir.path .. '/' .. name .. '.lua')
-    resource:addCallback(private.nodeCallback, process, name)
+    local resource = private.findOrMakeResource(self, process.dir.url .. '/' .. name .. '.lua')
+    resource:addCallback('update', private.node.updateCallback, process, name)
   end
 end
 
 function private.process.writeFile(process)
-  process.patch:update(yaml.dump(process.nodes))
+  process.patch:update(yaml.dump(process.cache))
 end
 
 --=============================================== add/remove process
-function private.findOrMakeResource(self, relpath, is_dir)
-  local href = '/' .. relpath
-  local resource = self.resources[href]
+function private.findOrMakeResource(self, url, is_dir)
+  local resource = self.root.cache[url]
   if not resource then
-    local fullpath = self.root.path .. href
-    if is_dir then
-      lk.makePath(fullpath)
-    else
-      lk.makePath(lk.directory(fullpath))
-      lk.writeall(fullpath, '')
+    local fullpath = self.root.path .. url
+    if not lk.exist(fullpath) then
+      if is_dir then
+        lk.makePath(fullpath)
+      else
+        lk.makePath(lk.directory(fullpath))
+        lk.writeall(fullpath, '')
+      end
     end
-    resource = lk.FileResource(fullpath, self.root.path)
-    self.resources[href] = resource
+    resource = lk.FileResource(url, self.root)
   end
   return resource
 end
@@ -330,10 +331,10 @@ function private.process.add(self, name, info, reading_lkp)
   self.processes[name] = process
   process.host = info.host or 'localhost'
   -- set resource
-  process.dir = private.findOrMakeResource(self, info.dir or name, true)
-  process.patch = private.findOrMakeResource(self, process.dir.path .. '/_patch.yml')
+  process.dir = private.findOrMakeResource(self, '/' .. (info.dir or name), true)
+  process.patch = private.findOrMakeResource(self, process.dir.url .. '/_patch.yml')
 
-  private.process.readFile(process)
+  private.process.readFile(self, process)
   private.process.start(self, process)
   if not reading_lkp then
     -- This is a new process

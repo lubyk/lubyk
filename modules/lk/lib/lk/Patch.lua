@@ -23,7 +23,7 @@ local ALLOWED_KEYS = {
 }
 
 local function loadFromYaml(self, yaml_code)
-  local data = yaml.load(yaml_code)
+  local data = yaml.load(yaml_code) or {}
   -- clear before loading (yaml contains a full definition)
   self.nodes = {}
   self:set(data)
@@ -256,11 +256,9 @@ end
 function lib:findCode(url)
   -- TODO: make async
   if self.morph then
-    print("lk.Patch requests", url)
     return self.morph:request(lubyk.get_url, url)
   else
     -- error
-    print("No morph?")
     return nil
   end
 end
@@ -369,13 +367,7 @@ end
 
 -- Callback on removed process in ProcessWatch. Not used for the moment.
 function lib:processDisconnected(remote_process)
-  if remote_service.zone ~= self.zone then
-    -- not in our zone: ignore
-    return
-  end
-
-  local service_name = remote_service.name
-  if service_name ~= '' then
+  if remote_process.name ~= '' then
     -- process: noop
   else
     -- morph going offline

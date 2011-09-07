@@ -17,15 +17,35 @@ local private = {}
 
 setmetatable(lib, {
   -- new method
- __call = function(lib, path, rootpath)
-  if not lk.exist(path) then
-    return nil
+  -- Create a FileResource. The path *MUST* be relative to root
+  -- if root is provided and must start with a '/'.
+ __call = function(lib, url, root)
+  local self
+  if root then
+    self = root.cache[url]
+    if self then
+      return self
+    end
+    self = {
+      root = root,
+      path = root.path .. url,
+      url = url,
+   }
+  else
+    self = {
+      path = url,
+      url = '',
+    }
+    self.root = self
+    -- keep all resources cached
+    self.cache = {}
   end
-  local self  = {
-    path      = path,
-    rootpath  = rootpath or path,
-    callbacks = {},
-  }
+  if not lk.exist(self.path) then
+    return nil
+  else
+    self.root.cache[self.url] = self
+  end
+  self.callbacks = {}
   setmetatable(self, lib)
   return self:sync()
 end})
@@ -34,7 +54,7 @@ end})
 lib.davProperty = rawget
 
 function lib:sync()
-  local stat = lfs.attributes(self.path)
+  local stat, err = lfs.attributes(self.path)
   if not stat then
     -- does not exist (removed)
     return nil
@@ -42,23 +62,35 @@ function lib:sync()
   self.name = string.match(self.path, '/([^/]+)$')
   self.children_list = nil
   self.body_cache    = nil
-  if self.path == self.rootpath then
-    self.href = '/'
+  local url = self.url
+  if self.root == self then
+    self.url = ''
+    self.cache[self.url] = self
   else
-    self.href = string.sub(self.path, string.len(self.rootpath) + 1)
+    self.url = string.sub(self.path, string.len(self.root.path) + 1)
+    if url ~= self.url then
+      if self.root.cache[url] == self then
+        self.root.cache[url] = nil
+      end
+      self.root.cache[self.url] = self
+    end
   end
   if stat.mode == 'directory' then
     self.is_dir = true
     self.resourcetype = {xml = 'collection'}
     -- TODO: we could keep the getlastmodified in sync (must change
     -- on add/removal of children and/or subchildren)
+    self.getlastmodified  = stat.modification
+    -- FIXME: find creation date through lfs ?
+    self.creationdate     = self.getlastmodified
   else
     self.is_dir = false
     self.resourcetype     = nil
     self.contenttype      = private.contentType(self)
     self.getcontentlength = stat.size
     self.getlastmodified  = stat.modification
-    self.creationdate     = stat.change
+    -- FIXME: find creation date through lfs ?
+    self.creationdate     = self.getlastmodified
   end
   return self
 end
@@ -76,7 +108,6 @@ function lib:body()
 end
 
 function lib:update(content)
-  print('update', self.path)
   if self.is_dir then
     return false
   else
@@ -90,8 +121,16 @@ end
 function lib:delete()
   if self.is_dir then
     lk.rmTree(self.path, true)
+    local url = self.url
+    local len = string.len(url)
+    for surl, _ in pairs(self.root.cache) do
+      if string.sub(surl, 1, len) == url then
+        self.root.cache[surl] = nil
+      end
+    end
   else
     lk.rmFile(self.path)
+    self.root.cache[self.url] = nil
   end
   return true
 end
@@ -105,12 +144,24 @@ function lib:move(new_path)
   return false
 end
 
+--- LOCK the resource. The lock has a default timeout of
+-- FileResource.LOCK_TIMEOUT in ms and is linked to a user. 
+--
+-- @return 'nil' if the lock cannot be granted (already locked, parent lock)
+--          a new lock token on succes
+function lib:lock()
+end
+
+function lib:unlock()
+end
+
 --=============================================== Callbacks
 -- These are manually triggered by the controllers (typically
 -- the WebDAV controller when it updates files.
 
 function lib:addCallback(op, func, ...)
-  local clb = {..., self}
+  local clb = {...}
+  table.insert(clb, self)
   local callbacks = self.callbacks[op]
   if not callbacks then
     callbacks = {}
@@ -125,25 +176,24 @@ function lib:triggerCallbacks(op)
     for _, clbk in ipairs(callbacks) do
       clbk[1](unpack(clbk[2]))
     end
-  else
-    print('no callback for', op, self.path)
   end
 end
 
 --=============================================== Children
 function lib:children()
-  if not self.is_dir then
+  if not self.is_dir or not lk.exist(self.path) then
     return {}
   end
   local list = self.children_list
   if not list then
     -- build and store in cache
     list = {}
+    self.children_list = list
     for file in lfs.dir(self.path) do
       -- IGNORE
       if not string.match(file, self.IGNORE) then
-        local f = self.path..'/'..file
-        table.insert(list, lib(f, self.rootpath))
+        local f = self.url..'/'..file
+        table.insert(list, lib(f, self.root))
       end
     end
   end
@@ -158,14 +208,14 @@ function lib:createChild(name, body)
     lk.makePath(fullpath)
   end
   self:sync()
-  return true
+  return lk.FileResource(self.url .. '/' .. name, self.root)
 end
 
 function lib:deleteChild(res_or_name)
   local rez 
   if type(res_or_name) == 'string' then
-    local fullpath = self.path .. '/' .. res_or_name
-    rez = lib(fullpath, self.rootpath)
+    local url = self.url.. '/' .. res_or_name
+    rez = lib(url, self.root)
   else
     rez = res_or_name
   end

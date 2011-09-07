@@ -160,10 +160,10 @@ end
 
 -- The process is going offline, we need to transform connected
 -- inlets from other processes to pending_inlets.
-function lib:disconnectProcess(process_name)
+function lib:disconnectProcess(process)
   local target_urls = {}
   for i, link in ipairs(self.links) do
-    if link.target_url:match('^/' .. process_name) then
+    if link.target_url:match('^/' .. process.name) then
       -- becomes a pending link (changing an existing key while traversing table is ok).
       table.insert(target_urls, link.target_url)
       self.links[i] = nil

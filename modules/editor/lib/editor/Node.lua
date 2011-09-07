@@ -139,9 +139,9 @@ end
 
 -- The process is going offline, we need to transform connected
 -- inlets from other processes to pending_inlets.
-function lib:disconnectProcess(process_name)
+function lib:disconnectProcess(process)
   for _, outlet in ipairs(self.sorted_outlets) do
-    outlet:disconnectProcess(process_name)
+    outlet:disconnectProcess(process)
   end
 end
 

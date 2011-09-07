@@ -69,8 +69,9 @@ function lib:toggleView(process)
   end
 end
 
-local work_path = (Lubyk.editor or {}).work_path or
-                  string.format('%s/tmp_lubyk/editor/tmp', os.getenv('HOME'))
+local work_path = '/Volumes/Lubyk'
+                  --(Lubyk.editor or {}).work_path or
+                  --string.format('%s/tmp_lubyk/editor/tmp', os.getenv('HOME'))
 
 lk.makePath(work_path)
 
@@ -164,6 +165,7 @@ end
 
 --=============================================== lk.ProcessWatch delegate
 function lib:processConnected(remote_process)
+  -- FIXME: remove pending_processes
   local name = remote_process.name
   if name ~= '' then
     -- process
@@ -196,8 +198,14 @@ function lib:processConnected(remote_process)
   else
     -- found morph server
     -- TODO: create editor.Morph to proxy calls to morph server
-    self.morph = process
+    self.morph = remote_process
     -- TODO: create editor.MorphView to show morph server
+    -- mount morph DAV server
+    self.morph.dav_url = string.format('http://%s:8103', remote_process.ip)
+    -- We could use option -S == do not prompt when server goes offline
+    local cmd = string.format('mount_webdav %s %s', self.morph.dav_url, self:workPath())
+    print(cmd)
+    os.execute(cmd)
   end
 end
 
@@ -209,21 +217,24 @@ function lib:processDisconnected(process)
     if process then
       process:disconnect()
       --- Update views
-      app:post(function()
-        -- This should run in the GUI thread
-        if self.process_list_view then
-          self.process_list_view:removeProcess(process.name)
-          process:deleteView()
-        end
-        self.main_view:placeElements()
-        self.found_processes[name] = nil
-        -- this could run anywhere but it has to run after the process is removed
-        -- from process_list
-        for _, p in pairs(self.found_processes) do
-          -- transform outgoing links to the dying process to pending links.
-          p:disconnectProcess(process.name)
-        end
-      end)
+      if process.name then
+        -- not morph
+        app:post(function()
+          -- This should run in the GUI thread
+          if self.process_list_view then
+            self.process_list_view:removeProcess(process.name)
+            process:deleteView()
+          end
+          self.main_view:placeElements()
+          self.found_processes[name] = nil
+          -- this could run anywhere but it has to run after the process is removed
+          -- from process_list
+          for _, p in pairs(self.found_processes) do
+            -- transform outgoing links to the dying process to pending links.
+            p:disconnectProcess(process)
+          end
+        end)
+      end
     end
   else
     -- morph server going offline
