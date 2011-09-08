@@ -314,7 +314,7 @@ function lib:play(t)
     if data then
       -- move head to where we are playing
       self.t = t
-      self.playback(data)
+      self:playback(data)
     end
 
     local next_t = self:next(t)

@@ -250,9 +250,9 @@ function lib.makeGhost(node_def, delegate)
     -- add a LineEdit on top of self
     local edit = editor.NodeLineEdit(delegate.main_view, node.name, delegate.library)
     self.edit = edit
-    edit:resize(math.max(self.width, MINW), self.height)
     edit:selectAll()
     delegate.main_view:addWidget(edit)
+    edit:resize(math.max(self.width, MINW), self.height)
     edit:globalMove(self:globalPosition())
     edit:setFocus()
     function edit.editingFinished(edit, text)

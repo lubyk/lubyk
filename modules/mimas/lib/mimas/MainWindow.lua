@@ -12,7 +12,7 @@ mimas.MainWindow_ = mt
 
 local addWidget = mt.addWidget
 function mt:addWidget(other, ...)
-  addMainWindow(self, other:widget(), ...)
+  addWidget(self, other:widget(), ...)
 end
 
 local setParent = mt.setParent

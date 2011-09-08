@@ -15,25 +15,6 @@ lib.__index        = lib
 editor.Application = lib
 local private      = {}
 
-local function testApp(self)
-  self.win = mimas.MainWindow()
-  self.win:testMenus(true)
-  --[[
-  win.menu_bar = mimas.MenuBar(win)
-  win.menu_bar:addMenu('File')
-  win.menu_bar.File:addAction('Quit', 'Ctrl+Q', function()
-    app:quit()
-  end)
-  --]]
-
-  function self.win:paint(p, w, h)
-    local steps=5
-    for i=1,steps do
-      p:fillRect((i-1)*w/steps, 0, w/steps, h, mimas.Color(i/steps))
-    end
-  end
-  self.win:show()
-end  
 
 function lib:init()
   -- editing windows' models
@@ -43,22 +24,22 @@ function lib:init()
   -- hosts
   self.host_list = {'localhost'}
 
-  if true then
-    testApp(self)
-    return
+  self:selectZone(Lubyk.zone)
+  
+  if false then
+    -- splash screen, etc: later
+    -- Start listening for processes and zones on the network
+    self.process_watch = lk.ProcessWatch():addDelegate(self)
+
+    -- Data source for zones
+    self.zone_data = mimas.DataSource(self.zone_list)
+
+    -- Data source for hosts
+    self.host_data = mimas.DataSource(self.host_list)
+
+    self.splash_view = editor.SplashScreen(self)
+    self.splash_view:show()
   end
-
-  -- Start listening for processes and zones on the network
-  self.process_watch = lk.ProcessWatch():addDelegate(self)
-
-  -- Data source for zones
-  self.zone_data = mimas.DataSource(self.zone_list)
-
-  -- Data source for hosts
-  self.host_data = mimas.DataSource(self.host_list)
-
-  self.splash_view = editor.SplashScreen(self)
-  self.splash_view:show()
 end
 
 --=============================================== ProcessWatch delegate
@@ -131,3 +112,5 @@ function lib:openFile(path)
     self:startZone(path)
   end
 end
+
+

@@ -42,13 +42,12 @@ namespace midi {
  *      string_format:'%%s (%%f)'
  *      string_args:'(*userdata)->port_name(), (*userdata)->port()'
  */
-class In : LuaCallback {
+class In : public LuaObject {
 public:
-  In(lubyk::Worker *worker)
-   : LuaCallback(worker),
-     port_id_(-1),
-     port_name_("lubyk"),
-     midi_in_(NULL) {
+  In()
+      : port_id_(-1),
+        port_name_("lubyk"),
+        midi_in_(NULL) {
 
     midi_in_ = new RtMidiIn;
 
@@ -108,27 +107,6 @@ public:
     return open_port(-1, L);
   }
 
-  /** Set a callback function.
-   *
-   */
-  void __newindex(lua_State *L) {
-    // Stack should be ... <self> <key> <value>
-    std::string key(luaL_checkstring(L, -2));
-
-    luaL_checktype(L, -1, LUA_TFUNCTION);
-    lua_pushvalue(L, -3);
-    // ... <self> <key> <value> <self>
-    lua_pushvalue(L, -2);
-    // ... <self> <key> <value> <self> <value>
-    if (key == "receive") {
-      set_lua_callback(L);
-    } else {
-      luaL_error(L, "Invalid callback name '%s' (valid name is 'receive').", key.c_str());
-    }
-
-    lua_pop(L, 2);
-    // ... <self> <key> <value>
-  }
 private:
 
   /** Static callback to trigger when new messages arrive.
@@ -141,15 +119,14 @@ private:
 
   inline void receive(std::vector<unsigned char> *message) {
     lua_State *L = lua_;
-    if (!lua_) return;
     ScopedLock lock(worker_);
 
-    push_lua_callback(false);
+    if (!pushLuaCallback("receive")) return;
     lua_pushnumber(L, (*message)[0]);
     lua_pushnumber(L, (*message)[1]);
     lua_pushnumber(L, (*message)[2]);
-
-    int status = lua_pcall(lua_, 3, 0, 0);
+    // <func> <self> <byte> <byte> <byte>
+    int status = lua_pcall(lua_, 4, 0, 0);
 
     if (status) {
       fprintf(stderr, "Error in 'receive' callback: %s\n", lua_tostring(L, -1));

@@ -79,8 +79,12 @@ function lib:init(node, parent_view)
   self.delegate = node.delegate
   self:setName(node.name)
   if parent_view then
+    -- If we do not cache these, they endup wrong (resized callback?)
+    local w, h = self.width, self.height
     parent_view:addWidget(self)
-    self:resize(self.width, self.height)
+    self:resize(w, h)
+  else
+    print('Start NodeView without parent')
   end
 end
 
@@ -99,8 +103,8 @@ function lib:setName(name)
   local w, h = self.super:textSize(name)
   self.width = math.max(w + 2 * TEXT_HPADDING + 2*PAD, MINW)
   self.height = h + 2 * TEXT_VPADDING + 2*PAD
-  self:setSizePolicy(mimas.Minimum, mimas.Fixed)
   self:setSizeHint(self.width, self.height)
+  self:setSizePolicy(mimas.Minimum, mimas.Fixed)
   app:post(function()
     self:update()
   end)

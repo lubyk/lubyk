@@ -74,7 +74,7 @@ setmetatable(lib, {
     delegate = delegate,
     -- Dir patterns to glob for files.
     sources = {
-      lubyk = Lubyk.lib .. '/lua/lubyk',
+      lubyk = Lubyk.lib .. '/lubyk',
     },
   }
   if db then

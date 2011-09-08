@@ -19,6 +19,7 @@ function mimas.Application(type)
   local self = constr(type)
   self:setStyleSheet [[
     .window { background:rgb(38, 38, 38); color: rgb(180,180,180);}
+    .main_window { background:rgb(38, 38, 38); color: rgb(180,180,180);}
     .table {
       background:rgb(38, 38, 38);
       color: rgb(180,180,180);

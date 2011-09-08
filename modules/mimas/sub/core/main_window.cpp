@@ -41,9 +41,6 @@ void MainWindow::testMenus(bool inplace, lua_State *L) {
     printf("in place\n");
     QMenuBar *bar = menuBar();
 
-
-
-
     QAction *foobar = new QAction(QString("settings"), this);
     foobar->setShortcut(QKeySequence("Ctrl+W"));
     QObject::connect(foobar, SIGNAL(triggered()), this, SLOT(close()));
@@ -51,13 +48,6 @@ void MainWindow::testMenus(bool inplace, lua_State *L) {
     foo->addAction(foobar);
 
     QObjectList list = bar->children();
-    for (QObjectList::iterator it = list.begin(); it != list.end(); ++it) {
-      QObject *main = *it;
-      if (main) {
-        printf("This is a '%s'\n", main->metaObject()->className());
-        //main->setTitle("Bolomey");
-      }
-    }
   } else {
     MenuBar *bar = new MenuBar(this);
     bar->luaInit(L, bar, "mimas.MenuBar");

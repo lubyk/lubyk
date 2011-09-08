@@ -79,20 +79,15 @@ function lib:workPath()
   return work_path
 end
 
-local editor_cmd = (Lubyk.editor or {}).editor_cmd or 'vim'
+local editor_cmd = (Lubyk.editor or {}).editor_cmd
 
 function lib:editFile(filepath, node)
-  -- FIXME: holds node reference (make it weak ?)
-  -- FIXME: when do we remove paths ?
-  if not self.observed_files[filepath] then
-    self.file_observer:addPath(filepath)
-  end
-  self.observed_files[filepath] = node
   if editor_cmd then
-    os.execute(string.format("%s '%s'", editor_cmd, filepath))
+    local cmd = string.format("%s '%s'", editor_cmd, filepath)
+    os.execute(cmd)
   else
     -- FIXME
-    -- use internal editor
+    -- use internal editor ?
     os.execute(string.format("open '%s'", filepath))
   end
 end
@@ -203,7 +198,7 @@ function lib:processConnected(remote_process)
     -- mount morph DAV server
     self.morph.dav_url = string.format('http://%s:8103', remote_process.ip)
     -- We could use option -S == do not prompt when server goes offline
-    local cmd = string.format('mount_webdav %s %s', self.morph.dav_url, self:workPath())
+    local cmd = string.format('mount_webdav -S %s %s', self.morph.dav_url, self:workPath())
     print(cmd)
     os.execute(cmd)
   end
