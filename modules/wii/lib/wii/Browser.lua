@@ -12,7 +12,7 @@ require 'wii.Remote_core'
 require 'worker'
 
 -- Singleton
-wii.Browser = wii.Browser(worker)
+wii.Browser = wii.Browser()
 --local constr = wii.Browser
 --function wii.Browser()
 --  local instance = constr(worker)

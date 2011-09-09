@@ -41,20 +41,16 @@ class Browser;
  * @dub lib_name:'Remote_core'
  *      string_format:'%%s'
  *      string_args:'(*userdata)->name()'
- *      ignore:'set_remote,acceleration,button,disconnected'
+ *      ignore:'setRemote,acceleration,button,disconnected'
  */
-class Remote
-{
+class Remote : public LuaObject {
   std::string name_;
-  LuaCallback acceleration_;
-  LuaCallback button_;
-  LuaCallback connected_;
 
   class Implementation;
   Implementation *impl_;
   friend class Implementation;
 public:
-  Remote(lubyk::Worker *worker, const char *remote_name = NULL);
+  Remote(const char *remote_name = NULL);
 
   ~Remote();
 
@@ -64,51 +60,25 @@ public:
 
   void disconnect();
 
-  /** Set a callback function.
-   *
-   */
-  void __newindex(lua_State *L) {
-    // Stack should be ... <self> <key> <value>
-    std::string key(luaL_checkstring(L, -2));
-    luaL_checktype(L, -1, LUA_TFUNCTION);
-    lua_pushvalue(L, -3);
-    // ... <self> <key> <value> <self>
-    lua_pushvalue(L, -2);
-    // ... <self> <key> <value> <self> <value>
-    if (key == "acceleration") {
-      acceleration_.set_lua_callback(L);
-    } else if (key == "button") {
-      button_.set_lua_callback(L);
-    } else if (key == "connected") {
-      connected_.set_lua_callback(L);
-    } else {
-      luaL_error(L, "Invalid function name '%s' (valid names are 'connected', 'acceleration' and 'button').", key.c_str());
-    }
-
-    lua_pop(L, 2);
-    // ... <self> <key> <value>
-  }
-
   /** Set remote leds.
    */
-  void set_leds(bool led1, bool led2, bool led3, bool led4);
+  void setLeds(bool led1, bool led2, bool led3, bool led4);
 
   //*********** CALLBACKS
 
   /** This callback is called on new accelerator data.
    */
   void acceleration(const char *sensor, float x, float y, float z) {
-    lua_State *L = acceleration_.lua_;
-    if (!L) return;
-    ScopedLock lock(acceleration_.worker_);
+    lua_State *L = lua_;
+    ScopedLock lock(worker_);
 
-    acceleration_.push_lua_callback(false);
+    if (!pushLuaCallback("acceleration")) return;
     lua_pushstring(L, sensor);
     lua_pushnumber(L, x);
     lua_pushnumber(L, y);
     lua_pushnumber(L, z);
-    // <func> <sensor name> <x> <y> <z>
-    int status = lua_pcall(L, 4, 0, 0);
+    // <func> <self> <sensor name> <x> <y> <z>
+    int status = lua_pcall(L, 5, 0, 0);
 
     if (status) {
       printf("Error in 'acceleration' callback: %s\n", lua_tostring(L, -1));
@@ -118,15 +88,14 @@ public:
   /** This callback is called on button changes.
    */
   void button(const char *type, bool pressed) {
-    lua_State *L = button_.lua_;
-    if (!L) return;
-    ScopedLock lock(button_.worker_);
+    lua_State *L = lua_;
+    ScopedLock lock(worker_);
 
-    button_.push_lua_callback(false);
+    if (!pushLuaCallback("button")) return;
     lua_pushstring(L, type);
     lua_pushboolean(L, pressed);
-    // <func> <btn name> <pressed>
-    int status = lua_pcall(L, 2, 0, 0);
+    // <func> <self> <btn name> <pressed>
+    int status = lua_pcall(L, 3, 0, 0);
 
     if (status) {
       printf("Error in 'button' callback: %s\n", lua_tostring(L, -1));
@@ -136,25 +105,33 @@ public:
   /** This callback is called when the wii Remote is disconnected.
    */
   void disconnected() {
-    // noop for the moment
+    lua_State *L = lua_;
+    ScopedLock lock(worker_);
+
+    if (!pushLuaCallback("disconnected")) return;
+    // <func> <self>
+    int status = lua_pcall(L, 1, 0, 0);
+
+    if (status) {
+      printf("Error in 'disconnected' callback: %s\n", lua_tostring(L, -1));
+    }
   }
 
   /** This callback is called when the wii Remote is disconnected.
    */
   void connected() {
-    lua_State *L = connected_.lua_;
-    if (!L) {
+    lua_State *L = lua_;
+    ScopedLock lock(worker_);
+
+    if (!pushLuaCallback("connected")) {
       // default action
-      set_leds(true, false, false, false);
+      setLeds(true, false, false, false);
       return;
     }
-    ScopedLock lock(connected_.worker_);
 
-    connected_.push_lua_callback(false);
     lua_pushstring(L, name_.c_str());
-
-    // <func> <name>
-    int status = lua_pcall(L, 1, 0, 0);
+    // <func> <self> <name>
+    int status = lua_pcall(L, 2, 0, 0);
 
     if (status) {
       printf("Error in 'connected' callback: %s\n", lua_tostring(L, -1));
@@ -163,7 +140,7 @@ public:
 
   /** @internal
    */
-  void set_remote(void *remote);
+  void setRemote(void *remote);
 };
 } // wii
 

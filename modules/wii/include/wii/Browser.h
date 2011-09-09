@@ -41,15 +41,14 @@ namespace wii {
  * @dub lib_name:'Browser_core'
  *      ignore: 'found,need_more,find_more'
  */
-class Browser : public LuaCallback
-{
+class Browser : public LuaObject {
   class Implementation;
   Implementation *impl_;
   friend class Implementation;
   size_t need_count_;
   bool need_more_;
 public:
-  Browser(lubyk::Worker *worker);
+  Browser();
 
   ~Browser();
 
@@ -57,71 +56,54 @@ public:
    */
   void find();
 
-  /** Set a callback function.
-   *
-   */
-  void __newindex(lua_State *L) {
-    // Stack should be ... <self> <key> <value>
-    std::string key(luaL_checkstring(L, -2));
-    luaL_checktype(L, -1, LUA_TFUNCTION);
-    lua_pushvalue(L, -3);
-    // ... <self> <key> <value> <self>
-    lua_pushvalue(L, -2);
-    // ... <self> <key> <value> <self> <value>
-    if (key == "found") {
-      set_lua_callback(L);
-    } else {
-      luaL_error(L, "Invalid function name '%s' (valid name is 'found').", key.c_str());
-    }
-
-    lua_pop(L, 2);
-    // ... <self> <key> <value>
-  }
-
   /** A wiimote has been found, ask for a wii.Remote to create
    * connection.
    */
   wii::Remote *found(const char *name) {
     lua_State *L = lua_;
-    if (!L) {
+    ScopedLock lock(worker_);
+    if (!pushLuaCallback("found")) {
       printf("Remote found without browser callback.\n");
       return NULL;
     }
 
-    ScopedLock lock(worker_);
-    need_count_--;
-    need_more_ = (need_count_ > 0);
-
-    push_lua_callback(false);
-
     lua_pushstring(L, name);
-
-    // <func> <name>
-    int status = lua_pcall(L, 1, 1, 0);
+    // <func> <self> <name>
+    int status = lua_pcall(L, 2, 1, 0);
 
     if (status) {
       printf("Error in 'found' callback: %s\n", lua_tostring(L, -1));
+      return NULL;
     }
 
-    if (lua_type(lua_, -1) == LUA_TNIL) {
-      // no wii.Remote.. cannot link
+    try {
+      if (lua_type(L, -1) == LUA_TNIL) {
+        // no wii.Remote.. cannot link
+        lua_pop(L, 1);
+        return NULL;
+      } else {
+        need_count_--;
+        need_more_ = (need_count_ > 0);
+        wii::Remote **remote = (wii::Remote**)dubL_checksdata(L, -1, "wii.Remote");
+        lua_pop(L, 1);
+        return *remote;
+      }
+    } catch (std::exception &e) {
+      printf("Error in 'found' callback: %s\n", e.what());
       lua_pop(L, 1);
       return NULL;
-    } else {
-      lua_pop(L, 1);
-      return *((wii::Remote **)luaL_checkudata(L, -1, "wii.Remote"));
     }
   }
 
   /** @internal.
    */
-  bool need_more() {
+  bool needMore() {
     return need_more_;
   }
 
   /** @internal
    */
-  void find_more();
+  void findMore();
 };
 } // wii
 

@@ -43,7 +43,7 @@ timer = lk.Timer(30, function()
 end)
 
 win = mimas.GLWindow()
-function win.initializeGL()
+function win:initializeGL()
   gl.Enable("POINT_SMOOTH")
   gl.Enable("SMOOTH")
   gl.Enable("BLEND")                                -- Enable alpha blending
@@ -59,7 +59,7 @@ function win.initializeGL()
   gl.ClearColor(0.2,0.2,0.2,0.01)
 end
 
-function win.resizeGL(width, height)
+function win:resizeGL(width, height)
   gl.Enable("BLEND")
   gl.Disable("DEPTH_TEST")
   gl.BlendFunc("SRC_ALPHA", "ONE_MINUS_SRC_ALPHA")
@@ -70,7 +70,7 @@ function win.resizeGL(width, height)
   -- reset
   gl.LoadIdentity()
   -- Calculate the aspect ratio of the view
-  gl.Perspective(
+  glu.Perspective(
     45,               -- Field of view angle
     width / height,   -- Aspect ration
     1,                -- zNear
@@ -78,7 +78,7 @@ function win.resizeGL(width, height)
   )
 end
 
-function win.paintGL()
+function win:paintGL()
   gl.Clear( "COLOR_BUFFER_BIT, DEPTH_BUFFER_BIT")
   gl.MatrixMode("MODELVIEW")
   gl.LoadIdentity()
@@ -109,22 +109,22 @@ win:show()
 stream = db.Stream()
 stream.loop = true
 
-function process_acceleration(lx, ly, lz)
+function processAcceleration(lx, ly, lz)
   x = x + (lx - x) * 0.1
   y = y + (ly - y) * 0.1
   z = z + (lz - z) * 0.1
   win:updateGL()
 end
 
-function stream.playback(row)
+function stream:playback(row)
   if row.b then
-    process_button(row.b)
+    processButton(row.b)
   else
-    process_acceleration(row.x, row.y, row.z)
+    processAcceleration(row.x, row.y, row.z)
   end
 end
 
-function process_button(btn)
+function processButton(btn)
   if btn == 'Remote.U' then
     -- red
     color = {r=0.8, g=0.2, b=0.2}
@@ -164,33 +164,33 @@ function process_button(btn)
 end
 
 wiimote = wii.Remote()
-function wiimote.acceleration(device, lx, ly, lz)
+function wiimote:acceleration(device, lx, ly, lz)
   stream:rec{x = lx, y = ly, z = lz}
   if not stream.playing then
-    process_acceleration(lx, ly, lz)
+    processAcceleration(lx, ly, lz)
   end
 end
 
-function wiimote.button(btn, on)
+function wiimote:button(btn, on)
   if on then
     if btn == 'Remote.A' then
       if stream.recording then
         print("Stop recording and start playback.")
         stream:rec_stop()
         stream:play()
-        wiimote:set_leds(false, false, false, true)
+        wiimote:setLeds(false, false, false, true)
       elseif stream.playing then
         print("Playback stop.")
         stream:stop()
-        wiimote:set_leds(true, false, false, false)
+        wiimote:setLeds(true, false, false, false)
       else
         print("Started recording...")
         stream:rec_start()
-        wiimote:set_leds(false, true, true, false)
+        wiimote:setLeds(false, true, true, false)
       end
     elseif not stream.playing then
       stream:rec{b=btn}
-      process_button(btn)
+      processButton(btn)
     end
   end
   win:updateGL()

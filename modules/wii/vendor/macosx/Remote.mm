@@ -185,10 +185,10 @@ public:
     wii_remote_ = nil;
   }
 
-  void set_remote(WiiRemote *remote) {
+  void setRemote(WiiRemote *remote) {
     if (wii_remote_ == remote) return;
 
-    unlink_wii();
+    unlinkWii();
 
     wii_remote_ = [remote retain];
   	[wii_remote_ setDelegate:wii_remote_delegate_];
@@ -196,11 +196,11 @@ public:
     master_->connected();
   }
 
-  void set_leds(bool led1, bool led2, bool led3, bool led4) {
+  void setLeds(bool led1, bool led2, bool led3, bool led4) {
     [wii_remote_ setLEDEnabled1:led1 enabled2:led2 enabled3:led3 enabled4:led4];
   }
 
-  void unlink_wii() {
+  void unlinkWii() {
     if (wii_remote_) {
       [wii_remote_ closeConnection];
       [wii_remote_ release];
@@ -209,16 +209,13 @@ public:
   }
 
   ~Implementation() {
-    unlink_wii();
+    unlinkWii();
 
     [wii_remote_delegate_ release];
   }
 };
 
-Remote::Remote(lubyk::Worker *worker, const char *remote_name)
- : acceleration_(worker),
-   button_(worker),
-   connected_(worker) {
+Remote::Remote(const char *remote_name) {
   ScopedPool pool;
   if (remote_name) name_ = remote_name;
   impl_ = new Implementation(this);
@@ -228,16 +225,16 @@ Remote::~Remote() {
   delete impl_;
 }
 
-void Remote::set_remote(void *remote) {
-  impl_->set_remote((WiiRemote *)remote);
+void Remote::setRemote(void *remote) {
+  impl_->setRemote((WiiRemote *)remote);
 }
 
-void Remote::set_leds(bool led1, bool led2, bool led3, bool led4) {
-  impl_->set_leds(led1, led2, led3, led4);
+void Remote::setLeds(bool led1, bool led2, bool led3, bool led4) {
+  impl_->setLeds(led1, led2, led3, led4);
 }
 
 void Remote::disconnect() {
-  impl_->unlink_wii();
+  impl_->unlinkWii();
 }
 
 } // wii
@@ -294,13 +291,13 @@ void Remote::disconnect() {
   // get a wii.Remote and connect
   wii::Remote *remote = master_->found([[wiimote address] UTF8String]);
   if (remote) {
-    remote->set_remote(wiimote);
+    remote->setRemote(wiimote);
   } else {
     fprintf(stderr, "Could not connect..\n");
   }
 
-  if (master_->need_more()) {
-    master_->find_more();
+  if (master_->needMore()) {
+    master_->findMore();
   }
 }
 
@@ -309,8 +306,8 @@ void Remote::disconnect() {
 }
 
 - (void) WiiRemoteStopped {
-  if (master_->need_more()) {
-    master_->find_more();
+  if (master_->needMore()) {
+    master_->findMore();
   }
 }
 
@@ -328,8 +325,10 @@ public:
   Implementation(Browser *master)
    : master_(master) {
     wii_discovery_delegate_ = [[LWiiDiscoveryDelegate alloc] initWithBrowser:master_ worker:master_->worker_];
-    discovery_ =  [WiiRemoteDiscovery discoveryWithDelegate:wii_discovery_delegate_];
-    [discovery_ retain];
+    discovery_ = [[WiiRemoteDiscovery alloc] init];
+    [discovery_ setDelegate:wii_discovery_delegate_];
+    //discovery_ =  [WiiRemoteDiscovery discoveryWithDelegate:wii_discovery_delegate_];
+    //[discovery_ retain];
   }
 
   ~Implementation() {
@@ -352,10 +351,9 @@ public:
   }
 };
 
-Browser::Browser(lubyk::Worker *worker)
- : LuaCallback(worker),
-   need_count_(0),
-   need_more_(false) {
+Browser::Browser()
+    : need_count_(0),
+      need_more_(false) {
   ScopedPool pool;
   // we need to run the browser in an NSThread
   // or something else that has an event loop so that we
@@ -377,7 +375,7 @@ void Browser::find() {
 }
 
 // called by objC
-void Browser::find_more() {
+void Browser::findMore() {
   impl_->find();
 }
 

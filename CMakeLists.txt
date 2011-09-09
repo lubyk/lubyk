@@ -25,7 +25,7 @@ if(UNIX)
   add_definitions(-DLUA_USE_LINUX)
   if(APPLE)
     set(PLAT "macosx")
-    set(LUBYK_LIB ${LUBYK_SOURCE_DIR}/deploy/macosx/Lubyk_dmg/Lubyk.app/Contents/Resources/lib)
+    set(LUBYK_LIB ${LUBYK_SOURCE_DIR}/deploy/macosx/Lubyk.app/Contents/Resources/lib)
     # add_definitions(-DLUA_USE_MACOSX)
     add_definitions(-D__MACOSX_CORE__)
     # CoreFoundation needed by Midi and cannot be added in dylib
@@ -113,6 +113,15 @@ add_subdirectory(modules)
 # ==============================================================================
 # we do not shipt with a lua binary yet
 #add_subdirectory(lua)
+
+# ==============================================================================
+#
+#  Build Mac OS X dmg
+#
+# ==============================================================================
+add_custom_target(dmg
+  COMMAND hdiutil create -srcfolder ${LUBYK_SOURCE_DIR}/deploy/macosx/Lubyk_dmg -format UDZO -volname 'Install Lubyk' ${LUBYK_SOURCE_DIR}/deploy/macosx/Lubyk.dmg
+  )
 
 # ==============================================================================
 #

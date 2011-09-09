@@ -13,8 +13,8 @@ require 'worker'
 
 local constr = wii.Remote
 local worker = worker
-local unconnected_remotes = {}
-local connected_remotes = {}
+local unconnected_remotes = setmetatable({}, {__mode = 'v'})
+local connected_remotes   = setmetatable({}, {__mode = 'v'})
 function wii.Remote(name)
   local instance = nil
   if connected_remotes[name] then
@@ -24,7 +24,7 @@ function wii.Remote(name)
     instance = connected_remotes[1]
     table.remove(connected_remotes, 1)
   else
-    instance = constr(worker)
+    instance = constr()
     if name then
       unconnected_remotes[name] = instance
     else
@@ -35,7 +35,7 @@ function wii.Remote(name)
   return instance
 end
 
-function wii.Browser.found(name)
+function wii.Browser:found(name)
   local instance = unconnected_remotes[name]
   if instance then
     unconnected_remotes[name] = nil

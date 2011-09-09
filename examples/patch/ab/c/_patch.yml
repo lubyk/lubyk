@@ -1,10 +1,24 @@
-x: 100
-y: 100
+---
+hue: 0.5
+x: 74
+nodes:
+  '':
+    y: 25
+    x: 44
+    has_all_slots: true
+    hue: 0.5
+  loop:
+    y: 45
+    x: 230
+    hue: 0.5
+  one:
+    hue: 0.5
+    x: 57
+    inlets:
+    - name: print
+      info: Print/dump incoming value [any].
+    y: 99
+    has_all_slots: true
+y: 29
 w: 150
 h: 150
-hue: 0.5
-nodes:
-  loop:
-    x: 230
-    y: 45
-    hue: 0.5

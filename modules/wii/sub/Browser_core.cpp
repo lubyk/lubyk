@@ -3,24 +3,26 @@
 #include "lua_cpp_helper.h"
 
 
+
+
+
 using namespace wii;
 
 
 /* ============================ Constructors     ====================== */
 
-/** wii::Browser::Browser(lubyk::Worker *worker)
- * include/wii/Browser.h:52
+/** wii::Browser::Browser()
+ * include/wii/Browser.h:51
  */
 static int Browser_Browser(lua_State *L) {
   try {
-    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checksdata(L, 1, "lubyk.Worker"));
-    Browser * retval__ = new Browser(worker);
-    lua_pushclass<Browser>(L, retval__, "wii.Browser");
-    return 1;
+    Browser * retval__ = new Browser();
+    // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
+    return retval__->luaInit(L, retval__, "wii.Browser");
   } catch (std::exception &e) {
-    lua_pushfstring(L, "wii.Browser.Browser: %s", e.what());
+    lua_pushfstring(L, "Browser: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "wii.Browser.Browser: Unknown exception");
+    lua_pushfstring(L, "Browser: Unknown exception");
   }
   return lua_error(L);
 }
@@ -55,37 +57,55 @@ static int Browser__tostring(lua_State *L) {
 /* ============================ Member Methods   ====================== */
 
 
-/** void wii::Browser::__newindex(lua_State *L)
- * include/wii/Browser.h:63
+/** void wii::Browser::find()
+ * include/wii/Browser.h:57
  */
-static int Browser___newindex(lua_State *L) {
+static int Browser_find(lua_State *L) {
   try {
-    Browser *self__ = *((Browser**)dubL_checksdata(L, 1, "wii.Browser"));
-    
-    self__->__newindex(L);
+    Browser *self = *((Browser**)dubL_checksdata(L, 1, "wii.Browser"));
+    self->find();
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "wii.Browser.__newindex: %s", e.what());
+    lua_pushfstring(L, "find: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "wii.Browser.__newindex: Unknown exception");
+    lua_pushfstring(L, "find: Unknown exception");
   }
   return lua_error(L);
 }
 
 
 
-/** void wii::Browser::find()
- * include/wii/Browser.h:58
+/** void wii::Browser::findMore()
+ * include/wii/Browser.h:106
  */
-static int Browser_find(lua_State *L) {
+static int Browser_findMore(lua_State *L) {
   try {
-    Browser *self__ = *((Browser**)dubL_checksdata(L, 1, "wii.Browser"));
-    self__->find();
+    Browser *self = *((Browser**)dubL_checksdata(L, 1, "wii.Browser"));
+    self->findMore();
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "wii.Browser.find: %s", e.what());
+    lua_pushfstring(L, "findMore: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "wii.Browser.find: Unknown exception");
+    lua_pushfstring(L, "findMore: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** bool wii::Browser::needMore()
+ * include/wii/Browser.h:100
+ */
+static int Browser_needMore(lua_State *L) {
+  try {
+    Browser *self = *((Browser**)dubL_checksdata(L, 1, "wii.Browser"));
+    bool  retval__ = self->needMore();
+    lua_pushboolean(L, retval__);
+    return 1;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "needMore: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "needMore: Unknown exception");
   }
   return lua_error(L);
 }
@@ -97,8 +117,9 @@ static int Browser_find(lua_State *L) {
 /* ============================ Lua Registration ====================== */
 
 static const struct luaL_Reg Browser_member_methods[] = {
-  {"__newindex"        , Browser___newindex},
   {"find"              , Browser_find},
+  {"findMore"          , Browser_findMore},
+  {"needMore"          , Browser_needMore},
   {"__tostring"        , Browser__tostring},
   {"__gc"              , Browser_destructor},
   {NULL, NULL},
