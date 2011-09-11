@@ -192,6 +192,10 @@ public:
     return local_port_;
   }
 
+  int fd() const {
+    return socket_fd_;
+  }
+
 private:
    /** Create a socket with an existing file descriptor.
     * This is used as the result of an 'accept()' call.

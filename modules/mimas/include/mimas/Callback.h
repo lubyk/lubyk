@@ -47,6 +47,7 @@ class Slider;
  *
  * @dub lib_name:'Callback_core'
  *      ignore: 'callback'
+ *      super: 'QObject'
  */
 class Callback : public QObject, public lubyk::LuaObject
 {

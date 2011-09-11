@@ -55,4 +55,18 @@ function should.spawnProcess()
   assertEqual(5, worker:waitpid(pid))
   print('')
 end
+
+function should.setReadFd()
+  worker:fdReadSet(434)
+  assertEqual(434, worker:maxFd())
+  worker:fdWriteSet(454)
+  assertEqual(454, worker:maxFd())
+  worker:fdWriteClear(464)
+  assertEqual(454, worker:maxFd())
+  worker:fdWriteClear(454)
+  assertEqual(434, worker:maxFd())
+  worker:fdReadClear(434)
+  assertEqual(0, worker:maxFd())
+end
+
 test.all()

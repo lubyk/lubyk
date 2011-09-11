@@ -178,7 +178,7 @@ static int MainWindow_cssClass(lua_State *L) {
 
 
 /** LuaStackSize mimas::MainWindow::getExistingDirectory(const char *caption, const char *base_dir, int options, lua_State *L)
- * include/mimas/MainWindow.h:100
+ * include/mimas/MainWindow.h:84
  */
 static int MainWindow_getExistingDirectory(lua_State *L) {
   try {
@@ -201,7 +201,7 @@ static int MainWindow_getExistingDirectory(lua_State *L) {
 
 
 /** LuaStackSize mimas::MainWindow::getOpenFileName(const char *caption, const char *base_dir, const char *filter, int options, lua_State *L)
- * include/mimas/MainWindow.h:95
+ * include/mimas/MainWindow.h:79
  */
 static int MainWindow_getOpenFileName(lua_State *L) {
   try {

@@ -11,12 +11,19 @@ using namespace mimas;
 
 /* ============================ Constructors     ====================== */
 
-/** mimas::MenuBar::MenuBar()
+/** mimas::MenuBar::MenuBar(QWidget *parent=0)
  * include/mimas/MenuBar.h:51
  */
 static int MenuBar_MenuBar(lua_State *L) {
   try {
-    MenuBar * retval__ = new MenuBar();
+    int top__ = lua_gettop(L);
+    MenuBar * retval__;
+    if (top__ < 1) {
+      retval__ = new MenuBar();
+    } else {
+      QWidget *parent = *((QWidget **)dubL_checksdata(L, 1, "mimas.QWidget"));
+      retval__ = new MenuBar(parent);
+    }
     // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
     return retval__->luaInit(L, retval__, "mimas.MenuBar");
   } catch (std::exception &e) {

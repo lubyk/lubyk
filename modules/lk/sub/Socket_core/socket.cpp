@@ -213,6 +213,9 @@ LuaStackSize lk::Socket::accept(lua_State *L) {
       for(int i=0; i < SIZEOF_SIZE; ++i) {
         if (buffer_i_ >= buffer_length_) {
           // eaten all buffer, fetch more
+          // ***********************************************
+          // This is where we need our coroutine to do coroutine.yield('read', socket_fd_)
+          // ***********************************************
           buffer_length_ = ::recv(socket_fd_, buffer_, SIZEOF_SIZE - i, 0);
           if (buffer_length_ == 0) {
             // connection closed

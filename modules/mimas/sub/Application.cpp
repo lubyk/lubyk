@@ -28,6 +28,11 @@ int Application::exec() {
   return QApplication::exec();
 }
 
+void Application::processEvents(int maxtime) {
+  QCoreApplication::sendPostedEvents();
+  QCoreApplication::processEvents(QEventLoop::AllEvents, maxtime);
+}
+
 /** OS Signal catch.
  */
 void Application::terminate(int sig) {

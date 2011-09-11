@@ -34,6 +34,7 @@
 
 #include <QtGui/QApplication>
 #include <QtGui/QDesktopWidget>
+#include <QtCore/QTimer>
 
 #include <iostream>
 
@@ -99,6 +100,12 @@ public:
    */
   int exec();
 
+  /** Process events from an external event loop
+   * FIXME: check deffered delete....
+   */
+  void processEvents(int maxtime);
+  
+
   /** Key to retrieve 'this' value from a running thread.
    */
   static pthread_key_t sAppKey;
@@ -135,6 +142,12 @@ public:
   }
 
   virtual bool event(QEvent *event);
+  
+  /** Calls a slot in msec milliseconds. Used by worker to handle scheduling.
+   */
+  void singleShot(int msec, QObject *receiver, const char *member) {
+    QTimer::singleShot(msec, receiver, member);
+  }
 private:
   class LuaEventsProcessor : public QObject
   {

@@ -62,3 +62,17 @@ function mimas.Application(type)
   -- TODO: rewrite 'post' to keep a pool of Callback objects (or accept an existing Callback).
   return self
 end
+
+local singleShot = mt.singleShot
+function mt.singleShot(app, timeout, func_or_clbk)
+  local clbk = func_or_clbk
+  if type(func_or_clbk) == 'function' then
+    clbk = mimas.Callback(function(self)
+      func_or_clbk()
+      app[self] = nil
+    end)
+    -- avoid gc
+    app[clbk] = clbk
+  end
+  singleShot(app, timeout, clbk:object(), '1callback()')
+end

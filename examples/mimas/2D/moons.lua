@@ -48,11 +48,11 @@ local function move(x, y)
 end
 
 -- do something with mouse input
-function win.mouse(x, y)
+function win:mouse(x, y)
   move(x, y)
 end
 
-function win.keyboard(key, on)
+function win:keyboard(key, on)
   if on then
     if key == mimas.ESC then
       -- ESC
@@ -65,17 +65,17 @@ function win.keyboard(key, on)
   end
 end
 
-function win.click()
+function win:click()
   make_moons()
 end
 
-function win.resized(w, h)
+function win:resized(w, h)
   width  = w
   height = h
   dist = math.min(w, h) * 0.75
 end
 
-function win.paint(p, w, h)
+function win:paint(p, w, h)
   for i=1,moon_count do
     local moon = moons[i]
     p:setBrush(moon.brush)

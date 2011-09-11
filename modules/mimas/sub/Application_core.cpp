@@ -57,7 +57,7 @@ static int Application__tostring(lua_State *L) {
 
 
 /** static LuaStackSize mimas::Application::MakeApplication(lua_State *L)
- * include/mimas/Application.h:66
+ * include/mimas/Application.h:68
  */
 static int Application_MakeApplication(lua_State *L) {
   try {
@@ -75,7 +75,7 @@ static int Application_MakeApplication(lua_State *L) {
 
 
 /** virtual void mimas::Application::dub_destroy()
- * include/mimas/Application.h:92
+ * include/mimas/Application.h:94
  */
 static int Application_dub_destroy(lua_State *L) {
   try {
@@ -94,7 +94,7 @@ static int Application_dub_destroy(lua_State *L) {
 
 
 /** int mimas::Application::exec()
- * include/mimas/Application.h:99
+ * include/mimas/Application.h:101
  */
 static int Application_exec(lua_State *L) {
   try {
@@ -114,7 +114,7 @@ static int Application_exec(lua_State *L) {
 
 
 /** void mimas::Application::post(lua_State *L)
- * include/mimas/Application.h:110
+ * include/mimas/Application.h:118
  */
 static int Application_post(lua_State *L) {
   try {
@@ -133,8 +133,28 @@ static int Application_post(lua_State *L) {
 
 
 
+/** void mimas::Application::processEvents(int maxtime)
+ * include/mimas/Application.h:106
+ */
+static int Application_processEvents(lua_State *L) {
+  try {
+    Application *self = *((Application**)dubL_checksdata(L, 1, "mimas.Application"));
+    if (!self) throw dub::Exception("Using deleted mimas.Application in processEvents");
+    int maxtime = dubL_checkint(L, 2);
+    self->processEvents(maxtime);
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "processEvents: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "processEvents: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
 /** void mimas::Application::quit()
- * include/mimas/Application.h:119
+ * include/mimas/Application.h:127
  */
 static int Application_quit(lua_State *L) {
   try {
@@ -153,7 +173,7 @@ static int Application_quit(lua_State *L) {
 
 
 /** LuaStackSize mimas::Application::screenSize(lua_State *L)
- * include/mimas/Application.h:129
+ * include/mimas/Application.h:137
  */
 static int Application_screenSize(lua_State *L) {
   try {
@@ -173,7 +193,7 @@ static int Application_screenSize(lua_State *L) {
 
 
 /** void mimas::Application::setStyleSheet(const char *text)
- * include/mimas/Application.h:123
+ * include/mimas/Application.h:131
  */
 static int Application_setStyleSheet(lua_State *L) {
   try {
@@ -192,8 +212,30 @@ static int Application_setStyleSheet(lua_State *L) {
 
 
 
+/** void mimas::Application::singleShot(int msec, QObject *receiver, const char *member)
+ * include/mimas/Application.h:148
+ */
+static int Application_singleShot(lua_State *L) {
+  try {
+    Application *self = *((Application**)dubL_checksdata(L, 1, "mimas.Application"));
+    if (!self) throw dub::Exception("Using deleted mimas.Application in singleShot");
+    int msec = dubL_checkint(L, 2);
+    QObject *receiver = *((QObject **)dubL_checksdata(L, 3, "mimas.QObject"));
+    const char *member = dubL_checkstring(L, 4);
+    self->singleShot(msec, receiver, member);
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "singleShot: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "singleShot: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
 /** static void mimas::Application::terminate(int sig)
- * include/mimas/Application.h:106
+ * include/mimas/Application.h:114
  */
 static int Application_terminate(lua_State *L) {
   try {
@@ -218,9 +260,11 @@ static const struct luaL_Reg Application_member_methods[] = {
   {"dub_destroy"       , Application_dub_destroy},
   {"exec"              , Application_exec},
   {"post"              , Application_post},
+  {"processEvents"     , Application_processEvents},
   {"quit"              , Application_quit},
   {"screenSize"        , Application_screenSize},
   {"setStyleSheet"     , Application_setStyleSheet},
+  {"singleShot"        , Application_singleShot},
   {"__tostring"        , Application__tostring},
   {"__gc"              , Application_destructor},
   {"deleted"           , Application_deleted},

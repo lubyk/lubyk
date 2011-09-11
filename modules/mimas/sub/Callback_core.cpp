@@ -12,7 +12,7 @@ using namespace mimas;
 /* ============================ Constructors     ====================== */
 
 /** mimas::Callback::Callback()
- * include/mimas/Callback.h:58
+ * include/mimas/Callback.h:59
  */
 static int Callback_Callback(lua_State *L) {
   try {
@@ -58,7 +58,7 @@ static int Callback__tostring(lua_State *L) {
 
 
 /** void mimas::Callback::connect(QObject *obj, const char *method, const char *callback)
- * include/mimas/Callback.h:64
+ * include/mimas/Callback.h:65
  */
 static int Callback_connect(lua_State *L) {
   try {
@@ -78,12 +78,71 @@ static int Callback_connect(lua_State *L) {
 
 
 
+/** void mimas::QObject::name()
+ * mimas/bind/QObject.h:12
+ */
+static int QObject_name(lua_State *L) {
+  try {
+    Callback *self = *((Callback**)dubL_checksdata(L, 1, "mimas.Callback"));
+    lua_pushstring(L, self->objectName().toUtf8().data());
+    return 1;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "name: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "name: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** void mimas::QObject::object()
+ * mimas/bind/QObject.h:11
+ */
+static int QObject_object(lua_State *L) {
+  try {
+    Callback *self = *((Callback**)dubL_checksdata(L, 1, "mimas.Callback"));
+    QObject * retval__ = self;
+    lua_pushclass<QObject>(L, retval__, "mimas.QObject");
+    return 1;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "object: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "object: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** void mimas::QObject::setName(const char *name)
+ * mimas/bind/QObject.h:13
+ */
+static int QObject_setName(lua_State *L) {
+  try {
+    Callback *self = *((Callback**)dubL_checksdata(L, 1, "mimas.Callback"));
+    const char *name = dubL_checkstring(L, 2);
+    self->setObjectName(QString(name));
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "setName: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "setName: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
 
 
 /* ============================ Lua Registration ====================== */
 
 static const struct luaL_Reg Callback_member_methods[] = {
   {"connect"           , Callback_connect},
+  {"name"              , QObject_name},
+  {"object"            , QObject_object},
+  {"setName"           , QObject_setName},
   {"__tostring"        , Callback__tostring},
   {"__gc"              , Callback_destructor},
   {NULL, NULL},

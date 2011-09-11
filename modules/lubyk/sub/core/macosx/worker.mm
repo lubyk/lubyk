@@ -62,10 +62,15 @@ public:
   }
 };                            
 
-Worker::Worker() :
-  zmq_context_(NULL),
-  zmq_context_refcount_(0) {
+Worker::Worker()
+    : zmq_context_(NULL),
+      zmq_context_refcount_(0),
+      max_fd_(0) {
   //impl_ = new Worker::Implementation;
+  for(int i=0; i<3; ++i) {
+    FD_ZERO(&fd_[i]);
+    FD_ZERO(&res_fd_[i]);
+  }
   lock();
 }
 
@@ -133,6 +138,21 @@ LuaStackSize Worker::execPath(lua_State *L)
   }
 }
 
+extern "C" {
+#include "lualib.h"
+}
+static void startProcess(const char *string) {
+  lua_State *L = lua_open();
+  luaL_openlibs(L);  /* open libraries */
+
+  int status = luaL_loadstring(L, string);
+  if (lua_pcall(L, 0, 0, 0)) {
+    fprintf(stderr, "Error in 'spawn': %s\n", lua_tostring(L, -1));
+  }
+
+  lua_close(L);
+}
+
 /** Start a new process with the given Lua script.
  */
 LuaStackSize Worker::spawn(const char *script, lua_State *L)
@@ -146,6 +166,7 @@ LuaStackSize Worker::spawn(const char *script, lua_State *L)
     if (pid == 0) {
       // child process
       execv(argv[0], argv);
+      //startProcess(script);
       // unreachable
       exit(0);
       return 0;
@@ -176,3 +197,4 @@ int Worker::waitpid(int pid) {
     return -1;
   }
 }
+
