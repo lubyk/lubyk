@@ -160,6 +160,9 @@
 /* Have AIX OS */
 #undef ZMQ_HAVE_AIX
 
+/* Have Android OS */
+#undef ZMQ_HAVE_ANDROID
+
 /* Have Cygwin */
 #undef ZMQ_HAVE_CYGWIN
 

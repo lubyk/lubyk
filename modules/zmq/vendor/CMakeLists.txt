@@ -24,7 +24,7 @@ SET(PACKAGE_VERSION_PATCH 10)
 SET(SRC_DIR ${ZMQ_SOURCE_DIR}/src)
 SET(INCLUDE_DIR ${ZMQ_SOURCE_DIR}/include)
 
-file(GLOB ZMQ_SRC lubyk.cpp ${SRC_DIR}/*.cpp ${SRC_DIR}/*.hpp ${INCLUDE_DIR}/zmq.h ${INCLUDE_DIR}/zmq.hpp)
+file(GLOB ZMQ_SRC ${SRC_DIR}/*.cpp ${SRC_DIR}/*.hpp ${INCLUDE_DIR}/zmq.h ${INCLUDE_DIR}/zmq.hpp)
 
 # Create the list of include directories needed for ZMQ header files.
 INCLUDE(${ZMQ_SOURCE_DIR}/ZMQIncludeDirectories.cmake)
@@ -133,7 +133,7 @@ CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/platform.hpp.in
 # ----------------------------------------------------------------------------------
 #ADD_LIBRARY(ZMQ ${ZMQ_SRC} )
 #TARGET_LINK_LIBRARIES(ZMQ ${LIB_DEP})
-build_sub_module("vendor" ${ZMQ_SRC} lubyk.cpp)
+build_sub_module("vendor" ${ZMQ_SRC} ${ZMQ_SOURCE_DIR}/lua-zmq/pre_generated-zmq.nobj.c)
 
 # ----------------------------------------------------------------------------------
 #  [/lubyk]

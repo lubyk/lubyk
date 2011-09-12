@@ -18,12 +18,14 @@ setmetatable(lib, {
     local self = {
       -- Ordered linked list of events by event time.
       at_next    = nil,
-      -- List of threads that need to have their filedescriptor added to the
+      -- List of threads that have added their filedescriptors to
       -- select.
-      fd_list    = {},
+      fd_list    = {n=0},
       -- These are plain lua functions that will be called when
       -- quitting.
       finalizers = {},
+      -- Using zmq for polling
+      poller = zmq.poller.new(3),
     }
     return setmetatable(self, lib)
   end
@@ -35,13 +37,14 @@ function lib:thread(func)
   }
 
   private.scheduleAt(self, 0, thread)
+  return thread
 end
 
 function lib:wait(delay)
   if delay == 0 then
     coroutine.yield(0)
   else
-    coroutine.yield(self.logical_now + delay)
+    coroutine.yield(self.now + delay)
   end
 end
 
@@ -50,10 +53,11 @@ function lib:waitRead(fd)
 end
 
 function lib:run()
+  local fd_list = self.fd_list
   while true do
     local now = worker:now()
     local now_list = {}
-    local timeout
+    local timeout = -1
     local thread = self.at_next
     while thread and thread.at < now do
       -- remove from at_list
@@ -72,40 +76,77 @@ function lib:run()
 
     if self.at_next then
       -- timeout
-      timeout = self.at_next.at - now
+      -- our timeout is in ms
+      -- zmq is in us ==> 1000*
+      timeout = 1000 * (self.at_next.at - now)
     end
       
-    if private.select(self, timeout) == false then
+    if fd_list.n == 0 and timeout == -1 then
+      -- done
       break
+    else
+      local status, err = self.poller:poll(timeout)
+      if not status then
+        print("ERROR", err)
+        break
+      end
     end
   end
   private.finalize(self)
 end
 
+function lib:addFd(thread, fd)
+  local fd_list = self.fd_list
+  thread.fd = fd
+  table.insert(fd_list, thread)
+  fd_list.n = fd_list.n + 1
+  self.poller:add(fd, zmq.POLLIN + zmq.POLLOUT, function()
+    private.runThread(self, thread)
+  end)
+end
+
+function lib:removeFd(fd)
+  local fd_list = self.fd_list
+  self.poller:remove(fd)
+  for i, thread in ipairs(self.fd_list) do
+    if thread.fd == fd then
+      table.remove(self.fd_list, i)
+      fd_list.n = fd_list.n - 1
+      break
+    end
+  end
+end
 --=============================================== PRIVATE
 
 function private:runThread(thread)
   if thread.at and thread.at > 0 then
-    self.logical_now = thread.at
+    self.now = thread.at
   else
-    self.logical_now = worker:now()
+    self.now = worker:now()
   end                
   -- FIXME: pcall ?
   thread.at = nil
   local ok, a, b = coroutine.resume(thread.co)
   if not ok then
     -- a = error
+    if thread.fd then
+      self:removeFd(thread.fd)
+    end
     print('ERROR', a)
   elseif b then
-    thread.fd = a
-    thread.op = b -- read/write/error
+    --thread.fd = a
+    --thread.op = b -- read/write/error
     -- add thread to select
     -- FIXME: merge fdSet + insert
-    table.insert(self.fd_list, thread)
     -- worker:fdReadSet(thread.fd)
-    worker.fdSet[b](worker, a)
+    -- worker.fdSet[b](worker, a)
   elseif coroutine.status(thread.co) == 'dead' then
     -- let it repose in peace
+    if thread.fd then
+      -- remove from poller
+      self:removeFd(thread.fd)
+    end
+    thread.fd = nil
     thread.co = nil
   else
     -- a = at
@@ -132,52 +173,6 @@ function private:scheduleAt(at, thread)
       break
     else
       prev = ne
-    end
-  end
-end
-
-function private:select(timeout)
-  local fd_list = self.fd_list
-  if not timeout and #fd_list == 0 then
-    -- nothing to do anymore (no events, no fd)
-    return false
-  end
-  local count = worker:select(timeout or -1)  -- -1 == no timeout
-  if count == -1 then
-    -- error
-    return false
-  end
-  for i, thread in ipairs(fd_list) do
-    local fd = thread.fd
-    if worker:fdReadIsSet(fd) then
-      -- read
-      table.remove(fd_list, i)
-      worker:fdReadClear(fd)
-      private.runThread(self, thread)
-      count = count - 1
-      if count == 0 then
-        break
-      end
-    elseif worker:fdWriteIsSet(fd) then
-      -- write
-      table.remove(fd_list, i)
-      worker:fdWriteClear(fd)
-      private.runThread(self, thread)
-      count = count - 1
-      if count == 0 then
-        break
-      end
-    elseif worker:fdErrorIsSet(fd) then
-      -- error
-      table.remove(fd_list, i)
-      worker:fdErrorClear(fd)
-      private.runThread(self, thread)
-      count = count - 1
-      if count == 0 then
-        break
-      end
-    else
-      -- nothing for this thread, leave it running
     end
   end
 end

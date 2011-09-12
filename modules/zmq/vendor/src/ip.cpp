@@ -92,7 +92,7 @@ static int resolve_nic_name (in_addr* addr_, char const *interface_)
     return 0;
 }
 
-#elif defined ZMQ_HAVE_AIX || ZMQ_HAVE_HPUX
+#elif defined ZMQ_HAVE_AIX || ZMQ_HAVE_HPUX || ZMQ_HAVE_ANDROID
 
 #include <sys/types.h>
 #include <unistd.h>
@@ -270,9 +270,6 @@ int zmq::resolve_ip_interface (sockaddr_storage* addr_, socklen_t *addr_len_,
     return 0;
 }
 
-// gethostname
-#include <unistd.h>
-
 int zmq::resolve_ip_hostname (sockaddr_storage *addr_, socklen_t *addr_len_,
     const char *hostname_)
 {
@@ -306,58 +303,8 @@ int zmq::resolve_ip_hostname (sockaddr_storage *addr_, socklen_t *addr_len_,
     addrinfo *res;
     int rc = getaddrinfo (hostname.c_str (), service.c_str (), &req, &res);
     if (rc) {
-        switch(rc) {
-          case EAI_ADDRFAMILY:
-            printf("Address family for nodename not supported.");
-            break;
-          case EAI_AGAIN:
-            printf("Temporary failure in name resolution.");
-            break;
-          case EAI_BADFLAGS:
-            printf("Invalid value for ai_flags.");
-            break;
-          case EAI_FAIL:
-            printf("Non-recoverable failure in name resolution.");
-            break;
-          case EAI_FAMILY:
-            printf("ai_family not supported.");
-            break;
-          case EAI_MEMORY:
-            printf("Memory allocation failure.");
-            break;
-          case EAI_NODATA:
-            printf("No address associated with nodename.");
-            break;
-          case EAI_NONAME:
-            printf("nodename nor servname provided, or not known.");
-            break;
-          case EAI_SERVICE:
-            printf("servname not supported for ai_socktype.");
-            break;
-          case EAI_SOCKTYPE:
-            printf("ai_socktype not supported.");
-            break;
-          case EAI_SYSTEM:
-            printf("System error returned in errno.");
-            break;
-        }
-
-        char buffer[1024];
-        if (!gethostname(buffer, 1024)) {
-          printf("%s // %s\n", hostname.c_str(), buffer);
-          if (hostname == buffer) {
-            // localhost
-            int rc = getaddrinfo("localhost", service.c_str (), &req, &res);
-            if (rc) {
-              errno = EINVAL;
-              return -1;
-            }
-          }
-        } else {
-          // error
-          errno = EINVAL;
-          return -1;
-        }
+        errno = EINVAL;
+        return -1;
     }
 
     //  Copy first result to output addr with hostname and service.

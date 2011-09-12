@@ -1,14 +1,66 @@
+0MQ version 2.1.9 (Stable), released on 2011/08/29
+==================================================
+
+Bug fixes
+---------
+
+* Fixed issue 240, assertion failure in pgm_socket.cpp:437.
+
+* Fixed issue 238, assertion failure in zmq.cpp:655, when zmq_poll is
+  used on an empty set, on Windows.
+
+* Fixed issue 239, assertion failure in zmq.cpp:223, when ZMQ_SWAP was
+  used with explicit identities and multiple SUB sockets.
+
+* Fixed issue 236, zmq_send() and zmq_recv() did not always return
+  error conditions such as EFSM properly. This bug was introduced in
+  version 2.1.8 by the backport of changes for issue 231.
+
+Building
+--------
+
+* 0MQ support for Android added (Bill Roberts, Mikko Koppanen).
+
+
+0MQ version 2.1.8 (RC), released on 2011/07/28
+==============================================
+
+Bug fixes
+---------
+
+* Fixed issue 223, assertion failure in tcp_connecter.cpp:300 when
+  connecting to a server that is on an unreachable network (errno is
+  equal to ENETUNREACH).
+
+* Fixed issue 228, assertion failure at rep.cpp:88 when HWM was reached.
+
+* Fixed issue 231, assertion failure at mailbox.cpp:183 when too many
+  pending socketpair operations were queued (major backport from 3.0).
+
+* Fixed issue 234, assertion failure at mailbox.cpp:77 when Ctrl-C was
+  used (only affected git master following backport for 231).
+
+* Fixed issue 230, SIGPIPE killing servers when client disconnected, hit
+  OS/X only.
+
+Note: this release was renamed "release candidate" due to issue 236,
+fixed in 2.1.9.
+
+
 0MQ version 2.1.7 (Stable), released on 2011/05/12
 ==================================================
 
 Bug fixes
 ---------
 
+* Fixed issue 188, assert when closing socket that had unread multipart
+  data still on it (affected PULL, SUB, ROUTER, and DEALER sockets).
+
 * Fixed issue 191, message atomicity issue with PUB sockets (an old issue).
 
 * Fixed issue 199 (affected ROUTER/XREP sockets, an old issue).
 
-* Fixed issue 206, assertion failure in zmq.cpp:223, affected all sockets 
+* Fixed issue 206, assertion failure in zmq.cpp:223, affected all sockets
   (bug was introduced in 2.1.6 as part of message validity checking).
 
 * Fixed issue 211, REP socket asserted if sent malformed envelope (old issue
@@ -17,30 +69,10 @@ Bug fixes
 * Fixed issue 212, reconnect failing after resume from sleep on Windows
   (due to not handling WSAENETDOWN).
 
-* Properly handle WSAENETUNREACH on Windows (e.g. if client connects 
+* Properly handle WSAENETUNREACH on Windows (e.g. if client connects
   before server binds).
 
-Changes
--------
-
-* Runtime checking of socket and context validity, to catch e.g. using a
-  socket after closing it, or passing an invalid pointer to context/socket
-  methods.
-
-* Test cases moved off port 5555, which conflicts with other services.
-
-* Clarified zmq_poll man page that the resolution of the timeout is 1msec.
-
-
-0MQ version 2.1.6 (Stable), released on 2011/04/26
-==================================================
-
-Bug fixes
----------
-
 * Fixed memory leak with threads on Windows.
-
-* Assert during SUB socket termination fixed.
 
 Changes
 -------
@@ -56,6 +88,21 @@ Changes
 * Added "--with-system-pgm" configure option to use already installed
   OpenPGM.
 
+* Runtime checking of socket and context validity, to catch e.g. using a
+  socket after closing it, or passing an invalid pointer to context/socket
+  methods.
+
+* Test cases moved off port 5555, which conflicts with other services.
+
+* Clarified zmq_poll man page that the resolution of the timeout is 1msec.
+
+
+0MQ version 2.1.6 (Broken), released on 2011/04/26
+==================================================
+
+Note that this version contained a malformed patch and is not usable.
+It is not available for download, but is available in the git via the
+2.1.6 tag.
 
 0MQ version 2.1.5 (Broken), released on 2011/04/20
 ==================================================

@@ -2,15 +2,28 @@
     "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta name="generator" content="AsciiDoc 8.5.2" />
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<meta name="generator" content="AsciiDoc 8.6.3" />
 <title>zmq_cpp(7)</title>
 <style type="text/css">
-/* Debug borders */
-p, li, dt, dd, div, pre, h1, h2, h3, h4, h5, h6 {
-/*
-  border: 1px solid red;
-*/
+/* Sans-serif font. */
+h1, h2, h3, h4, h5, h6,
+div.title, caption.title,
+thead, p.table.header,
+div#toctitle,
+span#author, span#revnumber, span#revdate, span#revremark,
+div#footer {
+  font-family: Arial,Helvetica,sans-serif;
+}
+
+/* Serif font. */
+div.sectionbody {
+  font-family: Georgia,"Times New Roman",Times,serif;
+}
+
+/* Monospace font. */
+tt {
+  font-size: inherit;
 }
 
 body {
@@ -36,12 +49,12 @@ strong {
 }
 
 tt {
+  font-size: inherit;
   color: navy;
 }
 
 h1, h2, h3, h4, h5, h6 {
   color: #527bbd;
-  font-family: sans-serif;
   margin-top: 1.2em;
   margin-bottom: 0.5em;
   line-height: 1.3;
@@ -61,7 +74,6 @@ h3 + * {
 }
 
 div.sectionbody {
-  font-family: serif;
   margin-left: 0;
 }
 
@@ -77,6 +89,8 @@ p {
 ul, ol, li > p {
   margin-top: 0;
 }
+ul > li     { color: #aaa; }
+ul > li > * { color: black; }
 
 pre {
   padding: 0;
@@ -85,18 +99,15 @@ pre {
 
 span#author {
   color: #527bbd;
-  font-family: sans-serif;
   font-weight: bold;
   font-size: 1.1em;
 }
 span#email {
 }
 span#revnumber, span#revdate, span#revremark {
-  font-family: sans-serif;
 }
 
 div#footer {
-  font-family: sans-serif;
   font-size: small;
   border-top: 2px solid silver;
   padding-top: 0.5em;
@@ -135,7 +146,6 @@ div.content { /* Block element content. */
 /* Block element titles. */
 div.title, caption.title {
   color: #527bbd;
-  font-family: sans-serif;
   font-weight: bold;
   text-align: left;
   margin-top: 1.0em;
@@ -157,13 +167,15 @@ div.content + div.title {
 
 div.sidebarblock > div.content {
   background: #ffffee;
-  border: 1px solid silver;
+  border: 1px solid #dddddd;
+  border-left: 4px solid #f0f0f0;
   padding: 0.5em;
 }
 
 div.listingblock > div.content {
-  border: 1px solid silver;
-  background: #f4f4f4;
+  border: 1px solid #dddddd;
+  border-left: 5px solid #f0f0f0;
+  background: #f8f8f8;
   padding: 0.5em;
 }
 
@@ -171,7 +183,7 @@ div.quoteblock, div.verseblock {
   padding-left: 1.0em;
   margin-left: 1.0em;
   margin-right: 10%;
-  border-left: 5px solid #dddddd;
+  border-left: 5px solid #f0f0f0;
   color: #777777;
 }
 
@@ -180,8 +192,9 @@ div.quoteblock > div.attribution {
   text-align: right;
 }
 
-div.verseblock > div.content {
-  white-space: pre;
+div.verseblock > pre.content {
+  font-family: inherit;
+  font-size: inherit;
 }
 div.verseblock > div.attribution {
   padding-top: 0.75em;
@@ -258,8 +271,8 @@ div.tableblock > table {
   border: 3px solid #527bbd;
 }
 thead, p.table.header {
-  font-family: sans-serif;
   font-weight: bold;
+  color: #527bbd;
 }
 tfoot {
   font-weight: bold;
@@ -339,6 +352,14 @@ span.footnote, span.footnoteref {
   min-width: 100px;
 }
 
+div.colist td {
+  padding-right: 0.5em;
+  padding-bottom: 0.3em;
+  vertical-align: top;
+}
+div.colist td img {
+  margin-top: 0.3em;
+}
 
 @media print {
   div#footer-badges { display: none; }
@@ -350,7 +371,6 @@ div#toc {
 
 div#toctitle {
   color: #527bbd;
-  font-family: sans-serif;
   font-size: 1.1em;
   font-weight: bold;
   margin-top: 1.0em;
@@ -373,6 +393,7 @@ div.toclevel4 {
   margin-left: 6em;
   font-size: 0.9em;
 }
+
 /* Overrides for manpage documents */
 h1 {
   padding-top: 0.5em;
@@ -391,47 +412,6 @@ div.sectionbody {
   div#toc { display: none; }
 }
 
-/* Workarounds for IE6's broken and incomplete CSS2. */
-
-div.sidebar-content {
-  background: #ffffee;
-  border: 1px solid silver;
-  padding: 0.5em;
-}
-div.sidebar-title, div.image-title {
-  color: #527bbd;
-  font-family: sans-serif;
-  font-weight: bold;
-  margin-top: 0.0em;
-  margin-bottom: 0.5em;
-}
-
-div.listingblock div.content {
-  border: 1px solid silver;
-  background: #f4f4f4;
-  padding: 0.5em;
-}
-
-div.quoteblock-attribution {
-  padding-top: 0.5em;
-  text-align: right;
-}
-
-div.verseblock-content {
-  white-space: pre;
-}
-div.verseblock-attribution {
-  padding-top: 0.75em;
-  text-align: left;
-}
-
-div.exampleblock-content {
-  border-left: 3px solid #dddddd;
-  padding-left: 0.5em;
-}
-
-/* IE6 sets dynamically generated links as visited. */
-div#toc a:visited { color: blue; }
 </style>
 <script type="text/javascript">
 /*<![CDATA[*/
@@ -567,7 +547,7 @@ footnotes: function () {
 /*]]>*/
 </script>
 </head>
-<body>
+<body class="manpage">
 <div id="header">
 <h1>
 zmq_cpp(7) Manual Page
@@ -580,11 +560,14 @@ zmq_cpp(7) Manual Page
 </div>
 </div>
 <div id="content">
+<div class="sect1">
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="paragraph"><p><strong>#include &lt;zmq.hpp&gt;</strong></p></div>
 <div class="paragraph"><p><strong>c++</strong> [<em>flags</em>] <em>files</em> <strong>-lzmq</strong> [<em>libraries</em>]</p></div>
 </div>
+</div>
+<div class="sect1">
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>This manual page describes how the ØMQ C++ language binding maps to the
@@ -592,126 +575,151 @@ underlying ØMQ C library functions.</p></div>
 <div class="paragraph"><p>All ØMQ constants defined by <em>zmq.h</em> are also available to the C++ language
 binding.</p></div>
 <div class="paragraph"><p>The following classes are provided in the <em>zmq</em> namespace:</p></div>
-<h3 id="_context">Context</h3><div style="clear:left"></div>
+<div class="sect2">
+<h3 id="_context">Context</h3>
 <div class="paragraph"><p>The <em>context_t</em> class encapsulates functionality dealing with the
 initialisation and termination of a ØMQ <em>context</em>.</p></div>
+<div class="sect3">
 <h4 id="_constructor">Constructor</h4>
 <div class="verseblock">
-<div class="verseblock-content"><strong>context_t::context_t(int <em>io_threads</em>)</strong></div>
-<div class="verseblock-attribution">
+<pre class="content"><strong>context_t::context_t(int <em>io_threads</em>)</strong></pre>
+<div class="attribution">
 </div></div>
 <div class="paragraph"><p>Maps to the <em>zmq_init()</em> function, as described in <a href="zmq_init.html">zmq_init(3)</a>.</p></div>
+</div>
+<div class="sect3">
 <h4 id="_destructor">Destructor</h4>
 <div class="verseblock">
-<div class="verseblock-content"><strong>context_t::~context_t(void)</strong></div>
-<div class="verseblock-attribution">
+<pre class="content"><strong>context_t::~context_t(void)</strong></pre>
+<div class="attribution">
 </div></div>
 <div class="paragraph"><p>Maps to the <em>zmq_term()</em> function, as described in <a href="zmq_term.html">zmq_term(3)</a>.</p></div>
+</div>
+<div class="sect3">
 <h4 id="_methods">Methods</h4>
 <div class="paragraph"><p>None.</p></div>
-<h3 id="_socket">Socket</h3><div style="clear:left"></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_socket">Socket</h3>
 <div class="paragraph"><p>The <em>socket_t</em> class encapsulates a ØMQ socket.</p></div>
+<div class="sect3">
 <h4 id="_constructor_2">Constructor</h4>
 <div class="verseblock">
-<div class="verseblock-content"><strong>socket_t::socket_t(context_t <em>&amp;context</em>, int <em>type</em>)</strong></div>
-<div class="verseblock-attribution">
+<pre class="content"><strong>socket_t::socket_t(context_t <em>&amp;context</em>, int <em>type</em>)</strong></pre>
+<div class="attribution">
 </div></div>
 <div class="paragraph"><p>Maps to the <em>zmq_socket()</em> function, as described in <a href="zmq_socket.html">zmq_socket(3)</a>.</p></div>
+</div>
+<div class="sect3">
 <h4 id="_destructor_2">Destructor</h4>
 <div class="verseblock">
-<div class="verseblock-content"><strong>socket_t::~socket_t(void)</strong></div>
-<div class="verseblock-attribution">
+<pre class="content"><strong>socket_t::~socket_t(void)</strong></pre>
+<div class="attribution">
 </div></div>
 <div class="paragraph"><p>Calls the <em>zmq_close()</em> function, as described in <a href="zmq_close.html">zmq_close(3)</a>.</p></div>
+</div>
+<div class="sect3">
 <h4 id="_methods_2">Methods</h4>
 <div class="verseblock">
-<div class="verseblock-content"><strong>void socket_t::getsockopt(int <em>option_name</em>, void <em>*option_value</em>, size_t
-<em>*option_len</em>)</strong></div>
-<div class="verseblock-attribution">
+<pre class="content"><strong>void socket_t::getsockopt(int <em>option_name</em>, void <em>*option_value</em>, size_t
+<em>*option_len</em>)</strong></pre>
+<div class="attribution">
 </div></div>
 <div class="paragraph"><p>Maps to the <em>zmq_getsockopt()</em> function, as described in
 <a href="zmq_getsockopt.html">zmq_getsockopt(3)</a>.</p></div>
 <div class="verseblock">
-<div class="verseblock-content"><strong>void socket_t::setsockopt(int <em>option_name</em>, const void <em>*option_value</em>, size_t
-<em>option_len</em>)</strong></div>
-<div class="verseblock-attribution">
+<pre class="content"><strong>void socket_t::setsockopt(int <em>option_name</em>, const void <em>*option_value</em>, size_t
+<em>option_len</em>)</strong></pre>
+<div class="attribution">
 </div></div>
 <div class="paragraph"><p>Maps to the <em>zmq_setsockopt()</em> function, as described in
 <a href="zmq_setsockopt.html">zmq_setsockopt(3)</a>.</p></div>
 <div class="verseblock">
-<div class="verseblock-content"><strong>void socket_t::bind(const char <em>*endpoint</em>)</strong></div>
-<div class="verseblock-attribution">
+<pre class="content"><strong>void socket_t::bind(const char <em>*endpoint</em>)</strong></pre>
+<div class="attribution">
 </div></div>
 <div class="paragraph"><p>Maps to the <em>zmq_bind()</em> function, as described in <a href="zmq_bind.html">zmq_bind(3)</a>.</p></div>
 <div class="verseblock">
-<div class="verseblock-content"><strong>void socket_t::connect(const char <em>*endpoint</em>)</strong></div>
-<div class="verseblock-attribution">
+<pre class="content"><strong>void socket_t::connect(const char <em>*endpoint</em>)</strong></pre>
+<div class="attribution">
 </div></div>
 <div class="paragraph"><p>Maps to the <em>zmq_connect()</em> function, as described in <a href="zmq_connect.html">zmq_connect(3)</a>.</p></div>
 <div class="verseblock">
-<div class="verseblock-content"><strong>bool socket_t::send(message_t <em>&amp;msg</em>, int <em>flags</em> = 0)</strong></div>
-<div class="verseblock-attribution">
+<pre class="content"><strong>bool socket_t::send(message_t <em>&amp;msg</em>, int <em>flags</em> = 0)</strong></pre>
+<div class="attribution">
 </div></div>
 <div class="paragraph"><p>Maps to the <em>zmq_send()</em> function, as described in <a href="zmq_send.html">zmq_send(3)</a>.
 Returns true if message is successfully sent, false if it is not.</p></div>
 <div class="verseblock">
-<div class="verseblock-content"><strong>bool socket_t::recv(message_t <em>*msg</em>, int <em>flags</em> = 0)</strong></div>
-<div class="verseblock-attribution">
+<pre class="content"><strong>bool socket_t::recv(message_t <em>*msg</em>, int <em>flags</em> = 0)</strong></pre>
+<div class="attribution">
 </div></div>
 <div class="paragraph"><p>Maps to the <em>zmq_recv()</em> function, as described in <a href="zmq_recv.html">zmq_recv(3)</a>.
 Returns true if message is successfully received, false if it is not.</p></div>
-<h3 id="_message">Message</h3><div style="clear:left"></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_message">Message</h3>
 <div class="paragraph"><p>The <em>zmq::message_t</em> class encapsulates the <em>zmq_msg_t</em> structure and
 functions to construct, destruct and manipulate ØMQ messages.</p></div>
+<div class="sect3">
 <h4 id="_constructor_3">Constructor</h4>
 <div class="verseblock">
-<div class="verseblock-content"><strong>message_t::message_t(void)</strong>
+<pre class="content"><strong>message_t::message_t(void)</strong>
 <strong>message_t::message_t(size_t <em>size</em>)</strong>
-<strong>message_t::message_t(void <em>*data</em>, size_t <em>size</em>, free_fn <em>*ffn</em>)</strong></div>
-<div class="verseblock-attribution">
+<strong>message_t::message_t(void <em>*data</em>, size_t <em>size</em>, free_fn <em>*ffn</em>)</strong></pre>
+<div class="attribution">
 </div></div>
 <div class="paragraph"><p>These map to the <em>zmq_msg_init()</em>, <em>zmq_msg_init_size()</em> and
 <em>zmq_msg_init_data()</em> functions, described in <a href="zmq_msg_init.html">zmq_msg_init(3)</a>,
 <a href="zmq_msg_init_size.html">zmq_msg_init_size(3)</a> and <a href="zmq_msg_init_data.html">zmq_msg_init_data(3)</a> respectively.</p></div>
+</div>
+<div class="sect3">
 <h4 id="_destructor_3">Destructor</h4>
 <div class="verseblock">
-<div class="verseblock-content"><strong>message_t::~message_t(void)</strong></div>
-<div class="verseblock-attribution">
+<pre class="content"><strong>message_t::~message_t(void)</strong></pre>
+<div class="attribution">
 </div></div>
 <div class="paragraph"><p>Calls the <em>zmq_msg_close()</em> function, as described in <a href="zmq_msg_close.html">zmq_msg_close(3)</a>.</p></div>
+</div>
+<div class="sect3">
 <h4 id="_methods_3">Methods</h4>
 <div class="verseblock">
-<div class="verseblock-content"><strong>void *message_t::data (void)</strong></div>
-<div class="verseblock-attribution">
+<pre class="content"><strong>void *message_t::data (void)</strong></pre>
+<div class="attribution">
 </div></div>
 <div class="paragraph"><p>Maps to the <em>zmq_msg_data()</em> function, as described in <a href="zmq_msg_data.html">zmq_msg_data(3)</a>.</p></div>
 <div class="verseblock">
-<div class="verseblock-content"><strong>size_t message_t::size (void)</strong></div>
-<div class="verseblock-attribution">
+<pre class="content"><strong>size_t message_t::size (void)</strong></pre>
+<div class="attribution">
 </div></div>
 <div class="paragraph"><p>Maps to the <em>zmq_msg_size()</em> function, as described in <a href="zmq_msg_size.html">zmq_msg_size(3)</a>.</p></div>
 <div class="verseblock">
-<div class="verseblock-content"><strong>void message_t::copy (message_t <em>*src</em>)</strong></div>
-<div class="verseblock-attribution">
+<pre class="content"><strong>void message_t::copy (message_t <em>*src</em>)</strong></pre>
+<div class="attribution">
 </div></div>
 <div class="paragraph"><p>Maps to the <em>zmq_msg_copy()</em> function, as described in <a href="zmq_msg_copy.html">zmq_msg_copy(3)</a>.</p></div>
 <div class="verseblock">
-<div class="verseblock-content"><strong>void message_t::move (message_t <em>*src</em>)</strong></div>
-<div class="verseblock-attribution">
+<pre class="content"><strong>void message_t::move (message_t <em>*src</em>)</strong></pre>
+<div class="attribution">
 </div></div>
 <div class="paragraph"><p>Maps to the <em>zmq_msg_move()</em> function, as described in <a href="zmq_msg_move.html">zmq_msg_move(3)</a>.</p></div>
 <div class="verseblock">
-<div class="verseblock-content"><strong>message_t::rebuild(void)</strong>
+<pre class="content"><strong>message_t::rebuild(void)</strong>
 <strong>message_t::rebuild(size_t <em>size</em>)</strong>
-<strong>message_t::rebuild(void <em>*data</em>, size_t <em>size</em>, free_fn <em>*ffn</em>)</strong></div>
-<div class="verseblock-attribution">
+<strong>message_t::rebuild(void <em>*data</em>, size_t <em>size</em>, free_fn <em>*ffn</em>)</strong></pre>
+<div class="attribution">
 </div></div>
 <div class="paragraph"><p>Equivalent to calling the <em>zmq_msg_close()</em> function followed by the
 corresponding <em>zmq_msg_init()</em> function.</p></div>
-<h3 id="_input_output_multiplexing">Input/output multiplexing</h3><div style="clear:left"></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_input_output_multiplexing">Input/output multiplexing</h3>
 <div class="verseblock">
-<div class="verseblock-content"><strong>int poll (zmq_pollitem_t *items, int nitems, long timeout = -1)</strong></div>
-<div class="verseblock-attribution">
+<pre class="content"><strong>int poll (zmq_pollitem_t *items, int nitems, long timeout = -1)</strong></pre>
+<div class="attribution">
 </div></div>
 <div class="paragraph"><p>The <em>poll()</em> function is a namespaced equivalent of the <em>zmq_poll()</em> function,
 as described in <a href="zmq_poll.html">zmq_poll(3)</a>.</p></div>
@@ -725,6 +733,9 @@ should cast an instance of the <em>socket_t</em> class to <tt>(void *)</tt>.</td
 </tr></table>
 </div>
 </div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_error_handling">ERROR HANDLING</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>All errors reported by the underlying ØMQ C library functions are automatically
@@ -732,6 +743,8 @@ converted to exceptions by the C++ language binding.  The <em>zmq::error_t</em> 
 is derived from the <em>std::exception</em> class and uses the <em>zmq_strerror()</em>
 function to convert the error code to human-readable string.</p></div>
 </div>
+</div>
+<div class="sect1">
 <h2 id="_example">EXAMPLE</h2>
 <div class="sectionbody">
 <div class="listingblock">
@@ -744,21 +757,26 @@ memset (msg.data (), 0, 100);
 s.send (msg);</tt></pre>
 </div></div>
 </div>
+</div>
+<div class="sect1">
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
 <div class="paragraph"><p><a href="zmq.html">zmq(7)</a></p></div>
 </div>
+</div>
+<div class="sect1">
 <h2 id="_authors">AUTHORS</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>This ØMQ manual page was written by Martin Sustrik &lt;<a href="mailto:sustrik@250bpm.com">sustrik@250bpm.com</a>&gt; and
 Martin Lucina &lt;<a href="mailto:mato@kotelna.sk">mato@kotelna.sk</a>&gt;.</p></div>
 </div>
 </div>
+</div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-ØMQ 2.1.4<br />
-Last updated 2011-03-13 17:59:17 CEST
+ØMQ 2.1.9<br />
+Last updated 2011-03-13 17:59:17 CET
 </div>
 </div>
 </body>

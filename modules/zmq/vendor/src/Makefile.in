@@ -93,14 +93,15 @@ am_libzmq_la_OBJECTS = libzmq_la-clock.lo libzmq_la-command.lo \
 	libzmq_la-poller_base.lo libzmq_la-pull.lo libzmq_la-push.lo \
 	libzmq_la-reaper.lo libzmq_la-pub.lo libzmq_la-rep.lo \
 	libzmq_la-req.lo libzmq_la-select.lo libzmq_la-session.lo \
-	libzmq_la-socket_base.lo libzmq_la-sub.lo libzmq_la-swap.lo \
-	libzmq_la-tcp_connecter.lo libzmq_la-tcp_listener.lo \
-	libzmq_la-tcp_socket.lo libzmq_la-thread.lo \
-	libzmq_la-transient_session.lo libzmq_la-trie.lo \
-	libzmq_la-uuid.lo libzmq_la-xpub.lo libzmq_la-xrep.lo \
-	libzmq_la-xreq.lo libzmq_la-xsub.lo libzmq_la-zmq.lo \
-	libzmq_la-zmq_connecter.lo libzmq_la-zmq_engine.lo \
-	libzmq_la-zmq_init.lo libzmq_la-zmq_listener.lo
+	libzmq_la-signaler.lo libzmq_la-socket_base.lo \
+	libzmq_la-sub.lo libzmq_la-swap.lo libzmq_la-tcp_connecter.lo \
+	libzmq_la-tcp_listener.lo libzmq_la-tcp_socket.lo \
+	libzmq_la-thread.lo libzmq_la-transient_session.lo \
+	libzmq_la-trie.lo libzmq_la-uuid.lo libzmq_la-xpub.lo \
+	libzmq_la-xrep.lo libzmq_la-xreq.lo libzmq_la-xsub.lo \
+	libzmq_la-zmq.lo libzmq_la-zmq_connecter.lo \
+	libzmq_la-zmq_engine.lo libzmq_la-zmq_init.lo \
+	libzmq_la-zmq_listener.lo
 libzmq_la_OBJECTS = $(am_libzmq_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
@@ -350,6 +351,7 @@ libzmq_la_SOURCES = \
     select.hpp \
     semaphore.hpp \
     session.hpp \
+    signaler.hpp \
     socket_base.hpp \
     stdint.hpp \
     sub.hpp \
@@ -410,6 +412,7 @@ libzmq_la_SOURCES = \
     req.cpp \
     select.cpp \
     session.cpp \
+    signaler.cpp \
     socket_base.cpp \
     sub.cpp \
     swap.cpp \
@@ -566,6 +569,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzmq_la-req.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzmq_la-select.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzmq_la-session.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzmq_la-signaler.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzmq_la-socket_base.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzmq_la-sub.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzmq_la-swap.Plo@am__quote@
@@ -905,6 +909,14 @@ libzmq_la-session.lo: session.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='session.cpp' object='libzmq_la-session.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzmq_la_CPPFLAGS) $(CPPFLAGS) $(libzmq_la_CXXFLAGS) $(CXXFLAGS) -c -o libzmq_la-session.lo `test -f 'session.cpp' || echo '$(srcdir)/'`session.cpp
+
+libzmq_la-signaler.lo: signaler.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzmq_la_CPPFLAGS) $(CPPFLAGS) $(libzmq_la_CXXFLAGS) $(CXXFLAGS) -MT libzmq_la-signaler.lo -MD -MP -MF $(DEPDIR)/libzmq_la-signaler.Tpo -c -o libzmq_la-signaler.lo `test -f 'signaler.cpp' || echo '$(srcdir)/'`signaler.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libzmq_la-signaler.Tpo $(DEPDIR)/libzmq_la-signaler.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='signaler.cpp' object='libzmq_la-signaler.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzmq_la_CPPFLAGS) $(CPPFLAGS) $(libzmq_la_CXXFLAGS) $(CXXFLAGS) -c -o libzmq_la-signaler.lo `test -f 'signaler.cpp' || echo '$(srcdir)/'`signaler.cpp
 
 libzmq_la-socket_base.lo: socket_base.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzmq_la_CPPFLAGS) $(CPPFLAGS) $(libzmq_la_CXXFLAGS) $(CXXFLAGS) -MT libzmq_la-socket_base.lo -MD -MP -MF $(DEPDIR)/libzmq_la-socket_base.Tpo -c -o libzmq_la-socket_base.lo `test -f 'socket_base.cpp' || echo '$(srcdir)/'`socket_base.cpp

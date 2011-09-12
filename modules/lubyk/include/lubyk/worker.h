@@ -63,15 +63,6 @@ public:
    */
   TimeRef time_ref_;
 
-  /** Context use by zmq::Socket.
-   */
-  void *zmq_context_;
-
-  /** Counts the number of zmq::Socket depending on the
-   * socket.
-   */
-  size_t zmq_context_refcount_;
-
   /** These sets contain the bitfields set by fdSet methods.
    */
   fd_set fd_[3];

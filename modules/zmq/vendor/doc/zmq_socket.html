@@ -2,15 +2,28 @@
     "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta name="generator" content="AsciiDoc 8.5.2" />
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<meta name="generator" content="AsciiDoc 8.6.3" />
 <title>zmq_socket(3)</title>
 <style type="text/css">
-/* Debug borders */
-p, li, dt, dd, div, pre, h1, h2, h3, h4, h5, h6 {
-/*
-  border: 1px solid red;
-*/
+/* Sans-serif font. */
+h1, h2, h3, h4, h5, h6,
+div.title, caption.title,
+thead, p.table.header,
+div#toctitle,
+span#author, span#revnumber, span#revdate, span#revremark,
+div#footer {
+  font-family: Arial,Helvetica,sans-serif;
+}
+
+/* Serif font. */
+div.sectionbody {
+  font-family: Georgia,"Times New Roman",Times,serif;
+}
+
+/* Monospace font. */
+tt {
+  font-size: inherit;
 }
 
 body {
@@ -36,12 +49,12 @@ strong {
 }
 
 tt {
+  font-size: inherit;
   color: navy;
 }
 
 h1, h2, h3, h4, h5, h6 {
   color: #527bbd;
-  font-family: sans-serif;
   margin-top: 1.2em;
   margin-bottom: 0.5em;
   line-height: 1.3;
@@ -61,7 +74,6 @@ h3 + * {
 }
 
 div.sectionbody {
-  font-family: serif;
   margin-left: 0;
 }
 
@@ -77,6 +89,8 @@ p {
 ul, ol, li > p {
   margin-top: 0;
 }
+ul > li     { color: #aaa; }
+ul > li > * { color: black; }
 
 pre {
   padding: 0;
@@ -85,18 +99,15 @@ pre {
 
 span#author {
   color: #527bbd;
-  font-family: sans-serif;
   font-weight: bold;
   font-size: 1.1em;
 }
 span#email {
 }
 span#revnumber, span#revdate, span#revremark {
-  font-family: sans-serif;
 }
 
 div#footer {
-  font-family: sans-serif;
   font-size: small;
   border-top: 2px solid silver;
   padding-top: 0.5em;
@@ -135,7 +146,6 @@ div.content { /* Block element content. */
 /* Block element titles. */
 div.title, caption.title {
   color: #527bbd;
-  font-family: sans-serif;
   font-weight: bold;
   text-align: left;
   margin-top: 1.0em;
@@ -157,13 +167,15 @@ div.content + div.title {
 
 div.sidebarblock > div.content {
   background: #ffffee;
-  border: 1px solid silver;
+  border: 1px solid #dddddd;
+  border-left: 4px solid #f0f0f0;
   padding: 0.5em;
 }
 
 div.listingblock > div.content {
-  border: 1px solid silver;
-  background: #f4f4f4;
+  border: 1px solid #dddddd;
+  border-left: 5px solid #f0f0f0;
+  background: #f8f8f8;
   padding: 0.5em;
 }
 
@@ -171,7 +183,7 @@ div.quoteblock, div.verseblock {
   padding-left: 1.0em;
   margin-left: 1.0em;
   margin-right: 10%;
-  border-left: 5px solid #dddddd;
+  border-left: 5px solid #f0f0f0;
   color: #777777;
 }
 
@@ -180,8 +192,9 @@ div.quoteblock > div.attribution {
   text-align: right;
 }
 
-div.verseblock > div.content {
-  white-space: pre;
+div.verseblock > pre.content {
+  font-family: inherit;
+  font-size: inherit;
 }
 div.verseblock > div.attribution {
   padding-top: 0.75em;
@@ -258,8 +271,8 @@ div.tableblock > table {
   border: 3px solid #527bbd;
 }
 thead, p.table.header {
-  font-family: sans-serif;
   font-weight: bold;
+  color: #527bbd;
 }
 tfoot {
   font-weight: bold;
@@ -339,6 +352,14 @@ span.footnote, span.footnoteref {
   min-width: 100px;
 }
 
+div.colist td {
+  padding-right: 0.5em;
+  padding-bottom: 0.3em;
+  vertical-align: top;
+}
+div.colist td img {
+  margin-top: 0.3em;
+}
 
 @media print {
   div#footer-badges { display: none; }
@@ -350,7 +371,6 @@ div#toc {
 
 div#toctitle {
   color: #527bbd;
-  font-family: sans-serif;
   font-size: 1.1em;
   font-weight: bold;
   margin-top: 1.0em;
@@ -373,6 +393,7 @@ div.toclevel4 {
   margin-left: 6em;
   font-size: 0.9em;
 }
+
 /* Overrides for manpage documents */
 h1 {
   padding-top: 0.5em;
@@ -391,47 +412,6 @@ div.sectionbody {
   div#toc { display: none; }
 }
 
-/* Workarounds for IE6's broken and incomplete CSS2. */
-
-div.sidebar-content {
-  background: #ffffee;
-  border: 1px solid silver;
-  padding: 0.5em;
-}
-div.sidebar-title, div.image-title {
-  color: #527bbd;
-  font-family: sans-serif;
-  font-weight: bold;
-  margin-top: 0.0em;
-  margin-bottom: 0.5em;
-}
-
-div.listingblock div.content {
-  border: 1px solid silver;
-  background: #f4f4f4;
-  padding: 0.5em;
-}
-
-div.quoteblock-attribution {
-  padding-top: 0.5em;
-  text-align: right;
-}
-
-div.verseblock-content {
-  white-space: pre;
-}
-div.verseblock-attribution {
-  padding-top: 0.75em;
-  text-align: left;
-}
-
-div.exampleblock-content {
-  border-left: 3px solid #dddddd;
-  padding-left: 0.5em;
-}
-
-/* IE6 sets dynamically generated links as visited. */
-div#toc a:visited { color: blue; }
 </style>
 <script type="text/javascript">
 /*<![CDATA[*/
@@ -567,7 +547,7 @@ footnotes: function () {
 /*]]>*/
 </script>
 </head>
-<body>
+<body class="manpage">
 <div id="header">
 <h1>
 zmq_socket(3) Manual Page
@@ -580,10 +560,13 @@ zmq_socket(3) Manual Page
 </div>
 </div>
 <div id="content">
+<div class="sect1">
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="paragraph"><p><strong>void *zmq_socket (void <em>*context</em>, int <em>type</em>);</strong></p></div>
 </div>
+</div>
+<div class="sect1">
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>The <em>zmq_socket()</em> function shall create a ØMQ socket within the specified
@@ -617,10 +600,12 @@ from multiple threads except after migrating a socket from one thread to
 another with a "full fence" memory barrier.</p></div>
 <div class="paragraph"><div class="title">Socket types</div><p>The following sections present the socket types defined by ØMQ, grouped by the
 general <em>messaging pattern</em> which is built from related socket types.</p></div>
-<h3 id="_request_reply_pattern">Request-reply pattern</h3><div style="clear:left"></div>
+<div class="sect2">
+<h3 id="_request_reply_pattern">Request-reply pattern</h3>
 <div class="paragraph"><p>The request-reply pattern is used for sending requests from a <em>client</em> to one
 or more instances of a <em>service</em>, and receiving subsequent replies to each
 request sent.</p></div>
+<div class="sect3">
 <h4 id="_zmq_req">ZMQ_REQ</h4>
 <div class="paragraph"><p>A socket of type <em>ZMQ_REQ</em> is used by a <em>client</em> to send requests to and
 receive replies from a <em>service</em>. This socket type allows only an alternating
@@ -700,6 +685,8 @@ Block
 </td>
 </tr>
 </table></div>
+</div>
+<div class="sect3">
 <h4 id="_zmq_rep">ZMQ_REP</h4>
 <div class="paragraph"><p>A socket of type <em>ZMQ_REP</em> is used by a <em>service</em> to receive requests from and
 send replies to a <em>client</em>. This socket type allows only an alternating
@@ -778,6 +765,8 @@ Drop
 </td>
 </tr>
 </table></div>
+</div>
+<div class="sect3">
 <h4 id="_zmq_dealer">ZMQ_DEALER</h4>
 <div class="paragraph"><p>A socket of type <em>ZMQ_DEALER</em> is an advanced pattern used for extending
 request/reply sockets. Each message sent is load-balanced among all connected
@@ -800,7 +789,7 @@ Compatible peer sockets
 </td>
 <td class="hdlist2">
 <p style="margin-top: 0;">
-<em>ZMQ_ROUTER</em>, <em>ZMQ_REP</em>
+<em>ZMQ_ROUTER</em>, <em>ZMQ_REQ</em>, <em>ZMQ_REP</em>
 </p>
 </td>
 </tr>
@@ -860,6 +849,8 @@ Block
 </td>
 </tr>
 </table></div>
+</div>
+<div class="sect3">
 <h4 id="_zmq_router">ZMQ_ROUTER</h4>
 <div class="paragraph"><p>A socket of type <em>ZMQ_ROUTER</em> is an advanced pattern used for extending
 request/reply sockets. When receiving messages a <em>ZMQ_ROUTER</em> socket shall
@@ -890,7 +881,7 @@ Compatible peer sockets
 </td>
 <td class="hdlist2">
 <p style="margin-top: 0;">
-<em>ZMQ_DEALER</em>, <em>ZMQ_REQ</em>
+<em>ZMQ_DEALER</em>, <em>ZMQ_REQ</em>, <em>ZMQ_REP</em>
 </p>
 </td>
 </tr>
@@ -950,9 +941,13 @@ Drop
 </td>
 </tr>
 </table></div>
-<h3 id="_publish_subscribe_pattern">Publish-subscribe pattern</h3><div style="clear:left"></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_publish_subscribe_pattern">Publish-subscribe pattern</h3>
 <div class="paragraph"><p>The publish-subscribe pattern is used for one-to-many distribution of data from
 a single <em>publisher</em> to multiple <em>subscribers</em> in a fan out fashion.</p></div>
+<div class="sect3">
 <h4 id="_zmq_pub">ZMQ_PUB</h4>
 <div class="paragraph"><p>A socket of type <em>ZMQ_PUB</em> is used by a <em>publisher</em> to distribute data.
 Messages sent are distributed in a fan out fashion to all connected peers.
@@ -1029,6 +1024,8 @@ Drop
 </td>
 </tr>
 </table></div>
+</div>
+<div class="sect3">
 <h4 id="_zmq_sub">ZMQ_SUB</h4>
 <div class="paragraph"><p>A socket of type <em>ZMQ_SUB</em> is used by a <em>subscriber</em> to subscribe to data
 distributed by a <em>publisher</em>. Initially a <em>ZMQ_SUB</em> socket is not subscribed to
@@ -1103,11 +1100,15 @@ Drop
 </td>
 </tr>
 </table></div>
-<h3 id="_pipeline_pattern">Pipeline pattern</h3><div style="clear:left"></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_pipeline_pattern">Pipeline pattern</h3>
 <div class="paragraph"><p>The pipeline pattern is used for distributing data to <em>nodes</em> arranged in
 a pipeline. Data always flows down the pipeline, and each stage of the pipeline
 is connected to at least one <em>node</em>. When a pipeline stage is connected to
 multiple <em>nodes</em> data is load-balanced among all connected <em>nodes</em>.</p></div>
+<div class="sect3">
 <h4 id="_zmq_push">ZMQ_PUSH</h4>
 <div class="paragraph"><p>A socket of type <em>ZMQ_PUSH</em> is used by a pipeline <em>node</em> to send messages
 to downstream pipeline <em>nodes</em>. Messages are load-balanced to all connected
@@ -1187,6 +1188,8 @@ Block
 </td>
 </tr>
 </table></div>
+</div>
+<div class="sect3">
 <h4 id="_zmq_pull">ZMQ_PULL</h4>
 <div class="paragraph"><p>A socket of type <em>ZMQ_PULL</em> is used by a pipeline <em>node</em> to receive messages
 from upstream pipeline <em>nodes</em>. Messages are fair-queued from among all
@@ -1261,10 +1264,14 @@ N/A
 </td>
 </tr>
 </table></div>
-<h3 id="_exclusive_pair_pattern">Exclusive pair pattern</h3><div style="clear:left"></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_exclusive_pair_pattern">Exclusive pair pattern</h3>
 <div class="paragraph"><p>The exclusive pair pattern is used to connect a peer to precisely one other
 peer. This pattern is used for inter-thread communication across the inproc
 transport.</p></div>
+<div class="sect3">
 <h4 id="_zmq_pair">ZMQ_PAIR</h4>
 <div class="paragraph"><p>A socket of type <em>ZMQ_PAIR</em> can only be connected to a single peer at any one
 time.  No message routing or filtering is performed on messages sent over a
@@ -1353,12 +1360,18 @@ Block
 </tr>
 </table></div>
 </div>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_return_value">RETURN VALUE</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>The <em>zmq_socket()</em> function shall return an opaque handle to the newly created
 socket if successful. Otherwise, it shall return NULL and set <em>errno</em> to one of
 the values defined below.</p></div>
 </div>
+</div>
+<div class="sect1">
 <h2 id="_errors">ERRORS</h2>
 <div class="sectionbody">
 <div class="dlist"><dl>
@@ -1396,6 +1409,8 @@ The context specified was terminated.
 </dd>
 </dl></div>
 </div>
+</div>
+<div class="sect1">
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
 <div class="paragraph"><p><a href="zmq_init.html">zmq_init(3)</a>
@@ -1407,17 +1422,20 @@ The context specified was terminated.
 <a href="zmq_inproc.html">zmq_inproc(7)</a>
 <a href="zmq.html">zmq(7)</a></p></div>
 </div>
+</div>
+<div class="sect1">
 <h2 id="_authors">AUTHORS</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>This ØMQ manual page was written by Martin Sustrik &lt;<a href="mailto:sustrik@250bpm.com">sustrik@250bpm.com</a>&gt; and
 Martin Lucina &lt;<a href="mailto:mato@kotelna.sk">mato@kotelna.sk</a>&gt;.</p></div>
 </div>
 </div>
+</div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-ØMQ 2.1.6<br />
-Last updated 2011-05-06 12:35:19 CEST
+ØMQ 2.1.9<br />
+Last updated 2011-07-30 17:22:16 CEST
 </div>
 </div>
 </body>

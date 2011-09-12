@@ -1,5 +1,5 @@
 Name:          zeromq
-Version:       2.1.7
+Version:       2.1.9
 Release:       1%{?dist}
 Summary:       The ZeroMQ messaging library
 Group:         Applications/Internet

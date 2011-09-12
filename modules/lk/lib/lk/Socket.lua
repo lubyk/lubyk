@@ -17,11 +17,10 @@ lib.UDP  = lk.Socket_const.UDP
 
 function lib.new(func)
   local self = constr(lib.TCP)
-  if func then
-    sched:thread(function()
-      func(self)
-    end)
-  end
+  assert(func)
+  self.thread = sched:thread(function()
+    func(self)
+  end)
   return setmetatable(self, lib)
 end
 
@@ -29,7 +28,7 @@ function lib:bind(host, port)
   self.host    = host
   self.port    = self.super:bind(host, port)
   self.super:setNonBlocking()
-  self.sock_fd = self.super:fd()
+  sched:addFd(self.thread, self.super:fd())
   return self.port
 end
 
@@ -66,10 +65,17 @@ function lib:send(data)
   end
 end
 
-function lib:accept()
+function lib:accept(func)
+  assert(func)
   sched:waitRead(self.sock_fd)
   local cli = self.super:accept()
-  cli.sock_fd = cli.super:fd()
+  cli.super:setNonBlocking()
+  cli.sock_fd = cli:fd()
+  -- start new thread
+  cli.thread = sched:thread(function()
+    func(cli)
+  end)
+  sched:addFd(cli.thread, cli.super:fd())
   return setmetatable(cli, lib)
 end
 --[[

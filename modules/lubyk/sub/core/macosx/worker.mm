@@ -63,9 +63,7 @@ public:
 };                            
 
 Worker::Worker()
-    : zmq_context_(NULL),
-      zmq_context_refcount_(0),
-      max_fd_(0) {
+    : max_fd_(0) {
   //impl_ = new Worker::Implementation;
   for(int i=0; i<3; ++i) {
     FD_ZERO(&fd_[i]);

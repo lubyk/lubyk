@@ -2,15 +2,28 @@
     "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta name="generator" content="AsciiDoc 8.5.2" />
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<meta name="generator" content="AsciiDoc 8.6.3" />
 <title>zmq_getsockopt(3)</title>
 <style type="text/css">
-/* Debug borders */
-p, li, dt, dd, div, pre, h1, h2, h3, h4, h5, h6 {
-/*
-  border: 1px solid red;
-*/
+/* Sans-serif font. */
+h1, h2, h3, h4, h5, h6,
+div.title, caption.title,
+thead, p.table.header,
+div#toctitle,
+span#author, span#revnumber, span#revdate, span#revremark,
+div#footer {
+  font-family: Arial,Helvetica,sans-serif;
+}
+
+/* Serif font. */
+div.sectionbody {
+  font-family: Georgia,"Times New Roman",Times,serif;
+}
+
+/* Monospace font. */
+tt {
+  font-size: inherit;
 }
 
 body {
@@ -36,12 +49,12 @@ strong {
 }
 
 tt {
+  font-size: inherit;
   color: navy;
 }
 
 h1, h2, h3, h4, h5, h6 {
   color: #527bbd;
-  font-family: sans-serif;
   margin-top: 1.2em;
   margin-bottom: 0.5em;
   line-height: 1.3;
@@ -61,7 +74,6 @@ h3 + * {
 }
 
 div.sectionbody {
-  font-family: serif;
   margin-left: 0;
 }
 
@@ -77,6 +89,8 @@ p {
 ul, ol, li > p {
   margin-top: 0;
 }
+ul > li     { color: #aaa; }
+ul > li > * { color: black; }
 
 pre {
   padding: 0;
@@ -85,18 +99,15 @@ pre {
 
 span#author {
   color: #527bbd;
-  font-family: sans-serif;
   font-weight: bold;
   font-size: 1.1em;
 }
 span#email {
 }
 span#revnumber, span#revdate, span#revremark {
-  font-family: sans-serif;
 }
 
 div#footer {
-  font-family: sans-serif;
   font-size: small;
   border-top: 2px solid silver;
   padding-top: 0.5em;
@@ -135,7 +146,6 @@ div.content { /* Block element content. */
 /* Block element titles. */
 div.title, caption.title {
   color: #527bbd;
-  font-family: sans-serif;
   font-weight: bold;
   text-align: left;
   margin-top: 1.0em;
@@ -157,13 +167,15 @@ div.content + div.title {
 
 div.sidebarblock > div.content {
   background: #ffffee;
-  border: 1px solid silver;
+  border: 1px solid #dddddd;
+  border-left: 4px solid #f0f0f0;
   padding: 0.5em;
 }
 
 div.listingblock > div.content {
-  border: 1px solid silver;
-  background: #f4f4f4;
+  border: 1px solid #dddddd;
+  border-left: 5px solid #f0f0f0;
+  background: #f8f8f8;
   padding: 0.5em;
 }
 
@@ -171,7 +183,7 @@ div.quoteblock, div.verseblock {
   padding-left: 1.0em;
   margin-left: 1.0em;
   margin-right: 10%;
-  border-left: 5px solid #dddddd;
+  border-left: 5px solid #f0f0f0;
   color: #777777;
 }
 
@@ -180,8 +192,9 @@ div.quoteblock > div.attribution {
   text-align: right;
 }
 
-div.verseblock > div.content {
-  white-space: pre;
+div.verseblock > pre.content {
+  font-family: inherit;
+  font-size: inherit;
 }
 div.verseblock > div.attribution {
   padding-top: 0.75em;
@@ -258,8 +271,8 @@ div.tableblock > table {
   border: 3px solid #527bbd;
 }
 thead, p.table.header {
-  font-family: sans-serif;
   font-weight: bold;
+  color: #527bbd;
 }
 tfoot {
   font-weight: bold;
@@ -339,6 +352,14 @@ span.footnote, span.footnoteref {
   min-width: 100px;
 }
 
+div.colist td {
+  padding-right: 0.5em;
+  padding-bottom: 0.3em;
+  vertical-align: top;
+}
+div.colist td img {
+  margin-top: 0.3em;
+}
 
 @media print {
   div#footer-badges { display: none; }
@@ -350,7 +371,6 @@ div#toc {
 
 div#toctitle {
   color: #527bbd;
-  font-family: sans-serif;
   font-size: 1.1em;
   font-weight: bold;
   margin-top: 1.0em;
@@ -373,6 +393,7 @@ div.toclevel4 {
   margin-left: 6em;
   font-size: 0.9em;
 }
+
 /* Overrides for manpage documents */
 h1 {
   padding-top: 0.5em;
@@ -391,47 +412,6 @@ div.sectionbody {
   div#toc { display: none; }
 }
 
-/* Workarounds for IE6's broken and incomplete CSS2. */
-
-div.sidebar-content {
-  background: #ffffee;
-  border: 1px solid silver;
-  padding: 0.5em;
-}
-div.sidebar-title, div.image-title {
-  color: #527bbd;
-  font-family: sans-serif;
-  font-weight: bold;
-  margin-top: 0.0em;
-  margin-bottom: 0.5em;
-}
-
-div.listingblock div.content {
-  border: 1px solid silver;
-  background: #f4f4f4;
-  padding: 0.5em;
-}
-
-div.quoteblock-attribution {
-  padding-top: 0.5em;
-  text-align: right;
-}
-
-div.verseblock-content {
-  white-space: pre;
-}
-div.verseblock-attribution {
-  padding-top: 0.75em;
-  text-align: left;
-}
-
-div.exampleblock-content {
-  border-left: 3px solid #dddddd;
-  padding-left: 0.5em;
-}
-
-/* IE6 sets dynamically generated links as visited. */
-div#toc a:visited { color: blue; }
 </style>
 <script type="text/javascript">
 /*<![CDATA[*/
@@ -567,7 +547,7 @@ footnotes: function () {
 /*]]>*/
 </script>
 </head>
-<body>
+<body class="manpage">
 <div id="header">
 <h1>
 zmq_getsockopt(3) Manual Page
@@ -580,10 +560,13 @@ zmq_getsockopt(3) Manual Page
 </div>
 </div>
 <div id="content">
+<div class="sect1">
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="paragraph"><p><strong>int zmq_getsockopt (void <em>*socket</em>, int <em>option_name</em>, void <em>*option_value</em>, size_t <em>*option_len</em>);</strong></p></div>
 </div>
+</div>
+<div class="sect1">
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>The <em>zmq_getsockopt()</em> function shall retrieve the value for the option
@@ -594,7 +577,8 @@ to by <em>option_value</em>; upon successful completion <em>zmq_getsockopt()</em
 modify the <em>option_len</em> argument to indicate the actual size of the option
 value stored in the buffer.</p></div>
 <div class="paragraph"><p>The following options can be retrieved with the <em>zmq_getsockopt()</em> function:</p></div>
-<h3 id="_zmq_type_retrieve_socket_type">ZMQ_TYPE: Retrieve socket type</h3><div style="clear:left"></div>
+<div class="sect2">
+<h3 id="_zmq_type_retrieve_socket_type">ZMQ_TYPE: Retrieve socket type</h3>
 <div class="paragraph"><p>The <em>ZMQ_TYPE</em> option shall retrieve the socket type for the specified
 <em>socket</em>.  The socket type is specified at socket creation time and
 cannot be modified afterwards.</p></div>
@@ -644,7 +628,9 @@ all
 </td>
 </tr>
 </table></div>
-<h3 id="_zmq_rcvmore_more_message_parts_to_follow">ZMQ_RCVMORE: More message parts to follow</h3><div style="clear:left"></div>
+</div>
+<div class="sect2">
+<h3 id="_zmq_rcvmore_more_message_parts_to_follow">ZMQ_RCVMORE: More message parts to follow</h3>
 <div class="paragraph"><p>The <em>ZMQ_RCVMORE</em> option shall return a boolean value indicating if the
 multi-part message currently being read from the specified <em>socket</em> has more
 message parts to follow. If there are no message parts to follow or if the
@@ -698,7 +684,9 @@ all
 </td>
 </tr>
 </table></div>
-<h3 id="_zmq_hwm_retrieve_high_water_mark">ZMQ_HWM: Retrieve high water mark</h3><div style="clear:left"></div>
+</div>
+<div class="sect2">
+<h3 id="_zmq_hwm_retrieve_high_water_mark">ZMQ_HWM: Retrieve high water mark</h3>
 <div class="paragraph"><p>The <em>ZMQ_HWM</em> option shall retrieve the high water mark for the specified
 <em>socket</em>.  The high water mark is a hard limit on the maximum number of
 outstanding messages ØMQ shall queue in memory for any single peer that the
@@ -755,10 +743,12 @@ all
 </td>
 </tr>
 </table></div>
-<h3 id="_zmq_swap_retrieve_disk_offload_size">ZMQ_SWAP: Retrieve disk offload size</h3><div style="clear:left"></div>
+</div>
+<div class="sect2">
+<h3 id="_zmq_swap_retrieve_disk_offload_size">ZMQ_SWAP: Retrieve disk offload size</h3>
 <div class="paragraph"><p>The <em>ZMQ_SWAP</em> option shall retrieve the disk offload (swap) size for the
 specified <em>socket</em>. A socket which has <em>ZMQ_SWAP</em> set to a non-zero value may
-exceed it&#8217;s high water mark; in this case outstanding messages shall be
+exceed its high water mark; in this case outstanding messages shall be
 offloaded to storage on disk rather than held in memory.</p></div>
 <div class="paragraph"><p>The value of <em>ZMQ_SWAP</em> defines the maximum size of the swap space in bytes.</p></div>
 <div class="hdlist"><table>
@@ -807,7 +797,9 @@ all
 </td>
 </tr>
 </table></div>
-<h3 id="_zmq_affinity_retrieve_i_o_thread_affinity">ZMQ_AFFINITY: Retrieve I/O thread affinity</h3><div style="clear:left"></div>
+</div>
+<div class="sect2">
+<h3 id="_zmq_affinity_retrieve_i_o_thread_affinity">ZMQ_AFFINITY: Retrieve I/O thread affinity</h3>
 <div class="paragraph"><p>The <em>ZMQ_AFFINITY</em> option shall retrieve the I/O thread affinity for newly
 created connections on the specified <em>socket</em>.</p></div>
 <div class="paragraph"><p>Affinity determines which threads from the ØMQ I/O thread pool associated with
@@ -865,7 +857,9 @@ N/A
 </td>
 </tr>
 </table></div>
-<h3 id="_zmq_identity_retrieve_socket_identity">ZMQ_IDENTITY: Retrieve socket identity</h3><div style="clear:left"></div>
+</div>
+<div class="sect2">
+<h3 id="_zmq_identity_retrieve_socket_identity">ZMQ_IDENTITY: Retrieve socket identity</h3>
 <div class="paragraph"><p>The <em>ZMQ_IDENTITY</em> option shall retrieve the identity of the specified
 <em>socket</em>. Socket identity determines if existing ØMQ infrastructure (<em>message
 queues</em>, <em>forwarding devices</em>) shall be identified with a specific application
@@ -923,7 +917,9 @@ all
 </td>
 </tr>
 </table></div>
-<h3 id="_zmq_rate_retrieve_multicast_data_rate">ZMQ_RATE: Retrieve multicast data rate</h3><div style="clear:left"></div>
+</div>
+<div class="sect2">
+<h3 id="_zmq_rate_retrieve_multicast_data_rate">ZMQ_RATE: Retrieve multicast data rate</h3>
 <div class="paragraph"><p>The <em>ZMQ_RATE</em> option shall retrieve the maximum send or receive data rate for
 multicast transports using the specified <em>socket</em>.</p></div>
 <div class="hdlist"><table>
@@ -972,7 +968,9 @@ all, when using multicast transports
 </td>
 </tr>
 </table></div>
-<h3 id="_zmq_recovery_ivl_get_multicast_recovery_interval">ZMQ_RECOVERY_IVL: Get multicast recovery interval</h3><div style="clear:left"></div>
+</div>
+<div class="sect2">
+<h3 id="_zmq_recovery_ivl_get_multicast_recovery_interval">ZMQ_RECOVERY_IVL: Get multicast recovery interval</h3>
 <div class="paragraph"><p>The <em>ZMQ_RECOVERY_IVL</em> option shall retrieve the recovery interval for
 multicast transports using the specified <em>socket</em>.  The recovery interval
 determines the maximum time in seconds that a receiver can be absent from a
@@ -1023,7 +1021,9 @@ all, when using multicast transports
 </td>
 </tr>
 </table></div>
-<h3 id="_zmq_recovery_ivl_msec_get_multicast_recovery_interval_in_milliseconds">ZMQ_RECOVERY_IVL_MSEC: Get multicast recovery interval in milliseconds</h3><div style="clear:left"></div>
+</div>
+<div class="sect2">
+<h3 id="_zmq_recovery_ivl_msec_get_multicast_recovery_interval_in_milliseconds">ZMQ_RECOVERY_IVL_MSEC: Get multicast recovery interval in milliseconds</h3>
 <div class="paragraph"><p>The <em>ZMQ_RECOVERY_IVL&#8217;_MSEC option shall retrieve the recovery interval, in
 milliseconds, for multicast transports using the specified 'socket</em>.  The
 recovery interval determines the maximum time in seconds that a receiver
@@ -1079,7 +1079,9 @@ all, when using multicast transports
 </td>
 </tr>
 </table></div>
-<h3 id="_zmq_mcast_loop_control_multicast_loop_back">ZMQ_MCAST_LOOP: Control multicast loop-back</h3><div style="clear:left"></div>
+</div>
+<div class="sect2">
+<h3 id="_zmq_mcast_loop_control_multicast_loop_back">ZMQ_MCAST_LOOP: Control multicast loop-back</h3>
 <div class="paragraph"><p>The <em>ZMQ_MCAST_LOOP</em> option controls whether data sent via multicast
 transports can also be received by the sending host via loop-back.  A value of
 zero indicates that the loop-back functionality is disabled, while the default
@@ -1133,7 +1135,9 @@ all, when using multicast transports
 </td>
 </tr>
 </table></div>
-<h3 id="_zmq_sndbuf_retrieve_kernel_transmit_buffer_size">ZMQ_SNDBUF: Retrieve kernel transmit buffer size</h3><div style="clear:left"></div>
+</div>
+<div class="sect2">
+<h3 id="_zmq_sndbuf_retrieve_kernel_transmit_buffer_size">ZMQ_SNDBUF: Retrieve kernel transmit buffer size</h3>
 <div class="paragraph"><p>The <em>ZMQ_SNDBUF</em> option shall retrieve the underlying kernel transmit buffer
 size for the specified <em>socket</em>. A value of zero means that the OS default is
 in effect. For details refer to your operating system documentation for the
@@ -1184,7 +1188,9 @@ all
 </td>
 </tr>
 </table></div>
-<h3 id="_zmq_rcvbuf_retrieve_kernel_receive_buffer_size">ZMQ_RCVBUF: Retrieve kernel receive buffer size</h3><div style="clear:left"></div>
+</div>
+<div class="sect2">
+<h3 id="_zmq_rcvbuf_retrieve_kernel_receive_buffer_size">ZMQ_RCVBUF: Retrieve kernel receive buffer size</h3>
 <div class="paragraph"><p>The <em>ZMQ_RCVBUF</em> option shall retrieve the underlying kernel receive buffer
 size for the specified <em>socket</em>. A value of zero means that the OS default is
 in effect. For details refer to your operating system documentation for the
@@ -1235,7 +1241,9 @@ all
 </td>
 </tr>
 </table></div>
-<h3 id="_zmq_linger_retrieve_linger_period_for_socket_shutdown">ZMQ_LINGER: Retrieve linger period for socket shutdown</h3><div style="clear:left"></div>
+</div>
+<div class="sect2">
+<h3 id="_zmq_linger_retrieve_linger_period_for_socket_shutdown">ZMQ_LINGER: Retrieve linger period for socket shutdown</h3>
 <div class="paragraph"><p>The <em>ZMQ_LINGER</em> option shall retrieve the linger period for the specified
 <em>socket</em>.  The linger period determines how long pending messages which have
 yet to be sent to a peer shall linger in memory after a socket is closed with
@@ -1313,7 +1321,9 @@ all
 </table></div>
 </li>
 </ul></div>
-<h3 id="_zmq_reconnect_ivl_retrieve_reconnection_interval">ZMQ_RECONNECT_IVL: Retrieve reconnection interval</h3><div style="clear:left"></div>
+</div>
+<div class="sect2">
+<h3 id="_zmq_reconnect_ivl_retrieve_reconnection_interval">ZMQ_RECONNECT_IVL: Retrieve reconnection interval</h3>
 <div class="paragraph"><p>The <em>ZMQ_RECONNECT_IVL</em> option shall retrieve the initial reconnection interval
 for the specified <em>socket</em>.  The reconnection interval is the period ØMQ shall
 wait between attempts to reconnect disconnected peers when using
@@ -1373,7 +1383,9 @@ all, only for connection-oriented transports
 </td>
 </tr>
 </table></div>
-<h3 id="_zmq_reconnect_ivl_max_retrieve_maximum_reconnection_interval">ZMQ_RECONNECT_IVL_MAX: Retrieve maximum reconnection interval</h3><div style="clear:left"></div>
+</div>
+<div class="sect2">
+<h3 id="_zmq_reconnect_ivl_max_retrieve_maximum_reconnection_interval">ZMQ_RECONNECT_IVL_MAX: Retrieve maximum reconnection interval</h3>
 <div class="paragraph"><p>The <em>ZMQ_RECONNECT_IVL_MAX</em> option shall retrieve the maximum reconnection
 interval for the specified <em>socket</em>.  This is the maximum period ØMQ shall wait
 between attempts to reconnect. On each reconnect attempt, the previous interval
@@ -1434,7 +1446,9 @@ all, only for connection-oriented transport
 </td>
 </tr>
 </table></div>
-<h3 id="_zmq_backlog_retrieve_maximum_length_of_the_queue_of_outstanding_connections">ZMQ_BACKLOG: Retrieve maximum length of the queue of outstanding connections</h3><div style="clear:left"></div>
+</div>
+<div class="sect2">
+<h3 id="_zmq_backlog_retrieve_maximum_length_of_the_queue_of_outstanding_connections">ZMQ_BACKLOG: Retrieve maximum length of the queue of outstanding connections</h3>
 <div class="paragraph"><p>The <em>ZMQ_BACKLOG</em> option shall retrieve the maximum length of the queue of
 outstanding peer connections for the specified <em>socket</em>; this only applies to
 connection-oriented transports. For details refer to your operating system
@@ -1485,7 +1499,9 @@ all, only for connection-oriented transports
 </td>
 </tr>
 </table></div>
-<h3 id="_zmq_fd_retrieve_file_descriptor_associated_with_the_socket">ZMQ_FD: Retrieve file descriptor associated with the socket</h3><div style="clear:left"></div>
+</div>
+<div class="sect2">
+<h3 id="_zmq_fd_retrieve_file_descriptor_associated_with_the_socket">ZMQ_FD: Retrieve file descriptor associated with the socket</h3>
 <div class="paragraph"><p>The <em>ZMQ_FD</em> option shall retrieve the file descriptor associated with the
 specified <em>socket</em>. The returned file descriptor can be used to integrate the
 socket into an existing event loop; the ØMQ library shall signal any pending
@@ -1558,7 +1574,9 @@ all
 </td>
 </tr>
 </table></div>
-<h3 id="_zmq_events_retrieve_socket_event_state">ZMQ_EVENTS: Retrieve socket event state</h3><div style="clear:left"></div>
+</div>
+<div class="sect2">
+<h3 id="_zmq_events_retrieve_socket_event_state">ZMQ_EVENTS: Retrieve socket event state</h3>
 <div class="paragraph"><p>The <em>ZMQ_EVENTS</em> option shall retrieve the event state for the specified
 <em>socket</em>.  The returned value is a bit mask constructed by OR&#8217;ing a combination
 of the following event flags:</p></div>
@@ -1633,11 +1651,16 @@ all
 </tr>
 </table></div>
 </div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_return_value">RETURN VALUE</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>The <em>zmq_getsockopt()</em> function shall return zero if successful. Otherwise it
 shall return <tt>-1</tt> and set <em>errno</em> to one of the values defined below.</p></div>
 </div>
+</div>
+<div class="sect1">
 <h2 id="_errors">ERRORS</h2>
 <div class="sectionbody">
 <div class="dlist"><dl>
@@ -1678,6 +1701,8 @@ The operation was interrupted by delivery of a signal.
 </dd>
 </dl></div>
 </div>
+</div>
+<div class="sect1">
 <h2 id="_example">EXAMPLE</h2>
 <div class="sectionbody">
 <div class="listingblock">
@@ -1690,23 +1715,28 @@ rc = zmq_getsockopt (socket, ZMQ_HWM, &amp;hwm, &amp;hwm_size);
 assert (rc == 0);</tt></pre>
 </div></div>
 </div>
+</div>
+<div class="sect1">
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
 <div class="paragraph"><p><a href="zmq_setsockopt.html">zmq_setsockopt(3)</a>
 <a href="zmq_socket.html">zmq_socket(3)</a>
 <a href="zmq.html">zmq(7)</a></p></div>
 </div>
+</div>
+<div class="sect1">
 <h2 id="_authors">AUTHORS</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>This ØMQ manual page was written by Martin Sustrik &lt;<a href="mailto:sustrik@250bpm.com">sustrik@250bpm.com</a>&gt; and
 Martin Lucina &lt;<a href="mailto:mato@kotelna.sk">mato@kotelna.sk</a>&gt;.</p></div>
 </div>
 </div>
+</div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-ØMQ 2.1.6<br />
-Last updated 2011-05-07 07:13:32 CEST
+ØMQ 2.1.9<br />
+Last updated 2011-07-30 17:22:16 CEST
 </div>
 </div>
 </body>
