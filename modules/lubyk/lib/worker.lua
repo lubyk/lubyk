@@ -11,6 +11,11 @@
 require 'lubyk.Worker'
 worker   = lubyk.Worker()
 local mt = lubyk.Worker_
+mt.fdSet = {
+  read = mt.fdReadSet,
+  write= mt.fdWriteSet,
+  error= mt.fdErrorSet,
+}
 
 function lubyk.Worker()
   error('Already one worker created (lives as \'worker\' in global namespace).')

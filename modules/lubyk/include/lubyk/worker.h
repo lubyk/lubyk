@@ -187,10 +187,15 @@ public:
 
   int select(float msec) {
     memcpy(res_fd_, fd_, sizeof(res_fd_));
-    struct timeval timeout;
-    timeout.tv_sec  = (int)(msec / 1000);
-    timeout.tv_usec = (msec - 1000 * timeout.tv_sec) * 1000;
-    return ::select(max_fd_, &res_fd_[0], &res_fd_[1], &res_fd_[2], &timeout);
+    if (msec >= 0) {
+      struct timeval timeout;
+      timeout.tv_sec  = (int)(msec / 1000);
+      timeout.tv_usec = (msec - 1000 * timeout.tv_sec) * 1000;
+      return ::select(max_fd_ + 1, &res_fd_[0], &res_fd_[1], &res_fd_[2], &timeout);
+    } else {
+      return ::select(max_fd_ + 1, &res_fd_[0], &res_fd_[1], &res_fd_[2], NULL);
+    }
+
   };
 
   /** For testing purpose.

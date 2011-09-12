@@ -3,13 +3,16 @@
 #include "lua_cpp_helper.h"
 
 
+
+
+
 using namespace lk;
 
 
 /* ============================ Constructors     ====================== */
 
 /** lk::Thread::Thread()
- * include/lk/Thread.h:43
+ * include/lk/Thread.h:44
  */
 static int Thread_Thread(lua_State *L) {
   try {
@@ -17,9 +20,9 @@ static int Thread_Thread(lua_State *L) {
     // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
     return retval__->luaInit(L, retval__, "lk.Thread");
   } catch (std::exception &e) {
-    lua_pushfstring(L, "lk.Thread.Thread: %s", e.what());
+    lua_pushfstring(L, "Thread: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "lk.Thread.Thread: Unknown exception");
+    lua_pushfstring(L, "Thread: Unknown exception");
   }
   return lua_error(L);
 }
@@ -55,17 +58,17 @@ static int Thread__tostring(lua_State *L) {
 
 
 /** void lk::Thread::join()
- * include/lk/Thread.h:58
+ * include/lk/Thread.h:59
  */
 static int Thread_join(lua_State *L) {
   try {
-    Thread *self__ = *((Thread**)dubL_checksdata(L, 1, "lk.Thread"));
-    self__->join();
+    Thread *self = *((Thread**)dubL_checksdata(L, 1, "lk.Thread"));
+    self->join();
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "lk.Thread.join: %s", e.what());
+    lua_pushfstring(L, "join: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "lk.Thread.join: Unknown exception");
+    lua_pushfstring(L, "join: Unknown exception");
   }
   return lua_error(L);
 }
@@ -73,17 +76,17 @@ static int Thread_join(lua_State *L) {
 
 
 /** void lk::Thread::kill()
- * include/lk/Thread.h:53
+ * include/lk/Thread.h:54
  */
 static int Thread_kill(lua_State *L) {
   try {
-    Thread *self__ = *((Thread**)dubL_checksdata(L, 1, "lk.Thread"));
-    self__->kill();
+    Thread *self = *((Thread**)dubL_checksdata(L, 1, "lk.Thread"));
+    self->kill();
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "lk.Thread.kill: %s", e.what());
+    lua_pushfstring(L, "kill: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "lk.Thread.kill: Unknown exception");
+    lua_pushfstring(L, "kill: Unknown exception");
   }
   return lua_error(L);
 }
@@ -91,17 +94,17 @@ static int Thread_kill(lua_State *L) {
 
 
 /** void lk::Thread::quit()
- * include/lk/Thread.h:49
+ * include/lk/Thread.h:50
  */
 static int Thread_quit(lua_State *L) {
   try {
-    Thread *self__ = *((Thread**)dubL_checksdata(L, 1, "lk.Thread"));
-    self__->quit();
+    Thread *self = *((Thread**)dubL_checksdata(L, 1, "lk.Thread"));
+    self->quit();
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "lk.Thread.quit: %s", e.what());
+    lua_pushfstring(L, "quit: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "lk.Thread.quit: Unknown exception");
+    lua_pushfstring(L, "quit: Unknown exception");
   }
   return lua_error(L);
 }
@@ -109,18 +112,18 @@ static int Thread_quit(lua_State *L) {
 
 
 /** bool lk::Thread::shouldRun()
- * include/lk/Thread.h:63
+ * include/lk/Thread.h:64
  */
 static int Thread_shouldRun(lua_State *L) {
   try {
-    Thread *self__ = *((Thread**)dubL_checksdata(L, 1, "lk.Thread"));
-    bool  retval__ = self__->shouldRun();
+    Thread *self = *((Thread**)dubL_checksdata(L, 1, "lk.Thread"));
+    bool  retval__ = self->shouldRun();
     lua_pushboolean(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "lk.Thread.shouldRun: %s", e.what());
+    lua_pushfstring(L, "shouldRun: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "lk.Thread.shouldRun: Unknown exception");
+    lua_pushfstring(L, "shouldRun: Unknown exception");
   }
   return lua_error(L);
 }
@@ -128,17 +131,17 @@ static int Thread_shouldRun(lua_State *L) {
 
 
 /** void lk::Thread::start()
- * include/lk/Thread.h:67
+ * include/lk/Thread.h:68
  */
 static int Thread_start(lua_State *L) {
   try {
-    Thread *self__ = *((Thread**)dubL_checksdata(L, 1, "lk.Thread"));
-    self__->start();
+    Thread *self = *((Thread**)dubL_checksdata(L, 1, "lk.Thread"));
+    self->start();
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "lk.Thread.start: %s", e.what());
+    lua_pushfstring(L, "start: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "lk.Thread.start: Unknown exception");
+    lua_pushfstring(L, "start: Unknown exception");
   }
   return lua_error(L);
 }

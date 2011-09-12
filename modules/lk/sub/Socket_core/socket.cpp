@@ -320,15 +320,21 @@ LuaStackSize lk::Socket::recv(lua_State *L) {
 /** Send raw bytes without encoding with msgpack.
  * param: string to send.
  */
-void lk::Socket::send(lua_State *L) {
+int lk::Socket::send(lua_State *L) {
   // <string>
   size_t size;
   const char *data = luaL_checklstring(L, -1, &size);
   // printf("send string (%lu bytes)\n", size);
   // send raw bytes
-  if (::send(socket_fd_, data, size, 0) == -1) {
-    throw Exception("Could not send message (%s).", strerror(errno));
+  int sent = ::send(socket_fd_, data, size, 0);
+  if (sent == -1) {
+    if (errno == EAGAIN) {
+      sent = 0;
+    } else {
+      throw Exception("Could not send message (%s).", strerror(errno));
+    };
   }
+  return sent;
 }
 
 /** Send a message packed with msgpack.
@@ -468,7 +474,11 @@ int lk::Socket::recvAll(lua_State *L) {
         break;
       } else if (buffer_length_ < 0) {
         buffer_length_ = 0;
-        throw Exception("Could not receive (%s).", strerror(errno));
+        if (errno == EAGAIN) {
+          break;
+        } else {
+          throw Exception("Could not receive (%s).", strerror(errno));
+        }
       }
     }
     luaL_addlstring(&buffer, buffer_, buffer_length_);

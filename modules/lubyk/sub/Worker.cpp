@@ -270,7 +270,7 @@ static int Worker_fdWriteSet(lua_State *L) {
 
 
 /** static Worker* lubyk::Worker::getWorker(lua_State *L)
- * include/lubyk/worker.h:205
+ * include/lubyk/worker.h:210
  */
 static int Worker_getWorker(lua_State *L) {
   try {
@@ -289,7 +289,7 @@ static int Worker_getWorker(lua_State *L) {
 
 
 /** int lubyk::Worker::maxFd()
- * include/lubyk/worker.h:198
+ * include/lubyk/worker.h:203
  */
 static int Worker_maxFd(lua_State *L) {
   try {

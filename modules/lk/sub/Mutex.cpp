@@ -3,6 +3,9 @@
 #include "lua_cpp_helper.h"
 
 
+
+
+
 using namespace lk;
 
 
@@ -17,9 +20,9 @@ static int Mutex_Mutex(lua_State *L) {
     lua_pushclass<Mutex>(L, retval__, "lk.Mutex");
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "lk.Mutex.Mutex: %s", e.what());
+    lua_pushfstring(L, "Mutex: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "lk.Mutex.Mutex: Unknown exception");
+    lua_pushfstring(L, "Mutex: Unknown exception");
   }
   return lua_error(L);
 }
@@ -59,13 +62,13 @@ static int Mutex__tostring(lua_State *L) {
  */
 static int Mutex_lock(lua_State *L) {
   try {
-    Mutex *self__ = *((Mutex**)dubL_checksdata(L, 1, "lk.Mutex"));
-    self__->lock();
+    Mutex *self = *((Mutex**)dubL_checksdata(L, 1, "lk.Mutex"));
+    self->lock();
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "lk.Mutex.lock: %s", e.what());
+    lua_pushfstring(L, "lock: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "lk.Mutex.lock: Unknown exception");
+    lua_pushfstring(L, "lock: Unknown exception");
   }
   return lua_error(L);
 }
@@ -77,14 +80,14 @@ static int Mutex_lock(lua_State *L) {
  */
 static int Mutex_lockCount(lua_State *L) {
   try {
-    Mutex *self__ = *((Mutex**)dubL_checksdata(L, 1, "lk.Mutex"));
-    int  retval__ = self__->lockCount();
+    Mutex *self = *((Mutex**)dubL_checksdata(L, 1, "lk.Mutex"));
+    int  retval__ = self->lockCount();
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "lk.Mutex.lockCount: %s", e.what());
+    lua_pushfstring(L, "lockCount: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "lk.Mutex.lockCount: Unknown exception");
+    lua_pushfstring(L, "lockCount: Unknown exception");
   }
   return lua_error(L);
 }
@@ -96,13 +99,13 @@ static int Mutex_lockCount(lua_State *L) {
  */
 static int Mutex_unlock(lua_State *L) {
   try {
-    Mutex *self__ = *((Mutex**)dubL_checksdata(L, 1, "lk.Mutex"));
-    self__->unlock();
+    Mutex *self = *((Mutex**)dubL_checksdata(L, 1, "lk.Mutex"));
+    self->unlock();
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "lk.Mutex.unlock: %s", e.what());
+    lua_pushfstring(L, "unlock: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "lk.Mutex.unlock: Unknown exception");
+    lua_pushfstring(L, "unlock: Unknown exception");
   }
   return lua_error(L);
 }

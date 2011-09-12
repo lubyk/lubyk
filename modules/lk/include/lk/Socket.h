@@ -142,6 +142,17 @@ public:
     setTimeout(timeout, SO_SNDTIMEO);
   }
 
+  void setNonBlocking() {
+    if (socket_fd_ == -1) {
+      throw Exception("You have to use bind/connect before setting non-blocking.");
+    }
+    int x;
+    x = fcntl(socket_fd_, F_GETFL, 0);
+    if (-1 == fcntl(socket_fd_, F_SETFL, x | O_NONBLOCK)) {
+      throw Exception("Could not set non-blocking (%s).", strerror(errno));
+    }
+  }
+  
   /** Receive a message encoded by msgpack (blocks).
    * For a server, this should typically be used inside the loop.
    * We pass the lua_State to avoid mixing thread contexts.
@@ -156,8 +167,9 @@ public:
 
   /** Send raw bytes without encoding with msgpack.
    * param: string to send.
+   * @return number of bytes sent.
    */
-  void send(lua_State *L);
+  int send(lua_State *L);
 
   /** Send a message packed with msgpack.
    * Varying parameters.

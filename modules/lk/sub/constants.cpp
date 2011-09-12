@@ -15,9 +15,9 @@ static int lk_findFile(lua_State *L) {
     LuaStackSize  retval__ = findFile(L);
     return retval__;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "lk.findFile: %s", e.what());
+    lua_pushfstring(L, "findFile: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "lk.findFile: Unknown exception");
+    lua_pushfstring(L, "findFile: Unknown exception");
   }
   return lua_error(L);
 }
@@ -36,9 +36,9 @@ static int lk_pushnexttemplate(lua_State *L) {
     lua_pushstring(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "lk.pushnexttemplate: %s", e.what());
+    lua_pushfstring(L, "pushnexttemplate: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "lk.pushnexttemplate: Unknown exception");
+    lua_pushfstring(L, "pushnexttemplate: Unknown exception");
   }
   return lua_error(L);
 }
@@ -56,9 +56,9 @@ static int lk_readable(lua_State *L) {
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "lk.readable: %s", e.what());
+    lua_pushfstring(L, "readable: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "lk.readable: Unknown exception");
+    lua_pushfstring(L, "readable: Unknown exception");
   }
   return lua_error(L);
 }
