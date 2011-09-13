@@ -93,6 +93,11 @@ public:
     Thread::millisleep(duration);
   }
 
+  LuaStackSize swap(lua_State *L) throw() {
+    lua_pushthread(L);
+    return 1;
+  }
+
   /** Start a new process with the given Lua script.
    * @return new process id or nil on failure
    */

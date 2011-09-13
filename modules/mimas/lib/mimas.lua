@@ -16,6 +16,18 @@ for k, v in pairs(mimas_core) do
   end
 end
 
+--=============================================== app
+local singleApp = mimas.Application()
+app = singleApp
+function mimas.Application()
+  return singleApp
+end
+--=============================================== alter scheduler
+sched:hasMimas()
+
+
+
+
 -- no need for a custom loader for these
 mimas.Brush   = mimas_core.Brush
 mimas.Color   = mimas_core.Color

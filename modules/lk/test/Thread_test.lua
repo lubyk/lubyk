@@ -12,6 +12,7 @@ local should = test.Suite('lk.Thread')
 
 function should.runThread()
   local counter = 0
+  local start = sched.now
   local thread = lk.Thread(function()
     while true do
       counter = counter + 1
@@ -25,8 +26,10 @@ function should.runThread()
   -- 00, 40, 80
   assertEqual(3, counter)
   sleep(90)
-  -- 20, 60
+  -- 120, 160 (190)
   assertEqual(5, counter)
+  -- Thread is garbage collected here.
+  -- This means that the scheduler does not hold on threads.
 end
 
 function should.joinThreads()
@@ -44,9 +47,8 @@ function should.joinThreads()
 end
 
 function should.killThreads()
-  local thread = nil
-  thread = lk.Thread(function()
-    while thread:shouldRun() do
+  local thread = lk.Thread(function()
+    while true do
       sleep(30)
     end
   end)
@@ -60,7 +62,6 @@ function should.killThreads()
 end
 
 local function makeThreads()
-
   collectgarbage('collect')
   local threads = {}
   for i = 1,200 do
@@ -73,31 +74,27 @@ local function makeThreads()
       end
     end))
   end
-
-  for _, thread in ipairs(threads) do
+  
+  for i, thread in ipairs(threads) do
     thread:join()
   end
 end
 
 function should.createManyThreadsAndProperlyGc()
+  local before, after
   -- warmup
   makeThreads()
-
   collectgarbage('collect')
   collectgarbage('collect')
-  local before = collectgarbage('count')
+  before = collectgarbage('count')
+  -- create
   makeThreads()
+  -- destroy
+  collectgarbage('collect')
+  collectgarbage('collect')
+  after = collectgarbage('count')
 
-  collectgarbage('collect')
-  collectgarbage('collect')
-  local after = collectgarbage('count')
-  if #test.suites > 1 then
-    -- with other tests messing around, we have to be more tolerant
-    assertLessThen(before * 1.01, after)
-  else
-    -- when running the test alone
-    assertEqual(before, after)
-  end
+  assertEqual(before, after)
 end
 
 function should.getKilledBeforeStarting()
@@ -114,9 +111,8 @@ end
 
 function should.getDestroyedBeforeStarting()
   local runOnce = false
-  local thread = lk.Thread(function(runner)
+  local thread = lk.Thread(function()
     runOnce = true
-    print(runner)
   end)
 
   -- destroy

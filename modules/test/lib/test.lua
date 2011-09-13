@@ -4,11 +4,6 @@ local lib = {suites = {}, file_count = 0, TIMEOUT = 35000}
 lib.__index = lib
 test = lib
 
-function lib.run(tests)
-  lunit.testcase(tests)
-  lunit.main()
-end
-
 function lib:testWithUser()
   return lib.UserSuite(self._info.name)
 end
@@ -67,41 +62,41 @@ function lib.all()
   if testing_gui then
     lib.gui()
   else
-    for i, suite in ipairs(lib.suites) do
-      lib.runSuite(suite)
-      lib.reportSuite(suite)
-    end
-    lib.report()
-  end
-end
-
-function lib.gui()
-  lib.total_test = 0
-  lib.total_asrt = 0
-  lib.total_fail = 0
-  if lib.suites[1] then
-    -- test threads first (or they fail because of mimas widgets creation)
-    for i, suite in ipairs(lib.suites) do
-      if string.match('lk.Thread', suite._info.name) then
-        lib.runSuite(suite)
-        lib.reportSuite(suite)
-        table.remove(lib.suites, i)
-        break
-      end
-    end
-
-    app = mimas.Application()
-    app:post(function()
+    sched:run(function()
       for i, suite in ipairs(lib.suites) do
         lib.runSuite(suite)
         lib.reportSuite(suite)
       end
+      lib.report()
     end)
-
-    app:exec()
   end
-  -- get report when all threads have finished (all windows closed)
-  lib.report()
+end
+
+function lib.gui()
+  sched:run(function()
+    lib.total_test = 0
+    lib.total_asrt = 0
+    lib.total_fail = 0
+    if lib.suites[1] then
+      -- test threads first (or they fail because of mimas widgets creation)
+      for i, suite in ipairs(lib.suites) do
+        if string.match('lk.Thread', suite._info.name) then
+          lib.runSuite(suite)
+          lib.reportSuite(suite)
+          table.remove(lib.suites, i)
+          break
+        end
+      end
+
+      for i, suite in ipairs(lib.suites) do
+        lib.runSuite(suite)
+        lib.reportSuite(suite)
+      end
+    end
+    -- get report when all threads have finished (all windows closed)
+    lib.report()
+  end)
+  sched:run()
 end
 
 function lib.loadAll(...)
@@ -109,11 +104,9 @@ function lib.loadAll(...)
   if not arg[1] then
     -- load all
     for mod in lk.Dir('modules'):list() do
-      print('Loading tests for', mod)
       if lk.fileType(mod) == 'directory' then
         for file in lk.Dir(mod):glob('test/.+_test[.]lua$') do
           lib.file_count = lib.file_count + 1
-          print(file)
           dofile(file)
         end
       end
@@ -123,7 +116,6 @@ function lib.loadAll(...)
       if not string.match(mod, '^modules/') then
         mod = 'modules' .. lk.Dir.sep .. mod
       end
-      print('Loading tests for', mod)
       if lk.fileType(mod) == 'directory' then
         for file in lk.Dir(mod):glob('test/.+_test[.]lua$') do
           lib.file_count = lib.file_count + 1
@@ -137,8 +129,8 @@ function lib.loadAll(...)
 end
 
 -- FIXME: traceback not working good enough
-local function error_handler(err)
-  local tb = lk.split(debug.traceback(), '\n')
+local function errorHandler(err, co)
+  local tb = lk.split(debug.traceback(co), '\n')
   local max_i = 5
   local message = err
   for i = 4,#tb do
@@ -170,6 +162,23 @@ function lib.trace(fun, ...)
   end
 end
 
+local function mypcall(f)
+  local co = coroutine.create(f)
+  while true do
+    local status, a, b = coroutine.resume(co)
+    if coroutine.status(co) == 'suspended' then
+      coroutine.yield(a, b)   -- suspend across `mypcall'
+    elseif not status then
+      -- error
+      return false, errorHandler(a, co)
+    else
+      -- ended normally
+      return status, a, b   -- error or normal return
+    end
+  end
+end
+  
+
 function lib.runSuite(suite)
   local test_count = 0
   local fail_count = 0
@@ -196,10 +205,10 @@ function lib.runSuite(suite)
         if skip then
           -- skip user tests
           skip_count = skip_count + 1
-        else
+        elseif not lib.only or lib.only == name then
           suite.setup(gc_protect[name])
-            local ok, err = xpcall(pass_args, error_handler)
-            --local ok, err = pcall(pass_args)
+            local ok, err = mypcall(pass_args, error_handler)
+            collectgarbage('collect')
             if not ok then
               fail_count = fail_count + 1
               --local file, line, message = string.match(err, "([^/\.]+\.lua):(%d+): (.+)")

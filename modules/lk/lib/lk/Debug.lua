@@ -3,20 +3,24 @@
   lk.Debug
   --------
 
-  This is a helper to display debug information
+  This is a helper to display information on object
+  creation and destruction. Pass any information when
+  creating the object and these information will be
+  printed out on destruction.
+
+  Usage: lk.Debug('some name', ...)
 
 --]]------------------------------------------------------
-
-local lib = {}
+require 'lk.Debug_core'
+local constr = lk.Debug
+local lib   = {}
 lib.__index = lib
 lk.Debug = lib
 
 setmetatable(lib, {
   -- new method
- __call = function(lib, arg)
-  local instance = {path = arg}
-  setmetatable(instance, lib)
-  return instance
+ __call = function(lib, ...)
+  return constr(...)
 end})
 
 function lib.inspect(table)

@@ -20,7 +20,9 @@ setmetatable(lib, {
       at_next    = nil,
       -- List of threads that have added their filedescriptors to
       -- select.
-      fd_list    = {n=0},
+      fd_count   = 0,
+      fd_read    = {},
+      fd_write   = {},
       -- These are plain lua functions that will be called when
       -- quitting.
       finalizers = {},
@@ -31,42 +33,40 @@ setmetatable(lib, {
   end
 })
 
-function lib:thread(func)
-  local thread = {
-    co = coroutine.create(func),
-  }
-
-  private.scheduleAt(self, 0, thread)
-  return thread
-end
 
 function lib:wait(delay)
   if delay == 0 then
-    coroutine.yield(0)
+    coroutine.yield('wait', 0)
   else
-    coroutine.yield(self.now + delay)
+    coroutine.yield('wait', self.now + delay)
   end
 end
 
 function lib:waitRead(fd)         
-  coroutine.yield(fd, 'read')
+  coroutine.yield('read', fd)
 end
 
-function lib:run()
-  local fd_list = self.fd_list
+function lib:waitWrite(fd)         
+  coroutine.yield('write', fd)
+end
+
+function lib:run(func)
+  if func then
+    self.main = lk.Thread(func)
+  end
   while true do
     local now = worker:now()
     local now_list = {}
     local timeout = -1
-    local thread = self.at_next
-    while thread and thread.at < now do
-      -- remove from at_list
-      self.at_next = thread.at_next
+    local next_thread = self.at_next
+    while next_thread and next_thread.at < now do
       -- collect
-      table.insert(now_list, thread)
-      thread = self.at_next
+      table.insert(now_list, next_thread)
+      -- get next
+      next_thread = next_thread.at_next
     end
-    self.at_next = thread
+    -- remove from at_list
+    self.at_next = next_thread
 
     for i, thread in ipairs(now_list) do
       -- We run them all now so that we give time for 'select' in
@@ -74,14 +74,21 @@ function lib:run()
       private.runThread(self, thread)
     end
 
-    if self.at_next then
-      -- timeout
-      -- our timeout is in ms
-      -- zmq is in us ==> 1000*
-      timeout = 1000 * (self.at_next.at - now)
+    -- the running thread might have added new elements
+    next_thread = self.at_next
+
+    if next_thread then
+      if next_thread.at < worker:now() then
+        timeout = 0
+      else
+        -- timeout
+        -- our timeout is in ms
+        -- zmq is in us ==> 1000*
+        timeout = 1000 * (next_thread.at - now)
+      end
     end
       
-    if fd_list.n == 0 and timeout == -1 then
+    if self.fd_count == 0 and timeout == -1 then
       -- done
       break
     else
@@ -95,69 +102,9 @@ function lib:run()
   private.finalize(self)
 end
 
-function lib:addFd(thread, fd)
-  local fd_list = self.fd_list
-  thread.fd = fd
-  table.insert(fd_list, thread)
-  fd_list.n = fd_list.n + 1
-  self.poller:add(fd, zmq.POLLIN + zmq.POLLOUT, function()
-    private.runThread(self, thread)
-  end)
-end
-
-function lib:removeFd(fd)
-  local fd_list = self.fd_list
-  self.poller:remove(fd)
-  for i, thread in ipairs(self.fd_list) do
-    if thread.fd == fd then
-      table.remove(self.fd_list, i)
-      fd_list.n = fd_list.n - 1
-      break
-    end
-  end
-end
---=============================================== PRIVATE
-
-function private:runThread(thread)
-  if thread.at and thread.at > 0 then
-    self.now = thread.at
-  else
-    self.now = worker:now()
-  end                
-  -- FIXME: pcall ?
-  thread.at = nil
-  local ok, a, b = coroutine.resume(thread.co)
-  if not ok then
-    -- a = error
-    if thread.fd then
-      self:removeFd(thread.fd)
-    end
-    print('ERROR', a)
-  elseif b then
-    --thread.fd = a
-    --thread.op = b -- read/write/error
-    -- add thread to select
-    -- FIXME: merge fdSet + insert
-    -- worker:fdReadSet(thread.fd)
-    -- worker.fdSet[b](worker, a)
-  elseif coroutine.status(thread.co) == 'dead' then
-    -- let it repose in peace
-    if thread.fd then
-      -- remove from poller
-      self:removeFd(thread.fd)
-    end
-    thread.fd = nil
-    thread.co = nil
-  else
-    -- a = at
-    -- a value of 0 == execute again as soon as possible
-    if a then
-      private.scheduleAt(self, a, thread)
-    end
-  end
-end
-
-function private:scheduleAt(at, thread)
+function lib:scheduleAt(at, thread)
+  -- We use the wrapper internally so that we do not prevent
+  -- garbage collection.
   thread.at = at
   -- sorted insert (next event first)
   local prev = self
@@ -176,6 +123,112 @@ function private:scheduleAt(at, thread)
     end
   end
 end
+--=============================================== PRIVATE
+
+local zmq_POLLIN, zmq_POLLOUT = zmq.POLLIN, zmq.POLLOUT
+
+function private:runThread(thread)
+  -- get thread from wrap
+  local t = thread.t.t
+  if not t or not t.co then
+    -- has been killed or gc
+    if thread.fd then
+      private.removeFd(self, thread)
+      thread.fd = nil
+    end
+    -- let it repose in peace
+    if t then
+      t:finalize(self)
+    end
+    return
+  end
+  if thread.at and thread.at > 0 then
+    sched.now = thread.at
+  else
+    sched.now = worker:now()
+  end                
+  -- FIXME: pcall ?
+  thread.at = nil
+  local ok, a, b = coroutine.resume(t.co)
+  if not ok then
+    -- a = error
+    if thread.fd then
+      private.removeFd(self, thread)
+    end
+    print('ERROR', a, debug.traceback(t.co))
+  elseif a == 'read' then
+    if thread.fd then
+      -- same ?
+      if thread.events == zmq_POLLIN then
+        -- done
+      else
+        -- update
+        self.fd_read[b]  = thread
+        self.fd_write[b] = nil
+        self.poller:modify(b, zmq_POLLIN, t.cb)
+      end
+    else
+      -- add fd
+      thread.fd = b
+      self.fd_read[b]  = thread
+      self.fd_count    = self.fd_count + 1
+      thread.events = zmq_POLLIN
+      function t.cb()
+        private.runThread(self, thread)
+      end
+      self.poller:add(b, thread.events, t.cb)
+    end
+  elseif a == 'write' then
+    if thread.fd then
+      -- same ?
+      if thread.events == zmq_POLLOUT then
+        -- done
+      else
+        -- update
+        self.fd_read[b]  = nil
+        self.fd_write[b] = thread
+        self.poller:modify(b, zmq_POLLOUT, t.cb)
+      end
+    else
+      -- add fd
+      thread.fd = b
+      self.fd_write[b] = thread
+      self.fd_count    = self.fd_count + 1
+      thread.events = zmq_POLLOUT
+      function thread.cb()
+        private.runThread(self, thread)
+      end
+      self.poller:add(b, thread.events, t.cb)
+    end
+  elseif a == 'join' then
+    if thread.fd then
+      private.removeFd(self, thread)
+    end
+    b:addJoin(thread)
+  elseif a == 'wait' then
+    if thread.fd then
+      private.removeFd(self, thread)
+    end
+    -- b = at
+    -- a value of 0 == execute again as soon as possible
+    self:scheduleAt(b, thread)
+  elseif coroutine.status(t.co) == 'dead' then
+    if thread.fd then
+      private.removeFd(self, thread)
+    end
+    -- let it repose in peace
+
+    thread.fd = nil
+    t.co = nil
+    t:finalize(self)
+  else
+    if thread.fd then
+      private.removeFd(self, thread)
+    end
+    print('BAD YIELD:', a, b)
+  end
+end
+
 
 function private:finalize()
   for _, func in ipairs(self.finalizers) do
@@ -184,6 +237,17 @@ function private:finalize()
   end
 end
 
+function private.removeFd(self, thread)
+  local fd = thread.fd
+  if self.fd_read[fd] then
+    self.fd_count = self.fd_count - 1
+    self.fd_read[fd] = nil
+  elseif self.fd_write[fd] then
+    self.fd_count = self.fd_count - 1
+    self.fd_write[fd] = nil
+  end
+  thread.fd = nil
+end
 --=============================================== Without mimas
 
 --=============================================== With mimas

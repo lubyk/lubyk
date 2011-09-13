@@ -62,6 +62,12 @@ lubyk.rem_service_url = '/lk/rem_service'
 require 'lubyk.core'
 require 'worker' -- declares global 'sleep' and creates worker
 
+require 'lk.Scheduler'
+sched = lk.Scheduler()
+function sleep(ms)
+  sched:wait(ms)
+end
+
 -------------------------------- pack/unpack (msgpack.vendor)
 require 'msgpack.vendor'
 
