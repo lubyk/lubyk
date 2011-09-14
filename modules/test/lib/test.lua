@@ -130,6 +130,9 @@ end
 
 -- FIXME: traceback not working good enough
 local function errorHandler(err, co)
+  if true then
+    return err .. '\n' .. debug.traceback(co)
+  end
   local tb = lk.split(debug.traceback(co), '\n')
   local max_i = 5
   local message = err

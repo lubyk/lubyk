@@ -24,7 +24,7 @@ lk.Thread   = lib
 local WeakValue = {__mode = 'v'}
 
 setmetatable(lib, {
-  __call = function(lib, func)
+  __call = function(lib, func, at)
     local self = {
       co = coroutine.create(func),
       should_run = true,
@@ -34,7 +34,7 @@ setmetatable(lib, {
       t  = setmetatable({t = self}, WeakValue),
     }
     setmetatable(self, lib)
-    sched:scheduleAt(0, self.wrap)
+    sched:scheduleAt(at or 0, self.wrap)
     return self
   end
 })
@@ -54,6 +54,7 @@ end
 
 function lib:kill()
   self.should_run = false
+  self.wrap.at = 0
   self.co = nil
 end
 

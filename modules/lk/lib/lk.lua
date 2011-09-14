@@ -65,7 +65,7 @@ require 'worker' -- declares global 'sleep' and creates worker
 require 'lk.Scheduler'
 sched = lk.Scheduler()
 function sleep(ms)
-  sched:wait(ms)
+  sched:sleep(ms)
 end
 
 -------------------------------- pack/unpack (msgpack.vendor)

@@ -33,7 +33,20 @@ setmetatable(lib, {
   end
 })
 
+--- Sleeps a given number of milliseconds starting from the
+-- current time (not the logical time). This should not be used as a
+-- timer because it will drift.
+function lib:sleep(delay)
+  if delay == 0 then
+    coroutine.yield('wait', 0)
+  else
+    coroutine.yield('wait', worker:now() + delay)
+  end
+end
 
+--- Waits a given number of milliseconds starting from the
+-- logical time. This should be used as a timer because it will not
+-- drift.
 function lib:wait(delay)
   if delay == 0 then
     coroutine.yield('wait', 0)
@@ -212,7 +225,7 @@ function private:runThread(thread)
     -- b = at
     -- a value of 0 == execute again as soon as possible
     self:scheduleAt(b, thread)
-  elseif coroutine.status(t.co) == 'dead' then
+  elseif not t.co or coroutine.status(t.co) == 'dead' then
     if thread.fd then
       private.removeFd(self, thread)
     end

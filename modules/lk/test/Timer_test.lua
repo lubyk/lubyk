@@ -27,7 +27,6 @@ function should.loopTimerInExternalThread()
   sleep(5 * SLEEP)
   --                   , 100, 120, 140, 160, 180
   assertEqual(10, counter)
-  counter = 0
   timer:stop()
 end
 
