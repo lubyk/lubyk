@@ -19,14 +19,10 @@ function zmq.Sub(filter, func)
     func   = filter
     filter = nil
   end
-  local instance = zmq.Socket(zmq.SUB, func)
+  local self = zmq.Socket(zmq.SUB, func)
   -- will not start until we sleep or unlock in another way
   -- so it is safe to setsockopt now
   
-  if filter then
-    instance:setsockopt(zmq.SUBSCRIBE, filter)
-  else
-    instance:setsockopt(zmq.SUBSCRIBE) -- filter none = get all
-  end
-  return instance
+  self:setopt(zmq.SUBSCRIBE, filter or '')
+  return self
 end

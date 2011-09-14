@@ -14,7 +14,7 @@ function zmq.SimpleRep(location, func)
     location = nil
   end
   return zmq.Rep(location, function(self)
-    while self:shouldRun() do
+    while self.thread do
       self:send(func(self:recv()))
     end
   end)

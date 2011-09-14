@@ -2686,6 +2686,107 @@ static int ZMQ_Socket__recv_msg__meth(lua_State *L) {
   return 2;
 }
 
+// [[lubyk
+typedef struct msgpack_sbuffer {
+  size_t size;
+  char* data;
+  size_t alloc;
+} msgpack_sbuffer;
+
+//void msgpack_lua_to_bin(lua_State *L, msgpack_sbuffer **buffer, int skip_index = 0);
+//int  msgpack_bin_to_lua(lua_State *L, void *msg, size_t msg_len);
+void free_msgpack_msg(void *data, void *buffer);
+/* method: recvMsg (returns 'nil' when there are no messages (NON-BLOCKING).
+ */
+static int ZMQ_Socket__recvMsg__meth(lua_State *L) {
+  ZMQ_Socket * this1 = obj_type_ZMQ_Socket_check(L,1);
+  zmq_msg_t msg;
+  zmq_msg_init(&msg);
+  if (zmq_recv(this1, &msg, ZMQ_NOBLOCK)) {
+    zmq_msg_close(&msg);
+    if (errno == EAGAIN) {
+      lua_pushnil(L);
+      return 1;
+    }
+    error_code__ZMQ_Error__push(L, -1);
+    lua_error(L);
+  }
+
+  int arg_size = msgpack_bin_to_lua(L, zmq_msg_data(&msg), zmq_msg_size(&msg));
+  zmq_msg_close(&msg);
+  return arg_size;
+}
+
+/* method: bindAny
+ * Bind to a random port.
+ * Should NOT be used while in a request() or recv().
+ */
+int ZMQ_Socket__bindAny__meth(lua_State *L) {
+  ZMQ_Socket * this1 = obj_type_ZMQ_Socket_check(L,1);
+  int top = lua_gettop(L);
+  int min_port = 2000;
+  if (top > 1) {
+    min_port = luaL_checkinteger(L,2);
+  }
+  int max_port = 20000;
+  if (top > 2) {
+    max_port = luaL_checkinteger(L,3);
+  }
+  int retries = 100;
+  if (top > 3) {
+    retries = luaL_checkinteger(L,4);
+  }
+  // do not use rand() --> not random in higher bits
+  srandom((unsigned)time(0));
+  static const int buf_size = 50;
+  char buffer[buf_size];
+  int i = 0;
+  for(i = 0; i < retries; ++i) {
+    int port = min_port + (max_port - min_port) * ((float)random()/RAND_MAX);
+    snprintf(buffer, buf_size, "tcp://*:%i", port);
+    if (!zmq_bind(this1, buffer)) {
+      // success
+      lua_pushnumber(L, port);
+      return 1;
+    } else if (errno != EADDRINUSE) {
+      error_code__ZMQ_Error__push(L, -1);
+      lua_error(L);
+    }
+  }
+  luaL_error(L, "Could not bind to any port in range '%i-%i' (%i retries).", min_port, max_port, retries);
+  return 0;
+}
+
+/* method: sendMsg
+   @return nil when the message cannot be sent (NON-BLOCKING) and
+   should be tried again when socket is write ready.
+ */
+static int ZMQ_Socket__sendMsg__meth(lua_State *L) {
+  ZMQ_Socket * this1 = obj_type_ZMQ_Socket_check(L,1);
+  msgpack_sbuffer *buffer;
+
+  msgpack_lua_to_bin(L, &buffer, 1);
+
+  zmq_msg_t msg;
+  zmq_msg_init_data(&msg, buffer->data, buffer->size, free_msgpack_msg, buffer);
+
+  if (zmq_send(this1, &msg, ZMQ_NOBLOCK)) {
+    zmq_msg_close(&msg);
+    if (errno == EAGAIN) {
+      // could not send, return the message data so that it does not need
+      // to be encoded again later: will have to be sent with send and not
+      // sendMsg.
+      lua_pushlstring(L, buffer->data, buffer->size);
+      return 1;
+    }
+    error_code__ZMQ_Error__push(L, -1);
+    lua_error(L);
+  }
+  // ok
+  return 0;
+}
+// lubyk]]
+
 /* method: recv */
 static int ZMQ_Socket__recv__meth(lua_State *L) {
   ZMQ_Socket * this1 = obj_type_ZMQ_Socket_check(L,1);
@@ -3126,6 +3227,11 @@ static const luaL_reg obj_ZMQ_Socket_methods[] = {
   {"send", ZMQ_Socket__send__meth},
   {"recv_msg", ZMQ_Socket__recv_msg__meth},
   {"recv", ZMQ_Socket__recv__meth},
+  // [[lubyk
+  {"recvMsg", ZMQ_Socket__recvMsg__meth},
+  {"sendMsg", ZMQ_Socket__sendMsg__meth},
+  {"bindAny", ZMQ_Socket__bindAny__meth},
+  // lubyk]]
   {NULL, NULL}
 };
 

@@ -14,10 +14,12 @@ require 'lubyk'
 local should = test.Suite('zmq.Pub/Sub')
 
 function should.publishAndSubscribe()
+  print("START")
   local sender   = zmq.Pub()
   local received = 0
   local receiver = zmq.Sub(function(server)
     while server:shouldRun() and server:recv() do
+      print'[3]'
       received = received + 1
     end
   end)
@@ -25,36 +27,40 @@ function should.publishAndSubscribe()
   receiver:connect(string.format("tcp://localhost:%i", sender:port()))
 
   while received < 10 do
+    print'[1]'
     sender:send("anything")
+    print'[2]'
     sleep(10)
   end
 
+  print'[1]'
   assertEqual(10, received)
   receiver:kill()
 end
 
-function should.shareRequestBetwenThreads(t)
-  local thread_count = 50
-  local up_count     = 30
+function should_shareRequestBetwenThreads(t)
+  local thread_count = 5
+  local up_count     = 3
 
   t.total = 0
 
-  t.sub = zmq.Sub(function(server)
+  local sub = zmq.Sub(function(server)
     while server:shouldRun() do
       t.total = t.total + server:recv()
+      print(t.total)
     end
   end)
 
   -- publisher
-  t.pub = zmq.Pub()
-  t.sub:connect(string.format("tcp://localhost:%i", t.pub:port()))
+  local pub = zmq.Pub()
+  sub:connect(string.format("tcp://localhost:%i", pub:port()))
 
   t.threads = {}
   for i=1,thread_count do
     t.threads[i] = lk.Thread(function()
       for j=1,up_count do
-        t.pub:send(1)
         sleep(10)
+        pub:send(1)
       end
     end)
     -- adds 5 * 30 => 150
@@ -62,9 +68,13 @@ function should.shareRequestBetwenThreads(t)
   for i=1,thread_count do
     t.threads[i]:join()
   end
+  print('sent all')
 
+  while t.total < up_count * thread_count do
+    sleep(10)
+  end
   assertEqual(up_count * thread_count, t.total)
-  t.sub:kill()
+  sub:kill()
 end
 
 function should.publishAndSubscribeMany(t)

@@ -16,9 +16,9 @@ require 'zmq'
 require 'zmq.Socket'
 
 function zmq.Req(location)
-  local instance = zmq.Socket(zmq.REQ)
+  local self = zmq.Socket(zmq.REQ)
   if location then
-    instance:connect(location)
+    self:connect(location)
   end
-  return instance
+  return self
 end

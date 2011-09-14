@@ -14,12 +14,12 @@ function zmq.Rep(location, func)
     func = location
     location = nil
   end
-  local instance = zmq.Socket(zmq.REP, func)
+  local self = zmq.Socket(zmq.REP, func)
   if location then
-    instance:bind(location)
+    self:bind(location)
   else
     -- choose a random port with "tcp://*"
-    instance:bind()
+    self:bind('tcp://*')
   end
-  return instance
+  return self
 end
