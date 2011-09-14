@@ -1,12 +1,10 @@
 --[[------------------------------------------------------
 
-  zmq
-  ---
+  msgpack
+  -------
 
-  ZeroMQ (0MQ) networking library bindings.
+  Bindings to pack/unpack messages by using Msgpack.
 
 --]]------------------------------------------------------
-zmq = Autoload('zmq')
--- fast pack/unpack directly in zmq
+msgpack = Autoload('msgpack')
 require 'msgpack.vendor'
-require 'zmq.vendor'
