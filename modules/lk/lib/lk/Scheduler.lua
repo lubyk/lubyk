@@ -108,6 +108,9 @@ function lib:run(func)
       local status, err = self.poller:poll(timeout)
       if not status then
         print("ERROR", err)
+        for k,v in pairs(self.fd_read) do
+          print(k,v)
+        end
         break
       end
     end
@@ -136,6 +139,21 @@ function lib:scheduleAt(at, thread)
     end
   end
 end
+
+function lib:removeFd(thread)
+  local fd = thread.fd
+  if fd then
+    self.poller:remove(fd)
+  end
+  if self.fd_read[fd] then
+    self.fd_count = self.fd_count - 1
+    self.fd_read[fd] = nil
+  elseif self.fd_write[fd] then
+    self.fd_count = self.fd_count - 1
+    self.fd_write[fd] = nil
+  end
+  thread.fd = nil
+end
 --=============================================== PRIVATE
 
 local zmq_POLLIN, zmq_POLLOUT = zmq.POLLIN, zmq.POLLOUT
@@ -146,7 +164,7 @@ function private:runThread(thread)
   if not t or not t.co then
     -- has been killed or gc
     if thread.fd then
-      private.removeFd(self, thread)
+      self:removeFd(thread)
       thread.fd = nil
     end
     -- let it repose in peace
@@ -166,7 +184,7 @@ function private:runThread(thread)
   if not ok then
     -- a = error
     if thread.fd then
-      private.removeFd(self, thread)
+      self:removeFd(thread)
     end
     print('ERROR', a, debug.traceback(t.co))
   elseif a == 'read' then
@@ -215,19 +233,19 @@ function private:runThread(thread)
     end
   elseif a == 'join' then
     if thread.fd then
-      private.removeFd(self, thread)
+      self:removeFd(thread)
     end
     b:addJoin(thread)
   elseif a == 'wait' then
     if thread.fd then
-      private.removeFd(self, thread)
+      self:removeFd(thread)
     end
     -- b = at
     -- a value of 0 == execute again as soon as possible
     self:scheduleAt(b, thread)
   elseif not t.co or coroutine.status(t.co) == 'dead' then
     if thread.fd then
-      private.removeFd(self, thread)
+      self:removeFd(thread)
     end
     -- let it repose in peace
 
@@ -236,7 +254,7 @@ function private:runThread(thread)
     t:finalize(self)
   else
     if thread.fd then
-      private.removeFd(self, thread)
+      self:removeFd(thread)
     end
     print('BAD YIELD:', a, b)
   end
@@ -250,17 +268,6 @@ function private:finalize()
   end
 end
 
-function private.removeFd(self, thread)
-  local fd = thread.fd
-  if self.fd_read[fd] then
-    self.fd_count = self.fd_count - 1
-    self.fd_read[fd] = nil
-  elseif self.fd_write[fd] then
-    self.fd_count = self.fd_count - 1
-    self.fd_write[fd] = nil
-  end
-  thread.fd = nil
-end
 --=============================================== Without mimas
 
 --=============================================== With mimas

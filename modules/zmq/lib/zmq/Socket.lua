@@ -20,13 +20,7 @@ setmetatable(lib, {
   local self = { 
     super = zmq.ctx:socket(type),
     loop  = func,
-    d = lk.Debug('zmq.Socket'),
   }
-  function self.d.callback()
-    if self.thread then
-      sched:removeFd(self.thread.wrap)
-    end
-  end
   setmetatable(self, lib)
   if self.loop then
     self:start()

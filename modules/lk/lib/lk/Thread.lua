@@ -18,6 +18,7 @@
 
 --]]------------------------------------------------------
 local lib   = {type = 'lk.Thread'}
+local sched = sched
 lib.__index = lib
 lk.Thread   = lib
 
@@ -54,6 +55,9 @@ end
 
 function lib:kill()
   self.should_run = false
+  if self.wrap.fd then
+    sched:removeFd(self.wrap)
+  end
   self.wrap.at = 0
   self.co = nil
 end

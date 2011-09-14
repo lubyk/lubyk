@@ -14,12 +14,10 @@ require 'lubyk'
 local should = test.Suite('zmq.Pub/Sub')
 
 function should.publishAndSubscribe()
-  print("START")
   local sender   = zmq.Pub()
   local received = 0
   local receiver = zmq.Sub(function(server)
     while server:shouldRun() and server:recv() do
-      print'[3]'
       received = received + 1
     end
   end)
@@ -27,18 +25,15 @@ function should.publishAndSubscribe()
   receiver:connect(string.format("tcp://localhost:%i", sender:port()))
 
   while received < 10 do
-    print'[1]'
     sender:send("anything")
-    print'[2]'
     sleep(10)
   end
 
-  print'[1]'
   assertEqual(10, received)
   receiver:kill()
 end
 
-function should_shareRequestBetwenThreads(t)
+function should.shareRequestBetwenThreads(t)
   local thread_count = 5
   local up_count     = 3
 
@@ -47,7 +42,6 @@ function should_shareRequestBetwenThreads(t)
   local sub = zmq.Sub(function(server)
     while server:shouldRun() do
       t.total = t.total + server:recv()
-      print(t.total)
     end
   end)
 
@@ -68,7 +62,6 @@ function should_shareRequestBetwenThreads(t)
   for i=1,thread_count do
     t.threads[i]:join()
   end
-  print('sent all')
 
   while t.total < up_count * thread_count do
     sleep(10)
