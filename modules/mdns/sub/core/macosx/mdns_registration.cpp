@@ -53,61 +53,24 @@ typedef	int	pid_t;
 
 namespace mdns {
 
-static void registration_cleanup(void *data) {
-  DNSServiceRef *service = (DNSServiceRef*)data;
-  DNSServiceRefDeallocate(*service);
-}
-
 // Note: the select() implementation on Windows (Winsock2)
 //       fails with any timeout much larger than this
 #define LONG_TIME 100000000
 
 class AbstractRegistration::Implementation : public Thread {
+  DNSServiceRef service_;
 public:
   Implementation(AbstractRegistration *master) : master_(master) {
-    startThread<Implementation, &Implementation::registration>(this, NULL);
+    getFiledescriptor();
   }
 
-  void registerService(DNSServiceRef service) {
-    // Run until break.
-    int dns_sd_fd = DNSServiceRefSockFD(service);
-    fd_set readfds;
-    struct timeval tv;
-    int result;
-
-    while (shouldRun()) {
-      FD_ZERO(&readfds);
-      FD_SET(dns_sd_fd, &readfds);
-      tv.tv_sec = LONG_TIME;
-      tv.tv_usec = 0;
-                      // highest fd in set + 1
-      result = select(dns_sd_fd+1, &readfds, (fd_set*)NULL, (fd_set*)NULL, &tv);
-      if (result > 0) {
-        DNSServiceErrorType err = kDNSServiceErr_NoError;
-        // Execute callback
-        if (FD_ISSET(dns_sd_fd, &readfds)) err = DNSServiceProcessResult(service);
-
-        if (err) {
-          // An error occured. Halt.
-          fprintf(stderr, "DNSServiceProcessResult returned %d\n", err);
-          quit();
-        }
-      }	else if (errno != EINTR) {
-        // Error.
-        fprintf(stderr, "mdns.Registration error (%d %s)\n", errno, strerror(errno));
-        if (errno != EINTR) quit();
-      }
-    }
+  ~Implementation() {
+    DNSServiceRefDeallocate(service_);
   }
 
-  void registration(Thread *thread) {
-    //  release calling thread semaphore
-    thread->threadReady();
-
+  void getFiledescriptor() {
     DNSServiceErrorType error;
-    DNSServiceRef service;
-
-    error = DNSServiceRegister(&service,
+    error = DNSServiceRegister(&service_,
       0,                    // no flags
       0,                    // all network interfaces
       master_->name_.c_str(),         // name
@@ -117,22 +80,31 @@ public:
       htons(master_->port_),// port number
       0,                    // length of TXT record
       NULL,                 // no TXT record
-      Implementation::registerCallback,  // callback function
+      Implementation::getServiceInfo,  // callback function
       (void*)master_);         // context
 
     if (error == kDNSServiceErr_NoError) {
-      pthread_cleanup_push(registration_cleanup, &service);
-        registerService(service);
-      pthread_cleanup_pop(0); // 0 = do not execute on pop
+      master_->fd_ = DNSServiceRefSockFD(service_);
     } else {
+      master_->fd_ = 0;
       fprintf(stderr,"Could not register service %s.%s on port %u (error %d)\n", master_->name_.c_str(), master_->service_type_.c_str(), master_->port_, error);//, strerror(errno));
     }
 
-    DNSServiceRefDeallocate(service);
   }
 
+  bool getService() {
+    DNSServiceErrorType err = DNSServiceProcessResult(service_);
+    if (err) {
+      // An error occured. Halt.
+      fprintf(stderr, "DNSServiceProcessResult returned %d\n", err);
+      return false;
+    }
+    return true;
+  }
+
+
   /** Callback called after registration. */
-  static void registerCallback(DNSServiceRef ref,
+  static void getServiceInfo(DNSServiceRef ref,
                                DNSServiceFlags flags,
                                DNSServiceErrorType error,
                                const char *name,
@@ -146,24 +118,22 @@ public:
       AbstractRegistration *reg = (AbstractRegistration*)context;
       reg->name_ = name;
       reg->host_ = host;
-      reg->registrationDone();
     }
   }
   AbstractRegistration *master_;
 };
 
 
-AbstractRegistration::AbstractRegistration(const char *service_type, const char *name, uint port) : name_(name), service_type_(service_type), port_(port) {
+AbstractRegistration::AbstractRegistration(const char *service_type, const char *name, uint port) : name_(name), service_type_(service_type), port_(port), fd_(0) {
   impl_ = new AbstractRegistration::Implementation(this);
 }
 
 AbstractRegistration::~AbstractRegistration() {
-  stop();
   delete impl_;
 }
 
-void AbstractRegistration::stop() {
-  impl_->kill();
+bool AbstractRegistration::getService() {
+  return impl_->getService();
 }
 
 } // mdns

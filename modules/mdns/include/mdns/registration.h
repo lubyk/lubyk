@@ -51,40 +51,37 @@ public:
   }
 
   ~Registration() {
-    stop();
   }
 
-protected:
-  virtual void registrationDone() {
-    lua_State *L = lua_;
-    ScopedLock lock(worker_);
+  int fd() {
+    return fd_;
+  }
 
-    // do not push self
-    if (!pushLuaCallback("registrationDone")) {
-      return;
+  /** Get a table describing the service.
+   */
+  LuaStackSize getService(lua_State *L) {
+    if (!AbstractRegistration::getService()) {
+      // ??? Something went wrong, we should return nil, error ?
+      return 0;
     }
-
     // create table {name = 'x', host = '10.0.0.34', port = 7500}
     lua_newtable(L);
-    // name = 'xxxxx'
+    // name = 'xxxx'
     lua_pushstring(L, "name");
     lua_pushstring(L, name_.c_str());
     lua_settable(L, -3);
-    // host = 'xxxx'
+    // host = 'gaspard.local' / '10.3.4.5'
     lua_pushstring(L, "host");
     lua_pushstring(L, host_.c_str());
     lua_settable(L, -3);
-    // port = 7500
+    // port = 7890
     lua_pushstring(L, "port");
     lua_pushnumber(L, port_);
     lua_settable(L, -3);
-    // ... <fun> <self> <table>
-    int status = lua_pcall(L, 2, 0, 0);
-
-    if (status) {
-      printf("Error in 'registrationDone': %s\n", lua_tostring(L, -1));
-    }
+    // <table>
+    return 1;
   }
+
 };
 } // mdns
 

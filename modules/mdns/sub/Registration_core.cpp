@@ -3,6 +3,9 @@
 #include "lua_cpp_helper.h"
 
 
+
+
+
 using namespace mdns;
 
 
@@ -20,9 +23,9 @@ static int Registration_Registration(lua_State *L) {
     // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
     return retval__->luaInit(L, retval__, "mdns.Registration");
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mdns.Registration.Registration: %s", e.what());
+    lua_pushfstring(L, "Registration: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mdns.Registration.Registration: Unknown exception");
+    lua_pushfstring(L, "Registration: Unknown exception");
   }
   return lua_error(L);
 }
@@ -57,11 +60,51 @@ static int Registration__tostring(lua_State *L) {
 /* ============================ Member Methods   ====================== */
 
 
+/** int mdns::Registration::fd()
+ * include/mdns/registration.h:56
+ */
+static int Registration_fd(lua_State *L) {
+  try {
+    Registration *self = *((Registration**)dubL_checksdata(L, 1, "mdns.Registration"));
+    int  retval__ = self->fd();
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "fd: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "fd: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** LuaStackSize mdns::Registration::getService(lua_State *L)
+ * include/mdns/registration.h:62
+ */
+static int Registration_getService(lua_State *L) {
+  try {
+    Registration *self = *((Registration**)dubL_checksdata(L, 1, "mdns.Registration"));
+    
+    LuaStackSize  retval__ = self->getService(L);
+    return retval__;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "getService: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "getService: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
 
 
 /* ============================ Lua Registration ====================== */
 
 static const struct luaL_Reg Registration_member_methods[] = {
+  {"fd"                , Registration_fd},
+  {"getService"        , Registration_getService},
   {"__tostring"        , Registration__tostring},
   {"__gc"              , Registration_destructor},
   {NULL, NULL},

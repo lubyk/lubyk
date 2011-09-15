@@ -3,6 +3,9 @@
 #include "lua_cpp_helper.h"
 
 
+
+
+
 using namespace mdns;
 
 
@@ -18,9 +21,9 @@ static int Browser_Browser(lua_State *L) {
     // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
     return retval__->luaInit(L, retval__, "mdns.Browser");
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mdns.Browser.Browser: %s", e.what());
+    lua_pushfstring(L, "Browser: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mdns.Browser.Browser: Unknown exception");
+    lua_pushfstring(L, "Browser: Unknown exception");
   }
   return lua_error(L);
 }
@@ -60,14 +63,14 @@ static int Browser__tostring(lua_State *L) {
  */
 static int Browser_serviceType(lua_State *L) {
   try {
-    Browser *self__ = *((Browser**)dubL_checksdata(L, 1, "mdns.Browser"));
-    const char * retval__ = self__->serviceType();
+    Browser *self = *((Browser**)dubL_checksdata(L, 1, "mdns.Browser"));
+    const char * retval__ = self->serviceType();
     lua_pushstring(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mdns.Browser.serviceType: %s", e.what());
+    lua_pushfstring(L, "serviceType: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mdns.Browser.serviceType: Unknown exception");
+    lua_pushfstring(L, "serviceType: Unknown exception");
   }
   return lua_error(L);
 }

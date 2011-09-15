@@ -47,22 +47,18 @@ class AbstractRegistration : public Mutex {
 
   virtual ~AbstractRegistration();
 
-  virtual void registrationDone() = 0;
-
   const char *name() {
     return name_.c_str();
   }
+
  protected:
-  /** This method *must* be called from sub-classes in their destructors to
-   * make sure the callback (registration_done) is not called in the middle of
-	 * a class destruction.
-	 */
-  virtual void stop();
+  bool getService();
 
   std::string name_;
   std::string host_;
   std::string service_type_;
   uint16_t    port_;
+  int fd_;
 
  private:
   class Implementation;
