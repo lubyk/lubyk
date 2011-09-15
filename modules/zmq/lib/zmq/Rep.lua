@@ -19,7 +19,7 @@ function zmq.Rep(location, func)
     self:bind(location)
   else
     -- choose a random port with "tcp://*"
-    self:bind('tcp://*')
+    self:bind()
   end
   return self
 end

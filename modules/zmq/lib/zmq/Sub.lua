@@ -23,6 +23,6 @@ function zmq.Sub(filter, func)
   -- will not start until we sleep or unlock in another way
   -- so it is safe to setsockopt now
   
-  self:setopt(zmq.SUBSCRIBE, filter or '')
+  self:setsockopt(zmq.SUBSCRIBE, filter)
   return self
 end

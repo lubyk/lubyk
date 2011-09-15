@@ -44,22 +44,25 @@ setmetatable(lib, {
     end
   end
 
-  if self.find_more then
-    self.process_watch = lk.ProcessWatch():addDelegate(self)
-    while(self.find_more) do
-      self.find_more = nil
-      if self.abort then
-        break
-      else
-        sleep(1000) -- let the processes resolve
+  self.thread = lk.Thread(function()
+    if self.find_more then
+      self.process_watch = lk.ProcessWatch():addDelegate(self)
+      while(self.find_more) do
+        self.find_more = nil
+        if self.abort then
+          break
+        else
+          sleep(1000) -- let the processes resolve
+        end
       end
     end
-  end
 
-  if self.on_load then
-    self:call(unpack(self.on_load))
-    self.on_load = nil
-  end
+    if self.on_load then
+      self:call(unpack(self.on_load))
+      self.on_load = nil
+    end
+    self.thread = nil
+  end)
 
   return self
 end})

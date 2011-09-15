@@ -20,14 +20,15 @@ setmetatable(lib, {
       at_next    = nil,
       -- List of threads that have added their filedescriptors to
       -- select.
-      fd_count   = 0,
-      fd_read    = {},
-      fd_write   = {},
+      fd_count      = 0,
+      fd_read       = {},
+      fd_write      = {},
+      idx_to_thread = {},
       -- These are plain lua functions that will be called when
       -- quitting.
       finalizers = {},
       -- Using zmq for polling
-      poller = zmq.poller.new(3),
+      poller = zmq.Poller(),
     }
     return setmetatable(self, lib)
   end
@@ -64,6 +65,8 @@ function lib:waitWrite(fd)
 end
 
 function lib:run(func)
+  local poller = self.poller
+  local idx_to_thread = self.idx_to_thread
   if func then
     self.main = lk.Thread(func)
   end
@@ -95,9 +98,7 @@ function lib:run(func)
         timeout = 0
       else
         -- timeout
-        -- our timeout is in ms
-        -- zmq is in us ==> 1000*
-        timeout = 1000 * (next_thread.at - now)
+        timeout = next_thread.at - now
       end
     end
       
@@ -105,14 +106,17 @@ function lib:run(func)
       -- done
       break
     else
-      local status, err = self.poller:poll(timeout)
-      if not status then
-        print("ERROR", err)
-        for k,v in pairs(self.fd_read) do
-          print(k,v)
+      poller:poll(timeout)
+      while true do
+        local ev_idx = poller:event()
+        if ev_idx then
+          local thread = idx_to_thread[ev_idx]
+          private.runThread(self, thread)
+        else
+          break
         end
-        break
       end
+
     end
   end
   private.finalize(self)
@@ -142,8 +146,9 @@ end
 
 function lib:removeFd(thread)
   local fd = thread.fd
+  self.idx_to_thread[thread.idx] = nil
   if fd then
-    self.poller:remove(fd)
+    self.poller:removeItem(thread.idx)
   end
   if self.fd_read[fd] then
     self.fd_count = self.fd_count - 1
@@ -152,7 +157,8 @@ function lib:removeFd(thread)
     self.fd_count = self.fd_count - 1
     self.fd_write[fd] = nil
   end
-  thread.fd = nil
+  thread.idx = nil
+  thread.fd  = nil
 end
 --=============================================== PRIVATE
 
@@ -196,7 +202,7 @@ function private:runThread(thread)
         -- update
         self.fd_read[b]  = thread
         self.fd_write[b] = nil
-        self.poller:modify(b, zmq_POLLIN, t.cb)
+        self.poller:modifyItem(thread.idx, zmq_POLLIN)
       end
     else
       -- add fd
@@ -204,10 +210,8 @@ function private:runThread(thread)
       self.fd_read[b]  = thread
       self.fd_count    = self.fd_count + 1
       thread.events = zmq_POLLIN
-      function t.cb()
-        private.runThread(self, thread)
-      end
-      self.poller:add(b, thread.events, t.cb)
+      thread.idx = self.poller:add(b, thread.events)
+      self.idx_to_thread[thread.idx] = thread
     end
   elseif a == 'write' then
     if thread.fd then
@@ -218,7 +222,7 @@ function private:runThread(thread)
         -- update
         self.fd_read[b]  = nil
         self.fd_write[b] = thread
-        self.poller:modify(b, zmq_POLLOUT, t.cb)
+        self.poller:modifyItem(thread.idx, zmq_POLLOUT)
       end
     else
       -- add fd
@@ -226,10 +230,8 @@ function private:runThread(thread)
       self.fd_write[b] = thread
       self.fd_count    = self.fd_count + 1
       thread.events = zmq_POLLOUT
-      function thread.cb()
-        private.runThread(self, thread)
-      end
-      self.poller:add(b, thread.events, t.cb)
+      thread.idx = self.poller:add(b, thread.events)
+      self.idx_to_thread[thread.idx] = thread
     end
   elseif a == 'join' then
     if thread.fd then

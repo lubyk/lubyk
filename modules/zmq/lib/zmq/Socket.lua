@@ -9,24 +9,24 @@
   if you need to.
 
 --]]------------------------------------------------------
-require 'zmq'
-local lib = {type = 'zmq.Socket'}
-local sched = sched
-lib.__index = lib
-zmq.Socket  = lib
+require 'zmq.Socket_core'
+local constr = zmq.Socket
+local lib  = lk.SubClass(zmq, 'Socket')
+local worker = worker
+zmq.Socket = lib
 
-setmetatable(lib, {
-  __call = function(lib, type, func)
-  local self = { 
-    super = zmq.ctx:socket(type),
-    loop  = func,
-  }
+lib.type = 'zmq.Socket'
+
+function lib.new(type, func)
+  local self = constr(type, worker)
+  self.fd = self:rawSock()
+  self.loop = func
   setmetatable(self, lib)
   if self.loop then
     self:start()
   end
   return self
-end})
+end
 
 function lib:shouldRun()
   -- FIXME: remove and simply check self.thread
@@ -64,11 +64,11 @@ end
 
 function lib:send(...)
   local super = self.super
-  local msg = super:sendMsg(...)
+  local msg = super:send(...)
   if msg then
     -- could not send
     sched:waitWrite(super)
-    super:send(msg)
+    super:rawSend(msg)
   end
 end
 
@@ -77,35 +77,7 @@ function lib:request(...)
   return self:recv()
 end
 
-function lib:connect(...)
-  self.super:connect(...)
-end
-
-function lib:bind(location)
-  if not location then
-    self.port_ = self.super:bindAny()
-  else
-    self.super:bind(location)
-    -- how do we get host/port ?
-  end
-  return self.port_
-end
-
-function lib:port()
-  return self.port_
-end
-
-function lib:setopt(...)
-  self.super:setopt(...)
-end
-
 function lib:recv()
-  local super = self.super
-  local msg = {super:recvMsg()}
-  if msg[1] == nil then
-    sched:waitRead(super)
-    return super:recvMsg()
-  else
-    return unpack(msg)
-  end
+  sched:waitRead(self.super)
+  return self.super:recv()
 end

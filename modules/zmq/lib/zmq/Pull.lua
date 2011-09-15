@@ -16,10 +16,10 @@ function zmq.Pull(location, func)
   end
   local self = zmq.Socket(zmq.PULL, func)
   if location then
-    self.super:connect(location)
+    self:connect(location)
   else
     -- choose a random port with "tcp://*"
-    self.super:bind('tcp://*')
+    self:bind()
   end
   return self
 end

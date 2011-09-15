@@ -54,7 +54,7 @@ modules = {
     'const' => true,
   },
   'zmq'   => {
-    'class' => %w{Socket},
+    'class' => %w{Poller Socket},
     'const' => true,
   },
   'wii'   => %w{Browser Remote},

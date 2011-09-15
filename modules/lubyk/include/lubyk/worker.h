@@ -74,6 +74,15 @@ public:
   /** Stores the maximum value of all fd sets.
    */
   int max_fd_;
+
+  /** Context use by zmq::Socket.
+   */
+  void *zmq_context_;
+   
+  /** Counts the number of zmq::Socket depending on the
+   * socket.
+   */
+  size_t zmq_context_refcount_;
 public:
 
   Worker();

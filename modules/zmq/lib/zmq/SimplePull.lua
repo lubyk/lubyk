@@ -15,7 +15,7 @@ function zmq.SimplePull(location, func)
   end
   return zmq.Pull(location, function(self)
     while self.thread do
-      func(self.super:recv())
+      func(self:recv())
     end
   end)
 end
