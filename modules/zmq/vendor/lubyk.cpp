@@ -27,6 +27,7 @@
   ==============================================================================
 */
 #include "lubyk.h"
+#include "zmq/Poller.h"
 
 /////////////  This is a dummy Lua module just to load zmq lib //
 
@@ -35,8 +36,13 @@ static const struct luaL_Reg lib_functions[] = {
   {NULL, NULL},
 };
 
+pthread_key_t zmq::Poller::sThisKey = NULL;
+
 extern "C" int luaopen_zmq_vendor(lua_State *L) {
-  // register functions
+  // create a key to find 'lua_State' in current thread (used to handle
+  // interrupts in Poller::poll.
+  if (!zmq::Poller::sThisKey) pthread_key_create(&zmq::Poller::sThisKey, NULL);
+
   luaL_register(L, "zmq", lib_functions);
   return 0;
 }

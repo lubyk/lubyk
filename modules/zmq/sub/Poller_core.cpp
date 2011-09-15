@@ -12,7 +12,7 @@ using namespace zmq;
 /* ============================ Constructors     ====================== */
 
 /** zmq::Poller::Poller(int reserve=8)
- * include/zmq/Poller.h:97
+ * include/zmq/Poller.h:103
  */
 static int Poller_Poller(lua_State *L) {
   try {
@@ -66,7 +66,7 @@ static int Poller__tostring(lua_State *L) {
 
 
 /** int zmq::Poller::add(int fd, int events)
- * include/zmq/Poller.h:170
+ * include/zmq/Poller.h:183
  */
 static int Poller_add1(lua_State *L) {
   try {
@@ -87,7 +87,7 @@ static int Poller_add1(lua_State *L) {
 
 
 /** int zmq::Poller::add(zmq::Socket *sock, int events)
- * include/zmq/Poller.h:174
+ * include/zmq/Poller.h:187
  */
 static int Poller_add2(lua_State *L) {
   try {
@@ -123,7 +123,7 @@ static int Poller_add(lua_State *L) {
 
 
 /** int zmq::Poller::count()
- * include/zmq/Poller.h:242
+ * include/zmq/Poller.h:255
  */
 static int Poller_count(lua_State *L) {
   try {
@@ -142,7 +142,7 @@ static int Poller_count(lua_State *L) {
 
 
 /** LuaStackSize zmq::Poller::event(lua_State *L)
- * include/zmq/Poller.h:155
+ * include/zmq/Poller.h:168
  */
 static int Poller_event(lua_State *L) {
   try {
@@ -162,7 +162,7 @@ static int Poller_event(lua_State *L) {
 
 
 /** void zmq::Poller::modify(int fd, int events)
- * include/zmq/Poller.h:178
+ * include/zmq/Poller.h:191
  */
 static int Poller_modify1(lua_State *L) {
   try {
@@ -182,7 +182,7 @@ static int Poller_modify1(lua_State *L) {
 
 
 /** void zmq::Poller::modify(zmq::Socket *sock, int events)
- * include/zmq/Poller.h:187
+ * include/zmq/Poller.h:200
  */
 static int Poller_modify2(lua_State *L) {
   try {
@@ -217,7 +217,7 @@ static int Poller_modify(lua_State *L) {
 
 
 /** void zmq::Poller::modifyItem(size_t idx, int events)
- * include/zmq/Poller.h:199
+ * include/zmq/Poller.h:212
  */
 static int Poller_modifyItem(lua_State *L) {
   try {
@@ -236,15 +236,15 @@ static int Poller_modifyItem(lua_State *L) {
 
 
 
-/** int zmq::Poller::poll(float timeout)
- * include/zmq/Poller.h:129
+/** bool zmq::Poller::poll(float timeout)
+ * include/zmq/Poller.h:137
  */
 static int Poller_poll(lua_State *L) {
   try {
     Poller *self = *((Poller**)dubL_checksdata(L, 1, "zmq.Poller"));
     float timeout = dubL_checknumber(L, 2);
-    int  retval__ = self->poll(timeout);
-    lua_pushnumber(L, retval__);
+    bool  retval__ = self->poll(timeout);
+    lua_pushboolean(L, retval__);
     return 1;
   } catch (std::exception &e) {
     lua_pushfstring(L, "poll: %s", e.what());
@@ -258,7 +258,7 @@ static int Poller_poll(lua_State *L) {
 
 
 /** void zmq::Poller::remove(int fd, int flags)
- * include/zmq/Poller.h:206
+ * include/zmq/Poller.h:219
  */
 static int Poller_remove1(lua_State *L) {
   try {
@@ -278,7 +278,7 @@ static int Poller_remove1(lua_State *L) {
 
 
 /** void zmq::Poller::remove(zmq::Socket *sock, int flags)
- * include/zmq/Poller.h:215
+ * include/zmq/Poller.h:228
  */
 static int Poller_remove2(lua_State *L) {
   try {
@@ -313,7 +313,7 @@ static int Poller_remove(lua_State *L) {
 
 
 /** void zmq::Poller::removeItem(size_t idx)
- * include/zmq/Poller.h:226
+ * include/zmq/Poller.h:239
  */
 static int Poller_removeItem(lua_State *L) {
   try {

@@ -11,11 +11,6 @@
 require 'lubyk.Worker'
 worker   = lubyk.Worker()
 local mt = lubyk.Worker_
-mt.fdSet = {
-  read = mt.fdReadSet,
-  write= mt.fdWriteSet,
-  error= mt.fdErrorSet,
-}
 
 function lubyk.Worker()
   error('Already one worker created (lives as \'worker\' in global namespace).')
@@ -43,3 +38,4 @@ function mt:spawn(code, args)
   local args = string.format("yaml.load [%s[\n%s\n]%s]", sep, dump, sep)
   return spawn(self, string.format(code, args))
 end
+

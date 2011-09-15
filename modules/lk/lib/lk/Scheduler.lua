@@ -26,9 +26,9 @@ setmetatable(lib, {
       idx_to_thread = {},
       -- These are plain lua functions that will be called when
       -- quitting.
-      finalizers = {},
+      finalizers    = {},
       -- Using zmq for polling
-      poller = zmq.Poller(),
+      poller        = zmq.Poller(),
     }
     return setmetatable(self, lib)
   end
@@ -106,7 +106,11 @@ function lib:run(func)
       -- done
       break
     else
-      poller:poll(timeout)
+      if not poller:poll(timeout) then
+        -- interrupted
+        print("\nBye...")
+        break
+      end
       while true do
         local ev_idx = poller:event()
         if ev_idx then
@@ -160,6 +164,7 @@ function lib:removeFd(thread)
   thread.idx = nil
   thread.fd  = nil
 end
+
 --=============================================== PRIVATE
 
 local zmq_POLLIN, zmq_POLLOUT = zmq.POLLIN, zmq.POLLOUT

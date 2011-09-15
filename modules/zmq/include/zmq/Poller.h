@@ -84,6 +84,11 @@ class Poller {
   /** Time reference for precise timing.
    */
   TimeRef time_;
+
+  /** We set this to true when we receive a SIGINT. This enables
+   * poll to return false.
+   */
+  bool interrupted_;
 public:
   /** Create a zmq poller and reserve free slots.
    */
@@ -94,7 +99,8 @@ public:
         pos_to_idx_(NULL),
         used_count_(0),
         event_count_(0),
-        event_pos_(0) {
+        event_pos_(0),
+        interrupted_(false) {
     if (reserve < 0) reserve = 10;
     pollitems_ = (zmq_pollitem_t*)calloc(reserve, sizeof(zmq_pollitem_t));
     if (pollitems_ == NULL) {
@@ -111,6 +117,8 @@ public:
       throw Exception("Could not pre-allocate %i pollitems", reserve);
     }
     pollitems_size_ = reserve;
+
+    setupInterruptHook();
   }
 
   ~Poller() {
@@ -123,10 +131,11 @@ public:
 
   /** Polls for new events and ensures that if we timeout, this is done
    * as precisely as possible (pads with nanosleep).
-   * @return number of events.
+   * @return true on success, false on interruption.
    * @param timeout in milliseconds.
    */
-  int poll(float timeout) {
+  bool poll(float timeout) {
+    interrupted_ = false;
     if (timeout > 0) {
       double start = time_.elapsed();
       long t = timeout > 2 ? timeout - 2 : timeout;
@@ -147,7 +156,11 @@ public:
       event_count_ = zmq_poll(pollitems_, used_count_, timeout);
     }
     event_pos_ = 0;
-    return event_count_;
+    if (interrupted_) {
+      return false;
+    } else {
+      return true;
+    }
   }
 
   /** Return the next event's idx or nil.
@@ -243,6 +256,7 @@ public:
     return used_count_;
   }
 
+  static pthread_key_t sThisKey;
 private:
   int addItem(int fd, void *socket, int events) {
     if (used_count_ >= pollitems_size_) {
@@ -281,6 +295,18 @@ private:
     return pos;
   }
 
+  static void sInterrupted(int i) {
+    signal(i, SIG_DFL); // double interrupt == kill
+    Poller *p = (Poller*)pthread_getspecific(sThisKey);
+    p->interrupted_ = true;
+    // continue
+  }
+
+  void setupInterruptHook() {
+    pthread_setspecific(sThisKey, (void*)this);
+    //
+    signal(SIGINT, sInterrupted);
+  }
 };
 } // zmq
 
