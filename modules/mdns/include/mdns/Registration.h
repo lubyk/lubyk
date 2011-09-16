@@ -29,7 +29,7 @@
 #ifndef LUBYK_INCLUDE_MDNS_REGISTRATION_H_
 #define LUBYK_INCLUDE_MDNS_REGISTRATION_H_
 
-#include "mdns/abstract_registration.h"
+#include "mdns/AbstractRegistration.h"
 
 #include "lubyk.h"
 using namespace lubyk;
@@ -61,7 +61,7 @@ public:
    */
   LuaStackSize getService(lua_State *L) {
     if (!AbstractRegistration::getService()) {
-      // ??? Something went wrong, we should return nil, error ?
+      // TODO: Something went wrong, we should return nil, error ?
       return 0;
     }
     // create table {name = 'x', host = '10.0.0.34', port = 7500}

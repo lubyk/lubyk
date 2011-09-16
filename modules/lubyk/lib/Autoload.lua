@@ -6,9 +6,8 @@ setmetatable(lib, {
   -- new method
  __call = function(lib, prefix)
   assert(prefix, 'Autoload needs a name')
-  local instance = {prefix = prefix}
-  setmetatable(instance, lib)
-  return instance
+  local self = {prefix = prefix}
+  return setmetatable(self, lib)
 end})
 
 

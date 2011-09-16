@@ -20,11 +20,11 @@ end
 --- We should provide a socket to inform when registration is over (callback).
 -- This socket could be the default zmq.REQ socket used to by lk.Service ?
 function mdns.Registration(service_type, name, port, func)
+  func = func or dummy
   local self = constr(service_type, name, port)
   self.thread = lk.Thread(function()
     while true do
       sched:waitRead(self:fd())
-      -- This calls DNSServiceProcessResult
       func(self:getService())
     end
   end)

@@ -12,7 +12,7 @@ using namespace mdns;
 /* ============================ Constructors     ====================== */
 
 /** mdns::Registration::Registration(const char *service_type, const char *name, uint port)
- * include/mdns/registration.h:50
+ * include/mdns/Registration.h:50
  */
 static int Registration_Registration(lua_State *L) {
   try {
@@ -20,7 +20,7 @@ static int Registration_Registration(lua_State *L) {
     const char *name = dubL_checkstring(L, 2);
     uint port = dubL_checkint(L, 3);
     Registration * retval__ = new Registration(service_type, name, port);
-    // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
+    // The class inherits from 'LuaObject', use luaInit instead of lua_pushclass.
     return retval__->luaInit(L, retval__, "mdns.Registration");
   } catch (std::exception &e) {
     lua_pushfstring(L, "Registration: %s", e.what());
@@ -38,7 +38,7 @@ static int Registration_destructor(lua_State *L) {
   Registration **userdata = (Registration**)dubL_checksdata_n(L, 1, "mdns.Registration");
 
   
-  if (*userdata) delete *userdata;
+  if (*userdata) (*userdata)->luaDestroy();
   
   *userdata = NULL;
   return 0;
@@ -61,7 +61,7 @@ static int Registration__tostring(lua_State *L) {
 
 
 /** int mdns::Registration::fd()
- * include/mdns/registration.h:56
+ * include/mdns/Registration.h:56
  */
 static int Registration_fd(lua_State *L) {
   try {
@@ -80,7 +80,7 @@ static int Registration_fd(lua_State *L) {
 
 
 /** LuaStackSize mdns::Registration::getService(lua_State *L)
- * include/mdns/registration.h:62
+ * include/mdns/Registration.h:62
  */
 static int Registration_getService(lua_State *L) {
   try {

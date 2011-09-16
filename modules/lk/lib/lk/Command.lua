@@ -134,6 +134,8 @@ function lib:specialCommand(cmd, ...)
     test.loadAll(...)
     all()
     return nil
+  elseif cmd == '--debug' then
+    remdebug.controller()
   elseif cmd == '--testInstall' then
     app = mimas.Application()
     dlg = editor.SimpleDialog {

@@ -48,7 +48,7 @@ typedef	int	pid_t;
 #include <dns_sd.h>     // zeroconf
 
 #include "lubyk/thread.h"
-#include "mdns/abstract_registration.h"
+#include "mdns/AbstractRegistration.h"
 
 
 namespace mdns {
@@ -80,8 +80,8 @@ public:
       htons(master_->port_),// port number
       0,                    // length of TXT record
       NULL,                 // no TXT record
-      Implementation::getServiceInfo,  // callback function
-      (void*)master_);         // context
+      sGetServiceInfo,      // callback function
+      (void*)master_);      // context
 
     if (error == kDNSServiceErr_NoError) {
       master_->fd_ = DNSServiceRefSockFD(service_);
@@ -104,7 +104,7 @@ public:
 
 
   /** Callback called after registration. */
-  static void getServiceInfo(DNSServiceRef ref,
+  static void sGetServiceInfo(DNSServiceRef ref,
                                DNSServiceFlags flags,
                                DNSServiceErrorType error,
                                const char *name,

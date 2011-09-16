@@ -12,13 +12,13 @@ using namespace mdns;
 /* ============================ Constructors     ====================== */
 
 /** mdns::Browser::Browser(const char *service_type)
- * include/mdns/browser.h:50
+ * include/mdns/Browser.h:50
  */
 static int Browser_Browser(lua_State *L) {
   try {
     const char *service_type = dubL_checkstring(L, 1);
     Browser * retval__ = new Browser(service_type);
-    // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
+    // The class inherits from 'LuaObject', use luaInit instead of lua_pushclass.
     return retval__->luaInit(L, retval__, "mdns.Browser");
   } catch (std::exception &e) {
     lua_pushfstring(L, "Browser: %s", e.what());
@@ -36,7 +36,7 @@ static int Browser_destructor(lua_State *L) {
   Browser **userdata = (Browser**)dubL_checksdata_n(L, 1, "mdns.Browser");
 
   
-  if (*userdata) delete *userdata;
+  if (*userdata) (*userdata)->luaDestroy();
   
   *userdata = NULL;
   return 0;
@@ -58,8 +58,46 @@ static int Browser__tostring(lua_State *L) {
 /* ============================ Member Methods   ====================== */
 
 
+/** int mdns::Browser::fd()
+ * include/mdns/Browser.h:60
+ */
+static int Browser_fd(lua_State *L) {
+  try {
+    Browser *self = *((Browser**)dubL_checksdata(L, 1, "mdns.Browser"));
+    int  retval__ = self->fd();
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "fd: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "fd: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** LuaStackSize mdns::Browser::getService(lua_State *L)
+ * include/mdns/Browser.h:64
+ */
+static int Browser_getService(lua_State *L) {
+  try {
+    Browser *self = *((Browser**)dubL_checksdata(L, 1, "mdns.Browser"));
+    
+    LuaStackSize  retval__ = self->getService(L);
+    return retval__;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "getService: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "getService: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
 /** const char* mdns::Browser::serviceType()
- * include/mdns/browser.h:62
+ * include/mdns/Browser.h:54
  */
 static int Browser_serviceType(lua_State *L) {
   try {
@@ -82,6 +120,8 @@ static int Browser_serviceType(lua_State *L) {
 /* ============================ Lua Registration ====================== */
 
 static const struct luaL_Reg Browser_member_methods[] = {
+  {"fd"                , Browser_fd},
+  {"getService"        , Browser_getService},
   {"serviceType"       , Browser_serviceType},
   {"__tostring"        , Browser__tostring},
   {"__gc"              , Browser_destructor},

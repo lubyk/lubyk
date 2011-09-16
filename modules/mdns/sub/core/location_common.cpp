@@ -34,10 +34,6 @@
 
 #include <sstream>
 
-#include "mdns/abstract_browser.h"
-
-
-
 namespace mdns {
 
 std::ostream &operator<<(std::ostream &out_stream, const Location &location) {

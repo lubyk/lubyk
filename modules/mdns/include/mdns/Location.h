@@ -38,7 +38,6 @@ typedef unsigned int uint;
 namespace mdns {
 
 #define DEFAULT_PROTOCOL "lubyk"
-typedef int LuaStackSize;
 
 class ZeroConfBrowser;
 
@@ -66,35 +65,39 @@ public:
            const char *hostname,
            uint port = NO_PORT,
            uint interface = DEFAULT_INTERFACE)
-           : protocol_(protocol),
-             name_(service_name),
-             host_(hostname),
-             ip_(ip_from_hostname(hostname)),
-             port_(port),
-             interface_(interface) {}
+      : protocol_(protocol),
+        name_(service_name),
+        host_(hostname),
+        ip_(ip_from_hostname(hostname)),
+        port_(port),
+        interface_(interface) {}
 
   Location(const char *protocol,
            const char *hostname,
            uint port)
-           : protocol_(protocol),
-             host_(hostname),
-             ip_(ip_from_hostname(hostname)),
-             port_(port) {}
+      : protocol_(protocol),
+        host_(hostname),
+        ip_(ip_from_hostname(hostname)),
+        port_(port) {}
 
   Location(const char *protocol,
            unsigned long ip,
            uint port)
-           : protocol_(protocol),
-             host_(name_from_ip(ip_)),
-             ip_(ip),
-             port_(port) {}
+      : protocol_(protocol),
+        host_(name_from_ip(ip_)),
+        ip_(ip),
+        port_(port) {}
 
   Location(const char *protocol,
            const char *service_name)
-           : protocol_(protocol),
-             name_(service_name),
-             ip_(NO_IP),
-             port_(NO_PORT) {}
+      : protocol_(protocol),
+        name_(service_name),
+        ip_(NO_IP),
+        port_(NO_PORT) {}
+
+  Location()
+      : ip_(NO_IP),
+        port_(NO_PORT) {}
 
   void clear() {
     protocol_ = "";

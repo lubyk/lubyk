@@ -27,7 +27,7 @@
   ==============================================================================
 */
 
-#include "mdns/location.h"
+#include "mdns/Location.h"
 
 #include "lubyk/lua.h"
 

@@ -27,7 +27,7 @@
   ==============================================================================
 */
 
-#include "mdns/browser.h"
+#include "mdns/AbstractBrowser.h"
 #include "lubyk/thread.h"
 
 #include <iostream>
@@ -51,6 +51,8 @@ typedef	int	pid_t;
 
 #include <dns_sd.h>     // zeroconf
 
+using namespace lubyk;
+
 namespace mdns {
 
 // Note: the select() implementation on Windows (Winsock2)
@@ -59,117 +61,62 @@ namespace mdns {
 
 struct BrowsedDevice {
   BrowsedDevice(AbstractBrowser *browser, const char *name, const char *host, DNSServiceFlags flags) :
-                name_(name), host_(host), browser_(browser), flags_(flags) {}
+                name_(name), host_(host), master_(browser), flags_(flags) {}
   std::string name_;
   std::string host_;
-  AbstractBrowser *browser_;
+  AbstractBrowser *master_;
   DNSServiceFlags flags_;
 };
 
 class AbstractBrowser::Implementation : public Thread {
+  DNSServiceRef service_;
 public:
   Implementation(AbstractBrowser *master)
-      : browser_(master) {}
-
-  void start() {
-    if (!browser_->running_) {
-      browser_->running_ = true;
-      startThread<Implementation, &Implementation::browse>(this, NULL);
-    }
+      : master_(master) {
+    getFiledescriptor();
   }
 
-  void browse(Thread *thread) {
-    //  release calling thread semaphore
-    threadReady();
+  ~Implementation() {
+    DNSServiceRefDeallocate(service_);
+  }
 
+  void getFiledescriptor() {
     DNSServiceErrorType error;
-    DNSServiceRef       service;
 
-
-    error = DNSServiceBrowse(&service,
+    error = DNSServiceBrowse(&service_,
       0,                     // no flags
       0,                     // all network interfaces
-      browser_->service_type_.c_str(), // service type
+      master_->service_type_.c_str(), // service type
       NULL,                  // default domain(s)
-      Implementation::browserCallback,    // callback function
-      (void*)browser_);       // context
+      sGetServiceInfo,       // callback function
+      (void*)master_);       // context
 
     if (error == kDNSServiceErr_NoError) {
-      browse(service);
+      master_->fd_ = DNSServiceRefSockFD(service_);
     } else {
-      fprintf(stderr,"Could not browse for service %s (error %d)\n", browser_->service_type_.c_str(), error);//, strerror(errno));
-    }
-
-    DNSServiceRefDeallocate(service);
-  }
-
-  void browse(DNSServiceRef service) {
-    // Run until break.
-    int dns_sd_fd = DNSServiceRefSockFD(service);
-    fd_set readfds;
-    struct timeval tv;
-    int result;
-
-    while (shouldRun()) {
-      FD_ZERO(&readfds);
-      FD_SET(dns_sd_fd, &readfds);
-      tv.tv_sec = LONG_TIME;
-      tv.tv_usec = 0;
-                      // highest fd in set + 1
-      result = select(dns_sd_fd+1, &readfds, (fd_set*)NULL, (fd_set*)NULL, &tv);
-      if (result > 0) {
-        DNSServiceErrorType err = kDNSServiceErr_NoError;
-        // Execute callback
-        if (FD_ISSET(dns_sd_fd, &readfds)) err = DNSServiceProcessResult(service);
-
-        if (err) {
-          // An error occured. Halt.
-          fprintf(stderr, "DNSServiceProcessResult error (%d).\n", err);
-          quit();
-        }
-      }	else if (errno != EINTR) {
-        // Error.
-        fprintf(stderr, "ZeroConf error (%d %s)\n", errno, strerror(errno));
-        if (errno != EINTR) quit();
-      }
-    }
-    browser_->running_ = false;
-  }
-
-  static void resolve_callback(DNSServiceRef service,
-                               DNSServiceFlags flags,
-                               uint32_t interface_index,
-                               DNSServiceErrorType error,
-                               const char *fullname,
-                               const char *hostname,
-                               uint16_t port,
-                               uint16_t txt_len,
-                               const unsigned char *txt,
-                               void *context) {
-
-    BrowsedDevice *device = (BrowsedDevice*)context;
-
-    if (device->flags_ & kDNSServiceFlagsAdd) {
-      device->browser_->addDevice(Location(
-                               device->browser_->protocol_.c_str(),
-                               device->name_.c_str(),
-                               hostname,
-                               ntohs(port),
-                               interface_index
-                               ));
-    } else {
-      device->browser_->removeDevice(device->name_.c_str());
+      fprintf(stderr,"Could not browse for service %s (error %d)\n", master_->service_type_.c_str(), error);//, strerror(errno));
     }
   }
 
-  static void browserCallback(DNSServiceRef service,
-                               DNSServiceFlags flags,
-                               uint32_t interface_index,
-                               DNSServiceErrorType error,
-                               const char *name,
-                               const char *type,
-                               const char *domain,
-                               void *context) {
+  bool getService() {
+    // calls getServiceInfo
+    DNSServiceErrorType err = DNSServiceProcessResult(service_);
+    if (err) {
+      // An error occured. Halt.
+      fprintf(stderr, "DNSServiceProcessResult error (%d).\n", err);
+      return false;
+    }
+    return true;
+  }
+
+  static void sGetServiceInfo(DNSServiceRef service,
+                             DNSServiceFlags flags,
+                             uint32_t interface_index,
+                             DNSServiceErrorType error,
+                             const char *name,
+                             const char *type,
+                             const char *domain,
+                             void *context) {
 
     if (error != kDNSServiceErr_NoError) {
       fprintf(stderr, "DNSServiceBrowse error (%d).\n", error);
@@ -184,7 +131,7 @@ public:
                name,
                type,
                domain,
-               Implementation::resolve_callback,
+               Implementation::sResolve,
                (void*)device);  // context
 
     if (error == kDNSServiceErr_NoError) {
@@ -200,12 +147,34 @@ public:
     delete device;
   }
 
-  AbstractBrowser *browser_;
+  static void sResolve(DNSServiceRef service,
+                               DNSServiceFlags flags,
+                               uint32_t interface_index,
+                               DNSServiceErrorType error,
+                               const char *fullname,
+                               const char *hostname,
+                               uint16_t port,
+                               uint16_t txt_len,
+                               const unsigned char *txt,
+                               void *context) {
+
+    BrowsedDevice *device = (BrowsedDevice*)context;
+
+    device->master_->location_ = Location(
+                             device->master_->protocol_.c_str(),
+                             device->name_.c_str(),
+                             hostname,
+                             ntohs(port),
+                             interface_index
+                             );
+    device->master_->is_add_ = device->flags_ & kDNSServiceFlagsAdd;
+  }
+
+  AbstractBrowser *master_;
 };
 
 AbstractBrowser::AbstractBrowser(const char *service_type)
-      : running_(false),
-        service_type_(service_type) {
+      : service_type_(service_type) {
   setProtocolFromServiceType();
   impl_ = new AbstractBrowser::Implementation(this);
 }
@@ -214,15 +183,11 @@ AbstractBrowser::~AbstractBrowser() {
   delete impl_;
 }
 
-void AbstractBrowser::start() {
-  impl_->start();
+bool AbstractBrowser::getService() {
+  return impl_->getService();
 }
 
-void AbstractBrowser::stop() {
-  impl_->kill();
-}
-
-} // oscit
+} // mdns
 
 
 

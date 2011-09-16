@@ -70,7 +70,7 @@ modules:
   #{name}:
     include:
       #{name}:
-    lua:
+    lib:
       #{name}.lua: #{name_lua.inspect}
       #{name}:
     sub:#{needs_core ? "\n      core:" : ''}#{needs_vendor ? "\n    vendor:" : ''}

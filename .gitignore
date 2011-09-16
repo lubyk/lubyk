@@ -21,4 +21,5 @@
 /zcpp/doc/prototypes/test
 /tmp
 /rename.rb
-/lua
+/modules/lua/vendor/lua5.1/src/lua
+/modules/lua/vendor/lua5.1/src/luac

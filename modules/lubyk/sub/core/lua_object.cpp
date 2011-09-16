@@ -78,6 +78,10 @@ void LuaObject::setupMetatable(lua_State *L, const char *type_name) throw() {
 //   Thanks to Robert G. Jakabosky for the idea to use lua_xmove
 //   instead of weak tables to store the function reference.
 void LuaObject::setupLuaThread(lua_State *L) throw() {
+  lua_pop(L, 1);
+  return;
+  //////// ******* DISABLED BECAUSE THERE IS A BUG HERE ******* ///////
+
   // ... <self> <udata>
   lua_getfenv(L, -1);
   // ... <self> <udata> <env>
@@ -135,6 +139,7 @@ void LuaObject::setupLuaThread(lua_State *L) throw() {
 }
 
 bool LuaObject::pushLuaCallbackl(const char *method, int len) const {
+  return false;
   lua_State *L = lua_;
   // <self>
   lua_pushlstring(L, method, len);

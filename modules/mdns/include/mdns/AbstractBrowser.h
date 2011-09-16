@@ -43,10 +43,6 @@ class AbstractBrowser : public lubyk::Mutex {
   class Implementation;
   Implementation *impl_;
 protected:
-  /** This value is on if the browser is running (listening for new devices).
-  */
-  bool          running_;
-
   /** Protocol used in communication (usually 'lubyk').
   */
   std::string   protocol_;
@@ -54,42 +50,29 @@ protected:
   /** Service-type to browse.
   */
   std::string   service_type_;
+  
+  /** Filedescriptor to listen for new/removed devices.
+   */
+  int fd_;
 
+  /** Last detected location.
+   */
+  Location location_;
+
+  /** This is true for 'add' and false for 'remove'.
+   */
+  bool is_add_;
+
+  /** Once we have some data ready, we call this method to load the
+   * service information into location_.
+   */
+  bool getService();
 public:
   AbstractBrowser(const char *service_type);
 
   virtual ~AbstractBrowser();
 
-  /** This method is called just after a new proxy has been added to the list.
-   */
-  virtual void addDevice(const Location &location) = 0;
-
-  /** This method is called so that you have an opportunity to delete it cleanly.
-   */
-  virtual void removeDevice(const char *name) = 0;
-
 protected:
-
-  /** This method should be called when the browser is ready.
-   */
-  virtual void start();
-
-  /** This method *must* be called from sub-classes in their destructors to
-   * make sure the callbacks (addDevice, removeDevice) are not called in the
-	 * middle of a class destruction.
-	 */
-  virtual void stop();
-
-  /** Return true if the browser is running (searching for devices).
-   */
-  bool isRunning() {
-    return running_;
-  }
-
-  void setRunning(bool is_running) {
-    running_ = is_running;
-  }
-
   void setProtocolFromServiceType();
 
 };
