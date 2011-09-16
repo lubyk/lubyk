@@ -1,0 +1,2 @@
+This module provides LuaSocket 2.0.2 by Diego Nehab. It is not actually needed
+in Lubyk but is provided for people who use Lubyk as a binary distribution.

@@ -114,6 +114,22 @@ msgpack
   license:   Apache License 2.0
   url:       msgpack.org
 
+remdebug
+--------
+  info:      Not used in Lubyk but provided for binary distribution.
+  version:   1.0 (2006-07)
+  copyright: Kepler Project 2005
+  license:   MIT/X
+  url:       www.keplerproject.org/remdebug/
+
+socket (LuaSocket)
+------
+  info:      Not used in Lubyk but provided for binary distribution.
+  version:   2.0.2 (2007-10)
+  copyright: Diego Nehab
+  license:   MIT/X
+  url:       w3.impa.br/~diego/software/luasocket
+
 sqlite3
 -------
   version:   3.7.4 (2010-12)
