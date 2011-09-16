@@ -138,7 +138,10 @@ end
 
 -- Reads and parses the content of the lkp file.
 function private:readFile()
-  local def = yaml.load(self.lkp_file:body()) or {}
+  local def = yaml.load(self.lkp_file:body())
+  if type(def) ~= 'table' then
+    def = {}
+  end
   local h = private.set
   for _, k in ipairs(DUMP_KEYS) do
     -- private.set.lubyk(self, def.lubyk)
@@ -156,7 +159,7 @@ function private:dumpAll()
 end
 
 function private:writeFile()
-  self.lkp_file:update(private.dumpAll(self))
+  self.lkp_file:update(yaml.dump(private.dumpAll(self)))
 end
 
 function private.set:lubyk(lubyk)
@@ -294,7 +297,9 @@ function private.node.updateCallback(process, node_name, resource)
 end
 
 function private.process.readFile(self, process)
-  process.cache = yaml.load(process.patch:body()) or {}
+  if type(process.cache) ~= 'table' then
+    process.cache = {}
+  end
   local nodes = process.cache.nodes or {}
   for name, def in pairs(nodes) do
     local resource = private.findOrMakeResource(self, process.dir.url .. '/' .. name .. '.lua')

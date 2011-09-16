@@ -18,7 +18,7 @@ static int Timer_Timer(lua_State *L) {
   try {
     float interval = dubL_checknumber(L, 1);
     Timer * retval__ = new Timer(interval);
-    // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
+    // The class inherits from 'LuaObject', use luaInit instead of lua_pushclass.
     return retval__->luaInit(L, retval__, "lk.Timer");
   } catch (std::exception &e) {
     lua_pushfstring(L, "Timer: %s", e.what());
@@ -36,7 +36,7 @@ static int Timer_destructor(lua_State *L) {
   Timer **userdata = (Timer**)dubL_checksdata_n(L, 1, "lk.Timer");
 
   
-  if (*userdata) delete *userdata;
+  if (*userdata) (*userdata)->luaDestroy();
   
   *userdata = NULL;
   return 0;

@@ -18,7 +18,7 @@ static int Debug_Debug(lua_State *L) {
   try {
     
     Debug * retval__ = new Debug(L);
-    // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
+    // The class inherits from 'LuaObject', use luaInit instead of lua_pushclass.
     return retval__->luaInit(L, retval__, "lk.Debug");
   } catch (std::exception &e) {
     lua_pushfstring(L, "Debug: %s", e.what());
@@ -36,7 +36,7 @@ static int Debug_destructor(lua_State *L) {
   Debug **userdata = (Debug**)dubL_checksdata_n(L, 1, "lk.Debug");
 
   
-  if (*userdata) delete *userdata;
+  if (*userdata) (*userdata)->luaDestroy();
   
   *userdata = NULL;
   return 0;

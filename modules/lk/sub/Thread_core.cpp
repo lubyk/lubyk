@@ -17,7 +17,7 @@ using namespace lk;
 static int Thread_Thread(lua_State *L) {
   try {
     Thread * retval__ = new Thread();
-    // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
+    // The class inherits from 'LuaObject', use luaInit instead of lua_pushclass.
     return retval__->luaInit(L, retval__, "lk.Thread");
   } catch (std::exception &e) {
     lua_pushfstring(L, "Thread: %s", e.what());
@@ -35,7 +35,7 @@ static int Thread_destructor(lua_State *L) {
   Thread **userdata = (Thread**)dubL_checksdata_n(L, 1, "lk.Thread");
 
   
-  if (*userdata) delete *userdata;
+  if (*userdata) (*userdata)->luaDestroy();
   
   *userdata = NULL;
   return 0;

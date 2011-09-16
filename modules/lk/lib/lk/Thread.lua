@@ -30,11 +30,15 @@ setmetatable(lib, {
       co = coroutine.create(func),
       should_run = true,
     }
-    self.wrap = {
+    setmetatable(self, lib)
+    local wrap = {
       -- weak link to thread
       t  = setmetatable({t = self}, WeakValue),
     }
-    setmetatable(self, lib)
+    self.wrap = wrap
+    self.finalizer = lk.Finalizer(function()
+      wrap.t.t = nil
+    end)
     sched:scheduleAt(at or 0, self.wrap)
     return self
   end

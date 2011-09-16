@@ -43,7 +43,7 @@ function should.browse()
   end
   continue = false
 
-  local browser = mdns.Browser(lubyk.service_type, function(service)
+  local browser = mdns.Browser(lubyk.service_type, function(self, service)
     if service.op == should_op and service.name == 'Service for browse' then
       continue = true
     end

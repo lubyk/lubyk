@@ -18,7 +18,7 @@ static int Socket_Socket(lua_State *L) {
   try {
     int socket_type = dubL_checkint(L, 1);
     Socket * retval__ = new Socket(socket_type);
-    // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
+    // The class inherits from 'LuaObject', use luaInit instead of lua_pushclass.
     return retval__->luaInit(L, retval__, "lk.Socket");
   } catch (std::exception &e) {
     lua_pushfstring(L, "Socket: %s", e.what());
@@ -36,7 +36,7 @@ static int Socket_destructor(lua_State *L) {
   Socket **userdata = (Socket**)dubL_checksdata_n(L, 1, "lk.Socket");
 
   
-  if (*userdata) delete *userdata;
+  if (*userdata) (*userdata)->luaDestroy();
   
   *userdata = NULL;
   return 0;

@@ -9,6 +9,8 @@
 require 'lubyk'
 
 local should = test.Suite('lk.FileResource')
+local old_date = os.time{year=2011,month=9,day=6}
+local new_date = os.time() + 0.1
 
 local function root()
   return lk.FileResource(fixture.path())
@@ -26,7 +28,7 @@ end
 
 function should.buildRoot()
   local root = lk.FileResource(fixture.path())
-  assertEqual('/', root.url)
+  assertEqual('', root.url)
   assertType('table', root.cache)
 end
 
@@ -34,8 +36,6 @@ function should.mapFile()
   local root = root()
   local url = '/project/example.lkp'
   local rez = lk.FileResource(url, root)
-  local old_date = os.time{year=2011,month=9,day=6}
-  local new_date = os.time()
   assertEqual('lkp', rez.ext)
   assertEqual('example.lkp', rez.name)
   assertEqual('/project/example.lkp', rez.url)
@@ -52,8 +52,8 @@ function should.mapDirectory()
   assertEqual('project', proj.name)
   assertEqual('/project', proj.url)
   assertValueEqual({xml = 'collection'}, proj.resourcetype)
-  assertNil(proj.getlastmodified)
-  assertNil(proj.creationdate)
+  assertInRange(old_date, new_date, proj.getlastmodified)
+  assertInRange(old_date, new_date, proj.creationdate)
 end
 
 function should.listChildren()
