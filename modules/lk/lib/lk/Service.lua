@@ -37,7 +37,8 @@ setmetatable(lib, {
 
   --======================================= REP server (sync)
   self.rep = zmq.SimpleRep(function(...)
-    if ... == lubyk.info_url then
+    local url = ...
+    if url == lubyk.info_url then
       -- get other ports from service
       if not self.info.pub then
         -- publish and pull ports
@@ -45,7 +46,7 @@ setmetatable(lib, {
         self.info.pull = self.pull:port()
       end
       return self.info
-    elseif ... == lubyk.quit_url then
+    elseif url == lubyk.quit_url then
       -- quit
       if app then
         app:quit()
@@ -67,6 +68,7 @@ setmetatable(lib, {
 
   --======================================= announce REP server
   self.registration = mdns.Registration(service_type, name, self.rep:port())
+  -- TODO: act on name change ....
 
   setmetatable(self, lib)
   return self
@@ -82,7 +84,7 @@ function lib:join(...)
 end
 
 function lib:kill(...)
-  self.registration:__gc()
+  self.registration:kill()
   self.registration = nil
   self.rep:kill(...)
   self.pull:kill(...)

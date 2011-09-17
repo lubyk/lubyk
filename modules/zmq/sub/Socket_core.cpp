@@ -19,7 +19,7 @@ static int Socket_Socket(lua_State *L) {
     int type = dubL_checkint(L, 1);
     lubyk::Worker *worker = *((lubyk::Worker **)dubL_checksdata(L, 2, "lubyk.Worker"));
     Socket * retval__ = new Socket(type, worker);
-    // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
+    // The class inherits from 'LuaObject', use luaInit instead of lua_pushclass.
     return retval__->luaInit(L, retval__, "zmq.Socket");
   } catch (std::exception &e) {
     lua_pushfstring(L, "Socket: %s", e.what());
@@ -37,7 +37,7 @@ static int Socket_destructor(lua_State *L) {
   Socket **userdata = (Socket**)dubL_checksdata_n(L, 1, "zmq.Socket");
 
   
-  if (*userdata) delete *userdata;
+  if (*userdata) (*userdata)->luaDestroy();
   
   *userdata = NULL;
   return 0;

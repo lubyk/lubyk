@@ -11,6 +11,7 @@
     * processConnected(name)
     * processDisconnected(name)
 
+  FIXME: Merge with lk.ServiceBrowser
 --]]------------------------------------------------------
 
 local lib = {}
@@ -19,67 +20,25 @@ lk.ProcessWatch = lib
 
 setmetatable(lib, {
   -- new method
- __call = function(lib)
+ __call = function(lib, mock_browser)
   local service_type = Lubyk.service_type
   local self = {
-    browser   = lk.ServiceBrowser(service_type),
     processes = {},
     -- weak table
     delegates = setmetatable({}, {__mode = 'v'}),
   }
   setmetatable(self, lib)
 
-  --======================================= SUB client
-  self.sub = zmq.SimpleSub(function(...)
-    -- receive message from local ServiceBrowser
-    local url, service_name = ...
-    local zone, name = string.match(service_name, '^([^:]+):(.*)$')
-    if not zone then
-      print('Error in ProcessWatch: found service without zone', service_name)
-      return
-    elseif zone ~= Lubyk.zone then
-      -- ignore
-      return
-    end
-
-    if url == lubyk.add_service_url then
-
-      local process = self:process(name)
-      if process.online then
-        -- allready found
-        return
-      else
-        local service = self.browser.services[service_name]
-        service.zone = zone
-        service.name = name
-
-        process:connect(service)
-        for _, delegate in ipairs(self.delegates) do
-          delegate:processConnected(process)
-        end
-      end
-    elseif url == lubyk.rem_service_url then
-      local process = self.processes[name]
-      if process then
-        -- disconnect
-        process:disconnect()
-        for _, delegate in ipairs(self.delegates) do
-          delegate:processDisconnected(process)
-        end
-      end
-    end
-  end)
-
-  -- so we can get connection commands from the service browser
-  self.sub:connect(string.format('inproc://%s', service_type))
-
+  self.browser = lk.ServiceBrowser(service_type):addDelegate(self)
   return self
 end})
 
 function lib:addDelegate(delegate)
   table.insert(self.delegates, delegate)
   for _, process in pairs(self.processes) do
-    delegate:processConnected(process)
+    if process.online then
+      delegate:processConnected(process)
+    end
   end
   return self
 end
@@ -94,3 +53,40 @@ function lib:process(name)
   return process
 end
 
+function lib:addDevice(service)
+  local zone, name = string.match(service.name, '^([^:]+):(.*)$')
+  if not zone then
+    print('Error in ProcessWatch: found service without zone', service.name)
+    return
+  elseif zone ~= Lubyk.zone then
+    -- ignore
+    return
+  end
+
+  if service.op == 'add' then
+    local process = self:process(name)
+    if process.online then
+      -- allready found
+      return
+    else
+      service.zone = zone
+      service.name = name
+
+      process:connect(service)
+      for _, delegate in ipairs(self.delegates) do
+        delegate:processConnected(process)
+      end
+    end
+  else
+    local process = self.processes[name]
+    if process then
+      -- disconnect
+      process:disconnect()
+      for _, delegate in ipairs(self.delegates) do
+        delegate:processDisconnected(process)
+      end
+    end
+  end
+end
+
+lib.removeDevice = lib.addDevice

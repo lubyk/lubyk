@@ -188,10 +188,6 @@ function lib:findByPath(path)
   return c
 end
 
-function lib:url()
-  return '/' .. self.name
-end
-
 --- Serialize current patch as a lua table. If a
 -- data table is provided, only dump parts that contain
 -- keys in the table.
@@ -326,9 +322,6 @@ end
 --- Return the patches url. This is the same as the patch's name for non-nested
 -- nodes.
 function lib:url()
-  if not self.name then
-    print(debug.traceback())
-  end
   return '/' .. self.name
 end
 

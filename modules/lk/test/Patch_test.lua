@@ -17,8 +17,14 @@ function should.loadCode()
   assertTrue(lk.Patch)
 end
 
-local function makePatch()
-  return lk.Patch(fixture.path('project/simple/_patch.yml'))
+local function makePatch(name)
+  name = name or 'simple'
+  local p = lk.Patch(name)
+  function p:findCode(url)
+    return lk.readall(fixture.path('project' .. url))
+  end
+  p:set(yaml.loadpath(fixture.path('project/'..name..'/_patch.yml')))
+  return p
 end
 
 function should.createEmptyPatch()
@@ -32,46 +38,9 @@ function should.createPatchWithNewFilename()
   assertFalse(patch.inline)
 end
 
-function should.createLiteralPatch()
-  local patch = lk.Patch [[
-nodes:
-  add:
-    code: |
-      inlet('val1', 'First value [number].')
-      inlet('val2', 'Second value [number].')
-      sum = outlet('sum', 'Sends sum of first and second values [number].')
-
-      val1 = val1 or 0
-      val2 = val2 or 0
-
-      function inlet.val1(v)
-        val1 = v
-        sum(val1 + val2)
-      end
-
-      function inlet.val2(v)
-        val2 = v
-        sum(val1 + val2)
-      end
-    x: 70
-    y: 95
-    links:
-      sum:
-        store/in/value: true
-    params:
-      val1: 0
-      val2: 5
-
-  store:
-    x: 70
-    y: 135
-]]
-  assertTrue(patch.inline)
-  assertMatch('Patch_test.lua', patch.filepath)
-end
-
 function should.createPatchWithInlineCode()
-  local patch = lk.Patch(fixture.path('inline.yml'))
+  local patch = makePatch('inline')
+  patch:set(yaml.loadpath(fixture.path('project/inline/_patch.yml')))
   assertEqual('lk.Patch', patch.type)
   assertEqual(patch.nodes.store, patch:get('/inline/store'))
   assertEqual(patch.nodes.add,   patch:get('/inline/add'))
@@ -143,7 +112,11 @@ end
 
 function should.findProcess()
   local patch = makePatch()
-  patch.process_watch = {pending_processes = {}}
+  patch.process_watch = {}
+  -- mock process_watch
+  function patch.process_watch:process(name)
+    return lk.RemoteProcess(name)
+  end
   local other = patch:findProcess('foobar')
   assertEqual('lk.RemoteProcess', other.type)
 end

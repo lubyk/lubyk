@@ -21,8 +21,6 @@ setmetatable(lib, {
       -- List of threads that have added their filedescriptors to
       -- select.
       fd_count      = 0,
-      fd_read       = {},
-      fd_write      = {},
       idx_to_thread = {},
       -- These are plain lua functions that will be called when
       -- quitting.
@@ -153,13 +151,7 @@ function lib:removeFd(thread)
   self.idx_to_thread[thread.idx] = nil
   if fd then
     self.poller:removeItem(thread.idx)
-  end
-  if self.fd_read[fd] then
     self.fd_count = self.fd_count - 1
-    self.fd_read[fd] = nil
-  elseif self.fd_write[fd] then
-    self.fd_count = self.fd_count - 1
-    self.fd_write[fd] = nil
   end
   thread.idx = nil
   thread.fd  = nil
@@ -168,6 +160,7 @@ end
 --=============================================== PRIVATE
 
 local zmq_POLLIN, zmq_POLLOUT = zmq.POLLIN, zmq.POLLOUT
+local zmq_const = {read = zmq_POLLIN, write = zmq_POLLOUT}
 
 function private:runThread(thread)
   -- get thread from wrap
@@ -192,50 +185,27 @@ function private:runThread(thread)
   -- FIXME: pcall ?
   thread.at = nil
   local ok, a, b = coroutine.resume(t.co)
+  local event = zmq_const[a]
   if not ok then
     -- a = error
     if thread.fd then
       self:removeFd(thread)
     end
     print('ERROR', a, debug.traceback(t.co))
-  elseif a == 'read' then
+  elseif event then
     if thread.fd then
-      -- same ?
-      if thread.events == zmq_POLLIN then
-        -- done
+      if thread.fd == b then
+        -- same
+        self.poller:modifyItem(thread.idx, event)
       else
-        -- update
-        self.fd_read[b]  = thread
-        self.fd_write[b] = nil
-        self.poller:modifyItem(thread.idx, zmq_POLLIN)
+        -- changed fd
+        self.poller:modifyItem(thread.idx, event, b)
       end
     else
       -- add fd
       thread.fd = b
-      self.fd_read[b]  = thread
-      self.fd_count    = self.fd_count + 1
-      thread.events = zmq_POLLIN
-      thread.idx = self.poller:add(b, thread.events)
-      self.idx_to_thread[thread.idx] = thread
-    end
-  elseif a == 'write' then
-    if thread.fd then
-      -- same ?
-      if thread.events == zmq_POLLOUT then
-        -- done
-      else
-        -- update
-        self.fd_read[b]  = nil
-        self.fd_write[b] = thread
-        self.poller:modifyItem(thread.idx, zmq_POLLOUT)
-      end
-    else
-      -- add fd
-      thread.fd = b
-      self.fd_write[b] = thread
-      self.fd_count    = self.fd_count + 1
-      thread.events = zmq_POLLOUT
-      thread.idx = self.poller:add(b, thread.events)
+      self.fd_count = self.fd_count + 1
+      thread.idx = self.poller:add(b, event)
       self.idx_to_thread[thread.idx] = thread
     end
   elseif a == 'join' then

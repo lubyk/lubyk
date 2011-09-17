@@ -1,2 +1,4 @@
 This module provides LuaSocket 2.0.2 by Diego Nehab. It is not actually needed
 in Lubyk but is provided for people who use Lubyk as a binary distribution.
+-- RemDebug 1.0 Beta
+-- Copyright Kepler Project 2005 (http://www.keplerproject.org/remdebug)

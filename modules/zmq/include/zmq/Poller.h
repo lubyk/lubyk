@@ -58,28 +58,28 @@ class Poller {
 
   /** Size of the pollitems array.
    */
-  size_t pollitems_size_;
+  int pollitems_size_;
 
   /** Resolve idx to actual position in pollitems.
    * (needed because pollitems can move due to array compaction).
    */
-  size_t *idx_to_pos_;
+  int *idx_to_pos_;
 
   /** Resolve pos to idx.
    */
-  size_t *pos_to_idx_;
+  int *pos_to_idx_;
 
   /** Number of slots used in the pollitems.
    */
-  size_t used_count_;
+  int used_count_;
 
   /** Event count (set during poll operation).
    */
-  size_t event_count_;
+  int event_count_;
 
   /** Position of next event.
    */
-  size_t event_pos_;
+  int event_pos_;
 
   /** Time reference for precise timing.
    */
@@ -106,12 +106,12 @@ public:
     if (pollitems_ == NULL) {
       throw Exception("Could not pre-allocate %i pollitems", reserve);
     }
-    idx_to_pos_ = (size_t*)calloc(reserve, sizeof(size_t));
+    idx_to_pos_ = (int*)calloc(reserve, sizeof(int));
     if (idx_to_pos_ == NULL) {
       free(pollitems_);
       throw Exception("Could not pre-allocate %i pollitems", reserve);
     }
-    pos_to_idx_ = (size_t*)calloc(reserve, sizeof(size_t));
+    pos_to_idx_ = (int*)calloc(reserve, sizeof(int));
     if (pos_to_idx_ == NULL) {
       free(pollitems_);
       throw Exception("Could not pre-allocate %i pollitems", reserve);
@@ -135,16 +135,22 @@ public:
    * @param timeout in milliseconds.
    */
   bool poll(float timeout) {
+    event_pos_ = 0;
     interrupted_ = false;
+#if POLLER_JITTER_HACK
     if (timeout > 0) {
       double start = time_.elapsed();
       long t = timeout > 2 ? timeout - 2 : timeout;
       // zmq counts micro seconds
       event_count_ = zmq_poll(pollitems_, used_count_, t * 1000);
       if (event_count_ < 0) {
-        // error
+        // error or interruption
         event_count_ = 0;
-        throw Exception("An error occured during zmq_poll (%s)", zmq_strerror(zmq_errno()));
+        if (!interrupted_) {
+          throw Exception("An error occured during zmq_poll (%s)", zmq_strerror(zmq_errno()));
+        } else {
+          return false;
+        }
       } else if (!event_count_) {
         // timed out
         double remaining = timeout - time_.elapsed() + start;
@@ -154,13 +160,29 @@ public:
     } else {
       // no timeout or 0
       event_count_ = zmq_poll(pollitems_, used_count_, timeout);
+      if (event_count_ < 0) {
+        // error or interruption
+        event_count_ = 0;
+        if (!interrupted_) {
+          throw Exception("An error occured during zmq_poll (%s)", zmq_strerror(zmq_errno()));
+        } else {
+          return false;
+        }
+      }
     }
-    event_pos_ = 0;
-    if (interrupted_) {
-      return false;
-    } else {
-      return true;
+#else
+    event_count_ = zmq_poll(pollitems_, used_count_, timeout);
+    if (event_count_ < 0) {
+      // error or interruption
+      event_count_ = 0;
+      if (!interrupted_) {
+        throw Exception("An error occured during zmq_poll (%s)", zmq_strerror(zmq_errno()));
+      } else {
+        return false;
+      }
     }
+#endif
+    return true;
   }
 
   /** Return the next event's idx or nil.
@@ -188,36 +210,49 @@ public:
     return addItem(0, sock->socket_, events);
   }
 
-  void modify(int fd, int events) {
-    for(size_t i=0; i < used_count_; ++i) {
-      if (pollitems_[i].fd == fd) {
-        modifyItem(pos_to_idx_[i], events);
-        return;
-      }
-    }
-  }
+  // void modify(int fd, int events) {
+  //   for(int i=0; i < used_count_; ++i) {
+  //     if (pollitems_[i].fd == fd) {
+  //       modifyItem(pos_to_idx_[i], events);
+  //       return;
+  //     }
+  //   }
+  // }
 
-  void modify(zmq::Socket *sock, int events) {
-    void *zsocket = sock->socket_;
-    for(size_t i=0; i < used_count_; ++i) {
-      if (pollitems_[i].socket == zsocket) {
-        modifyItem(pos_to_idx_[i], events);
-        return;
-      }
-    }
-  }
+  // void modify(zmq::Socket *sock, int events) {
+  //   void *zsocket = sock->socket_;
+  //   for(int i=0; i < used_count_; ++i) {
+  //     if (pollitems_[i].socket == zsocket) {
+  //       modifyItem(pos_to_idx_[i], events);
+  //       return;
+  //     }
+  //   }
+  // }
 
   /** Modify an item's events by its id (faster: no need to search for item).
    */
-  void modifyItem(size_t idx, int events) {
+  void modifyItem(int idx, int events, lua_State *L) {
     assert(events);
     assert(idx < pollitems_size_);
     zmq_pollitem_t *item = pollitems_ + idx_to_pos_[idx];
     item->events = events;
+    int top = lua_gettop(L);
+    // <self> <idx> <events> <new_fd>
+    if (top > 3) {
+      if (lua_isuserdata(L, 4)) {
+        zmq::Socket *sock = *((zmq::Socket **)dubL_checksdata(L, 4, "zmq.Socket"));
+        item->fd = 0;
+        item->socket = sock->socket_;
+      } else {
+        int fd = dubL_checkint(L, 4);
+        item->fd = fd;
+        item->socket = NULL;
+      }
+    }
   }
 
   void remove(int fd, int flags) {
-    for(size_t i=0; i < used_count_; ++i) {
+    for(int i=0; i < used_count_; ++i) {
       if (pollitems_[i].fd == fd) {
         removeItem(pos_to_idx_[i]);
         return;
@@ -226,7 +261,7 @@ public:
   }
 
   void remove(zmq::Socket *sock, int flags) {
-    for(size_t i=0; i < used_count_; ++i) {
+    for(int i=0; i < used_count_; ++i) {
       if (pollitems_[i].socket == sock) {
         removeItem(pos_to_idx_[i]);
         return;
@@ -236,17 +271,18 @@ public:
 
   /** Remove an item by its id (faster: no need to search for item).
    */
-  void removeItem(size_t idx) {
+  void removeItem(int idx) {
     assert(idx < pollitems_size_);
-    size_t last_pos = used_count_ - 1;
-    size_t pos = idx_to_pos_[idx];
+    int last_pos = used_count_ - 1;
+    int pos = idx_to_pos_[idx];
+    zmq_pollitem_t *item = pollitems_ + pos;
     --used_count_;
     if (pos == last_pos) {
       // we removed the last element, we are done.
       return;
     }
     // move last item in the position where idx was
-    size_t last_idx = pos_to_idx_[last_pos];
+    int last_idx = pos_to_idx_[last_pos];
     idx_to_pos_[last_idx] = pos;
     pos_to_idx_[pos] = last_idx;
     pollitems_[pos] = pollitems_[last_pos];
@@ -261,13 +297,13 @@ private:
   int addItem(int fd, void *socket, int events) {
     if (used_count_ >= pollitems_size_) {
       // we need more space: realloc
-      size_t *sptr = (size_t*)realloc(idx_to_pos_, pollitems_size_ * 2 * sizeof(size_t));
+      int *sptr = (int*)realloc(idx_to_pos_, pollitems_size_ * 2 * sizeof(int));
       if (!sptr) {
         throw Exception("Could not reallocate %i pollitems.", pollitems_size_ * 2);
       }
       idx_to_pos_ = sptr;
       sptr = NULL;
-      sptr = (size_t*)realloc(pos_to_idx_, pollitems_size_ * 2 * sizeof(size_t));
+      sptr = (int*)realloc(pos_to_idx_, pollitems_size_ * 2 * sizeof(int));
       if (!sptr) {
         throw Exception("Could not reallocate %i pollitems.", pollitems_size_ * 2);
       }
@@ -278,12 +314,12 @@ private:
       }
       pollitems_ = ptr;
       // clear new space (same size as pollitems_size_ because we double).
-      memset(idx_to_pos_+ used_count_, 0, pollitems_size_ * sizeof(size_t));
-      memset(pos_to_idx_+ used_count_, 0, pollitems_size_ * sizeof(size_t));
+      memset(idx_to_pos_+ used_count_, 0, pollitems_size_ * sizeof(int));
+      memset(pos_to_idx_+ used_count_, 0, pollitems_size_ * sizeof(int));
       memset(pollitems_ + used_count_, 0, pollitems_size_ * sizeof(zmq_pollitem_t));
       pollitems_size_ = 2 * pollitems_size_;
     }
-    size_t pos = used_count_;
+    int pos = used_count_;
     ++used_count_;
     zmq_pollitem_t *item = pollitems_ + pos;
     item->fd = fd;

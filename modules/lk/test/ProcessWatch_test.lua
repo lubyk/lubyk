@@ -14,14 +14,14 @@ function mockDelegate(t)
   return {
     last_op = nil,
     last_name = nil,
-    processConnected = function(self, name)
+    processConnected = function(self, process)
       self.last_op = 'connected'
-      self.last_name = name
+      self.last_name = process.name
       t.continue = true
     end,
-    processDisconnected = function(self, name)
+    processDisconnected = function(self, process)
       self.last_op = 'disconnected'
-      self.last_name = name
+      self.last_name = process.name
       t.continue = true
     end
   }

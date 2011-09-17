@@ -17,9 +17,13 @@ function lib:guiTimeout(func)
   end)
 end
 
-function lib:timeout(func)
+function lib:timeout(timeout, func)
+  if not func then
+    func = timeout
+    timeout = self.TIMEOUT
+  end
   local now = worker:now()
-  while not func(worker:now() >= now + self.TIMEOUT) do
+  while not func(worker:now() >= now + timeout) do
     sleep(100)
   end
 end

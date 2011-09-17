@@ -11,8 +11,10 @@ require 'lubyk'
 local should = test.Suite('lk.Node')
 
 local function makePatch()
-  local code = lk.readall(fixture.path('foo.yml'))
-  return lk.Patch{ patch = code }
+  local code = yaml.loadpath(fixture.path('foo.yml'))
+  local patch = lk.Patch('foo')
+  patch:set(code)
+  return patch
 end
 
 local function makeNode(patch, name)

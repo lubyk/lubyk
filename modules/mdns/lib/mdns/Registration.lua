@@ -31,3 +31,9 @@ function mdns.Registration(service_type, name, port, func)
   return self
 end
 
+function mt:kill()
+  if self.thread then
+    self.thread:kill()
+    self.thread = nil
+  end
+end
