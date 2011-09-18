@@ -9,7 +9,6 @@
 require 'lubyk'
 
 local should = test.Suite('lk.Process')
-local timeout = 3000
 
 function should.loadCode()
   assertTrue(lk.Process)

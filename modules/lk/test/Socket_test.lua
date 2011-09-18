@@ -19,13 +19,8 @@ function should.runMutlithreaded(t)
   function log(msg)
     table.insert(t.sequence, msg)
   end
-  t.server = lk.Socket()
-  t.server:bind('*', 0)
-  t.server:listen()
-  t.port = t.server:port()
-  -- run server in new thread
-  t.thread = lk.Thread(function()
-    -- will start as soon as we release the mutex
+  t.server = lk.Socket(function()
+    -- will start as soon as we join
     log('srv:thread')
     local client = t.server:accept()
     log('srv:accept')
@@ -34,6 +29,10 @@ function should.runMutlithreaded(t)
     client:close()
     log('srvi:close')
   end)
+  t.server:bind('*', 0)
+  t.server:listen()
+  t.port = t.server.port
+
   t.client = lk.Socket()
   t.client:connect('127.0.0.1', t.port)
   log('cli:connect')
@@ -41,7 +40,7 @@ function should.runMutlithreaded(t)
   t.client:send('Hello Lubyk!\n')
   log('cli:send')
   -- The server thread finally has some time to run
-  t.thread:join()
+  t.server:join()
   -- should give us control back on 'accept'
   assertValueEqual('Hello Lubyk!', t.received)
   assertValueEqual({
@@ -55,24 +54,24 @@ function should.runMutlithreaded(t)
 end
 
 function should.send(t)
-  t.server = lk.Socket()
-  t.server:bind('*', 0)
-  t.server:listen()
-  t.port = t.server:port()
-  -- run server in new thread
-  t.thread = lk.Thread(function()
+  t.server = lk.Socket(function()
+    -- run server in new thread
+    t.server:bind('*', 0)
+    t.server:listen()
+    t.port = t.server.port
     -- will start as soon as we release the mutex
     t.srv_client = t.server:accept()
     t.received1 = t.srv_client:recv()
     t.received2 = t.srv_client:recv()
     t.srv_client:close()
   end)
-  t.client = lk.Socket()
-  t.client:connect('127.0.0.1', t.port)
-  t.client:send('Hello Lubyk!\nOne two\n')
+  t.client = lk.Socket(function()
+    t.client:connect('127.0.0.1', t.port)
+    t.client:send('Hello Lubyk!\nOne two\n')
+  end)
 
   -- The server thread finally has some time to run
-  t.thread:join()
+  t.server:join()
   t.client:close()
   -- should give us control back on 'accept'
   assertEqual('Hello Lubyk!', t.received1)
@@ -83,7 +82,7 @@ function should.recvBytes(t)
   t.server = lk.Socket()
   t.server:bind('*', 0)
   t.server:listen()
-  t.port = t.server:port()
+  t.port = t.server.port
   -- run server in new thread
   t.thread = lk.Thread(function()
     -- will start as soon as we release the mutex
@@ -107,7 +106,7 @@ function should.sendMessages(t)
   t.server = lk.Socket()
   t.server:bind('*', 0)
   t.server:listen()
-  t.port = t.server:port()
+  t.port = t.server.port
   -- run server in new thread
   t.thread = lk.Thread(function()
     -- will start as soon as we release the mutex
@@ -134,7 +133,7 @@ function should.sendMessagesWithPartialBuffer(t)
   t.server = lk.Socket()
   t.server:bind('*', 0)
   t.server:listen()
-  t.port = t.server:port()
+  t.port = t.server.port
   -- run server in new thread
   t.thread = lk.Thread(function()
     -- will start as soon as we release the mutex

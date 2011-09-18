@@ -15,11 +15,13 @@ function mockDelegate(t)
     last_op = nil,
     last_name = nil,
     processConnected = function(self, process)
+      print(process.name, '<<<<<<<<<')
       self.last_op = 'connected'
       self.last_name = process.name
       t.continue = true
     end,
     processDisconnected = function(self, process)
+      print(process.name, '>>>>>D<<<<<<<<<')
       self.last_op = 'disconnected'
       self.last_name = process.name
       t.continue = true
@@ -41,7 +43,7 @@ function should.callProcessConnected(t)
   assertFalse(p.online)
   -- register 'hello'
   local s = lk.Service(Lubyk.zone .. ':hello')
-  t:timeout(function(done)
+  t:timeout(3000, function(done)
     if done or t.continue then
       assertTrue(t.continue)
       assertEqual('connected', del.last_op)

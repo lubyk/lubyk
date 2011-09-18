@@ -17,10 +17,11 @@ lib.UDP  = lk.Socket_const.UDP
 
 function lib.new(func)
   local self = constr(lib.TCP)
-  assert(func)
-  self.thread = sched:thread(function()
-    func(self)
-  end)
+  if func then
+    self.thread = lk.Thread(function()
+      func(self)
+    end)
+  end
   return setmetatable(self, lib)
 end
 
@@ -28,7 +29,7 @@ function lib:bind(host, port)
   self.host    = host
   self.port    = self.super:bind(host, port)
   self.super:setNonBlocking()
-  sched:addFd(self.thread, self.super:fd())
+  self.sock_fd = self.super:fd()
   return self.port
 end
 
@@ -66,48 +67,37 @@ function lib:send(data)
 end
 
 function lib:accept(func)
-  assert(func)
   sched:waitRead(self.sock_fd)
   local cli = self.super:accept()
   cli.super:setNonBlocking()
   cli.sock_fd = cli:fd()
-  -- start new thread
-  cli.thread = sched:thread(function()
-    func(cli)
-  end)
-  sched:addFd(cli.thread, cli.super:fd())
+  if func then
+    -- start new thread
+    cli.thread = sched:thread(function()
+      func(cli)
+    end)
+  end
   return setmetatable(cli, lib)
 end
---[[
---=============================================== ???? old stuff
-local function checkLoop(self)
-  if not self.loop then
-    error("Loop not set")
+
+function lib:shouldRun()
+  return self.thread and self.thread:shouldRun()
+end
+
+function lib:quit()
+  if self.thread then
+    self.thread:quit()
   end
 end
 
-function mt:shouldRun()
-  checkLoop(self)
-  return self.loop:shouldRun()
+function lib:kill()
+  if self.thread then
+    self.thread:kill()
+  end
 end
 
-function mt:start()
-  checkLoop(self)
-  self.loop:start()
+function lib:join()
+  if self.thread then
+    self.thread:join()
+  end
 end
-
-function mt:quit()
-  checkLoop(self)
-  self.loop:quit()
-end
-
-function mt:kill()
-  checkLoop(self)
-  self.loop:kill()
-end
-
-function mt:join()
-  checkLoop(self)
-  self.loop:join()
-end
---]]
