@@ -66,7 +66,7 @@ static int Poller__tostring(lua_State *L) {
 
 
 /** int zmq::Poller::add(int fd, int events)
- * include/zmq/Poller.h:185
+ * include/zmq/Poller.h:205
  */
 static int Poller_add1(lua_State *L) {
   try {
@@ -87,7 +87,7 @@ static int Poller_add1(lua_State *L) {
 
 
 /** int zmq::Poller::add(zmq::Socket *sock, int events)
- * include/zmq/Poller.h:189
+ * include/zmq/Poller.h:209
  */
 static int Poller_add2(lua_State *L) {
   try {
@@ -123,7 +123,7 @@ static int Poller_add(lua_State *L) {
 
 
 /** int zmq::Poller::count()
- * include/zmq/Poller.h:274
+ * include/zmq/Poller.h:254
  */
 static int Poller_count(lua_State *L) {
   try {
@@ -142,7 +142,7 @@ static int Poller_count(lua_State *L) {
 
 
 /** LuaStackSize zmq::Poller::event(lua_State *L)
- * include/zmq/Poller.h:169
+ * include/zmq/Poller.h:190
  */
 static int Poller_event(lua_State *L) {
   try {
@@ -160,21 +160,21 @@ static int Poller_event(lua_State *L) {
 
 
 
-/** void zmq::Poller::modifyItem(size_t idx, int events, lua_State *L)
- * include/zmq/Poller.h:214
+/** void zmq::Poller::modify(int idx, int events, lua_State *L)
+ * include/zmq/Poller.h:215
  */
-static int Poller_modifyItem(lua_State *L) {
+static int Poller_modify(lua_State *L) {
   try {
     Poller *self = *((Poller**)dubL_checksdata(L, 1, "zmq.Poller"));
-    size_t idx = dubL_checkint(L, 2);
+    int idx = dubL_checkint(L, 2);
     int events = dubL_checkint(L, 3);
     
-    self->modifyItem(idx, events, L);
+    self->modify(idx, events, L);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "modifyItem: %s", e.what());
+    lua_pushfstring(L, "modify: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "modifyItem: Unknown exception");
+    lua_pushfstring(L, "modify: Unknown exception");
   }
   return lua_error(L);
 }
@@ -201,75 +201,19 @@ static int Poller_poll(lua_State *L) {
 
 
 
-
-/** void zmq::Poller::remove(int fd, int flags)
- * include/zmq/Poller.h:236
+/** void zmq::Poller::remove(int idx)
+ * include/zmq/Poller.h:237
  */
-static int Poller_remove1(lua_State *L) {
-  try {
-    Poller *self = *((Poller**)dubL_checksdata(L, 1, "zmq.Poller"));
-    int fd = dubL_checkint(L, 2);
-    int flags = dubL_checkint(L, 3);
-    self->remove(fd, flags);
-    return 0;
-  } catch (std::exception &e) {
-    lua_pushfstring(L, "remove: %s", e.what());
-  } catch (...) {
-    lua_pushfstring(L, "remove: Unknown exception");
-  }
-  return lua_error(L);
-}
-
-
-
-/** void zmq::Poller::remove(zmq::Socket *sock, int flags)
- * include/zmq/Poller.h:245
- */
-static int Poller_remove2(lua_State *L) {
-  try {
-    Poller *self = *((Poller**)dubL_checksdata(L, 1, "zmq.Poller"));
-    zmq::Socket *sock = *((zmq::Socket **)dubL_checksdata(L, 2, "zmq.Socket"));
-    int flags = dubL_checkint(L, 3);
-    self->remove(sock, flags);
-    return 0;
-  } catch (std::exception &e) {
-    lua_pushfstring(L, "remove: %s", e.what());
-  } catch (...) {
-    lua_pushfstring(L, "remove: Unknown exception");
-  }
-  return lua_error(L);
-}
-
-
-
-
-/** Overloaded function chooser for remove(...) */
 static int Poller_remove(lua_State *L) {
-  int type__ = lua_type(L, 2);
-  if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "zmq.Socket")) {
-    return Poller_remove2(L);
-  } else if (type__ == LUA_TNUMBER) {
-    return Poller_remove1(L);
-  } else {
-    // use any to raise errors
-    return Poller_remove1(L);
-  }
-}
-
-
-/** void zmq::Poller::removeItem(size_t idx)
- * include/zmq/Poller.h:256
- */
-static int Poller_removeItem(lua_State *L) {
   try {
     Poller *self = *((Poller**)dubL_checksdata(L, 1, "zmq.Poller"));
-    size_t idx = dubL_checkint(L, 2);
-    self->removeItem(idx);
+    int idx = dubL_checkint(L, 2);
+    self->remove(idx);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "removeItem: %s", e.what());
+    lua_pushfstring(L, "remove: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "removeItem: Unknown exception");
+    lua_pushfstring(L, "remove: Unknown exception");
   }
   return lua_error(L);
 }
@@ -284,10 +228,9 @@ static const struct luaL_Reg Poller_member_methods[] = {
   {"add"               , Poller_add},
   {"count"             , Poller_count},
   {"event"             , Poller_event},
-  {"modifyItem"        , Poller_modifyItem},
+  {"modify"            , Poller_modify},
   {"poll"              , Poller_poll},
   {"remove"            , Poller_remove},
-  {"removeItem"        , Poller_removeItem},
   {"__tostring"        , Poller__tostring},
   {"__gc"              , Poller_destructor},
   {NULL, NULL},

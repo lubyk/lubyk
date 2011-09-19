@@ -60,9 +60,10 @@ public:
   void luaDestroy();
 
   /** The caller should lock before calling this.
-   * @todo: The 'const' stuff is stupid: can't we remove it ?
-   * @fixme: OPTIMIZATION: Register the keys and pass a ref in the registry.
    * @return: true if the callback is set, false otherwise.
+   *
+   * TODO: The 'const' stuff is stupid: can't we remove it ?
+   * FIXME: OPTIMIZATION: Register the keys and pass a ref in the registry.
    */
   bool pushLuaCallbackl(const char *method, int len) const;
 

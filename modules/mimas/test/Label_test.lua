@@ -12,8 +12,7 @@ require 'lubyk'
 
 local should = test.Suite('mimas.Label')
 
-
-function should.accept_destroy_from_gui()
+function should.acceptDestroyFromGui()
   local win = mimas.Window()
   win:resize(50, 50)
   win:show()
@@ -27,7 +26,7 @@ function should.accept_destroy_from_gui()
   end)
 end
 
-function should.accept_destroy_from_Lua(t)
+function should.acceptDestroyFromLua(t)
   t.win = mimas.Window()
   t.win:move(100,50)
   t.layout = mimas.HBoxLayout(t.win)
@@ -45,7 +44,7 @@ function should.accept_destroy_from_Lua(t)
 end
 
 
-function should.style_labels(t)
+function should.styleLabels(t)
   t.win = mimas.Window()
   t.win:move(100, 120)
   t.lb = mimas.Label("Label not in layout", t.win)

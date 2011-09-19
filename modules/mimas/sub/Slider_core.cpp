@@ -29,7 +29,6 @@ static int Slider_Slider(lua_State *L) {
         retval__ = new Slider(type, parent);
       }
     }
-    // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
     return retval__->luaInit(L, retval__, "mimas.Slider");
   } catch (std::exception &e) {
     lua_pushfstring(L, "Slider: %s", e.what());
@@ -48,12 +47,12 @@ static int Slider_destructor(lua_State *L) {
 
   
   // custom destructor
-  if (*userdata) (*userdata)->luaDestroy();
+  Slider *self = *userdata;
+  if (self) self->luaDestroy();
   
   *userdata = NULL;
   return 0;
 }
-
 
 
 

@@ -43,12 +43,12 @@ static int VBoxLayout_destructor(lua_State *L) {
 
   
   // custom destructor
-  if (*userdata) (*userdata)->luaDestroy();
+  VBoxLayout *self = *userdata;
+  if (self) self->luaDestroy();
   
   *userdata = NULL;
   return 0;
 }
-
 
 
 

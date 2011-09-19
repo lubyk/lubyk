@@ -25,7 +25,6 @@ static int Action_Action(lua_State *L) {
       QObject *parent = *((QObject **)dubL_checksdata(L, 2, "mimas.QObject"));
       retval__ = new Action(name, parent);
     }
-    // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
     return retval__->luaInit(L, retval__, "mimas.Action");
   } catch (std::exception &e) {
     lua_pushfstring(L, "Action: %s", e.what());
@@ -44,12 +43,12 @@ static int Action_destructor(lua_State *L) {
 
   
   // custom destructor
-  if (*userdata) (*userdata)->luaDestroy();
+  Action *self = *userdata;
+  if (self) self->luaDestroy();
   
   *userdata = NULL;
   return 0;
 }
-
 
 
 
@@ -85,6 +84,7 @@ static int Action__tostring(lua_State *L) {
 static int QObject_name(lua_State *L) {
   try {
     Action *self = *((Action**)dubL_checksdata(L, 1, "mimas.Action"));
+    if (!self) throw dub::Exception("Using deleted mimas.Action in name");
     lua_pushstring(L, self->objectName().toUtf8().data());
     return 1;
   } catch (std::exception &e) {
@@ -103,6 +103,7 @@ static int QObject_name(lua_State *L) {
 static int QObject_object(lua_State *L) {
   try {
     Action *self = *((Action**)dubL_checksdata(L, 1, "mimas.Action"));
+    if (!self) throw dub::Exception("Using deleted mimas.Action in object");
     QObject * retval__ = self;
     lua_pushclass<QObject>(L, retval__, "mimas.QObject");
     return 1;
@@ -122,6 +123,7 @@ static int QObject_object(lua_State *L) {
 static int QObject_setName(lua_State *L) {
   try {
     Action *self = *((Action**)dubL_checksdata(L, 1, "mimas.Action"));
+    if (!self) throw dub::Exception("Using deleted mimas.Action in setName");
     const char *name = dubL_checkstring(L, 2);
     self->setObjectName(QString(name));
     return 0;
@@ -161,6 +163,7 @@ static int Action_setShortcut(lua_State *L) {
 static int QAction_setText(lua_State *L) {
   try {
     Action *self = *((Action**)dubL_checksdata(L, 1, "mimas.Action"));
+    if (!self) throw dub::Exception("Using deleted mimas.Action in setText");
     const char *text = dubL_checkstring(L, 2);
     self->setText(text);
     return 0;
@@ -180,6 +183,7 @@ static int QAction_setText(lua_State *L) {
 static int QAction_text(lua_State *L) {
   try {
     Action *self = *((Action**)dubL_checksdata(L, 1, "mimas.Action"));
+    if (!self) throw dub::Exception("Using deleted mimas.Action in text");
     lua_pushstring(L, self->text().toUtf8().data());
     return 1;
   } catch (std::exception &e) {

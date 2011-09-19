@@ -17,7 +17,6 @@ using namespace mimas;
 static int MainWindow_MainWindow(lua_State *L) {
   try {
     MainWindow * retval__ = new MainWindow();
-    // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
     return retval__->luaInit(L, retval__, "mimas.MainWindow");
   } catch (std::exception &e) {
     lua_pushfstring(L, "MainWindow: %s", e.what());
@@ -36,12 +35,12 @@ static int MainWindow_destructor(lua_State *L) {
 
   
   // custom destructor
-  if (*userdata) (*userdata)->luaDestroy();
+  MainWindow *self = *userdata;
+  if (self) self->luaDestroy();
   
   *userdata = NULL;
   return 0;
 }
-
 
 
 
@@ -77,6 +76,7 @@ static int MainWindow__tostring(lua_State *L) {
 static int QWidget_activateWindow(lua_State *L) {
   try {
     MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    if (!self) throw dub::Exception("Using deleted mimas.MainWindow in activateWindow");
     self->activateWindow();
     return 0;
   } catch (std::exception &e) {
@@ -95,6 +95,7 @@ static int QWidget_activateWindow(lua_State *L) {
 static int QWidget_addAction(lua_State *L) {
   try {
     MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    if (!self) throw dub::Exception("Using deleted mimas.MainWindow in addAction");
     Action *action = *((Action **)dubL_checksdata(L, 2, "mimas.Action"));
     self->addAction(action);
     return 0;
@@ -114,6 +115,7 @@ static int QWidget_addAction(lua_State *L) {
 static int QWidget_addWidget(lua_State *L) {
   try {
     MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    if (!self) throw dub::Exception("Using deleted mimas.MainWindow in addWidget");
     int top__ = lua_gettop(L);
     QWidget *widget = *((QWidget **)dubL_checksdata(L, 2, "mimas.QWidget"));
     float x = 0;
@@ -144,6 +146,7 @@ static int QWidget_addWidget(lua_State *L) {
 static int QWidget_close(lua_State *L) {
   try {
     MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    if (!self) throw dub::Exception("Using deleted mimas.MainWindow in close");
     bool  retval__ = self->close();
     lua_pushboolean(L, retval__);
     return 1;
@@ -230,6 +233,7 @@ static int MainWindow_getOpenFileName(lua_State *L) {
 static int QWidget_globalMove(lua_State *L) {
   try {
     MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    if (!self) throw dub::Exception("Using deleted mimas.MainWindow in globalMove");
     float x = dubL_checknumber(L, 2);
     float y = dubL_checknumber(L, 3);
     self->move(
@@ -254,6 +258,7 @@ static int QWidget_globalMove(lua_State *L) {
 static int QWidget_globalPosition(lua_State *L) {
   try {
     MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    if (!self) throw dub::Exception("Using deleted mimas.MainWindow in globalPosition");
     QPoint pt = self->mapToGlobal(QPoint(0, 0));
     lua_pushnumber(L, pt.x());
     lua_pushnumber(L, pt.y());
@@ -274,6 +279,7 @@ static int QWidget_globalPosition(lua_State *L) {
 static int QWidget_height(lua_State *L) {
   try {
     MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    if (!self) throw dub::Exception("Using deleted mimas.MainWindow in height");
     int  retval__ = self->height();
     lua_pushnumber(L, retval__);
     return 1;
@@ -293,6 +299,7 @@ static int QWidget_height(lua_State *L) {
 static int QWidget_hide(lua_State *L) {
   try {
     MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    if (!self) throw dub::Exception("Using deleted mimas.MainWindow in hide");
     self->hide();
     return 0;
   } catch (std::exception &e) {
@@ -311,6 +318,7 @@ static int QWidget_hide(lua_State *L) {
 static int QWidget_isFullScreen(lua_State *L) {
   try {
     MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    if (!self) throw dub::Exception("Using deleted mimas.MainWindow in isFullScreen");
     bool  retval__ = self->isFullScreen();
     lua_pushboolean(L, retval__);
     return 1;
@@ -330,6 +338,7 @@ static int QWidget_isFullScreen(lua_State *L) {
 static int QWidget_isVisible(lua_State *L) {
   try {
     MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    if (!self) throw dub::Exception("Using deleted mimas.MainWindow in isVisible");
     bool  retval__ = self->isVisible();
     lua_pushboolean(L, retval__);
     return 1;
@@ -349,6 +358,7 @@ static int QWidget_isVisible(lua_State *L) {
 static int QWidget_lower(lua_State *L) {
   try {
     MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    if (!self) throw dub::Exception("Using deleted mimas.MainWindow in lower");
     self->lower();
     return 0;
   } catch (std::exception &e) {
@@ -367,6 +377,7 @@ static int QWidget_lower(lua_State *L) {
 static int QWidget_move(lua_State *L) {
   try {
     MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    if (!self) throw dub::Exception("Using deleted mimas.MainWindow in move");
     int x = dubL_checkint(L, 2);
     int y = dubL_checkint(L, 3);
     self->move(x, y);
@@ -387,6 +398,7 @@ static int QWidget_move(lua_State *L) {
 static int QObject_name(lua_State *L) {
   try {
     MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    if (!self) throw dub::Exception("Using deleted mimas.MainWindow in name");
     lua_pushstring(L, self->objectName().toUtf8().data());
     return 1;
   } catch (std::exception &e) {
@@ -405,6 +417,7 @@ static int QObject_name(lua_State *L) {
 static int QObject_object(lua_State *L) {
   try {
     MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    if (!self) throw dub::Exception("Using deleted mimas.MainWindow in object");
     QObject * retval__ = self;
     lua_pushclass<QObject>(L, retval__, "mimas.QObject");
     return 1;
@@ -424,6 +437,7 @@ static int QObject_object(lua_State *L) {
 static int QWidget_raise(lua_State *L) {
   try {
     MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    if (!self) throw dub::Exception("Using deleted mimas.MainWindow in raise");
     self->raise();
     return 0;
   } catch (std::exception &e) {
@@ -442,6 +456,7 @@ static int QWidget_raise(lua_State *L) {
 static int QWidget_resize(lua_State *L) {
   try {
     MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    if (!self) throw dub::Exception("Using deleted mimas.MainWindow in resize");
     int w = dubL_checkint(L, 2);
     int h = dubL_checkint(L, 3);
     self->resize(w, h);
@@ -462,6 +477,7 @@ static int QWidget_resize(lua_State *L) {
 static int QMainWindow_setMenuBar(lua_State *L) {
   try {
     MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    if (!self) throw dub::Exception("Using deleted mimas.MainWindow in setMenuBar");
     MenuBar *bar = *((MenuBar **)dubL_checksdata(L, 2, "mimas.MenuBar"));
     self->setMenuBar(bar);
     return 0;
@@ -481,6 +497,7 @@ static int QMainWindow_setMenuBar(lua_State *L) {
 static int QWidget_setMinimumSize(lua_State *L) {
   try {
     MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    if (!self) throw dub::Exception("Using deleted mimas.MainWindow in setMinimumSize");
     float w = dubL_checknumber(L, 2);
     float h = dubL_checknumber(L, 3);
     self->setMinimumSize(w, h);
@@ -501,6 +518,7 @@ static int QWidget_setMinimumSize(lua_State *L) {
 static int QWidget_setMouseTracking(lua_State *L) {
   try {
     MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    if (!self) throw dub::Exception("Using deleted mimas.MainWindow in setMouseTracking");
     bool enable = lua_toboolean(L, 2);
     self->setMouseTracking(enable);
     return 0;
@@ -520,6 +538,7 @@ static int QWidget_setMouseTracking(lua_State *L) {
 static int QObject_setName(lua_State *L) {
   try {
     MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    if (!self) throw dub::Exception("Using deleted mimas.MainWindow in setName");
     const char *name = dubL_checkstring(L, 2);
     self->setObjectName(QString(name));
     return 0;
@@ -539,6 +558,7 @@ static int QObject_setName(lua_State *L) {
 static int QWidget_setParent(lua_State *L) {
   try {
     MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    if (!self) throw dub::Exception("Using deleted mimas.MainWindow in setParent");
     QWidget *parent = *((QWidget **)dubL_checksdata(L, 2, "mimas.QWidget"));
     self->setParent(parent);
     return 0;
@@ -558,6 +578,7 @@ static int QWidget_setParent(lua_State *L) {
 static int QWidget_setSizeHint(lua_State *L) {
   try {
     MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    if (!self) throw dub::Exception("Using deleted mimas.MainWindow in setSizeHint");
     float w = dubL_checknumber(L, 2);
     float h = dubL_checknumber(L, 3);
     self->size_hint_ = QSize(w, h);
@@ -579,6 +600,7 @@ static int QWidget_setSizeHint(lua_State *L) {
 static int QWidget_setSizePolicy(lua_State *L) {
   try {
     MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    if (!self) throw dub::Exception("Using deleted mimas.MainWindow in setSizePolicy");
     int horizontal = dubL_checkint(L, 2);
     int vertical = dubL_checkint(L, 3);
     self->setSizePolicy((QSizePolicy::Policy)horizontal, (QSizePolicy::Policy)vertical);
@@ -600,6 +622,7 @@ static int QWidget_setSizePolicy(lua_State *L) {
 static int QWidget_setStyle(lua_State *L) {
   try {
     MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    if (!self) throw dub::Exception("Using deleted mimas.MainWindow in setStyle");
     const char *text = dubL_checkstring(L, 2);
     self->setStyleSheet(QString(".%1 { %2 }").arg(self->cssClass()).arg(text));
     return 0;
@@ -619,6 +642,7 @@ static int QWidget_setStyle(lua_State *L) {
 static int QWidget_setStyleSheet(lua_State *L) {
   try {
     MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    if (!self) throw dub::Exception("Using deleted mimas.MainWindow in setStyleSheet");
     const char *text = dubL_checkstring(L, 2);
     self->setStyleSheet(text);
     return 0;
@@ -638,6 +662,7 @@ static int QWidget_setStyleSheet(lua_State *L) {
 static int QWidget_show(lua_State *L) {
   try {
     MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    if (!self) throw dub::Exception("Using deleted mimas.MainWindow in show");
     self->show();
     return 0;
   } catch (std::exception &e) {
@@ -656,6 +681,7 @@ static int QWidget_show(lua_State *L) {
 static int QWidget_showFullScreen(lua_State *L) {
   try {
     MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    if (!self) throw dub::Exception("Using deleted mimas.MainWindow in showFullScreen");
     int top__ = lua_gettop(L);
     bool enable;
     if (top__ >= 2) {
@@ -685,6 +711,7 @@ static int QWidget_showFullScreen(lua_State *L) {
 static int QWidget_size(lua_State *L) {
   try {
     MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    if (!self) throw dub::Exception("Using deleted mimas.MainWindow in size");
     QRect rect = self->geometry();
     lua_pushnumber(L, rect.width());
     lua_pushnumber(L, rect.height());
@@ -705,6 +732,7 @@ static int QWidget_size(lua_State *L) {
 static int QWidget_swapFullScreen(lua_State *L) {
   try {
     MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    if (!self) throw dub::Exception("Using deleted mimas.MainWindow in swapFullScreen");
     bool enable = !self->isFullScreen();
     if (enable) {
       self->showFullScreen();
@@ -749,6 +777,7 @@ static int MainWindow_testMenus(lua_State *L) {
 static int QWidget_textSize(lua_State *L) {
   try {
     MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    if (!self) throw dub::Exception("Using deleted mimas.MainWindow in textSize");
     const char *text = dubL_checkstring(L, 2);
     lua_pushnumber(L, self->fontMetrics().width(text));
     lua_pushnumber(L, self->fontMetrics().height());
@@ -769,6 +798,7 @@ static int QWidget_textSize(lua_State *L) {
 static int QWidget_update(lua_State *L) {
   try {
     MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    if (!self) throw dub::Exception("Using deleted mimas.MainWindow in update");
     self->update();
     return 0;
   } catch (std::exception &e) {
@@ -787,6 +817,7 @@ static int QWidget_update(lua_State *L) {
 static int QWidget_widget(lua_State *L) {
   try {
     MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    if (!self) throw dub::Exception("Using deleted mimas.MainWindow in widget");
     QWidget* retval__ = self;
     lua_pushclass<QWidget>(L, retval__, "mimas.QWidget");
     return 1;
@@ -806,6 +837,7 @@ static int QWidget_widget(lua_State *L) {
 static int QWidget_width(lua_State *L) {
   try {
     MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    if (!self) throw dub::Exception("Using deleted mimas.MainWindow in width");
     int  retval__ = self->width();
     lua_pushnumber(L, retval__);
     return 1;
@@ -825,6 +857,7 @@ static int QWidget_width(lua_State *L) {
 static int QWidget_x(lua_State *L) {
   try {
     MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    if (!self) throw dub::Exception("Using deleted mimas.MainWindow in x");
     int  retval__ = self->x();
     lua_pushnumber(L, retval__);
     return 1;
@@ -844,6 +877,7 @@ static int QWidget_x(lua_State *L) {
 static int QWidget_y(lua_State *L) {
   try {
     MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    if (!self) throw dub::Exception("Using deleted mimas.MainWindow in y");
     int  retval__ = self->y();
     lua_pushnumber(L, retval__);
     return 1;

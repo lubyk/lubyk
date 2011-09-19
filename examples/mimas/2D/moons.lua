@@ -1,7 +1,5 @@
 require 'lubyk'
 
-app = app or mimas.Application()
-
 if not win then
   win = mimas.Widget()
   win:setMouseTracking(true)
@@ -99,5 +97,4 @@ timer = timer or lk.Timer(10, function()
 end)
 timer:start()
 
-app:exec()
-timer:stop()
+run()

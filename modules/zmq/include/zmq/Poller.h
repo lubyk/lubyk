@@ -210,28 +210,9 @@ public:
     return addItem(0, sock->socket_, events);
   }
 
-  // void modify(int fd, int events) {
-  //   for(int i=0; i < used_count_; ++i) {
-  //     if (pollitems_[i].fd == fd) {
-  //       modifyItem(pos_to_idx_[i], events);
-  //       return;
-  //     }
-  //   }
-  // }
-
-  // void modify(zmq::Socket *sock, int events) {
-  //   void *zsocket = sock->socket_;
-  //   for(int i=0; i < used_count_; ++i) {
-  //     if (pollitems_[i].socket == zsocket) {
-  //       modifyItem(pos_to_idx_[i], events);
-  //       return;
-  //     }
-  //   }
-  // }
-
-  /** Modify an item's events by its id (faster: no need to search for item).
+  /** Modify an item's events by its id.
    */
-  void modifyItem(int idx, int events, lua_State *L) {
+  void modify(int idx, int events, lua_State *L) {
     assert(events);
     assert(idx < pollitems_size_);
     zmq_pollitem_t *item = pollitems_ + idx_to_pos_[idx];
@@ -251,27 +232,9 @@ public:
     }
   }
 
-  void remove(int fd, int flags) {
-    for(int i=0; i < used_count_; ++i) {
-      if (pollitems_[i].fd == fd) {
-        removeItem(pos_to_idx_[i]);
-        return;
-      }
-    }
-  }
-
-  void remove(zmq::Socket *sock, int flags) {
-    for(int i=0; i < used_count_; ++i) {
-      if (pollitems_[i].socket == sock) {
-        removeItem(pos_to_idx_[i]);
-        return;
-      }
-    }
-  }
-
-  /** Remove an item by its id (faster: no need to search for item).
+  /** Remove an item by its id.
    */
-  void removeItem(int idx) {
+  void remove(int idx) {
     assert(idx < pollitems_size_);
     int last_pos = used_count_ - 1;
     int pos = idx_to_pos_[idx];

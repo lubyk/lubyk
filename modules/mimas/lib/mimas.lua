@@ -23,10 +23,6 @@ function mimas.Application()
   return singleApp
 end
 --=============================================== alter scheduler
-sched:hasMimas()
-
-
-
 
 -- no need for a custom loader for these
 mimas.Brush   = mimas_core.Brush
@@ -61,3 +57,5 @@ mimas.colors = {
 
 mimas.ESC   = 16777216
 mimas.Space = 32
+
+sched:mimasLoaded()

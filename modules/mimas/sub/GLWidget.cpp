@@ -17,7 +17,6 @@ using namespace mimas;
 static int GLWidget_GLWidget(lua_State *L) {
   try {
     GLWidget * retval__ = new GLWidget();
-    // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
     return retval__->luaInit(L, retval__, "mimas.GLWidget");
   } catch (std::exception &e) {
     lua_pushfstring(L, "GLWidget: %s", e.what());
@@ -36,12 +35,12 @@ static int GLWidget_destructor(lua_State *L) {
 
   
   // custom destructor
-  if (*userdata) (*userdata)->luaDestroy();
+  GLWidget *self = *userdata;
+  if (self) self->luaDestroy();
   
   *userdata = NULL;
   return 0;
 }
-
 
 
 

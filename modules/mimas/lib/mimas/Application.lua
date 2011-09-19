@@ -76,3 +76,4 @@ function mt.singleShot(app, timeout, func_or_clbk)
   end
   singleShot(app, timeout, clbk:object(), '1callback()')
 end
+

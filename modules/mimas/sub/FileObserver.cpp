@@ -17,7 +17,6 @@ using namespace mimas;
 static int FileObserver_FileObserver(lua_State *L) {
   try {
     FileObserver * retval__ = new FileObserver();
-    // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
     return retval__->luaInit(L, retval__, "mimas.FileObserver");
   } catch (std::exception &e) {
     lua_pushfstring(L, "FileObserver: %s", e.what());
@@ -35,7 +34,9 @@ static int FileObserver_destructor(lua_State *L) {
   FileObserver **userdata = (FileObserver**)dubL_checksdata_n(L, 1, "mimas.FileObserver");
 
   
-  if (*userdata) delete *userdata;
+  // custom destructor
+  FileObserver *self = *userdata;
+  if (self) self->luaDestroy();
   
   *userdata = NULL;
   return 0;
@@ -43,10 +44,22 @@ static int FileObserver_destructor(lua_State *L) {
 
 
 
+// test if class is deleted
+static int FileObserver_deleted(lua_State *L) {
+  FileObserver **userdata = (FileObserver**)dubL_checksdata_n(L, 1, "mimas.FileObserver");
+  lua_pushboolean(L, *userdata == NULL);
+  return 1;
+}
+
 /* ============================ tostring         ====================== */
 
 static int FileObserver__tostring(lua_State *L) {
   FileObserver **userdata = (FileObserver**)dubL_checksdata_n(L, 1, "mimas.FileObserver");
+  
+  if (!*userdata) {
+    lua_pushstring(L, "<mimas.FileObserver: NULL>");
+    return 1;
+  }
   
   
   lua_pushfstring(L, "<mimas.FileObserver: %p>", *userdata);
@@ -63,6 +76,7 @@ static int FileObserver__tostring(lua_State *L) {
 static int FileObserver_addPath(lua_State *L) {
   try {
     FileObserver *self = *((FileObserver**)dubL_checksdata(L, 1, "mimas.FileObserver"));
+    if (!self) throw dub::Exception("Using deleted mimas.FileObserver in addPath");
     const char *path = dubL_checkstring(L, 2);
     self->addPath(path);
     return 0;
@@ -82,6 +96,7 @@ static int FileObserver_addPath(lua_State *L) {
 static int FileObserver_removePath(lua_State *L) {
   try {
     FileObserver *self = *((FileObserver**)dubL_checksdata(L, 1, "mimas.FileObserver"));
+    if (!self) throw dub::Exception("Using deleted mimas.FileObserver in removePath");
     const char *path = dubL_checkstring(L, 2);
     self->removePath(path);
     return 0;
@@ -104,6 +119,7 @@ static const struct luaL_Reg FileObserver_member_methods[] = {
   {"removePath"        , FileObserver_removePath},
   {"__tostring"        , FileObserver__tostring},
   {"__gc"              , FileObserver_destructor},
+  {"deleted"           , FileObserver_deleted},
   {NULL, NULL},
 };
 

@@ -18,7 +18,6 @@ static int TableView_TableView(lua_State *L) {
   try {
     lubyk::Worker *worker = *((lubyk::Worker **)dubL_checksdata(L, 1, "lubyk.Worker"));
     TableView * retval__ = new TableView(worker);
-    // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
     return retval__->luaInit(L, retval__, "mimas.TableView");
   } catch (std::exception &e) {
     lua_pushfstring(L, "TableView: %s", e.what());
@@ -37,12 +36,12 @@ static int TableView_destructor(lua_State *L) {
 
   
   // custom destructor
-  if (*userdata) (*userdata)->luaDestroy();
+  TableView *self = *userdata;
+  if (self) self->luaDestroy();
   
   *userdata = NULL;
   return 0;
 }
-
 
 
 

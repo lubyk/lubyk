@@ -18,7 +18,6 @@ static int Menu_Menu(lua_State *L) {
   try {
     const char *name = dubL_checkstring(L, 1);
     Menu * retval__ = new Menu(name);
-    // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
     return retval__->luaInit(L, retval__, "mimas.Menu");
   } catch (std::exception &e) {
     lua_pushfstring(L, "Menu: %s", e.what());
@@ -37,12 +36,12 @@ static int Menu_destructor(lua_State *L) {
 
   
   // custom destructor
-  if (*userdata) (*userdata)->luaDestroy();
+  Menu *self = *userdata;
+  if (self) self->luaDestroy();
   
   *userdata = NULL;
   return 0;
 }
-
 
 
 
@@ -78,6 +77,7 @@ static int Menu__tostring(lua_State *L) {
 static int QWidget_activateWindow(lua_State *L) {
   try {
     Menu *self = *((Menu**)dubL_checksdata(L, 1, "mimas.Menu"));
+    if (!self) throw dub::Exception("Using deleted mimas.Menu in activateWindow");
     self->activateWindow();
     return 0;
   } catch (std::exception &e) {
@@ -96,6 +96,7 @@ static int QWidget_activateWindow(lua_State *L) {
 static int QMenu_addAction(lua_State *L) {
   try {
     Menu *self = *((Menu**)dubL_checksdata(L, 1, "mimas.Menu"));
+    if (!self) throw dub::Exception("Using deleted mimas.Menu in addAction");
     Action *action = *((Action **)dubL_checksdata(L, 2, "mimas.Action"));
     self->addAction(action);
     return 0;
@@ -115,6 +116,7 @@ static int QMenu_addAction(lua_State *L) {
 static int QWidget_addAction(lua_State *L) {
   try {
     Menu *self = *((Menu**)dubL_checksdata(L, 1, "mimas.Menu"));
+    if (!self) throw dub::Exception("Using deleted mimas.Menu in addAction");
     Action *action = *((Action **)dubL_checksdata(L, 2, "mimas.Action"));
     self->addAction(action);
     return 0;
@@ -134,6 +136,7 @@ static int QWidget_addAction(lua_State *L) {
 static int QWidget_addWidget(lua_State *L) {
   try {
     Menu *self = *((Menu**)dubL_checksdata(L, 1, "mimas.Menu"));
+    if (!self) throw dub::Exception("Using deleted mimas.Menu in addWidget");
     int top__ = lua_gettop(L);
     QWidget *widget = *((QWidget **)dubL_checksdata(L, 2, "mimas.QWidget"));
     float x = 0;
@@ -164,6 +167,7 @@ static int QWidget_addWidget(lua_State *L) {
 static int QMenu_clear(lua_State *L) {
   try {
     Menu *self = *((Menu**)dubL_checksdata(L, 1, "mimas.Menu"));
+    if (!self) throw dub::Exception("Using deleted mimas.Menu in clear");
     self->clear();
     return 0;
   } catch (std::exception &e) {
@@ -182,6 +186,7 @@ static int QMenu_clear(lua_State *L) {
 static int QWidget_close(lua_State *L) {
   try {
     Menu *self = *((Menu**)dubL_checksdata(L, 1, "mimas.Menu"));
+    if (!self) throw dub::Exception("Using deleted mimas.Menu in close");
     bool  retval__ = self->close();
     lua_pushboolean(L, retval__);
     return 1;
@@ -221,6 +226,7 @@ static int Menu_cssClass(lua_State *L) {
 static int QWidget_globalMove(lua_State *L) {
   try {
     Menu *self = *((Menu**)dubL_checksdata(L, 1, "mimas.Menu"));
+    if (!self) throw dub::Exception("Using deleted mimas.Menu in globalMove");
     float x = dubL_checknumber(L, 2);
     float y = dubL_checknumber(L, 3);
     self->move(
@@ -245,6 +251,7 @@ static int QWidget_globalMove(lua_State *L) {
 static int QWidget_globalPosition(lua_State *L) {
   try {
     Menu *self = *((Menu**)dubL_checksdata(L, 1, "mimas.Menu"));
+    if (!self) throw dub::Exception("Using deleted mimas.Menu in globalPosition");
     QPoint pt = self->mapToGlobal(QPoint(0, 0));
     lua_pushnumber(L, pt.x());
     lua_pushnumber(L, pt.y());
@@ -265,6 +272,7 @@ static int QWidget_globalPosition(lua_State *L) {
 static int QWidget_height(lua_State *L) {
   try {
     Menu *self = *((Menu**)dubL_checksdata(L, 1, "mimas.Menu"));
+    if (!self) throw dub::Exception("Using deleted mimas.Menu in height");
     int  retval__ = self->height();
     lua_pushnumber(L, retval__);
     return 1;
@@ -284,6 +292,7 @@ static int QWidget_height(lua_State *L) {
 static int QWidget_hide(lua_State *L) {
   try {
     Menu *self = *((Menu**)dubL_checksdata(L, 1, "mimas.Menu"));
+    if (!self) throw dub::Exception("Using deleted mimas.Menu in hide");
     self->hide();
     return 0;
   } catch (std::exception &e) {
@@ -302,6 +311,7 @@ static int QWidget_hide(lua_State *L) {
 static int QWidget_isFullScreen(lua_State *L) {
   try {
     Menu *self = *((Menu**)dubL_checksdata(L, 1, "mimas.Menu"));
+    if (!self) throw dub::Exception("Using deleted mimas.Menu in isFullScreen");
     bool  retval__ = self->isFullScreen();
     lua_pushboolean(L, retval__);
     return 1;
@@ -321,6 +331,7 @@ static int QWidget_isFullScreen(lua_State *L) {
 static int QWidget_isVisible(lua_State *L) {
   try {
     Menu *self = *((Menu**)dubL_checksdata(L, 1, "mimas.Menu"));
+    if (!self) throw dub::Exception("Using deleted mimas.Menu in isVisible");
     bool  retval__ = self->isVisible();
     lua_pushboolean(L, retval__);
     return 1;
@@ -340,6 +351,7 @@ static int QWidget_isVisible(lua_State *L) {
 static int QWidget_lower(lua_State *L) {
   try {
     Menu *self = *((Menu**)dubL_checksdata(L, 1, "mimas.Menu"));
+    if (!self) throw dub::Exception("Using deleted mimas.Menu in lower");
     self->lower();
     return 0;
   } catch (std::exception &e) {
@@ -358,6 +370,7 @@ static int QWidget_lower(lua_State *L) {
 static int QWidget_move(lua_State *L) {
   try {
     Menu *self = *((Menu**)dubL_checksdata(L, 1, "mimas.Menu"));
+    if (!self) throw dub::Exception("Using deleted mimas.Menu in move");
     int x = dubL_checkint(L, 2);
     int y = dubL_checkint(L, 3);
     self->move(x, y);
@@ -378,6 +391,7 @@ static int QWidget_move(lua_State *L) {
 static int QObject_name(lua_State *L) {
   try {
     Menu *self = *((Menu**)dubL_checksdata(L, 1, "mimas.Menu"));
+    if (!self) throw dub::Exception("Using deleted mimas.Menu in name");
     lua_pushstring(L, self->objectName().toUtf8().data());
     return 1;
   } catch (std::exception &e) {
@@ -396,6 +410,7 @@ static int QObject_name(lua_State *L) {
 static int QObject_object(lua_State *L) {
   try {
     Menu *self = *((Menu**)dubL_checksdata(L, 1, "mimas.Menu"));
+    if (!self) throw dub::Exception("Using deleted mimas.Menu in object");
     QObject * retval__ = self;
     lua_pushclass<QObject>(L, retval__, "mimas.QObject");
     return 1;
@@ -415,6 +430,7 @@ static int QObject_object(lua_State *L) {
 static int QWidget_raise(lua_State *L) {
   try {
     Menu *self = *((Menu**)dubL_checksdata(L, 1, "mimas.Menu"));
+    if (!self) throw dub::Exception("Using deleted mimas.Menu in raise");
     self->raise();
     return 0;
   } catch (std::exception &e) {
@@ -433,6 +449,7 @@ static int QWidget_raise(lua_State *L) {
 static int QWidget_resize(lua_State *L) {
   try {
     Menu *self = *((Menu**)dubL_checksdata(L, 1, "mimas.Menu"));
+    if (!self) throw dub::Exception("Using deleted mimas.Menu in resize");
     int w = dubL_checkint(L, 2);
     int h = dubL_checkint(L, 3);
     self->resize(w, h);
@@ -453,6 +470,7 @@ static int QWidget_resize(lua_State *L) {
 static int QWidget_setMinimumSize(lua_State *L) {
   try {
     Menu *self = *((Menu**)dubL_checksdata(L, 1, "mimas.Menu"));
+    if (!self) throw dub::Exception("Using deleted mimas.Menu in setMinimumSize");
     float w = dubL_checknumber(L, 2);
     float h = dubL_checknumber(L, 3);
     self->setMinimumSize(w, h);
@@ -473,6 +491,7 @@ static int QWidget_setMinimumSize(lua_State *L) {
 static int QWidget_setMouseTracking(lua_State *L) {
   try {
     Menu *self = *((Menu**)dubL_checksdata(L, 1, "mimas.Menu"));
+    if (!self) throw dub::Exception("Using deleted mimas.Menu in setMouseTracking");
     bool enable = lua_toboolean(L, 2);
     self->setMouseTracking(enable);
     return 0;
@@ -492,6 +511,7 @@ static int QWidget_setMouseTracking(lua_State *L) {
 static int QObject_setName(lua_State *L) {
   try {
     Menu *self = *((Menu**)dubL_checksdata(L, 1, "mimas.Menu"));
+    if (!self) throw dub::Exception("Using deleted mimas.Menu in setName");
     const char *name = dubL_checkstring(L, 2);
     self->setObjectName(QString(name));
     return 0;
@@ -511,6 +531,7 @@ static int QObject_setName(lua_State *L) {
 static int QWidget_setParent(lua_State *L) {
   try {
     Menu *self = *((Menu**)dubL_checksdata(L, 1, "mimas.Menu"));
+    if (!self) throw dub::Exception("Using deleted mimas.Menu in setParent");
     QWidget *parent = *((QWidget **)dubL_checksdata(L, 2, "mimas.QWidget"));
     self->setParent(parent);
     return 0;
@@ -530,6 +551,7 @@ static int QWidget_setParent(lua_State *L) {
 static int QWidget_setSizeHint(lua_State *L) {
   try {
     Menu *self = *((Menu**)dubL_checksdata(L, 1, "mimas.Menu"));
+    if (!self) throw dub::Exception("Using deleted mimas.Menu in setSizeHint");
     float w = dubL_checknumber(L, 2);
     float h = dubL_checknumber(L, 3);
     self->size_hint_ = QSize(w, h);
@@ -551,6 +573,7 @@ static int QWidget_setSizeHint(lua_State *L) {
 static int QWidget_setSizePolicy(lua_State *L) {
   try {
     Menu *self = *((Menu**)dubL_checksdata(L, 1, "mimas.Menu"));
+    if (!self) throw dub::Exception("Using deleted mimas.Menu in setSizePolicy");
     int horizontal = dubL_checkint(L, 2);
     int vertical = dubL_checkint(L, 3);
     self->setSizePolicy((QSizePolicy::Policy)horizontal, (QSizePolicy::Policy)vertical);
@@ -572,6 +595,7 @@ static int QWidget_setSizePolicy(lua_State *L) {
 static int QWidget_setStyle(lua_State *L) {
   try {
     Menu *self = *((Menu**)dubL_checksdata(L, 1, "mimas.Menu"));
+    if (!self) throw dub::Exception("Using deleted mimas.Menu in setStyle");
     const char *text = dubL_checkstring(L, 2);
     self->setStyleSheet(QString(".%1 { %2 }").arg(self->cssClass()).arg(text));
     return 0;
@@ -591,6 +615,7 @@ static int QWidget_setStyle(lua_State *L) {
 static int QWidget_setStyleSheet(lua_State *L) {
   try {
     Menu *self = *((Menu**)dubL_checksdata(L, 1, "mimas.Menu"));
+    if (!self) throw dub::Exception("Using deleted mimas.Menu in setStyleSheet");
     const char *text = dubL_checkstring(L, 2);
     self->setStyleSheet(text);
     return 0;
@@ -610,6 +635,7 @@ static int QWidget_setStyleSheet(lua_State *L) {
 static int QWidget_show(lua_State *L) {
   try {
     Menu *self = *((Menu**)dubL_checksdata(L, 1, "mimas.Menu"));
+    if (!self) throw dub::Exception("Using deleted mimas.Menu in show");
     self->show();
     return 0;
   } catch (std::exception &e) {
@@ -628,6 +654,7 @@ static int QWidget_show(lua_State *L) {
 static int QWidget_showFullScreen(lua_State *L) {
   try {
     Menu *self = *((Menu**)dubL_checksdata(L, 1, "mimas.Menu"));
+    if (!self) throw dub::Exception("Using deleted mimas.Menu in showFullScreen");
     int top__ = lua_gettop(L);
     bool enable;
     if (top__ >= 2) {
@@ -657,6 +684,7 @@ static int QWidget_showFullScreen(lua_State *L) {
 static int QWidget_size(lua_State *L) {
   try {
     Menu *self = *((Menu**)dubL_checksdata(L, 1, "mimas.Menu"));
+    if (!self) throw dub::Exception("Using deleted mimas.Menu in size");
     QRect rect = self->geometry();
     lua_pushnumber(L, rect.width());
     lua_pushnumber(L, rect.height());
@@ -677,6 +705,7 @@ static int QWidget_size(lua_State *L) {
 static int QWidget_swapFullScreen(lua_State *L) {
   try {
     Menu *self = *((Menu**)dubL_checksdata(L, 1, "mimas.Menu"));
+    if (!self) throw dub::Exception("Using deleted mimas.Menu in swapFullScreen");
     bool enable = !self->isFullScreen();
     if (enable) {
       self->showFullScreen();
@@ -700,6 +729,7 @@ static int QWidget_swapFullScreen(lua_State *L) {
 static int QWidget_textSize(lua_State *L) {
   try {
     Menu *self = *((Menu**)dubL_checksdata(L, 1, "mimas.Menu"));
+    if (!self) throw dub::Exception("Using deleted mimas.Menu in textSize");
     const char *text = dubL_checkstring(L, 2);
     lua_pushnumber(L, self->fontMetrics().width(text));
     lua_pushnumber(L, self->fontMetrics().height());
@@ -720,6 +750,7 @@ static int QWidget_textSize(lua_State *L) {
 static int QWidget_update(lua_State *L) {
   try {
     Menu *self = *((Menu**)dubL_checksdata(L, 1, "mimas.Menu"));
+    if (!self) throw dub::Exception("Using deleted mimas.Menu in update");
     self->update();
     return 0;
   } catch (std::exception &e) {
@@ -738,6 +769,7 @@ static int QWidget_update(lua_State *L) {
 static int QWidget_widget(lua_State *L) {
   try {
     Menu *self = *((Menu**)dubL_checksdata(L, 1, "mimas.Menu"));
+    if (!self) throw dub::Exception("Using deleted mimas.Menu in widget");
     QWidget* retval__ = self;
     lua_pushclass<QWidget>(L, retval__, "mimas.QWidget");
     return 1;
@@ -757,6 +789,7 @@ static int QWidget_widget(lua_State *L) {
 static int QWidget_width(lua_State *L) {
   try {
     Menu *self = *((Menu**)dubL_checksdata(L, 1, "mimas.Menu"));
+    if (!self) throw dub::Exception("Using deleted mimas.Menu in width");
     int  retval__ = self->width();
     lua_pushnumber(L, retval__);
     return 1;
@@ -776,6 +809,7 @@ static int QWidget_width(lua_State *L) {
 static int QWidget_x(lua_State *L) {
   try {
     Menu *self = *((Menu**)dubL_checksdata(L, 1, "mimas.Menu"));
+    if (!self) throw dub::Exception("Using deleted mimas.Menu in x");
     int  retval__ = self->x();
     lua_pushnumber(L, retval__);
     return 1;
@@ -795,6 +829,7 @@ static int QWidget_x(lua_State *L) {
 static int QWidget_y(lua_State *L) {
   try {
     Menu *self = *((Menu**)dubL_checksdata(L, 1, "mimas.Menu"));
+    if (!self) throw dub::Exception("Using deleted mimas.Menu in y");
     int  retval__ = self->y();
     lua_pushnumber(L, retval__);
     return 1;

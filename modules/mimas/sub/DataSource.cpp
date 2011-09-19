@@ -17,7 +17,6 @@ using namespace mimas;
 static int DataSource_DataSource(lua_State *L) {
   try {
     DataSource * retval__ = new DataSource();
-    // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
     return retval__->luaInit(L, retval__, "mimas.DataSource");
   } catch (std::exception &e) {
     lua_pushfstring(L, "DataSource: %s", e.what());
@@ -36,12 +35,12 @@ static int DataSource_destructor(lua_State *L) {
 
   
   // custom destructor
-  if (*userdata) (*userdata)->luaDestroy();
+  DataSource *self = *userdata;
+  if (self) self->luaDestroy();
   
   *userdata = NULL;
   return 0;
 }
-
 
 
 

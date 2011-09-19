@@ -29,7 +29,6 @@ static int LineEdit_LineEdit(lua_State *L) {
         retval__ = new LineEdit(content, parent);
       }
     }
-    // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
     return retval__->luaInit(L, retval__, "mimas.LineEdit");
   } catch (std::exception &e) {
     lua_pushfstring(L, "LineEdit: %s", e.what());
@@ -48,12 +47,12 @@ static int LineEdit_destructor(lua_State *L) {
 
   
   // custom destructor
-  if (*userdata) (*userdata)->luaDestroy();
+  LineEdit *self = *userdata;
+  if (self) self->luaDestroy();
   
   *userdata = NULL;
   return 0;
 }
-
 
 
 

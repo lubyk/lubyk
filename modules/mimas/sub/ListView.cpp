@@ -18,7 +18,6 @@ static int ListView_ListView(lua_State *L) {
   try {
     lubyk::Worker *worker = *((lubyk::Worker **)dubL_checksdata(L, 1, "lubyk.Worker"));
     ListView * retval__ = new ListView(worker);
-    // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
     return retval__->luaInit(L, retval__, "mimas.ListView");
   } catch (std::exception &e) {
     lua_pushfstring(L, "ListView: %s", e.what());
@@ -37,12 +36,12 @@ static int ListView_destructor(lua_State *L) {
 
   
   // custom destructor
-  if (*userdata) (*userdata)->luaDestroy();
+  ListView *self = *userdata;
+  if (self) self->luaDestroy();
   
   *userdata = NULL;
   return 0;
 }
-
 
 
 

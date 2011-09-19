@@ -84,6 +84,11 @@ modules = {
       puts "Could not find xml for #{class_name}"
       next
     end
+    
+    if klass.ancestors.detect{|a| a =~ /LuaObject/}
+      klass.opts[:init] = 'luaInit'
+      klass.custom_destructor ||= klass[:luaDestroy] || Dub::Function.new(klass, 'luaDestroy', '<type>void</type>')        
+    end
 
     klass.header = "#{mod_name}/#{class_name}.h"
 

@@ -55,52 +55,13 @@ function lib.all()
   lib.total_test = 0
   lib.total_asrt = 0
   lib.total_fail = 0
-  testing_gui = false
-  for i, suite in ipairs(lib.suites) do
-    if string.match(suite._info.name, 'mimas') then
-      testing_gui = true
-      break
-    end
-  end
-
-  if testing_gui then
-    lib.gui()
-  else
-    sched:run(function()
-      for i, suite in ipairs(lib.suites) do
-        lib.runSuite(suite)
-        lib.reportSuite(suite)
-      end
-      lib.report()
-    end)
-  end
-end
-
-function lib.gui()
   sched:run(function()
-    lib.total_test = 0
-    lib.total_asrt = 0
-    lib.total_fail = 0
-    if lib.suites[1] then
-      -- test threads first (or they fail because of mimas widgets creation)
-      for i, suite in ipairs(lib.suites) do
-        if string.match('lk.Thread', suite._info.name) then
-          lib.runSuite(suite)
-          lib.reportSuite(suite)
-          table.remove(lib.suites, i)
-          break
-        end
-      end
-
-      for i, suite in ipairs(lib.suites) do
-        lib.runSuite(suite)
-        lib.reportSuite(suite)
-      end
+    for i, suite in ipairs(lib.suites) do
+      lib.runSuite(suite)
+      lib.reportSuite(suite)
     end
-    -- get report when all threads have finished (all windows closed)
     lib.report()
   end)
-  sched:run()
 end
 
 function lib.loadAll(...)

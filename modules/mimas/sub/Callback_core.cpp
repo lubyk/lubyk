@@ -17,7 +17,6 @@ using namespace mimas;
 static int Callback_Callback(lua_State *L) {
   try {
     Callback * retval__ = new Callback();
-    // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
     return retval__->luaInit(L, retval__, "mimas.Callback");
   } catch (std::exception &e) {
     lua_pushfstring(L, "Callback: %s", e.what());
@@ -35,7 +34,9 @@ static int Callback_destructor(lua_State *L) {
   Callback **userdata = (Callback**)dubL_checksdata_n(L, 1, "mimas.Callback");
 
   
-  if (*userdata) delete *userdata;
+  // custom destructor
+  Callback *self = *userdata;
+  if (self) self->luaDestroy();
   
   *userdata = NULL;
   return 0;
@@ -43,10 +44,22 @@ static int Callback_destructor(lua_State *L) {
 
 
 
+// test if class is deleted
+static int Callback_deleted(lua_State *L) {
+  Callback **userdata = (Callback**)dubL_checksdata_n(L, 1, "mimas.Callback");
+  lua_pushboolean(L, *userdata == NULL);
+  return 1;
+}
+
 /* ============================ tostring         ====================== */
 
 static int Callback__tostring(lua_State *L) {
   Callback **userdata = (Callback**)dubL_checksdata_n(L, 1, "mimas.Callback");
+  
+  if (!*userdata) {
+    lua_pushstring(L, "<mimas.Callback: NULL>");
+    return 1;
+  }
   
   
   lua_pushfstring(L, "<mimas.Callback: %p>", *userdata);
@@ -63,6 +76,7 @@ static int Callback__tostring(lua_State *L) {
 static int Callback_connect(lua_State *L) {
   try {
     Callback *self = *((Callback**)dubL_checksdata(L, 1, "mimas.Callback"));
+    if (!self) throw dub::Exception("Using deleted mimas.Callback in connect");
     QObject *obj = *((QObject **)dubL_checksdata(L, 2, "mimas.QObject"));
     const char *method = dubL_checkstring(L, 3);
     const char *callback = dubL_checkstring(L, 4);
@@ -84,6 +98,7 @@ static int Callback_connect(lua_State *L) {
 static int QObject_name(lua_State *L) {
   try {
     Callback *self = *((Callback**)dubL_checksdata(L, 1, "mimas.Callback"));
+    if (!self) throw dub::Exception("Using deleted mimas.Callback in name");
     lua_pushstring(L, self->objectName().toUtf8().data());
     return 1;
   } catch (std::exception &e) {
@@ -102,6 +117,7 @@ static int QObject_name(lua_State *L) {
 static int QObject_object(lua_State *L) {
   try {
     Callback *self = *((Callback**)dubL_checksdata(L, 1, "mimas.Callback"));
+    if (!self) throw dub::Exception("Using deleted mimas.Callback in object");
     QObject * retval__ = self;
     lua_pushclass<QObject>(L, retval__, "mimas.QObject");
     return 1;
@@ -121,6 +137,7 @@ static int QObject_object(lua_State *L) {
 static int QObject_setName(lua_State *L) {
   try {
     Callback *self = *((Callback**)dubL_checksdata(L, 1, "mimas.Callback"));
+    if (!self) throw dub::Exception("Using deleted mimas.Callback in setName");
     const char *name = dubL_checkstring(L, 2);
     self->setObjectName(QString(name));
     return 0;
@@ -145,6 +162,7 @@ static const struct luaL_Reg Callback_member_methods[] = {
   {"setName"           , QObject_setName},
   {"__tostring"        , Callback__tostring},
   {"__gc"              , Callback_destructor},
+  {"deleted"           , Callback_deleted},
   {NULL, NULL},
 };
 

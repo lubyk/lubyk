@@ -139,6 +139,8 @@ void LuaObject::setupLuaThread(lua_State *L) throw() {
 }
 
 bool LuaObject::pushLuaCallbackl(const char *method, int len) const {
+  // FIXME: disable, we should not need this anymore (except in mimas
+  //        where we can use the main thread).
   lua_State *L = lua_;
   // <self>
   lua_pushlstring(L, method, len);

@@ -16,6 +16,7 @@ local private = {}
 setmetatable(lib, {
   __call = function()
     local self = {
+      should_run = true,
       -- Ordered linked list of events by event time.
       at_next    = nil,
       -- List of threads that have added their filedescriptors to
@@ -63,12 +64,31 @@ function lib:waitWrite(fd)
 end
 
 function lib:run(func)
-  local poller = self.poller
-  local idx_to_thread = self.idx_to_thread
   if func then
     self.main = lk.Thread(func)
   end
-  while true do
+
+  if not rawget(_G, 'mimas') then
+    -- without mimas
+    self:loop()
+  end
+
+  if self.should_run or self.restart_with_mimas then
+    self.restart_with_mimas = nil
+    -- restarting
+    self.should_run = true
+    -- now we are with mimas
+    self.mimas = true
+    private.usePoller(self, mimas.Poller())
+    app:exec()
+  end
+  private.finalize(self)
+end
+
+function lib:loop()
+  local poller = self.poller
+  local idx_to_thread = self.idx_to_thread
+  while self.should_run do
     local now = worker:now()
     local now_list = {}
     local timeout = -1
@@ -100,7 +120,7 @@ function lib:run(func)
       end
     end
       
-    if self.fd_count == 0 and timeout == -1 then
+    if self.fd_count == 0 and timeout == -1 and not self.mimas then
       -- done
       break
     else
@@ -121,7 +141,6 @@ function lib:run(func)
 
     end
   end
-  private.finalize(self)
 end
 
 function lib:scheduleAt(at, thread)
@@ -150,17 +169,36 @@ function lib:removeFd(thread)
   local fd = thread.fd
   self.idx_to_thread[thread.idx] = nil
   if fd then
-    self.poller:removeItem(thread.idx)
+    self.poller:remove(thread.idx)
     self.fd_count = self.fd_count - 1
   end
   thread.idx = nil
   thread.fd  = nil
 end
 
+function lib:mimasLoaded()
+  if coroutine.running() then
+    coroutine.yield('mimas')
+    -- we will continue here when triggered from within
+    -- app:exec()
+  end
+end
+
 --=============================================== PRIVATE
 
 local zmq_POLLIN, zmq_POLLOUT = zmq.POLLIN, zmq.POLLOUT
 local zmq_const = {read = zmq_POLLIN, write = zmq_POLLOUT}
+
+function private:usePoller(new_poller)
+  self.poller = new_poller
+  local idx_to_thread = self.idx_to_thread
+  self.idx_to_thread = {}
+  -- add all filedescriptors
+  for idx, thread in pairs(idx_to_thread) do
+    thread.idx = new_poller:add(thread.fd, thread.event)
+    self.idx_to_thread[thread.idx] = thread
+  end
+end
 
 function private:runThread(thread)
   -- get thread from wrap
@@ -196,10 +234,10 @@ function private:runThread(thread)
     if thread.fd then
       if thread.fd == b then
         -- same
-        self.poller:modifyItem(thread.idx, event)
+        self.poller:modify(thread.idx, event)
       else
         -- changed fd
-        self.poller:modifyItem(thread.idx, event, b)
+        self.poller:modify(thread.idx, event, b)
       end
     else
       -- add fd
@@ -208,6 +246,8 @@ function private:runThread(thread)
       thread.idx = self.poller:add(b, event)
       self.idx_to_thread[thread.idx] = thread
     end
+    -- We need this information in case we change poller.
+    thread.event = event
   elseif a == 'join' then
     if thread.fd then
       self:removeFd(thread)
@@ -229,6 +269,9 @@ function private:runThread(thread)
     thread.fd = nil
     t.co = nil
     t:finalize(self)
+  elseif a == 'mimas' then
+    self.should_run = false
+    self.restart_with_mimas = true
   else
     if thread.fd then
       self:removeFd(thread)

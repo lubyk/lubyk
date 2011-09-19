@@ -29,7 +29,6 @@ static int Button_Button(lua_State *L) {
         retval__ = new Button(title, parent);
       }
     }
-    // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
     return retval__->luaInit(L, retval__, "mimas.Button");
   } catch (std::exception &e) {
     lua_pushfstring(L, "Button: %s", e.what());
@@ -48,12 +47,12 @@ static int Button_destructor(lua_State *L) {
 
   
   // custom destructor
-  if (*userdata) (*userdata)->luaDestroy();
+  Button *self = *userdata;
+  if (self) self->luaDestroy();
   
   *userdata = NULL;
   return 0;
 }
-
 
 
 
