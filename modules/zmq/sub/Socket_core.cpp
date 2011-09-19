@@ -19,7 +19,6 @@ static int Socket_Socket(lua_State *L) {
     int type = dubL_checkint(L, 1);
     lubyk::Worker *worker = *((lubyk::Worker **)dubL_checksdata(L, 2, "lubyk.Worker"));
     Socket * retval__ = new Socket(type, worker);
-    // The class inherits from 'LuaObject', use luaInit instead of lua_pushclass.
     return retval__->luaInit(L, retval__, "zmq.Socket");
   } catch (std::exception &e) {
     lua_pushfstring(L, "Socket: %s", e.what());
@@ -37,7 +36,9 @@ static int Socket_destructor(lua_State *L) {
   Socket **userdata = (Socket**)dubL_checksdata_n(L, 1, "zmq.Socket");
 
   
-  if (*userdata) (*userdata)->luaDestroy();
+  // custom destructor
+  Socket *self = *userdata;
+  if (self) self->luaDestroy();
   
   *userdata = NULL;
   return 0;
@@ -45,10 +46,22 @@ static int Socket_destructor(lua_State *L) {
 
 
 
+// test if class is deleted
+static int Socket_deleted(lua_State *L) {
+  Socket **userdata = (Socket**)dubL_checksdata_n(L, 1, "zmq.Socket");
+  lua_pushboolean(L, *userdata == NULL);
+  return 1;
+}
+
 /* ============================ tostring         ====================== */
 
 static int Socket__tostring(lua_State *L) {
   Socket **userdata = (Socket**)dubL_checksdata_n(L, 1, "zmq.Socket");
+  
+  if (!*userdata) {
+    lua_pushstring(L, "<zmq.Socket: NULL>");
+    return 1;
+  }
   
   
   lua_pushfstring(L, "<zmq.Socket: %p %s (%s)>", *userdata, (*userdata)->location(), (*userdata)->type());
@@ -61,11 +74,12 @@ static int Socket__tostring(lua_State *L) {
 
 
 /** void zmq::Socket::bind(const char *location)
- * include/zmq/Socket.h:166
+ * include/zmq/Socket.h:165
  */
 static int Socket_bind1(lua_State *L) {
   try {
     Socket *self = *((Socket**)dubL_checksdata(L, 1, "zmq.Socket"));
+    if (!self) throw dub::Exception("Using deleted zmq.Socket in bind");
     const char *location = dubL_checkstring(L, 2);
     self->bind(location);
     return 0;
@@ -80,11 +94,12 @@ static int Socket_bind1(lua_State *L) {
 
 
 /** int zmq::Socket::bind(int min_port=2000, int max_port=20000, int retries=100)
- * include/zmq/Socket.h:176
+ * include/zmq/Socket.h:175
  */
 static int Socket_bind2(lua_State *L) {
   try {
     Socket *self = *((Socket**)dubL_checksdata(L, 1, "zmq.Socket"));
+    if (!self) throw dub::Exception("Using deleted zmq.Socket in bind");
     int top__ = lua_gettop(L);
     int  retval__;
     if (top__ < 2) {
@@ -120,11 +135,11 @@ static int Socket_bind2(lua_State *L) {
 static int Socket_bind(lua_State *L) {
   int type__ = lua_type(L, 2);
   int top__  = lua_gettop(L);
-  if (type__ == LUA_TSTRING) {
+  if (type__ == LUA_TNUMBER) {
+    return Socket_bind2(L);
+  } else if (type__ == LUA_TSTRING) {
     return Socket_bind1(L);
   } else if (top__ < 2) {
-    return Socket_bind2(L);
-  } else if (type__ == LUA_TNUMBER) {
     return Socket_bind2(L);
   } else {
     // use any to raise errors
@@ -134,11 +149,12 @@ static int Socket_bind(lua_State *L) {
 
 
 /** void zmq::Socket::connect(const char *location)
- * include/zmq/Socket.h:199
+ * include/zmq/Socket.h:198
  */
 static int Socket_connect(lua_State *L) {
   try {
     Socket *self = *((Socket**)dubL_checksdata(L, 1, "zmq.Socket"));
+    if (!self) throw dub::Exception("Using deleted zmq.Socket in connect");
     const char *location = dubL_checkstring(L, 2);
     self->connect(location);
     return 0;
@@ -152,12 +168,54 @@ static int Socket_connect(lua_State *L) {
 
 
 
+/** int zmq::Socket::fd()
+ * include/zmq/Socket.h:116
+ */
+static int Socket_fd(lua_State *L) {
+  try {
+    Socket *self = *((Socket**)dubL_checksdata(L, 1, "zmq.Socket"));
+    if (!self) throw dub::Exception("Using deleted zmq.Socket in fd");
+    int  retval__ = self->fd();
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "fd: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "fd: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** bool zmq::Socket::hasEvent(int event)
+ * include/zmq/Socket.h:209
+ */
+static int Socket_hasEvent(lua_State *L) {
+  try {
+    Socket *self = *((Socket**)dubL_checksdata(L, 1, "zmq.Socket"));
+    if (!self) throw dub::Exception("Using deleted zmq.Socket in hasEvent");
+    int event = dubL_checkint(L, 2);
+    bool  retval__ = self->hasEvent(event);
+    lua_pushboolean(L, retval__);
+    return 1;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "hasEvent: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "hasEvent: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
 /** const char* zmq::Socket::location()
- * include/zmq/Socket.h:336
+ * include/zmq/Socket.h:348
  */
 static int Socket_location(lua_State *L) {
   try {
     Socket *self = *((Socket**)dubL_checksdata(L, 1, "zmq.Socket"));
+    if (!self) throw dub::Exception("Using deleted zmq.Socket in location");
     const char * retval__ = self->location();
     lua_pushstring(L, retval__);
     return 1;
@@ -172,11 +230,12 @@ static int Socket_location(lua_State *L) {
 
 
 /** int zmq::Socket::port()
- * include/zmq/Socket.h:340
+ * include/zmq/Socket.h:352
  */
 static int Socket_port(lua_State *L) {
   try {
     Socket *self = *((Socket**)dubL_checksdata(L, 1, "zmq.Socket"));
+    if (!self) throw dub::Exception("Using deleted zmq.Socket in port");
     int  retval__ = self->port();
     lua_pushnumber(L, retval__);
     return 1;
@@ -191,11 +250,12 @@ static int Socket_port(lua_State *L) {
 
 
 /** void zmq::Socket::rawSend(lua_State *L)
- * include/zmq/Socket.h:249
+ * include/zmq/Socket.h:261
  */
 static int Socket_rawSend(lua_State *L) {
   try {
     Socket *self = *((Socket**)dubL_checksdata(L, 1, "zmq.Socket"));
+    if (!self) throw dub::Exception("Using deleted zmq.Socket in rawSend");
     
     self->rawSend(L);
     return 0;
@@ -209,31 +269,13 @@ static int Socket_rawSend(lua_State *L) {
 
 
 
-/** LuaStackSize zmq::Socket::rawSock(lua_State *L)
- * include/zmq/Socket.h:118
- */
-static int Socket_rawSock(lua_State *L) {
-  try {
-    Socket *self = *((Socket**)dubL_checksdata(L, 1, "zmq.Socket"));
-    
-    LuaStackSize  retval__ = self->rawSock(L);
-    return retval__;
-  } catch (std::exception &e) {
-    lua_pushfstring(L, "rawSock: %s", e.what());
-  } catch (...) {
-    lua_pushfstring(L, "rawSock: Unknown exception");
-  }
-  return lua_error(L);
-}
-
-
-
 /** LuaStackSize zmq::Socket::recv(lua_State *L)
- * include/zmq/Socket.h:211
+ * include/zmq/Socket.h:223
  */
 static int Socket_recv(lua_State *L) {
   try {
     Socket *self = *((Socket**)dubL_checksdata(L, 1, "zmq.Socket"));
+    if (!self) throw dub::Exception("Using deleted zmq.Socket in recv");
     
     LuaStackSize  retval__ = self->recv(L);
     return retval__;
@@ -248,11 +290,12 @@ static int Socket_recv(lua_State *L) {
 
 
 /** LuaStackSize zmq::Socket::request(lua_State *L)
- * include/zmq/Socket.h:264
+ * include/zmq/Socket.h:276
  */
 static int Socket_request(lua_State *L) {
   try {
     Socket *self = *((Socket**)dubL_checksdata(L, 1, "zmq.Socket"));
+    if (!self) throw dub::Exception("Using deleted zmq.Socket in request");
     
     LuaStackSize  retval__ = self->request(L);
     return retval__;
@@ -267,11 +310,12 @@ static int Socket_request(lua_State *L) {
 
 
 /** void zmq::Socket::send(lua_State *L)
- * include/zmq/Socket.h:232
+ * include/zmq/Socket.h:244
  */
 static int Socket_send(lua_State *L) {
   try {
     Socket *self = *((Socket**)dubL_checksdata(L, 1, "zmq.Socket"));
+    if (!self) throw dub::Exception("Using deleted zmq.Socket in send");
     
     self->send(L);
     return 0;
@@ -286,11 +330,12 @@ static int Socket_send(lua_State *L) {
 
 
 /** void zmq::Socket::setsockopt(int type, lua_State *L)
- * include/zmq/Socket.h:129
+ * include/zmq/Socket.h:128
  */
 static int Socket_setsockopt(lua_State *L) {
   try {
     Socket *self = *((Socket**)dubL_checksdata(L, 1, "zmq.Socket"));
+    if (!self) throw dub::Exception("Using deleted zmq.Socket in setsockopt");
     int type = dubL_checkint(L, 2);
     
     self->setsockopt(type, L);
@@ -306,11 +351,12 @@ static int Socket_setsockopt(lua_State *L) {
 
 
 /** const char* zmq::Socket::type() const 
- * include/zmq/Socket.h:351
+ * include/zmq/Socket.h:363
  */
 static int Socket_type(lua_State *L) {
   try {
     Socket *self = *((Socket**)dubL_checksdata(L, 1, "zmq.Socket"));
+    if (!self) throw dub::Exception("Using deleted zmq.Socket in type");
     const char * retval__ = self->type();
     lua_pushstring(L, retval__);
     return 1;
@@ -331,10 +377,11 @@ static int Socket_type(lua_State *L) {
 static const struct luaL_Reg Socket_member_methods[] = {
   {"bind"              , Socket_bind},
   {"connect"           , Socket_connect},
+  {"fd"                , Socket_fd},
+  {"hasEvent"          , Socket_hasEvent},
   {"location"          , Socket_location},
   {"port"              , Socket_port},
   {"rawSend"           , Socket_rawSend},
-  {"rawSock"           , Socket_rawSock},
   {"recv"              , Socket_recv},
   {"request"           , Socket_request},
   {"send"              , Socket_send},
@@ -342,6 +389,7 @@ static const struct luaL_Reg Socket_member_methods[] = {
   {"type"              , Socket_type},
   {"__tostring"        , Socket__tostring},
   {"__gc"              , Socket_destructor},
+  {"deleted"           , Socket_deleted},
   {NULL, NULL},
 };
 

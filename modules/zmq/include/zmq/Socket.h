@@ -113,16 +113,15 @@ public:
     }
   }
 
-  /** FIXME: tmp while testing (use zmq.Socket directly in poll).
-   */
-  LuaStackSize rawSock(lua_State *L) {
-    if (socket_) {
-      lua_pushlightuserdata(L, socket_);
-      return 1;
-    } else {
-      return 0;
+  int fd() {
+    int fd;
+    size_t fd_size = sizeof(fd);
+    if (zmq_getsockopt(socket_, ZMQ_FD, &fd, &fd_size)) {
+      throw Exception("Error while getting file descriptor (%s).", zmq_strerror(zmq_errno()));
     }
+    return fd;
   }
+
   /** Set socket options.
    * Should NOT be used while in a request() or recv().
    */
@@ -201,6 +200,19 @@ public:
     if (zmq_connect(socket_, location))
       throw Exception("Could not connect to '%s'.", location);
     location_ = location; // store last connection for info string
+  }
+
+  /** Return true if the socket responds to the given event. This has
+   * to be used when we do not use zmq_poll but some external poll/select
+   * on the file descriptor.
+   */
+  bool hasEvent(int event) {
+    uint32_t events;
+    size_t ev_size = sizeof(events);
+    if (zmq_getsockopt(socket_, ZMQ_EVENTS, &events, &ev_size)) {
+      throw Exception("Error while getting events (%s).", zmq_strerror(zmq_errno()));
+    }
+    return events & event;
   }
 
   /** Receive a message (blocks).

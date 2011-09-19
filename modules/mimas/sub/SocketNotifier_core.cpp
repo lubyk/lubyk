@@ -112,7 +112,7 @@ static int QObject_object(lua_State *L) {
 
 
 /** void mimas::SocketNotifier::setEnabled(bool enabled)
- * include/mimas/SocketNotifier.h:75
+ * include/mimas/SocketNotifier.h:80
  */
 static int SocketNotifier_setEnabled(lua_State *L) {
   try {
@@ -152,7 +152,7 @@ static int QObject_setName(lua_State *L) {
 
 
 /** int mimas::SocketNotifier::socket() const 
- * include/mimas/SocketNotifier.h:66
+ * include/mimas/SocketNotifier.h:71
  */
 static int SocketNotifier_socket(lua_State *L) {
   try {

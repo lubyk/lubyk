@@ -77,7 +77,7 @@ mimas = {}
 setmetatable(mimas, {
 __index = function(lib, key)
   -- we need to load mimas
-  mimas = nil
+  --mimas = nil
   require 'mimas'
   sched:mimasLoaded()
   return mimas[key]

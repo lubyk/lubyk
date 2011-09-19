@@ -44,6 +44,7 @@ function private.makeNotifier(self, fd, event)
   notifier.event = event
   notifier.poller = self
   notifier.callback = private.socketCallback
+  return notifier
 end
 
 -- This callback is called whenever we have an event for a given
@@ -53,6 +54,14 @@ function private.socketCallback(notifier)
   -- Add idx to events
   self.idx = notifier
   private.resume(self)
+end
+
+function private.zmqSocketCallback(notifier)
+  local sock = notifier.zmq_socket
+  -- Empty inbox (we only receive a call if the inbox has been emptied)
+  while sock:hasEvent(notifier.event) do
+    private.socketCallback(notifier)
+  end
 end
 
 function private:resume()
@@ -72,10 +81,14 @@ end
 --- Adds a filedescriptor or zmq.Socket to the poll items.
 -- @return a unique id for this element.
 function lib:add(fd, event)
+  local notifier
   if type(fd) == 'userdata' then
-    fd = fd:fd()
+    notifier = private.makeNotifier(self, fd:fd(), event)
+    notifier.callback = private.zmqSocketCallback
+    notifier.zmq_socket = fd
+  else
+    notifier = private.makeNotifier(self, fd, event)
   end
-  local notifier = private.makeNotifier(self, fd, event)
   notifier[event]  = notifier
   notifier.current = notifier
   return notifier

@@ -63,6 +63,8 @@ public:
 
   }
 
+  virtual ~SocketNotifier() {}
+
   int socket() const {
     return QSocketNotifier::socket();
   }
@@ -89,6 +91,7 @@ public:
 
 private slots:
   void activatedSlot(int socket) {
+    // printf("activatedSlot %i (%s)\n", socket, enabled_ ? "ON" : "OFF");
     if (!enabled_) return;
     // Callback
     // FIXME: LuaObject stores L as lua_ (no need for a new thread)

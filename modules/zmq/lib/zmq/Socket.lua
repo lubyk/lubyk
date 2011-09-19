@@ -19,7 +19,6 @@ lib.type = 'zmq.Socket'
 
 function lib.new(type, func)
   local self = constr(type, worker)
-  self.fd = self:rawSock()
   self.loop = func
   setmetatable(self, lib)
   if self.loop then
@@ -74,7 +73,8 @@ end
 
 function lib:request(...)
   self:send(...)
-  return self:recv()
+  local data = {self:recv()}
+  return unpack(data)
 end
 
 function lib:recv()

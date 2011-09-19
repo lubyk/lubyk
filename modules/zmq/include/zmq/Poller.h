@@ -238,7 +238,6 @@ public:
     assert(idx < pollitems_size_);
     int last_pos = used_count_ - 1;
     int pos = idx_to_pos_[idx];
-    zmq_pollitem_t *item = pollitems_ + pos;
     --used_count_;
     if (pos == last_pos) {
       // we removed the last element, we are done.

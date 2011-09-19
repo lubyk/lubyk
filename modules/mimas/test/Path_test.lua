@@ -12,8 +12,8 @@ require 'lubyk'
 
 local should = test.Suite('mimas.Painter')
 
-function should.load()
-  assertEqual(1, mimas.Path)
+function should.autoload()
+  assertTrue(mimas.Path)
 end
 
 local function makePath(t, s, x, y)

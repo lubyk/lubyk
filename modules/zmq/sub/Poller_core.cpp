@@ -111,19 +111,19 @@ static int Poller_add2(lua_State *L) {
 /** Overloaded function chooser for add(...) */
 static int Poller_add(lua_State *L) {
   int type__ = lua_type(L, 2);
-  if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "zmq.Socket")) {
-    return Poller_add2(L);
-  } else if (type__ == LUA_TNUMBER) {
+  if (type__ == LUA_TNUMBER) {
     return Poller_add1(L);
+  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "zmq.Socket")) {
+    return Poller_add2(L);
   } else {
     // use any to raise errors
-    return Poller_add1(L);
+    return Poller_add2(L);
   }
 }
 
 
 /** int zmq::Poller::count()
- * include/zmq/Poller.h:254
+ * include/zmq/Poller.h:253
  */
 static int Poller_count(lua_State *L) {
   try {

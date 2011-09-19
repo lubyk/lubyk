@@ -68,7 +68,7 @@ function lib:run(func)
     self.main = lk.Thread(func)
   end
 
-  if not rawget(_G, 'mimas') then
+  if not rawget(mimas, 'Application') then
     -- without mimas
     self:loop()
   end
@@ -122,7 +122,7 @@ function lib:loop()
       
     if self.fd_count == 0 and timeout == -1 and not self.mimas then
       -- done
-      break
+      self.should_run = false
     else
       if not poller:poll(timeout) then
         -- interrupted

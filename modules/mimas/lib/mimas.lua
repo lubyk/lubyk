@@ -30,7 +30,6 @@ mimas.Color   = mimas_core.Color
 mimas.Pen     = mimas_core.Pen
 mimas.Painter = mimas_core.Painter
 mimas.Path    = mimas_core.Path
-mimas.Region  = mimas_core.Region
 
 mimas.WhitePen   = mimas.Pen(1, 0, 0, 1)
 mimas.WhiteBrush = mimas.Brush(0, 0, 1)
@@ -58,4 +57,3 @@ mimas.colors = {
 mimas.ESC   = 16777216
 mimas.Space = 32
 
-sched:mimasLoaded()

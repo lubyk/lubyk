@@ -9,9 +9,6 @@
 
 --]]------------------------------------------------------
 require 'lubyk'
--- foce testing with gui thread
-require 'mimas'
-
 
 local should = test.Suite('zmq.Push/Pull')
 

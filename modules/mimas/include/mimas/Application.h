@@ -49,6 +49,7 @@ namespace mimas {
  *      constructor: 'MakeApplication'
  *      destructor: 'luaDestroy'
  *      ignore: 'event'
+ *      super: 'QObject'
  */
 class Application : public QApplication, public LuaObject {
   Q_OBJECT

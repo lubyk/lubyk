@@ -10,7 +10,6 @@
 --]]------------------------------------------------------
 require 'lubyk'
 
-
 local should = test.Suite('zmq.Pub/Sub')
 
 function should.publishAndSubscribe()
