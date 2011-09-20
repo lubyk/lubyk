@@ -17,7 +17,6 @@ using namespace lk;
 static int Finalizer_Finalizer(lua_State *L) {
   try {
     Finalizer * retval__ = new Finalizer();
-    // The class inherits from 'LuaObject', use luaInit instead of lua_pushclass.
     return retval__->luaInit(L, retval__, "lk.Finalizer");
   } catch (std::exception &e) {
     lua_pushfstring(L, "Finalizer: %s", e.what());
@@ -37,12 +36,11 @@ static int Finalizer_destructor(lua_State *L) {
   
   // custom destructor
   Finalizer *self = *userdata;
-  if (self) self->finalizer(L);
+  if (self) self->finalize(L);
   
   *userdata = NULL;
   return 0;
 }
-
 
 
 

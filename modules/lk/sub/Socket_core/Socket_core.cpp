@@ -18,7 +18,6 @@ static int Socket_Socket(lua_State *L) {
   try {
     int socket_type = dubL_checkint(L, 1);
     Socket * retval__ = new Socket(socket_type);
-    // The class inherits from 'LuaObject', use luaInit instead of lua_pushclass.
     return retval__->luaInit(L, retval__, "lk.Socket");
   } catch (std::exception &e) {
     lua_pushfstring(L, "Socket: %s", e.what());
@@ -36,7 +35,9 @@ static int Socket_destructor(lua_State *L) {
   Socket **userdata = (Socket**)dubL_checksdata_n(L, 1, "lk.Socket");
 
   
-  if (*userdata) (*userdata)->luaDestroy();
+  // custom destructor
+  Socket *self = *userdata;
+  if (self) self->luaDestroy();
   
   *userdata = NULL;
   return 0;
@@ -44,10 +45,22 @@ static int Socket_destructor(lua_State *L) {
 
 
 
+// test if class is deleted
+static int Socket_deleted(lua_State *L) {
+  Socket **userdata = (Socket**)dubL_checksdata_n(L, 1, "lk.Socket");
+  lua_pushboolean(L, *userdata == NULL);
+  return 1;
+}
+
 /* ============================ tostring         ====================== */
 
 static int Socket__tostring(lua_State *L) {
   Socket **userdata = (Socket**)dubL_checksdata_n(L, 1, "lk.Socket");
+  
+  if (!*userdata) {
+    lua_pushstring(L, "<lk.Socket: NULL>");
+    return 1;
+  }
   
   
   lua_pushfstring(L, "<lk.Socket: %p %s:%d --> %s:%d>", *userdata, (*userdata)->localHost(), (*userdata)->localPort(), (*userdata)->remoteHost(), (*userdata)->remotePort());
@@ -64,6 +77,7 @@ static int Socket__tostring(lua_State *L) {
 static int Socket_accept(lua_State *L) {
   try {
     Socket *self = *((Socket**)dubL_checksdata(L, 1, "lk.Socket"));
+    if (!self) throw dub::Exception("Using deleted lk.Socket in accept");
     
     LuaStackSize  retval__ = self->accept(L);
     return retval__;
@@ -83,6 +97,7 @@ static int Socket_accept(lua_State *L) {
 static int Socket_bind(lua_State *L) {
   try {
     Socket *self = *((Socket**)dubL_checksdata(L, 1, "lk.Socket"));
+    if (!self) throw dub::Exception("Using deleted lk.Socket in bind");
     int top__ = lua_gettop(L);
     int  retval__;
     if (top__ < 2) {
@@ -114,6 +129,7 @@ static int Socket_bind(lua_State *L) {
 static int Socket_close(lua_State *L) {
   try {
     Socket *self = *((Socket**)dubL_checksdata(L, 1, "lk.Socket"));
+    if (!self) throw dub::Exception("Using deleted lk.Socket in close");
     self->close();
     return 0;
   } catch (std::exception &e) {
@@ -132,6 +148,7 @@ static int Socket_close(lua_State *L) {
 static int Socket_connect(lua_State *L) {
   try {
     Socket *self = *((Socket**)dubL_checksdata(L, 1, "lk.Socket"));
+    if (!self) throw dub::Exception("Using deleted lk.Socket in connect");
     const char *host = dubL_checkstring(L, 2);
     int port = dubL_checkint(L, 3);
     self->connect(host, port);
@@ -152,6 +169,7 @@ static int Socket_connect(lua_State *L) {
 static int Socket_fd(lua_State *L) {
   try {
     Socket *self = *((Socket**)dubL_checksdata(L, 1, "lk.Socket"));
+    if (!self) throw dub::Exception("Using deleted lk.Socket in fd");
     int  retval__ = self->fd();
     lua_pushnumber(L, retval__);
     return 1;
@@ -171,6 +189,7 @@ static int Socket_fd(lua_State *L) {
 static int Socket_listen(lua_State *L) {
   try {
     Socket *self = *((Socket**)dubL_checksdata(L, 1, "lk.Socket"));
+    if (!self) throw dub::Exception("Using deleted lk.Socket in listen");
     self->listen();
     return 0;
   } catch (std::exception &e) {
@@ -189,6 +208,7 @@ static int Socket_listen(lua_State *L) {
 static int Socket_localHost(lua_State *L) {
   try {
     Socket *self = *((Socket**)dubL_checksdata(L, 1, "lk.Socket"));
+    if (!self) throw dub::Exception("Using deleted lk.Socket in localHost");
     const char * retval__ = self->localHost();
     lua_pushstring(L, retval__);
     return 1;
@@ -208,6 +228,7 @@ static int Socket_localHost(lua_State *L) {
 static int Socket_localPort(lua_State *L) {
   try {
     Socket *self = *((Socket**)dubL_checksdata(L, 1, "lk.Socket"));
+    if (!self) throw dub::Exception("Using deleted lk.Socket in localPort");
     int  retval__ = self->localPort();
     lua_pushnumber(L, retval__);
     return 1;
@@ -227,6 +248,7 @@ static int Socket_localPort(lua_State *L) {
 static int Socket_port(lua_State *L) {
   try {
     Socket *self = *((Socket**)dubL_checksdata(L, 1, "lk.Socket"));
+    if (!self) throw dub::Exception("Using deleted lk.Socket in port");
     int  retval__ = self->port();
     lua_pushnumber(L, retval__);
     return 1;
@@ -246,6 +268,7 @@ static int Socket_port(lua_State *L) {
 static int Socket_recv(lua_State *L) {
   try {
     Socket *self = *((Socket**)dubL_checksdata(L, 1, "lk.Socket"));
+    if (!self) throw dub::Exception("Using deleted lk.Socket in recv");
     
     LuaStackSize  retval__ = self->recv(L);
     return retval__;
@@ -265,6 +288,7 @@ static int Socket_recv(lua_State *L) {
 static int Socket_recvMsg(lua_State *L) {
   try {
     Socket *self = *((Socket**)dubL_checksdata(L, 1, "lk.Socket"));
+    if (!self) throw dub::Exception("Using deleted lk.Socket in recvMsg");
     
     LuaStackSize  retval__ = self->recvMsg(L);
     return retval__;
@@ -284,6 +308,7 @@ static int Socket_recvMsg(lua_State *L) {
 static int Socket_remoteHost(lua_State *L) {
   try {
     Socket *self = *((Socket**)dubL_checksdata(L, 1, "lk.Socket"));
+    if (!self) throw dub::Exception("Using deleted lk.Socket in remoteHost");
     const char * retval__ = self->remoteHost();
     lua_pushstring(L, retval__);
     return 1;
@@ -303,6 +328,7 @@ static int Socket_remoteHost(lua_State *L) {
 static int Socket_remotePort(lua_State *L) {
   try {
     Socket *self = *((Socket**)dubL_checksdata(L, 1, "lk.Socket"));
+    if (!self) throw dub::Exception("Using deleted lk.Socket in remotePort");
     int  retval__ = self->remotePort();
     lua_pushnumber(L, retval__);
     return 1;
@@ -322,6 +348,7 @@ static int Socket_remotePort(lua_State *L) {
 static int Socket_request(lua_State *L) {
   try {
     Socket *self = *((Socket**)dubL_checksdata(L, 1, "lk.Socket"));
+    if (!self) throw dub::Exception("Using deleted lk.Socket in request");
     
     LuaStackSize  retval__ = self->request(L);
     return retval__;
@@ -341,6 +368,7 @@ static int Socket_request(lua_State *L) {
 static int Socket_send(lua_State *L) {
   try {
     Socket *self = *((Socket**)dubL_checksdata(L, 1, "lk.Socket"));
+    if (!self) throw dub::Exception("Using deleted lk.Socket in send");
     
     int  retval__ = self->send(L);
     lua_pushnumber(L, retval__);
@@ -361,6 +389,7 @@ static int Socket_send(lua_State *L) {
 static int Socket_sendMsg(lua_State *L) {
   try {
     Socket *self = *((Socket**)dubL_checksdata(L, 1, "lk.Socket"));
+    if (!self) throw dub::Exception("Using deleted lk.Socket in sendMsg");
     
     self->sendMsg(L);
     return 0;
@@ -380,6 +409,7 @@ static int Socket_sendMsg(lua_State *L) {
 static int Socket_setNonBlocking(lua_State *L) {
   try {
     Socket *self = *((Socket**)dubL_checksdata(L, 1, "lk.Socket"));
+    if (!self) throw dub::Exception("Using deleted lk.Socket in setNonBlocking");
     self->setNonBlocking();
     return 0;
   } catch (std::exception &e) {
@@ -398,6 +428,7 @@ static int Socket_setNonBlocking(lua_State *L) {
 static int Socket_setRecvTimeout(lua_State *L) {
   try {
     Socket *self = *((Socket**)dubL_checksdata(L, 1, "lk.Socket"));
+    if (!self) throw dub::Exception("Using deleted lk.Socket in setRecvTimeout");
     int timeout = dubL_checkint(L, 2);
     self->setRecvTimeout(timeout);
     return 0;
@@ -417,6 +448,7 @@ static int Socket_setRecvTimeout(lua_State *L) {
 static int Socket_setSendTimeout(lua_State *L) {
   try {
     Socket *self = *((Socket**)dubL_checksdata(L, 1, "lk.Socket"));
+    if (!self) throw dub::Exception("Using deleted lk.Socket in setSendTimeout");
     int timeout = dubL_checkint(L, 2);
     self->setSendTimeout(timeout);
     return 0;
@@ -456,6 +488,7 @@ static const struct luaL_Reg Socket_member_methods[] = {
   {"setSendTimeout"    , Socket_setSendTimeout},
   {"__tostring"        , Socket__tostring},
   {"__gc"              , Socket_destructor},
+  {"deleted"           , Socket_deleted},
   {NULL, NULL},
 };
 

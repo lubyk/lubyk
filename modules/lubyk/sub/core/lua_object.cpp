@@ -96,39 +96,14 @@ void LuaObject::setupMetatable(lua_State *L, const char *type_name) throw() {
 //   Thanks to Robert G. Jakabosky for the idea to use lua_xmove
 //   instead of weak tables to store the function reference.
 void ThreadedLuaObject::setupLuaThread(lua_State *L) throw() {
-
   // ... <self> <udata>
-  lua_getfenv(L, -1);
+  // Create env table
+  lua_newtable(L);
   // ... <self> <udata> <env>
-  lua_pushstring(L, ".");
-  // ... <self> <udata> <env> "."
-  lua_rawget(L, -2); // <env>["."]
-  // ... <self> <udata> <env> <??>
-  if (!lua_rawequal(L, -1, -3)) {
-    // ... <self> <udata> <env> <nil>
-    // does not have it's own env table
-    lua_pop(L, 2);
-    // ... <self> <udata>
-    // Create env table
-    lua_newtable(L);
-    // ... <self> <udata> <env>
-    lua_pushstring(L, ".");
-    // ... <self> <udata> <env> "."
-    lua_pushvalue(L, -3);
-    // ... <self> <udata> <env> "." <udata>
-    lua_rawset(L, -3); // env["."] = udata
-    // ... <self> <udata> <env>
-    lua_pushvalue(L, -1);
-    // ... <self> <udata> <env> <env>
-    if (!lua_setfenv(L, -3)) {
-      luaL_error(L, "Could not set userdata env on '%s'.", lua_typename(L, lua_type(L, -3)));
-    }
-    // ... <self> <udata> <env>
-  } else {
-    // ... <self> <udata> <env> <self>
-    // has its own env table
-    lua_pop(L, 1);
-    // ... <self> <udata> <env>
+  lua_pushvalue(L, -1);
+  // ... <self> <udata> <env> <env>
+  if (!lua_setfenv(L, -3)) {
+    luaL_error(L, "Could not set userdata env on '%s'.", lua_typename(L, lua_type(L, -3)));
   }
 
   // ... <self> <udata> <env>

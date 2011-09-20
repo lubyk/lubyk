@@ -37,7 +37,7 @@ namespace lk {
  * in lua. The object calls "callback" when being garbage collected.
  * 
  * @dub lib_name: 'Finalizer_core'
- *      destructor: 'finalizer'
+ *      destructor: 'finalize'
  */
 class Finalizer : public LuaObject {
 public:
@@ -45,42 +45,55 @@ public:
 
   virtual ~Finalizer() {}
 
-  // ... <func>
   virtual int luaInit(lua_State *L, void *obj, const char *name) throw() {
-    luaL_checktype(L, -1, LUA_TFUNCTION);
     LuaObject::luaInit(L, obj, name);
-    // ... <func> <self>
+    // ... <self>
     lua_pushstring(L, "super");
-    // ... <func> <self> <'super'>
+    // ... <self> <'super'>
     lua_gettable(L, -2);
-    // ... <func> <self> <udata>
-    lua_getfenv(L, -1);
-    // ... <func> <self> <udata> <env>
-    lua_pushstring(L, "finalizer");
-    // ... <func> <self> <udata> <env> <'finalizer'>
-    lua_pushvalue(L, -5);
-    // ... <func> <self> <udata> <env> <'finalizer'> <func>
-    lua_settable(L, -3);
-    // ... <func> <self> <udata> <env>
+    // ... <self> <udata>
+    // create our own environment
+    lua_newtable(L);
+    // ... <self> <udata> <env>
+    lua_pushvalue(L, -1);
+    // ... <self> <udata> <env> <env>
+    if (!lua_setfenv(L, -3)) {
+      luaL_error(L, "Could not set userdata env on '%s'.", lua_typename(L, lua_type(L, -3)));
+    }
+    // ... <self> <udata> <env>
+    lua_pushstring(L, "self");
+    // ... <self> <udata> <env> <'self'>
+    lua_pushvalue(L, -4);
+    // ... <self> <udata> <env> <'self'> <self>
+    lua_settable(L, -3); // env.self = <self>
+    // ... <self> <udata> <env>
     lua_pop(L, 2);
+    // ... <self>
     return 1;
   }
 
+  // We do <udata>.<env>.self.finalize(self)
   // <udata>
-  void finalizer(lua_State *L) {
+  void finalize(lua_State *L) {
     lua_getfenv(L, -1);
     // <udata> <env>
-    lua_pushstring(L, "finalizer");
-    // <udata> <env> <'finalizer'>
+    lua_pushstring(L, "self");
+    // <udata> <env> <'self'>
     lua_gettable(L, -2);
-    // <udata> <env> <func>
-    int status = lua_pcall(L, 0, 0, 0);
+    // <udata> <env> <self>
+    lua_pushstring(L, "finalize");
+    // <udata> <env> <self> <'finalize'>
+    lua_gettable(L, -2);
+    // <udata> <env> <self> <func>
+    lua_pushvalue(L, -2);
+    // <udata> <env> <self> <func> <self>
+    int status = lua_pcall(L, 1, 0, 0);
     if (status) {
-      fprintf(stderr, "Error in 'finalizer': %s\n", lua_tostring(L, -1));
+      fprintf(stderr, "Error in 'finalize': %s\n", lua_tostring(L, -1));
       lua_pop(L, 1);
     }
-    // <udata> <env>
-    lua_pop(L, 1);
+    // <udata> <env> <self>
+    lua_pop(L, 2);
     // <udata>
     delete this;
   }

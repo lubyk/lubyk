@@ -18,7 +18,6 @@ static int Debug_Debug(lua_State *L) {
   try {
     
     Debug * retval__ = new Debug(L);
-    // The class inherits from 'LuaObject', use luaInit instead of lua_pushclass.
     return retval__->luaInit(L, retval__, "lk.Debug");
   } catch (std::exception &e) {
     lua_pushfstring(L, "Debug: %s", e.what());
@@ -36,7 +35,9 @@ static int Debug_destructor(lua_State *L) {
   Debug **userdata = (Debug**)dubL_checksdata_n(L, 1, "lk.Debug");
 
   
-  if (*userdata) (*userdata)->luaDestroy();
+  // custom destructor
+  Debug *self = *userdata;
+  if (self) self->luaDestroy();
   
   *userdata = NULL;
   return 0;
@@ -44,10 +45,22 @@ static int Debug_destructor(lua_State *L) {
 
 
 
+// test if class is deleted
+static int Debug_deleted(lua_State *L) {
+  Debug **userdata = (Debug**)dubL_checksdata_n(L, 1, "lk.Debug");
+  lua_pushboolean(L, *userdata == NULL);
+  return 1;
+}
+
 /* ============================ tostring         ====================== */
 
 static int Debug__tostring(lua_State *L) {
   Debug **userdata = (Debug**)dubL_checksdata_n(L, 1, "lk.Debug");
+  
+  if (!*userdata) {
+    lua_pushstring(L, "<lk.Debug: NULL>");
+    return 1;
+  }
   
   
   lua_pushfstring(L, "<lk.Debug: %p>", *userdata);
@@ -65,6 +78,7 @@ static int Debug__tostring(lua_State *L) {
 static const struct luaL_Reg Debug_member_methods[] = {
   {"__tostring"        , Debug__tostring},
   {"__gc"              , Debug_destructor},
+  {"deleted"           , Debug_deleted},
   {NULL, NULL},
 };
 

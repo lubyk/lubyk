@@ -25,7 +25,7 @@ function should_register()
   assertTrue(continue)
 end
 
-function should.browse()
+function should.browse(t)
   local continue    = false
   local should_op   = 'add'
   local hostname    = nil
@@ -50,11 +50,12 @@ function should.browse()
   end)
 
   -- wait (and give time for callback to enter Lua State)
-  local now = worker:now()
-  while not continue and worker:now() < now + timeout do
-    sleep(10)
-  end
-  assertTrue(continue)
+  t:timeout(5000, function(done)
+    if done or continue then
+      assertTrue(continue)
+      return true
+    end
+  end)
 
   continue   = false
   should_op  = 'remove'
@@ -62,11 +63,12 @@ function should.browse()
   collectgarbage('collect')
 
   -- wait (and give time for callback to enter Lua State)
-  local now = worker:now()
-  while not continue and worker:now() < now + timeout do
-    sleep(10)
-  end
-  assertTrue(continue)
+  t:timeout(5000, function(done)
+    if done or continue then
+      assertTrue(continue)
+      return true
+    end
+  end)
 end
 
 test.all()

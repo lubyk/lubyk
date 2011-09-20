@@ -14,4 +14,12 @@
 
 --]]------------------------------------------------------
 require 'lk.Finalizer_core'
+local constr    = lk.Finalizer
 
+local function dummy() end
+
+function lk.Finalizer(func)
+  local self = constr()
+  self.finalize = func or dummy
+  return self
+end
