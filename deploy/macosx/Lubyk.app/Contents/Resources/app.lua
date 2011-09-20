@@ -15,4 +15,4 @@ else
   require 'lubyk'
 end
 app = editor.Application()
-app:exec()
+run()

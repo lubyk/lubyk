@@ -37,7 +37,7 @@ setmetatable(lib, {
     }
     self.wrap = wrap
     self.finalizer = lk.Finalizer(function()
-      --wrap.t.t = nil
+      wrap.t.t = nil
     end)
     sched:scheduleAt(at or 0, self.wrap)
     return self
