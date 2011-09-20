@@ -10,16 +10,19 @@
 --]]------------------------------------------------------
 require 'lubyk'
 
---local should = test.Suite('lk.Thread')
---
---function should.remove_thread()
-  thread = lk.Thread(function()
+local should = test.Suite('lk.Thread')
+
+function should.remove_thread()
+  local removed = false
+  local thread = lk.Thread(function()
     --
+  end)
+  thread.f = lk.Finalizer(function()
+    removed = true
   end)
   thread = nil
   collectgarbage('collect')
-  io.flush()
-  print('done')
---end
+  assertTrue(removed)
+end
 
---test.all()
+test.all()
