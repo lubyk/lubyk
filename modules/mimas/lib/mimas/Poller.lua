@@ -58,8 +58,8 @@ end
 
 function private.zmqSocketCallback(notifier)
   local sock = notifier.zmq_socket
-  -- Empty inbox (we only receive a call if the inbox has been emptied)
-  while sock:hasEvent(notifier.event) do
+  -- We have to check for the correct event (sometimes it fires too soon)
+  if sock:hasEvent(notifier.event) then
     private.socketCallback(notifier)
   end
 end

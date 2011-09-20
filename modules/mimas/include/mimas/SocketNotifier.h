@@ -46,7 +46,6 @@ namespace mimas {
  */
 class SocketNotifier : public QSocketNotifier, public LuaObject {
   Q_OBJECT
-  bool enabled_;
 public:
   enum EventType {
     Read  = QSocketNotifier::Read,
@@ -56,8 +55,7 @@ public:
   /** Private constructor. Use MakeApplication instead.
    */
   SocketNotifier(int fd, int event_type)
-      : QSocketNotifier(fd, (QSocketNotifier::Type)event_type),
-        enabled_(true) {
+      : QSocketNotifier(fd, (QSocketNotifier::Type)event_type) {
     QObject::connect(this, SIGNAL(activated(int)),
                      this, SLOT(activatedSlot(int)));
 
@@ -70,12 +68,10 @@ public:
   }
 
 
-  /** Enable or disable a socket notifier. We do not remove the
-   * socket notifier from Qt (slow) but simply ignore any event 
-   * for this socket. This enables faster read/write sockets.
+  /** Enable or disable a socket notifier.
    */
   void setEnabled(bool enabled) {
-    enabled_ = enabled;
+    QSocketNotifier::setEnabled(enabled);
   }
 
   // <func>

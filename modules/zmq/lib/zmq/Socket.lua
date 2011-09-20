@@ -81,3 +81,26 @@ function lib:recv()
   sched:waitRead(self.super)
   return self.super:recv()
 end
+
+local zmq_POLLIN = zmq.POLLIN
+function lib:mimasRecv()
+  local super = self.super
+  if not super:hasEvent(zmq_POLLIN) then
+    self.recv_start = nil
+    sched:waitRead(super)
+  elseif self.recv_start then
+    if self.recv_start + 500 < worker:now() then
+      -- Force sleep to avoid DoS
+      self.recv_start = nil
+      sleep(1)
+    end
+  else
+    self.recv_start = worker:now()
+  end
+  return super:recv()
+end
+
+function lib.mimasLoaded()
+  -- Alter 'recv' to work with external event loop.
+  lib.recv = lib.mimasRecv
+end

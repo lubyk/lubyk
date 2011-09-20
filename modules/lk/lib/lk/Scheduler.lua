@@ -79,6 +79,7 @@ function lib:run(func)
     self.should_run = true
     -- now we are with mimas
     self.mimas = true
+    zmq.Socket.mimasLoaded()
     private.usePoller(self, mimas.Poller())
     app:exec()
   end
