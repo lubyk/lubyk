@@ -8,7 +8,7 @@
 --]]------------------------------------------------------
 require 'lubyk'
 
-local should = test.Suite('lk.Client/Service')
+local should = test.Suite('lk.Service')
 
 function should.connectWhenRemoteAppears()
   local continue = false
@@ -34,14 +34,14 @@ function should.connectWhenRemoteAppears()
 
   -- connected becomes true when 'Mars' appears on the network
   while not venus:connected() do
-    sleep(10) -- make sure everything is ready before sending
+    sleep(50) -- make sure everything is ready before sending
   end
 
   mars:notify('One')
   mars:notify('message from Mars')
 
   while not continue do
-    sleep(10)
+    sleep(50)
   end
 
   assertEqual(2, received_count)

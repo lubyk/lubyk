@@ -27,40 +27,34 @@ setmetatable(lib, {
     callback = function() end
   end
 
-  local instance = {browser = lk.ServiceBrowser(service_type), callback = callback, subscriptions = {}}
+  local self = {callback = callback, subscriptions = {}}
+  self.browser = lk.ServiceBrowser(service_type):addDelegate(self) 
 
   --======================================= SUB client
 
-  instance.sub = zmq.SimpleSub(function(...)
-    -- receive message from remote server or local ServiceBrowser
-    local url, service_name = ...
-    if url == lubyk.add_service_url then
-      -- resolve pending
-      local remote_service = instance.browser.services[service_name]
-      local subscription = instance.subscriptions[service_name]
-      if subscription and not subscription.connected then
-        subscription.subscriber:connect(remote_service.sub_url)
-        subscription.connected = true
-      end
-    elseif url == lubyk.rem_service_url then
-      -- remove connection
-      local subscription = instance.subscriptions[service_name]
-      if subscription then
-        -- TODO: do we need to disconnect ?
-        subscription.connected = false
-      end
-    else
-      -- data received from remote server
-      instance.callback(...)
-    end
-  end)
-  -- so we can get connection commands from the service browser
-  instance.sub:connect(string.format('inproc://%s', service_type))
+  self.sub = zmq.SimpleSub(self.callback)
 
-  setmetatable(instance, lib)
-  return instance
+  setmetatable(self, lib)
+  return self
 end})
 
+function lib:addDevice(service)
+  -- resolve pending
+  local subscription = self.subscriptions[service.name]
+  if subscription and not subscription.connected then
+    subscription.subscriber:connect(service.sub_url)
+    subscription.connected = true
+  end
+end
+
+function lib:removeDevice(service)
+  -- remove connection
+  local subscription = self.subscriptions[service.name]
+  if subscription then
+    -- TODO: do we need to disconnect ?
+    subscription.connected = false
+  end
+end
 
 function lib:subscribe(remote_name)
   if self.subscriptions[remote_name] then
