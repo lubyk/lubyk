@@ -87,3 +87,8 @@ function lib:finalize(scheduler)
     end
   end
 end
+
+--- @internal (used during testing).
+function lib.setScheduler(s)
+  sched = s
+end

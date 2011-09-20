@@ -301,9 +301,12 @@ private:
   }
 
   void setupInterruptHook() {
-    pthread_setspecific(sThisKey, (void*)this);
-    //
-    signal(SIGINT, sInterrupted);
+    Poller *p = (Poller*)pthread_getspecific(sThisKey);
+    if (!p) {
+      // only register first (main) Scheduler
+      pthread_setspecific(sThisKey, (void*)this);
+      signal(SIGINT, sInterrupted);
+    }
   }
 };
 } // zmq

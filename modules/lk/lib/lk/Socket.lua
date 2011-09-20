@@ -73,7 +73,7 @@ function lib:accept(func)
   cli.sock_fd = cli:fd()
   if func then
     -- start new thread
-    cli.thread = sched:thread(function()
+    cli.thread = lk.Thread(function()
       func(cli)
     end)
   end

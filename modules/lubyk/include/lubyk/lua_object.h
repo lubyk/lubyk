@@ -37,7 +37,6 @@ namespace lubyk {
  */
 class LuaObject
 {
-  int thread_in_env_idx_;
   const char *class_name_;
   /** This is used to invalidate the userdata in case the object is deleted
    * out of Lua.
@@ -59,6 +58,30 @@ public:
 
   void luaDestroy();
 
+  lubyk::Worker *worker_;
+
+protected:
+  /** When using a custom destructor, this method must be called
+   * from within the custom destructor.
+   */
+  void luaCleanup();
+
+  void setupSuper(lua_State *L, void *ptr) throw();
+  void setupMetatable(lua_State *L, const char *type_name) throw() ;
+};
+
+/** Lua object with a Lua thread (has callbacks)
+ */
+class ThreadedLuaObject : public LuaObject {
+  int thread_in_env_idx_;
+public:
+  lua_State *lua_;
+
+  ThreadedLuaObject() throw();
+
+  int luaInit(lua_State *L, void *ptr, const char *type_name) throw();
+
+protected:
   /** The caller should lock before calling this.
    * @return: true if the callback is set, false otherwise.
    *
@@ -67,18 +90,6 @@ public:
    */
   bool pushLuaCallbackl(const char *method, int len) const;
 
-  lubyk::Worker *worker_;
-  lua_State *lua_;
-
-protected:
-  /** When using a custom destructor, this method must be called
-   * from within the custom destructor.
-   */
-  void luaCleanup();
-
-private:
-  void setupSuper(lua_State *L, void *ptr) throw();
-  void setupMetatable(lua_State *L, const char *type_name) throw() ;
   void setupLuaThread(lua_State *L) throw();
 };
 

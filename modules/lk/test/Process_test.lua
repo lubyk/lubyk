@@ -35,6 +35,7 @@ function should.announceService(t)
       return true
     end
   end)
+  process = nil
 end
 
 test.all()

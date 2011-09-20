@@ -38,7 +38,7 @@ namespace lk {
  * 
  * @dub lib_name: 'Debug_core'
  */
-class Debug : public LuaObject {
+class Debug : public ThreadedLuaObject {
   std::string name_;
 public:
   Debug(lua_State *L) {

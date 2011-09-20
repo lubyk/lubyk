@@ -1,7 +1,7 @@
 --[[------------------------------------------------------
 
-  lk.Node test
-  ------------
+  lk.ProcessWatch test
+  --------------------
 
   ...
 
@@ -15,13 +15,11 @@ function mockDelegate(t)
     last_op = nil,
     last_name = nil,
     processConnected = function(self, process)
-      print(process.name, '<<<<<<<<<')
       self.last_op = 'connected'
       self.last_name = process.name
       t.continue = true
     end,
     processDisconnected = function(self, process)
-      print(process.name, '>>>>>D<<<<<<<<<')
       self.last_op = 'disconnected'
       self.last_name = process.name
       t.continue = true

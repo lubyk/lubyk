@@ -10,7 +10,7 @@ require 'lubyk'
 
 local should = test.Suite('lk.FileResource')
 local old_date = os.time{year=2011,month=9,day=6}
-local new_date = os.time() + 1
+local new_date = os.time() + 2
 
 local function root()
   return lk.FileResource(fixture.path())

@@ -127,6 +127,7 @@ function lib:loop()
     else
       if not poller:poll(timeout) then
         -- interrupted
+        self.should_run = false
         print("\nBye...")
         break
       end
@@ -200,6 +201,13 @@ function private:usePoller(new_poller)
     self.idx_to_thread[thread.idx] = thread
   end
 end
+
+-- FIXME: If fd == zmq.Socket, we never gc because 'self' is in
+-- the zmq socket thread (even if we do not use it).
+--
+-- What objects really need their own thread (+userdata env) ?
+--   * Mimas widgets
+--   * Nothing else
 
 function private:runThread(thread)
   -- get thread from wrap

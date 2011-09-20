@@ -43,7 +43,7 @@ mimas_classes.sort!
 modules = {
   'dummy' => %w{Dummy},
   'lk' => {
-    'class' => %w{Debug Finalizer Socket Mutex Timer Thread},
+    'class' => %w{Debug Finalizer Socket Mutex},
     'const' => true,
   },
   'lubyk' => %w{Worker},

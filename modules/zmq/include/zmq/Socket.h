@@ -98,14 +98,6 @@ public:
   }
 
   ~Socket() {
-    if (pushLuaCallback("closed")) {
-      // This callback is used to remove socket from poll/QSocketNotifier.
-      int status = lua_pcall(lua_, 0, 0, 0);
-
-      if (status) {
-        printf("Error triggering 'closed': %s\n", lua_tostring(lua_, -1));
-      }
-    }
     zmq_close(socket_);
     if (!--worker_->zmq_context_refcount_) {
       zmq_term(worker_->zmq_context_);

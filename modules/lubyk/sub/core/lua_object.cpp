@@ -4,12 +4,17 @@
 using namespace lubyk;
 
 LuaObject::LuaObject() throw ()
-    : thread_in_env_idx_(0),
-      class_name_("??"),
+    : class_name_("??"),
       userdata_(NULL),
-      worker_(NULL),
+      worker_(NULL) {
+}
+
+ThreadedLuaObject::ThreadedLuaObject() throw()
+    : LuaObject(),
+      thread_in_env_idx_(0),
       lua_(NULL) {
 }
+      
 
 LuaObject::~LuaObject() {
   if (userdata_) {
@@ -30,6 +35,19 @@ void LuaObject::luaCleanup() {
 }
 
 int LuaObject::luaInit(lua_State *L, void *ptr, const char *type_name) throw() {
+  worker_ = Worker::getWorker(L);
+  // ... <self> or new table
+  setupSuper(L, ptr); // creates self if there is no table (without a 'super' field)
+  // ... <self>.super = userdata
+  // ... <self> <udata>
+  setupMetatable(L, type_name);
+  // ... <self> <udata>
+  lua_pop(L, 1);
+  // <self>
+  return 1;
+}
+
+int ThreadedLuaObject::luaInit(lua_State *L, void *ptr, const char *type_name) throw() {
   worker_ = Worker::getWorker(L);
   // ... <self> or new table
   setupSuper(L, ptr); // creates self if there is no table (without a 'super' field)
@@ -77,7 +95,7 @@ void LuaObject::setupMetatable(lua_State *L, const char *type_name) throw() {
 //
 //   Thanks to Robert G. Jakabosky for the idea to use lua_xmove
 //   instead of weak tables to store the function reference.
-void LuaObject::setupLuaThread(lua_State *L) throw() {
+void ThreadedLuaObject::setupLuaThread(lua_State *L) throw() {
 
   // ... <self> <udata>
   lua_getfenv(L, -1);
@@ -113,9 +131,6 @@ void LuaObject::setupLuaThread(lua_State *L) throw() {
     // ... <self> <udata> <env>
   }
 
-  //  lua_pop(L, 2);
-  //  return;
-  //  //////// ******* DISABLED BECAUSE THERE IS A BUG HERE ******* ///////
   // ... <self> <udata> <env>
   if (lua_) {
     // remove from env
@@ -138,7 +153,7 @@ void LuaObject::setupLuaThread(lua_State *L) throw() {
   // L:    <self>
 }
 
-bool LuaObject::pushLuaCallbackl(const char *method, int len) const {
+bool ThreadedLuaObject::pushLuaCallbackl(const char *method, int len) const {
   // FIXME: disable, we should not need this anymore (except in mimas
   //        where we can use the main thread).
   lua_State *L = lua_;
