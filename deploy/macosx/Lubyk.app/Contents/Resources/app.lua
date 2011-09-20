@@ -14,5 +14,5 @@ if Lubyk.lib then
 else
   require 'lubyk'
 end
-app = editor.Application()
+editor = editor.Application()
 run()

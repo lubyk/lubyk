@@ -51,7 +51,7 @@ namespace mimas {
  * @dub destructor: 'luaDestroy'
  *      ignore: 'luaInit'
  */
-class ListView : public QListView, public LuaObject {
+class ListView : public QListView, public ThreadedLuaObject {
   Q_OBJECT
   Q_PROPERTY(QString class READ cssClass)
   Q_PROPERTY(float hue READ hue WRITE setHue)
@@ -255,7 +255,7 @@ class ListView : public QListView, public LuaObject {
   }
 
   int luaInit(lua_State *L, ListView *obj, const char *class_name) {
-    LuaObject::luaInit(L, obj, class_name);
+    ThreadedLuaObject::luaInit(L, obj, class_name);
     // <self>
     lua_pushlstring(L, "data_source", 11);
     // <self> <'data_source'>

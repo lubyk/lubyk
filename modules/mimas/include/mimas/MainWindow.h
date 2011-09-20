@@ -52,7 +52,7 @@ class Painter;
  * @dub destructor: 'luaDestroy'
  *      super: 'QMainWindow'
  */
-class MainWindow : public QMainWindow, public LuaObject {
+class MainWindow : public QMainWindow, public ThreadedLuaObject {
   Q_OBJECT
   Q_PROPERTY(QString class READ cssClass)
 

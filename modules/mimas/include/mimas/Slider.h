@@ -46,7 +46,7 @@ namespace mimas {
  * @dub lib_name:'Slider_core'
  *      destructor: 'luaDestroy'
  */
-class Slider : public QWidget, public LuaObject {
+class Slider : public QWidget, public ThreadedLuaObject {
   Q_OBJECT
   Q_PROPERTY(QString class READ cssClass)
   Q_PROPERTY(float hue READ hue WRITE setHue)

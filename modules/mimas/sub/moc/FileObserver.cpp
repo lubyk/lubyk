@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'FileObserver.h'
 **
-** Created: Sun Aug 28 20:24:37 2011
+** Created: Tue Sep 20 20:32:02 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.3)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -60,8 +60,8 @@ void *mimas::FileObserver::qt_metacast(const char *_clname)
     if (!_clname) return 0;
     if (!strcmp(_clname, qt_meta_stringdata_mimas__FileObserver))
         return static_cast<void*>(const_cast< FileObserver*>(this));
-    if (!strcmp(_clname, "LuaObject"))
-        return static_cast< LuaObject*>(const_cast< FileObserver*>(this));
+    if (!strcmp(_clname, "ThreadedLuaObject"))
+        return static_cast< ThreadedLuaObject*>(const_cast< FileObserver*>(this));
     return QFileSystemWatcher::qt_metacast(_clname);
 }
 

@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'MainWindow.h'
 **
-** Created: Mon Sep 5 09:33:11 2011
+** Created: Tue Sep 20 20:32:02 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.3)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -59,8 +59,8 @@ void *mimas::MainWindow::qt_metacast(const char *_clname)
     if (!_clname) return 0;
     if (!strcmp(_clname, qt_meta_stringdata_mimas__MainWindow))
         return static_cast<void*>(const_cast< MainWindow*>(this));
-    if (!strcmp(_clname, "LuaObject"))
-        return static_cast< LuaObject*>(const_cast< MainWindow*>(this));
+    if (!strcmp(_clname, "ThreadedLuaObject"))
+        return static_cast< ThreadedLuaObject*>(const_cast< MainWindow*>(this));
     return QMainWindow::qt_metacast(_clname);
 }
 

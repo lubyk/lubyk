@@ -11,6 +11,7 @@ require 'mimas.SocketNotifier'
 local lib    = {type = 'mimas.Poller'}
 lib.__index  = lib
 mimas.Poller = lib
+local app    = app
 local private = {}
 
 setmetatable(lib, {

@@ -25,8 +25,7 @@ static int Label_Label1(lua_State *L) {
       const char *title = dubL_checkstring(L, 1);
       retval__ = new Label(title);
     }
-    lua_pushclass2<Label>(L, retval__, "mimas.Label");
-    return 1;
+    return retval__->luaInit(L, retval__, "mimas.Label");
   } catch (std::exception &e) {
     lua_pushfstring(L, "Label: %s", e.what());
   } catch (...) {
@@ -45,8 +44,7 @@ static int Label_Label2(lua_State *L) {
     const char *title = dubL_checkstring(L, 1);
     QWidget *parent = *((QWidget **)dubL_checksdata(L, 2, "mimas.QWidget"));
     Label * retval__ = new Label(title, parent);
-    lua_pushclass2<Label>(L, retval__, "mimas.Label");
-    return 1;
+    return retval__->luaInit(L, retval__, "mimas.Label");
   } catch (std::exception &e) {
     lua_pushfstring(L, "Label: %s", e.what());
   } catch (...) {

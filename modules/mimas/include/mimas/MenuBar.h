@@ -44,7 +44,7 @@ namespace mimas {
  * @dub destructor: 'luaDestroy'
  *      super: 'QMenuBar'
  */
-class MenuBar : public QMenuBar, public LuaObject {
+class MenuBar : public QMenuBar, public ThreadedLuaObject {
   Q_OBJECT
 public:
   MenuBar(QWidget *parent = 0)

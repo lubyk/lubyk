@@ -47,7 +47,7 @@ namespace mimas {
  * TreeView.
  *
  */
-class FileObserver : public QFileSystemWatcher, public LuaObject
+class FileObserver : public QFileSystemWatcher, public ThreadedLuaObject
 {
   Q_OBJECT
 

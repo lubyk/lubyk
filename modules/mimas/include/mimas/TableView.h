@@ -50,7 +50,7 @@ namespace mimas {
  * @dub destructor: 'luaDestroy'
  *      ignore: 'luaInit'
  */
-class TableView : public QTableView, public LuaObject {
+class TableView : public QTableView, public ThreadedLuaObject {
   Q_OBJECT
   Q_PROPERTY(QString class READ cssClass)
   Q_PROPERTY(float hue READ hue WRITE setHue)
@@ -265,7 +265,7 @@ public:
   }
 
   int luaInit(lua_State *L, TableView *obj, const char *class_name) {
-    LuaObject::luaInit(L, obj, class_name);
+    ThreadedLuaObject::luaInit(L, obj, class_name);
     // <self>
     lua_pushlstring(L, "data_source", 5);
     // <self> <'data_source'>

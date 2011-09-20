@@ -47,7 +47,7 @@ namespace mimas {
  * @dub lib_name:'Button_core'
  *      destructor: 'luaDestroy'
  */
-class Button : public QPushButton, public LuaObject {
+class Button : public QPushButton, public ThreadedLuaObject {
   Q_OBJECT
   Q_PROPERTY(QString class READ cssClass)
   Q_PROPERTY(float hue READ hue WRITE setHue)

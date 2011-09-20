@@ -44,7 +44,7 @@ namespace mimas {
  * @dub lib_name:'LineEdit_core'
  *      destructor: 'luaDestroy'
  */
-class LineEdit : public QLineEdit, public LuaObject
+class LineEdit : public QLineEdit, public ThreadedLuaObject
 {
   Q_OBJECT
   Q_PROPERTY(QString class READ cssClass)

@@ -40,7 +40,7 @@ namespace mimas {
  * @dub lib_name:'Label_core'
  *      destructor: 'luaDestroy'
  */
-class Label : public QLabel, public DeletableOutOfLua
+class Label : public QLabel, public LuaObject
 {
   Q_OBJECT
   Q_PROPERTY(QString class READ cssClass)

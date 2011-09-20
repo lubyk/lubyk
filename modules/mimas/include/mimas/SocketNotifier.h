@@ -44,7 +44,7 @@ namespace mimas {
  * @dub lib_name:'SocketNotifier_core'
  *      super: 'QObject'
  */
-class SocketNotifier : public QSocketNotifier, public LuaObject {
+class SocketNotifier : public QSocketNotifier, public ThreadedLuaObject {
   Q_OBJECT
 public:
   enum EventType {
@@ -74,23 +74,11 @@ public:
     QSocketNotifier::setEnabled(enabled);
   }
 
-  // <func>
-  // int luaInit(lua_State *L, void *ptr, const char *type_name) throw() {
-  //   LuaObject::luaInit(L, ptr, type_name);
-  //   // <func> <self>
-  //   lua_rawgeti(L, LUA_REGISTRYINDEX, clbk_registry_);
-  //   // <func> <self> <reg>
-  //   callback_idx_ = luaL_ref(L, -1, -3);
-  //   // <func> <self>
-  //   return 1;
-  // }
-
 private slots:
   void activatedSlot(int socket) {
     // printf("activatedSlot %i (%s)\n", socket, enabled_ ? "ON" : "OFF");
-    if (!enabled_) return;
     // Callback
-    // FIXME: LuaObject stores L as lua_ (no need for a new thread)
+    // FIXME: ThreadedLuaObject stores L as lua_ (no need for a new thread)
     lua_State *L = lua_;
     // FIXME: We might need less lua threads and faster access to callbacks.
     // We could use:

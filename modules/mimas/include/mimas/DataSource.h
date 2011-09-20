@@ -49,7 +49,7 @@ namespace mimas {
  * @dub destructor: 'luaDestroy'
  *      ignore: 'index'
  */
-class DataSource : public QAbstractItemModel, public LuaObject
+class DataSource : public QAbstractItemModel, public ThreadedLuaObject
 {
   Q_OBJECT
 

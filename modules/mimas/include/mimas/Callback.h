@@ -49,7 +49,7 @@ class Slider;
  *      ignore: 'callback'
  *      super: 'QObject'
  */
-class Callback : public QObject, public lubyk::LuaObject
+class Callback : public QObject, public lubyk::ThreadedLuaObject
 {
   Q_OBJECT
 public:

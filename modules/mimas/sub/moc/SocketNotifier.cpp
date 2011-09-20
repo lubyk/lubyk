@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'SocketNotifier.h'
 **
-** Created: Tue Sep 20 08:14:18 2011
+** Created: Tue Sep 20 20:36:37 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.3)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -60,8 +60,8 @@ void *mimas::SocketNotifier::qt_metacast(const char *_clname)
     if (!_clname) return 0;
     if (!strcmp(_clname, qt_meta_stringdata_mimas__SocketNotifier))
         return static_cast<void*>(const_cast< SocketNotifier*>(this));
-    if (!strcmp(_clname, "LuaObject"))
-        return static_cast< LuaObject*>(const_cast< SocketNotifier*>(this));
+    if (!strcmp(_clname, "ThreadedLuaObject"))
+        return static_cast< ThreadedLuaObject*>(const_cast< SocketNotifier*>(this));
     return QSocketNotifier::qt_metacast(_clname);
 }
 

@@ -46,7 +46,7 @@ namespace mimas {
  * @dub destructor: 'luaDestroy'
  *      super: 'QMenu'
  */
-class Menu : public QMenu, public LuaObject {
+class Menu : public QMenu, public ThreadedLuaObject {
   Q_OBJECT
 public:
   Menu(const char *name)

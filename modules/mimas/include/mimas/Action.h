@@ -43,7 +43,7 @@ namespace mimas {
  * @dub destructor: 'luaDestroy'
  *      super: 'QAction'
  */
-class Action : public QAction, public LuaObject {
+class Action : public QAction, public ThreadedLuaObject {
   Q_OBJECT
 public:
   Action(const char *name, QObject *parent = 0)

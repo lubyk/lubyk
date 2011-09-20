@@ -50,7 +50,7 @@ class Painter;
  * @dub destructor: 'luaDestroy'
  *      super: 'QWidget'
  */
-class Widget : public QWidget, public LuaObject {
+class Widget : public QWidget, public ThreadedLuaObject {
   Q_OBJECT
   Q_PROPERTY(QString class READ cssClass)
   Q_PROPERTY(float hue READ hue WRITE setHue)

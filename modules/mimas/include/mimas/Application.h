@@ -51,7 +51,7 @@ namespace mimas {
  *      ignore: 'event'
  *      super: 'QObject'
  */
-class Application : public QApplication, public LuaObject {
+class Application : public QApplication, public ThreadedLuaObject {
   Q_OBJECT
 public:
   /** Private constructor. Use MakeApplication instead.

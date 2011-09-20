@@ -44,7 +44,7 @@ namespace mimas {
  *
  * @dub destructor: 'luaDestroy'
  */
-class GLWidget : public QGLWidget, public LuaObject
+class GLWidget : public QGLWidget, public ThreadedLuaObject
 {
   Q_OBJECT
   Q_PROPERTY(QString class READ cssClass)

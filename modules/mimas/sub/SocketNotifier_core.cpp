@@ -12,7 +12,7 @@ using namespace mimas;
 /* ============================ Constructors     ====================== */
 
 /** mimas::SocketNotifier::SocketNotifier(int fd, int event_type)
- * include/mimas/SocketNotifier.h:60
+ * include/mimas/SocketNotifier.h:58
  */
 static int SocketNotifier_SocketNotifier(lua_State *L) {
   try {
@@ -112,7 +112,7 @@ static int QObject_object(lua_State *L) {
 
 
 /** void mimas::SocketNotifier::setEnabled(bool enabled)
- * include/mimas/SocketNotifier.h:80
+ * include/mimas/SocketNotifier.h:73
  */
 static int SocketNotifier_setEnabled(lua_State *L) {
   try {
@@ -152,7 +152,7 @@ static int QObject_setName(lua_State *L) {
 
 
 /** int mimas::SocketNotifier::socket() const 
- * include/mimas/SocketNotifier.h:71
+ * include/mimas/SocketNotifier.h:66
  */
 static int SocketNotifier_socket(lua_State *L) {
   try {

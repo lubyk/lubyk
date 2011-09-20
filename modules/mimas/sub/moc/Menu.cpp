@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'Menu.h'
 **
-** Created: Sun Sep 4 21:48:28 2011
+** Created: Tue Sep 20 20:32:02 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.3)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -56,8 +56,8 @@ void *mimas::Menu::qt_metacast(const char *_clname)
     if (!_clname) return 0;
     if (!strcmp(_clname, qt_meta_stringdata_mimas__Menu))
         return static_cast<void*>(const_cast< Menu*>(this));
-    if (!strcmp(_clname, "LuaObject"))
-        return static_cast< LuaObject*>(const_cast< Menu*>(this));
+    if (!strcmp(_clname, "ThreadedLuaObject"))
+        return static_cast< ThreadedLuaObject*>(const_cast< Menu*>(this));
     return QMenu::qt_metacast(_clname);
 }
 
