@@ -26,10 +26,10 @@ setmetatable(lib, {
   os.setlocale('C')
   local self = {
     should_run = true,
+    clients    = {},
     server     = lk.Socket(),
   }
   self.server:bind('*', port or 0)
-  self.server:listen()
   self.host, self.port = self.server:localHost(), self.server:localPort()
   self.href_base = 'http://' .. self.host .. ':' .. self.port
   setmetatable(self, lib)
@@ -39,6 +39,7 @@ setmetatable(lib, {
     -- if no root path is provided, all the functions (find, findChildren,
     -- update, create, delete and move) should be implemented.
   end
+  self:listen()
   return self
 end})
 

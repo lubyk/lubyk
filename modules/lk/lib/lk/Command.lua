@@ -103,14 +103,12 @@ end
 --================================================== lk.ProcessWatch delegate
 
 function lib:processConnected(process)
-  print("Found", process.name)
   self.find_more = true
   self.processes[process.name] = process
   if process.name == self.target or self.target == '*' then
     private.runCmd(self, process, unpack(self.cmd))
     self.abort = self.target == process.name
   end
-  print('Found done')
 end
 
 function lib:processDisconnected(process)
@@ -155,7 +153,5 @@ function private:specialCommand(cmd, ...)
 end
 
 function private:runCmd(process, cmd, ...)
-  print('runCmd', cmd, ...)
   print(process.req:send(cmd, ...))
-  print('runCmd', 'done')
 end

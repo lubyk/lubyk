@@ -33,6 +33,29 @@ function lib:bind(host, port)
   return self.port
 end
 
+function lib:recv(len)
+  if not len then
+    return self:recvLine()
+  end
+  local buffer = self.buffer or ''
+  local res    = ''
+  while true do
+    local blen = string.len(buffer)
+    if blen >= len then
+      res = res .. string.sub(buffer, 1, len)
+      if len < blen then
+        self.buffer = string.sub(buffer, len+1)
+      else
+        self.buffer = nil
+      end
+      return res
+    end
+    -- we need more
+    sched:waitRead(self.sock_fd)
+    buffer = self.super:recv('*a')
+  end
+end
+
 function lib:recvLine()
   local buffer = self.buffer
   while true do

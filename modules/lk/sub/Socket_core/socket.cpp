@@ -167,7 +167,7 @@ LuaStackSize lk::Socket::accept(lua_State *L) {
   { ScopedUnlock unlock(worker_);
     fd = ::accept(socket_fd_, &sa, &sa_len);
 
-    // printf("[%p] accept(%i) --> %i\n", this, socket_fd_, fd);
+    //printf("[%p] accept(%i) --> %i\n", this, socket_fd_, fd);
   }
 
   if (fd == -1) {

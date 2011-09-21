@@ -177,7 +177,7 @@ public:
     }
 #else
     event_count_ = zmq_poll(pollitems_, used_count_, timeout * 1000);
-    //printf("===> %i\n", event_count_);
+    // printf("===> %i\n", event_count_);
     if (event_count_ < 0) {
       // error or interruption
       event_count_ = 0;

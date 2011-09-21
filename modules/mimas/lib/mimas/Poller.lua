@@ -118,7 +118,9 @@ end
 --- Remove a filedescriptor of zmq.Socket from the list of poll items.
 -- The item is identified by its id.
 function lib:remove(notifier)
-  notifier.current:setEnabled(false)
+  if not notifier.current:deleted() then
+    notifier.current:setEnabled(false)
+  end
   -- we let it be removed by garbage collector.
 end
 

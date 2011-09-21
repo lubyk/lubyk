@@ -16,12 +16,13 @@ setmetatable(lib, {
  __call = function(lib, port)
   local self = {
     should_run = true,
+    clients    = {},
     server     = lk.Socket(),
   }
   self.server:bind()
-  self.server:listen()
   self.host, self.port = self.server:localHost(), self.server:localPort()
   setmetatable(self, lib)
+  self:listen()
   return self
 end})
 
@@ -138,25 +139,32 @@ end
 
 function lib:listen()
   local server = self.server
-  while self.should_run do
-    local client = server:accept()
-    -- receive request
-    local request, err = getRequest(client)
-    if err then
-      print("error: " .. tostring(err))
-    else
-      local fun = self[request.method]
-      if fun then
-        local body, headers = fun(self, request)
-        if body or headers then
-          client:send(buildReply(body, headers))
+  server:listen()
+  self.thread = lk.Thread(function()
+    while true do
+      local client = server:accept()
+      self.clients[client.sock_fd] = client
+      client.thread = lk.Thread(function()
+        -- receive request
+        local request, err = getRequest(client)
+        if err then
+          print("error: " .. tostring(err))
+        else
+          local fun = self[request.method]
+          if fun then
+            local body, headers = fun(self, request)
+            if body or headers then
+              client:send(buildReply(body, headers))
+            end
+          else
+            print(string.format("Could not handle '%s' method with url '%s'.", request.method, request.path))
+          end
         end
-      else
-        print(string.format("Could not handle '%s' method with url '%s'.", request.method, request.path))
-      end
+        self[client.sock_fd] = nil
+        client:close()
+      end)
     end
-    client:close()
-  end
+  end)
 end
 
 function lib:GET(request)
