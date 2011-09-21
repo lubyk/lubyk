@@ -4,9 +4,9 @@
 using namespace lubyk;
 
 LuaObject::LuaObject() throw ()
-    : class_name_("??"),
-      userdata_(NULL),
-      worker_(NULL) {
+    : userdata_(NULL),
+      worker_(NULL),
+      class_name_("??") {
 }
 
 ThreadedLuaObject::ThreadedLuaObject() throw()

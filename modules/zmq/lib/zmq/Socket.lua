@@ -19,7 +19,10 @@ lib.type = 'zmq.Socket'
 
 function lib.new(type, func)
   local self = constr(type, worker)
+  local super = self.super
+  local sched = sched
   self.loop = func
+
   setmetatable(self, lib)
   if self.loop then
     self:start()

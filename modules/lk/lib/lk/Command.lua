@@ -8,10 +8,10 @@
   This is like a simplified (or scriptable) GUI.
 
 --]]------------------------------------------------------
-
-local lib = {type='lk.Command'}
-lib.__index = lib
-lk.Command  = lib
+local lib     = {type='lk.Command'}
+lib.__index   = lib
+lk.Command    = lib
+local private = {}
 
 --private
 local getTarget
@@ -28,26 +28,20 @@ setmetatable(lib, {
   setmetatable(self, lib)
 
   if url then
-    url = self:specialCommand(url, ...)
+    url = private.specialCommand(self, url, ...)
     if not url then
       -- done
     else
       local target, cmd = getTarget(url)
-      if target ~= '*' then
-        -- just find this target, execute command and quit
-        self.target = target
-        self.cmd = {url, ...}
-      elseif cmd then
-        -- star based url (run on many processes)
-        self.on_load = {url, ...}
-      end
+      self.target = target
+      self.cmd = {cmd, ...}
     end
   end
 
   self.thread = lk.Thread(function()
     if self.find_more then
       self.process_watch = lk.ProcessWatch():addDelegate(self)
-      while(self.find_more) do
+      while self.find_more do
         self.find_more = nil
         if self.abort then
           break
@@ -57,10 +51,6 @@ setmetatable(lib, {
       end
     end
 
-    if self.on_load then
-      self:call(unpack(self.on_load))
-      self.on_load = nil
-    end
     self.thread = nil
   end)
 
@@ -96,12 +86,12 @@ function lib:call(url, ...)
   local target_name, cmd = getTarget(url)
   if target_name == '*' then
     for _, process in pairs(self.processes) do
-      print(process.req:send(cmd, ...))
+      private.runCmd(self, process, cmd, ...)
     end
   elseif target_name then
     local process = self.processes[target_name]
     if process then
-      print(process.req:send(cmd, ...))
+      private.runCmd(self, process, cmd, ...)
     else
       print(string.format("Process '%s' not found.", target_name))
     end
@@ -116,18 +106,20 @@ function lib:processConnected(process)
   print("Found", process.name)
   self.find_more = true
   self.processes[process.name] = process
-  if self.target and process.name == self.target then
-    self:call(unpack(self.cmd))
-    self.abort = true
+  if process.name == self.target or self.target == '*' then
+    private.runCmd(self, process, unpack(self.cmd))
+    self.abort = self.target == process.name
   end
+  print('Found done')
 end
 
-function lib:removeService(process)
+function lib:processDisconnected(process)
   self.processes[process.name] = nil
 end
 
---================================================== Special commands
-function lib:specialCommand(cmd, ...)
+--=============================================== PRIVATE
+
+function private:specialCommand(cmd, ...)
   if cmd == '--test' then
     local all = test.all
     test.all = function() end -- dummy
@@ -160,4 +152,10 @@ function lib:specialCommand(cmd, ...)
   else
     return cmd
   end
+end
+
+function private:runCmd(process, cmd, ...)
+  print('runCmd', cmd, ...)
+  print(process.req:send(cmd, ...))
+  print('runCmd', 'done')
 end

@@ -18,7 +18,6 @@ static int Browser_Browser(lua_State *L) {
   try {
     const char *service_type = dubL_checkstring(L, 1);
     Browser * retval__ = new Browser(service_type);
-    // The class inherits from 'LuaObject', use luaInit instead of lua_pushclass.
     return retval__->luaInit(L, retval__, "mdns.Browser");
   } catch (std::exception &e) {
     lua_pushfstring(L, "Browser: %s", e.what());
@@ -36,7 +35,9 @@ static int Browser_destructor(lua_State *L) {
   Browser **userdata = (Browser**)dubL_checksdata_n(L, 1, "mdns.Browser");
 
   
-  if (*userdata) (*userdata)->luaDestroy();
+  // custom destructor
+  Browser *self = *userdata;
+  if (self) self->luaDestroy();
   
   *userdata = NULL;
   return 0;
@@ -44,10 +45,22 @@ static int Browser_destructor(lua_State *L) {
 
 
 
+// test if class is deleted
+static int Browser_deleted(lua_State *L) {
+  Browser **userdata = (Browser**)dubL_checksdata_n(L, 1, "mdns.Browser");
+  lua_pushboolean(L, *userdata == NULL);
+  return 1;
+}
+
 /* ============================ tostring         ====================== */
 
 static int Browser__tostring(lua_State *L) {
   Browser **userdata = (Browser**)dubL_checksdata_n(L, 1, "mdns.Browser");
+  
+  if (!*userdata) {
+    lua_pushstring(L, "<mdns.Browser: NULL>");
+    return 1;
+  }
   
   
   lua_pushfstring(L, "<mdns.Browser: %p %s>", *userdata, (*userdata)->serviceType());
@@ -64,6 +77,7 @@ static int Browser__tostring(lua_State *L) {
 static int Browser_fd(lua_State *L) {
   try {
     Browser *self = *((Browser**)dubL_checksdata(L, 1, "mdns.Browser"));
+    if (!self) throw dub::Exception("Using deleted mdns.Browser in fd");
     int  retval__ = self->fd();
     lua_pushnumber(L, retval__);
     return 1;
@@ -77,19 +91,40 @@ static int Browser_fd(lua_State *L) {
 
 
 
-/** LuaStackSize mdns::Browser::getService(lua_State *L)
- * include/mdns/Browser.h:64
+/** bool mdns::Browser::getServices()
+ * include/mdns/Browser.h:66
  */
-static int Browser_getService(lua_State *L) {
+static int Browser_getServices(lua_State *L) {
   try {
     Browser *self = *((Browser**)dubL_checksdata(L, 1, "mdns.Browser"));
+    if (!self) throw dub::Exception("Using deleted mdns.Browser in getServices");
+    bool  retval__ = self->getServices();
+    lua_pushboolean(L, retval__);
+    return 1;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "getServices: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "getServices: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** LuaStackSize mdns::Browser::nextService(lua_State *L)
+ * include/mdns/Browser.h:74
+ */
+static int Browser_nextService(lua_State *L) {
+  try {
+    Browser *self = *((Browser**)dubL_checksdata(L, 1, "mdns.Browser"));
+    if (!self) throw dub::Exception("Using deleted mdns.Browser in nextService");
     
-    LuaStackSize  retval__ = self->getService(L);
+    LuaStackSize  retval__ = self->nextService(L);
     return retval__;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "getService: %s", e.what());
+    lua_pushfstring(L, "nextService: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "getService: Unknown exception");
+    lua_pushfstring(L, "nextService: Unknown exception");
   }
   return lua_error(L);
 }
@@ -102,6 +137,7 @@ static int Browser_getService(lua_State *L) {
 static int Browser_serviceType(lua_State *L) {
   try {
     Browser *self = *((Browser**)dubL_checksdata(L, 1, "mdns.Browser"));
+    if (!self) throw dub::Exception("Using deleted mdns.Browser in serviceType");
     const char * retval__ = self->serviceType();
     lua_pushstring(L, retval__);
     return 1;
@@ -121,10 +157,12 @@ static int Browser_serviceType(lua_State *L) {
 
 static const struct luaL_Reg Browser_member_methods[] = {
   {"fd"                , Browser_fd},
-  {"getService"        , Browser_getService},
+  {"getServices"       , Browser_getServices},
+  {"nextService"       , Browser_nextService},
   {"serviceType"       , Browser_serviceType},
   {"__tostring"        , Browser__tostring},
   {"__gc"              , Browser_destructor},
+  {"deleted"           , Browser_deleted},
   {NULL, NULL},
 };
 

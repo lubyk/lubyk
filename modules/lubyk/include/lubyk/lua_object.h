@@ -37,7 +37,6 @@ namespace lubyk {
  */
 class LuaObject
 {
-  const char *class_name_;
   /** This is used to invalidate the userdata in case the object is deleted
    * out of Lua.
    */
@@ -68,6 +67,8 @@ protected:
 
   void setupSuper(lua_State *L, void *ptr) throw();
   void setupMetatable(lua_State *L, const char *type_name) throw() ;
+
+  const char *class_name_;
 };
 
 /** Lua object with a Lua thread (has callbacks)

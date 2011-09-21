@@ -8,7 +8,6 @@
   current selection, etc).
 
 --]]------------------------------------------------------
-
 local lib    = {type='editor.Zone'}
 lib.__index  = lib
 editor.Zone  = lib

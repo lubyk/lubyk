@@ -137,6 +137,11 @@ public:
   bool poll(float timeout) {
     event_pos_ = 0;
     interrupted_ = false;
+    // printf("============================= %f\n", timeout);
+    // for(int i=0; i<used_count_; ++i) {
+    //   zmq_pollitem_t *item = pollitems_ + i;
+    //   printf("%i: %2i / %p (%i)\n", i, item->fd, item->socket, item->events);
+    // }
 #if POLLER_JITTER_HACK
     if (timeout > 0) {
       double start = time_.elapsed();
@@ -171,7 +176,8 @@ public:
       }
     }
 #else
-    event_count_ = zmq_poll(pollitems_, used_count_, timeout);
+    event_count_ = zmq_poll(pollitems_, used_count_, timeout * 1000);
+    //printf("===> %i\n", event_count_);
     if (event_count_ < 0) {
       // error or interruption
       event_count_ = 0;
@@ -257,6 +263,7 @@ public:
   static pthread_key_t sThisKey;
 private:
   int addItem(int fd, void *socket, int events) {
+    // printf("addItem fd:%i socket:%p\n", fd, socket);
     if (used_count_ >= pollitems_size_) {
       // we need more space: realloc
       int *sptr = (int*)realloc(idx_to_pos_, pollitems_size_ * 2 * sizeof(int));

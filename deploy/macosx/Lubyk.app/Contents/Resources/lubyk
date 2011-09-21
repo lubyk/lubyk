@@ -10,8 +10,9 @@ if action == '--testInstall' then
   require 'lubyk'
   print('ok')
   print('Executing lk.Command("--testInstall")...')
-  lk.Command('--testInstall')
+  cmd = lk.Command('--testInstall')
 else
   require 'lubyk'
-  lk.Command(unpack(arg))
+  cmd = lk.Command(unpack(arg))
 end
+run()

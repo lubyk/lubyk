@@ -29,7 +29,7 @@
 
 #ifndef MDNS_INCLUDE_MDNS_ABSTRACT_BROWSER_H_
 #define MDNS_INCLUDE_MDNS_ABSTRACT_BROWSER_H_
-#include <string>
+#include <queue>
 
 #include "mdns/location.h"
 #include "lubyk/mutex.h"
@@ -55,9 +55,9 @@ protected:
    */
   int fd_;
 
-  /** Last detected location.
+  /** Detected locations.
    */
-  Location location_;
+  std::queue<Location> found_services_;
 
   /** This is true for 'add' and false for 'remove'.
    */
@@ -66,7 +66,7 @@ protected:
   /** Once we have some data ready, we call this method to load the
    * service information into location_.
    */
-  bool getService();
+  bool getServices();
 public:
   AbstractBrowser(const char *service_type);
 

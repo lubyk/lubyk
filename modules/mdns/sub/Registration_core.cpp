@@ -20,7 +20,6 @@ static int Registration_Registration(lua_State *L) {
     const char *name = dubL_checkstring(L, 2);
     uint port = dubL_checkint(L, 3);
     Registration * retval__ = new Registration(service_type, name, port);
-    // The class inherits from 'LuaObject', use luaInit instead of lua_pushclass.
     return retval__->luaInit(L, retval__, "mdns.Registration");
   } catch (std::exception &e) {
     lua_pushfstring(L, "Registration: %s", e.what());
@@ -38,7 +37,9 @@ static int Registration_destructor(lua_State *L) {
   Registration **userdata = (Registration**)dubL_checksdata_n(L, 1, "mdns.Registration");
 
   
-  if (*userdata) (*userdata)->luaDestroy();
+  // custom destructor
+  Registration *self = *userdata;
+  if (self) self->luaDestroy();
   
   *userdata = NULL;
   return 0;
@@ -46,10 +47,22 @@ static int Registration_destructor(lua_State *L) {
 
 
 
+// test if class is deleted
+static int Registration_deleted(lua_State *L) {
+  Registration **userdata = (Registration**)dubL_checksdata_n(L, 1, "mdns.Registration");
+  lua_pushboolean(L, *userdata == NULL);
+  return 1;
+}
+
 /* ============================ tostring         ====================== */
 
 static int Registration__tostring(lua_State *L) {
   Registration **userdata = (Registration**)dubL_checksdata_n(L, 1, "mdns.Registration");
+  
+  if (!*userdata) {
+    lua_pushstring(L, "<mdns.Registration: NULL>");
+    return 1;
+  }
   
   
   lua_pushfstring(L, "<mdns.Registration: %p %s>", *userdata, (*userdata)->name());
@@ -66,6 +79,7 @@ static int Registration__tostring(lua_State *L) {
 static int Registration_fd(lua_State *L) {
   try {
     Registration *self = *((Registration**)dubL_checksdata(L, 1, "mdns.Registration"));
+    if (!self) throw dub::Exception("Using deleted mdns.Registration in fd");
     int  retval__ = self->fd();
     lua_pushnumber(L, retval__);
     return 1;
@@ -85,6 +99,7 @@ static int Registration_fd(lua_State *L) {
 static int Registration_getService(lua_State *L) {
   try {
     Registration *self = *((Registration**)dubL_checksdata(L, 1, "mdns.Registration"));
+    if (!self) throw dub::Exception("Using deleted mdns.Registration in getService");
     
     LuaStackSize  retval__ = self->getService(L);
     return retval__;
@@ -107,6 +122,7 @@ static const struct luaL_Reg Registration_member_methods[] = {
   {"getService"        , Registration_getService},
   {"__tostring"        , Registration__tostring},
   {"__gc"              , Registration_destructor},
+  {"deleted"           , Registration_deleted},
   {NULL, NULL},
 };
 

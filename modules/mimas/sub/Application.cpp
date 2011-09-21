@@ -47,9 +47,11 @@ bool Application::event(QEvent *event) {
     QFileOpenEvent *fop = static_cast<QFileOpenEvent*>(event);
     QString file = fop->file();
     lua_State *L = lua_;
-    ScopedLock lock(worker_);
 
-    if (!pushLuaCallback("openFile")) return false;
+    if (!pushLuaCallback("openFile")) {
+      printf("'openFile' method not defined for application.\n");
+      return false;
+    }
 
     lua_pushstring(L, file.toUtf8().data());
     // <func> <self> <'file'>

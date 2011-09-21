@@ -61,15 +61,28 @@ public:
     return fd_;
   }
 
-  LuaStackSize getService(lua_State *L) {
-    if (!AbstractBrowser::getService()) {
+  /** Load found services (must be called after waitRead or it blocks).
+   */
+  bool getServices() {
+    return AbstractBrowser::getServices();
+  }
+
+  /** Get next found service. Must call getServices after scheduler waitRead
+   * and before nextService.
+   * @return nil if there is nothing left.
+   */
+  LuaStackSize nextService(lua_State *L) {
+    if (found_services_.empty()) {
       return 0;
     }
+    Location loc = found_services_.front();
+    found_services_.pop();
+
     // create table {op = 'add/remove', name = 'x', host = '10.0.0.34', port = 7500, interface = 2}
     lua_newtable(L);
     // op = 'add/remove'
     lua_pushstring(L, "op");
-    if (is_add_) {
+    if (loc.port()) {
       lua_pushstring(L, "add");
     } else {
       lua_pushstring(L, "remove");
@@ -77,23 +90,23 @@ public:
     lua_settable(L, -3);
     // name = 'xxxx'
     lua_pushstring(L, "name");
-    lua_pushstring(L, location_.name());
+    lua_pushstring(L, loc.name());
     lua_settable(L, -3);
     // host = 'gaspard.local' / '10.3.4.5'
     lua_pushstring(L, "host");
-    lua_pushstring(L, location_.host());
+    lua_pushstring(L, loc.host());
     lua_settable(L, -3);
     // ip = '10.3.4.5' / 'localhost'
     lua_pushstring(L, "ip");
-    lua_pushstring(L, location_.name_from_ip(location_.ip()).c_str());
+    lua_pushstring(L, loc.name_from_ip(loc.ip()).c_str());
     lua_settable(L, -3);
     // port = 7500
     lua_pushstring(L, "port");
-    lua_pushnumber(L, location_.port());
+    lua_pushnumber(L, loc.port());
     lua_settable(L, -3);
     // interface = 2
     lua_pushstring(L, "interface");
-    lua_pushnumber(L, location_.interface());
+    lua_pushnumber(L, loc.interface());
     lua_settable(L, -3);
     return 1;
   }

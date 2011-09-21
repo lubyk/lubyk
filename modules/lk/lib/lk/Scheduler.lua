@@ -167,9 +167,16 @@ function lib:scheduleAt(at, thread)
   end
 end
 
+function lib:remove(thread)
+  self:removeFd(thread)
+  thread.t.t = nil
+end
+  
 function lib:removeFd(thread)
   local fd = thread.fd
-  self.idx_to_thread[thread.idx] = nil
+  if thread.idx then
+    self.idx_to_thread[thread.idx] = nil
+  end
   if fd then
     self.poller:remove(thread.idx)
     self.fd_count = self.fd_count - 1
@@ -252,6 +259,7 @@ function private:runThread(thread)
       -- add fd
       thread.fd = b
       self.fd_count = self.fd_count + 1
+      -- keep zmq.Socket object to avoid gc
       thread.idx = self.poller:add(b, event)
       self.idx_to_thread[thread.idx] = thread
     end

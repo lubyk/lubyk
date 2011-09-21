@@ -12,7 +12,7 @@ function lib:guiTimeout(func)
   self.timeout = lk.Thread(function()
     local now = worker:now()
     while not func(worker:now() >= now + self.TIMEOUT) do
-      sleep(100)
+      sleep(300)
     end
   end)
 end
@@ -24,7 +24,7 @@ function lib:timeout(timeout, func)
   end
   local now = worker:now()
   while not func(worker:now() >= now + timeout) do
-    sleep(100)
+    sleep(300)
   end
 end
 

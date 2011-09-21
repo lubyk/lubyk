@@ -369,9 +369,8 @@ function lib.spawn(self, name)
   -- We start a mimas.Application in case the process needs GUI elements.
   worker:spawn([[
   require 'lubyk'
-  app     = mimas.Application()
   process = lk.Process(%s)
-  app:exec()
+  run()
   ]], name)
   -- TODO: We might make things faster by giving the ip/port stuff to the
   -- process...

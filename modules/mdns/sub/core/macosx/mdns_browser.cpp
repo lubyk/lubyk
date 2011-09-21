@@ -56,8 +56,8 @@ using namespace lubyk;
 namespace mdns {
 
 // Note: the select() implementation on Windows (Winsock2)
-//       fails with any timeout much larger than this
-#define LONG_TIME 100000000
+//       fails with any timeout much larger than 100000000
+#define LONG_TIME 5
 
 struct BrowsedDevice {
   BrowsedDevice(AbstractBrowser *browser, const char *name, const char *host, DNSServiceFlags flags) :
@@ -98,7 +98,7 @@ public:
     }
   }
 
-  bool getService() {
+  bool getServices() {
     // calls getServiceInfo
     DNSServiceErrorType err = DNSServiceProcessResult(service_);
     if (err) {
@@ -134,17 +134,73 @@ public:
                Implementation::sResolve,
                (void*)device);  // context
 
-    if (error == kDNSServiceErr_NoError) {
-      error = DNSServiceProcessResult(resolve_service);
-      if (error != kDNSServiceErr_NoError) {
-        fprintf(stderr, "DNSServiceProcessResult failed: %i\n", error);
-      }
-    } else {
-      fprintf(stderr,"Error while trying to resolve %s @ %s (%d)\n", name, domain, error);
-    }
+    sResolveSelect(resolve_service, device);
 
     DNSServiceRefDeallocate(resolve_service);
     delete device;
+  }
+
+  void browse() {
+    // Run until break.
+    int dns_sd_fd = DNSServiceRefSockFD(service_);
+    fd_set readfds;
+    struct timeval tv;
+    int result;
+
+    while (true) {
+      FD_ZERO(&readfds);
+      FD_SET(dns_sd_fd, &readfds);
+      tv.tv_sec = LONG_TIME;
+      tv.tv_usec = 0;
+                      // highest fd in set + 1
+      result = select(dns_sd_fd+1, &readfds, (fd_set*)NULL, (fd_set*)NULL, &tv);
+      if (result > 0) {
+        DNSServiceErrorType err = kDNSServiceErr_NoError;
+        // Execute callback
+        if (FD_ISSET(dns_sd_fd, &readfds)) err = DNSServiceProcessResult(service_);
+
+        if (err) {
+          // An error occured. Halt.
+          fprintf(stderr, "DNSServiceProcessResult error (%d).\n", err);
+          break;
+        }
+      }	else if (errno != EINTR) {
+        // Error.
+        fprintf(stderr, "ZeroConf error (%d %s)\n", errno, strerror(errno));
+        if (errno != EINTR) break;
+      }
+    }
+  }
+  
+  static void sResolveSelect(DNSServiceRef service, BrowsedDevice *device) {
+    int dns_sd_fd = DNSServiceRefSockFD(service);
+    fd_set readfds;
+    struct timeval tv;
+    int result;
+
+    while (true) {
+      FD_ZERO(&readfds);
+      FD_SET(dns_sd_fd, &readfds);
+      tv.tv_sec = LONG_TIME;
+      tv.tv_usec = 0;
+                      // highest fd in set + 1
+      result = select(dns_sd_fd+1, &readfds, (fd_set*)NULL, (fd_set*)NULL, &tv);
+      if (result > 0) {
+        DNSServiceErrorType error = kDNSServiceErr_NoError;
+        // Execute callback
+        if (FD_ISSET(dns_sd_fd, &readfds)) {
+          error = DNSServiceProcessResult(service);
+          if (error != kDNSServiceErr_NoError) {
+            fprintf(stderr, "DNSServiceProcessResult failed: %i\n", error);
+          }
+          break;
+        }
+      }	else if (errno != EINTR) {
+        // Error.
+        fprintf(stderr, "ZeroConf error (%d %s)\n", errno, strerror(errno));
+        break;
+      }
+    }
   }
 
   static void sResolve(DNSServiceRef service,
@@ -160,14 +216,19 @@ public:
 
     BrowsedDevice *device = (BrowsedDevice*)context;
 
-    device->master_->location_ = Location(
+    //printf("%s %i (%s)\n", device->name_.c_str(), ntohs(port), device->flags_ & kDNSServiceFlagsAdd ? "ADD" : "REMOVE");
+    if (device->flags_ & kDNSServiceFlagsAdd) {
+      port = ntohs(port);
+    } else {
+      port = 0;
+    }
+    device->master_->found_services_.push(Location(
                              device->master_->protocol_.c_str(),
                              device->name_.c_str(),
                              hostname,
-                             ntohs(port),
+                             port,
                              interface_index
-                             );
-    device->master_->is_add_ = device->flags_ & kDNSServiceFlagsAdd;
+                             ));
   }
 
   AbstractBrowser *master_;
@@ -183,8 +244,8 @@ AbstractBrowser::~AbstractBrowser() {
   delete impl_;
 }
 
-bool AbstractBrowser::getService() {
-  return impl_->getService();
+bool AbstractBrowser::getServices() {
+  return impl_->getServices();
 }
 
 } // mdns
