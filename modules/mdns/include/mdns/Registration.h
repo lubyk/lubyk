@@ -34,6 +34,8 @@
 #include "lubyk.h"
 using namespace lubyk;
 
+#define ALLOWED_CHARS "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
 
 namespace mdns {
 
@@ -46,8 +48,9 @@ namespace mdns {
 class Registration : public AbstractRegistration, public LuaObject
 {
 public:
-  Registration(const char *service_type, const char *name, uint port)
-      : AbstractRegistration(service_type, name, port) {
+
+  Registration(const char *service_type, const char *name, uint port, const char *txt)
+      : AbstractRegistration(service_type, name, port, txt) {
   }
 
   ~Registration() {
@@ -56,6 +59,7 @@ public:
   int fd() {
     return fd_;
   }
+
 
   /** Get a table describing the service.
    */

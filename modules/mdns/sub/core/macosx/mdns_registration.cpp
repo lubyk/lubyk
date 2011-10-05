@@ -69,6 +69,7 @@ public:
   }
 
   void getFiledescriptor() {
+    size_t txt_len = master_->txt_.size();
     DNSServiceErrorType error;
     error = DNSServiceRegister(&service_,
       0,                    // no flags
@@ -78,8 +79,8 @@ public:
       "",                   // register in default domain(s)
       NULL,                 // use default host name
       htons(master_->port_),// port number
-      0,                    // length of TXT record
-      NULL,                 // no TXT record
+      txt_len,              // length of TXT record
+      txt_len ? master_->txt_.c_str() : NULL,  // TXT record
       sGetServiceInfo,      // callback function
       (void*)master_);      // context
 
@@ -124,7 +125,8 @@ public:
 };
 
 
-AbstractRegistration::AbstractRegistration(const char *service_type, const char *name, uint port) : name_(name), service_type_(service_type), port_(port), fd_(0) {
+AbstractRegistration::AbstractRegistration(const char *service_type, const char *name, uint port, const char *txt)
+    : name_(name), service_type_(service_type), port_(port), txt_(txt), fd_(0) {
   impl_ = new AbstractRegistration::Implementation(this);
 }
 

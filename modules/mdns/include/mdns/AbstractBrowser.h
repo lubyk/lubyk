@@ -43,6 +43,22 @@ class AbstractBrowser : public lubyk::Mutex {
   class Implementation;
   Implementation *impl_;
 protected:
+  class Service : public Location {
+  public:
+    Service(const char *protocol,
+            const char *service_name,
+            const char *hostname,
+            uint port,
+            uint interface,
+            const std::string &txt,
+            bool is_add)
+        : Location(protocol, service_name, hostname, port, interface),
+          txt_(txt),
+          is_add_(is_add) {}
+    std::string txt_;
+    bool is_add_;
+  };
+
   /** Protocol used in communication (usually 'lubyk').
   */
   std::string   protocol_;
@@ -57,7 +73,7 @@ protected:
 
   /** Detected locations.
    */
-  std::queue<Location> found_services_;
+  std::queue<Service> found_services_;
 
   /** This is true for 'add' and false for 'remove'.
    */

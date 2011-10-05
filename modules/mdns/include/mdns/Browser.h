@@ -75,14 +75,14 @@ public:
     if (found_services_.empty()) {
       return 0;
     }
-    Location loc = found_services_.front();
+    Service loc = found_services_.front();
     found_services_.pop();
 
     // create table {op = 'add/remove', name = 'x', host = '10.0.0.34', port = 7500, interface = 2}
     lua_newtable(L);
     // op = 'add/remove'
     lua_pushstring(L, "op");
-    if (loc.port()) {
+    if (loc.is_add_) {
       lua_pushstring(L, "add");
     } else {
       lua_pushstring(L, "remove");
@@ -108,7 +108,41 @@ public:
     lua_pushstring(L, "interface");
     lua_pushnumber(L, loc.interface());
     lua_settable(L, -3);
+    // txt = {...}
+    lua_pushstring(L, "txt");
+    pushTxtRecord(L, loc.txt_);
+    lua_settable(L, -3);
     return 1;
+  }
+
+private:
+  void pushTxtRecord(lua_State *L, const std::string &txt) {
+    // [LEN] KEY ( EOF | '=' ) ( VALUE | EOF ) [LEN] ...
+    lua_newtable(L);
+    // ... <table>
+    if (txt == "") return;
+    size_t txt_len = txt.size();
+    size_t pos = 0;
+    while ( pos < txt_len ) {
+      size_t l = txt.at(pos);
+      ++pos;
+      if (!l) break;
+      std::string line = txt.substr(pos, l);
+      size_t sep = line.find('=');
+      if (sep == std::string::npos) {
+        // boolean true
+        lua_pushlstring(L, line.c_str(), line.size());
+        lua_pushboolean(L, true);
+      } else {
+        std::string key, value;
+        key   = line.substr(0, sep);
+        value = line.substr(sep + 1);
+        lua_pushlstring(L, key.c_str(), key.size());
+        lua_pushlstring(L, value.c_str(), value.size());
+      }
+      lua_settable(L, -3);
+      pos = pos + l;
+    }
   }
 };
 } // mdns

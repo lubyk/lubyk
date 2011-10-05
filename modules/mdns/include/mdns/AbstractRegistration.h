@@ -43,7 +43,7 @@ namespace mdns {
  */
 class AbstractRegistration : public Mutex {
  public:
-  AbstractRegistration(const char *service_type, const char *name, uint port);
+  AbstractRegistration(const char *service_type, const char *name, uint port, const char *txt);
 
   virtual ~AbstractRegistration();
 
@@ -58,6 +58,7 @@ class AbstractRegistration : public Mutex {
   std::string host_;
   std::string service_type_;
   uint16_t    port_;
+  std::string txt_;
   int fd_;
 
  private:

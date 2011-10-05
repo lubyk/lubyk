@@ -11,15 +11,16 @@ using namespace mdns;
 
 /* ============================ Constructors     ====================== */
 
-/** mdns::Registration::Registration(const char *service_type, const char *name, uint port)
- * include/mdns/Registration.h:50
+/** mdns::Registration::Registration(const char *service_type, const char *name, uint port, const char *txt)
+ * include/mdns/Registration.h:53
  */
 static int Registration_Registration(lua_State *L) {
   try {
     const char *service_type = dubL_checkstring(L, 1);
     const char *name = dubL_checkstring(L, 2);
     uint port = dubL_checkint(L, 3);
-    Registration * retval__ = new Registration(service_type, name, port);
+    const char *txt = dubL_checkstring(L, 4);
+    Registration * retval__ = new Registration(service_type, name, port, txt);
     return retval__->luaInit(L, retval__, "mdns.Registration");
   } catch (std::exception &e) {
     lua_pushfstring(L, "Registration: %s", e.what());
@@ -74,7 +75,7 @@ static int Registration__tostring(lua_State *L) {
 
 
 /** int mdns::Registration::fd()
- * include/mdns/Registration.h:56
+ * include/mdns/Registration.h:59
  */
 static int Registration_fd(lua_State *L) {
   try {
@@ -94,7 +95,7 @@ static int Registration_fd(lua_State *L) {
 
 
 /** LuaStackSize mdns::Registration::getService(lua_State *L)
- * include/mdns/Registration.h:62
+ * include/mdns/Registration.h:66
  */
 static int Registration_getService(lua_State *L) {
   try {

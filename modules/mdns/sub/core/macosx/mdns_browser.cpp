@@ -217,17 +217,14 @@ public:
     BrowsedDevice *device = (BrowsedDevice*)context;
 
     //printf("%s %i (%s)\n", device->name_.c_str(), ntohs(port), device->flags_ & kDNSServiceFlagsAdd ? "ADD" : "REMOVE");
-    if (device->flags_ & kDNSServiceFlagsAdd) {
-      port = ntohs(port);
-    } else {
-      port = 0;
-    }
-    device->master_->found_services_.push(Location(
+    device->master_->found_services_.push(Service(
                              device->master_->protocol_.c_str(),
                              device->name_.c_str(),
                              hostname,
                              port,
-                             interface_index
+                             interface_index,
+                             std::string((const char *)txt, txt_len),
+                             device->flags_ & kDNSServiceFlagsAdd
                              ));
   }
 
