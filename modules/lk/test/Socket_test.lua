@@ -102,6 +102,7 @@ function should.recvBytes(t)
   assertValueEqual('6789', t.received2)
 end
 
+--[[  recvMsg and sendMsg are DISABLED until we have a use case
 function should.sendMessages(t)
   t.server = lk.Socket()
   t.server:bind('*', 0)
@@ -136,7 +137,7 @@ function should.sendMessagesWithPartialBuffer(t)
   t.port = t.server.port
   -- run server in new thread
   t.thread = lk.Thread(function()
-    -- will start as soon as we release the mutex
+    -- will start as soon as we yield to the scheduler
     local client = t.server:accept()
     t.received1 = client:recv('*l')
     t.received2, t.received3 = client:recvMsg()
@@ -160,6 +161,7 @@ function should.sendMessagesWithPartialBuffer(t)
   assertEqual('Hello World!', t.received4)
   assertValueEqual({a=1,b=2}, t.received5)
 end
+--]]
 
 -- FIXME: test Socket::recv('*a')
 

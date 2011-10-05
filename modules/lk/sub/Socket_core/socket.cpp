@@ -198,95 +198,97 @@ LuaStackSize lk::Socket::accept(lua_State *L) {
    * For a server, this should typically be used inside the loop.
    * We pass the lua_State to avoid mixing thread contexts.
    */
-  LuaStackSize lk::Socket::recvMsg(lua_State *L) {
-    // printf("recvMsg len:%i, i:%i\n", buffer_length_, buffer_i_);
-    // TODO: second param = timeout ?
-    char *msg_buffer  = NULL;
-    char *tmp_buffer  = NULL;
-    size_t sz;
-
-    // unlock while waiting
-    { lubyk::ScopedUnlock unlock(worker_);
-
-      // Receive buffer length
-      char *sz_ptr = (char*)&sz;
-      for(int i=0; i < SIZEOF_SIZE; ++i) {
-        if (buffer_i_ >= buffer_length_) {
-          // eaten all buffer, fetch more
-          // ***********************************************
-          // This is where we need our coroutine to do coroutine.yield('read', socket_fd_)
-          // ***********************************************
-          buffer_length_ = ::recv(socket_fd_, buffer_, SIZEOF_SIZE - i, 0);
-          if (buffer_length_ == 0) {
-            // connection closed
-            return 0;
-          } else if (buffer_length_ < 0) {
-            buffer_length_ = 0;
-            throw Exception("Could not receive (%s).", strerror(errno));
-          }
-          buffer_i_ = 0;
-        }
-        sz_ptr[i] = *(buffer_ + buffer_i_);
-        ++buffer_i_;
-      }
-
-      sz = ntohs(sz);
-      // printf("Receiving %lu bytes...\n", sz);
-      if (sz > SIZE_MAX) {
-      throw Exception("Invalid message size (%lu bytes).", sz);
-    }
-
-    char *recv_buffer = NULL;
-
-    // available content in buffer
-    size_t avail = buffer_length_ - buffer_i_;
-    size_t done = 0;
-
-    // allocate buffer if sz > MAX_BUFF_SIZE or we have stuff in buffer_
-    if (sz <= avail) {
-      // everything is in the internal buffer
-      // printf("All in tmp buffer (%lu).\n", avail);
-      msg_buffer = buffer_ + buffer_i_;
-      done = sz;
-      buffer_i_ += done;
-    } else if (sz > MAX_BUFF_SIZE || avail) {
-      // printf("Using tmp buffer (%lu).\n", avail);
-      tmp_buffer = (char*)malloc(sz);
-      if (!tmp_buffer) {
-        throw Exception("Could not allocate buffer (%lu bytes).", sz);
-      }
-      msg_buffer  = tmp_buffer;
-      recv_buffer = msg_buffer + avail;
-
-      if (avail) {
-        done = avail;
-        memcpy(tmp_buffer, buffer_ + buffer_i_, done);
-        buffer_i_ = buffer_length_;
-      }
-    } else {
-      // internal buffer empty
-      msg_buffer  = buffer_;
-      recv_buffer = buffer_;
-    }
-
-
-    while (done < sz) {
-      int received = ::recv(socket_fd_, recv_buffer, sz - done, 0);
-      if (received == 0) {
-        if (tmp_buffer) free(tmp_buffer);
-        return 0;
-      } else if (received < 0) {
-        if (tmp_buffer) free(tmp_buffer);
-        throw Exception("Could not receive (%s).", strerror(errno));
-      }
-      done += received;
-    }
-  }
-
-  int arg_size = msgpack_bin_to_lua(L, msg_buffer, sz);
-  if (tmp_buffer) free(tmp_buffer);
-  return arg_size;
-}
+// ENABLE ONLY IF NEEDED (needs to be rewritten in Lua)
+//
+//   LuaStackSize lk::Socket::recvMsg(lua_State *L) {
+//     // printf("recvMsg len:%i, i:%i\n", buffer_length_, buffer_i_);
+//     // TODO: second param = timeout ?
+//     char *msg_buffer  = NULL;
+//     char *tmp_buffer  = NULL;
+//     size_t sz;
+// 
+//     // unlock while waiting
+//     { lubyk::ScopedUnlock unlock(worker_);
+// 
+//       // Receive buffer length
+//       char *sz_ptr = (char*)&sz;
+//       for(int i=0; i < SIZEOF_SIZE; ++i) {
+//         if (buffer_i_ >= buffer_length_) {
+//           // eaten all buffer, fetch more
+//           // ***********************************************
+//           // This is where we need our coroutine to do coroutine.yield('read', socket_fd_)
+//           // ***********************************************
+//           buffer_length_ = ::recv(socket_fd_, buffer_, SIZEOF_SIZE - i, 0);
+//           if (buffer_length_ == 0) {
+//             // connection closed
+//             return 0;
+//           } else if (buffer_length_ < 0) {
+//             buffer_length_ = 0;
+//             throw Exception("Could not receive (%s).", strerror(errno));
+//           }
+//           buffer_i_ = 0;
+//         }
+//         sz_ptr[i] = *(buffer_ + buffer_i_);
+//         ++buffer_i_;
+//       }
+// 
+//       sz = ntohs(sz);
+//       // printf("Receiving %lu bytes...\n", sz);
+//       if (sz > SIZE_MAX) {
+//       throw Exception("Invalid message size (%lu bytes).", sz);
+//     }
+// 
+//     char *recv_buffer = NULL;
+// 
+//     // available content in buffer
+//     size_t avail = buffer_length_ - buffer_i_;
+//     size_t done = 0;
+// 
+//     // allocate buffer if sz > MAX_BUFF_SIZE or we have stuff in buffer_
+//     if (sz <= avail) {
+//       // everything is in the internal buffer
+//       // printf("All in tmp buffer (%lu).\n", avail);
+//       msg_buffer = buffer_ + buffer_i_;
+//       done = sz;
+//       buffer_i_ += done;
+//     } else if (sz > MAX_BUFF_SIZE || avail) {
+//       // printf("Using tmp buffer (%lu).\n", avail);
+//       tmp_buffer = (char*)malloc(sz);
+//       if (!tmp_buffer) {
+//         throw Exception("Could not allocate buffer (%lu bytes).", sz);
+//       }
+//       msg_buffer  = tmp_buffer;
+//       recv_buffer = msg_buffer + avail;
+// 
+//       if (avail) {
+//         done = avail;
+//         memcpy(tmp_buffer, buffer_ + buffer_i_, done);
+//         buffer_i_ = buffer_length_;
+//       }
+//     } else {
+//       // internal buffer empty
+//       msg_buffer  = buffer_;
+//       recv_buffer = buffer_;
+//     }
+// 
+// 
+//     while (done < sz) {
+//       int received = ::recv(socket_fd_, recv_buffer, sz - done, 0);
+//       if (received == 0) {
+//         if (tmp_buffer) free(tmp_buffer);
+//         return 0;
+//       } else if (received < 0) {
+//         if (tmp_buffer) free(tmp_buffer);
+//         throw Exception("Could not receive (%s).", strerror(errno));
+//       }
+//       done += received;
+//     }
+//   }
+// 
+//   int arg_size = msgpack_bin_to_lua(L, msg_buffer, sz);
+//   if (tmp_buffer) free(tmp_buffer);
+//   return arg_size;
+// }
 
 /** Receive a raw string (not encoded by msgpack).
  * This IO call blocks.
@@ -340,24 +342,24 @@ int lk::Socket::send(lua_State *L) {
 /** Send a message packed with msgpack.
  * Varying parameters.
  */
-void lk::Socket::sendMsg(lua_State *L) {
-  msgpack_sbuffer* buffer;
-  msgpack_lua_to_bin(L, &buffer, 1);
-  if (buffer->size > SIZE_MAX) {
-    throw Exception("Message too big to send in a single packet (%lu bytes).", buffer->size);
-  }
-  // printf("Sending %lu bytes...\n", buffer->size);
-  size_t sz = htons(buffer->size);
-
-  if (::send(socket_fd_, (void*)&sz, SIZEOF_SIZE, 0) == -1) {
-    throw Exception("Could not send message size (%s).", strerror(errno));
-  }
-
-  if (::send(socket_fd_, buffer->data, buffer->size, 0) == -1) {
-    throw Exception("Could not send message (%s).", strerror(errno));
-  }
-  free_msgpack_msg(NULL, buffer);
-}
+// void lk::Socket::sendMsg(lua_State *L) {
+//   msgpack_sbuffer* buffer;
+//   msgpack_lua_to_bin(L, &buffer, 1);
+//   if (buffer->size > SIZE_MAX) {
+//     throw Exception("Message too big to send in a single packet (%lu bytes).", buffer->size);
+//   }
+//   // printf("Sending %lu bytes...\n", buffer->size);
+//   size_t sz = htons(buffer->size);
+// 
+//   if (::send(socket_fd_, (void*)&sz, SIZEOF_SIZE, 0) == -1) {
+//     throw Exception("Could not send message size (%s).", strerror(errno));
+//   }
+// 
+//   if (::send(socket_fd_, buffer->data, buffer->size, 0) == -1) {
+//     throw Exception("Could not send message (%s).", strerror(errno));
+//   }
+//   free_msgpack_msg(NULL, buffer);
+// }
 
 
 int lk::Socket::get_port(int fd) {

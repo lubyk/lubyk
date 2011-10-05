@@ -56,6 +56,11 @@ function lib:recv(len)
   end
 end
 
+function lib:recvMsg()
+  sched:waitRead(self.sock_fd)
+  --- WTF?
+end
+
 function lib:recvLine()
   local buffer = self.buffer
   while true do

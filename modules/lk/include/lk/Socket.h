@@ -157,7 +157,8 @@ public:
    * For a server, this should typically be used inside the loop.
    * We pass the lua_State to avoid mixing thread contexts.
    */
-  LuaStackSize recvMsg(lua_State *L);
+  // ENABLE ONLY IF NEEDED (needs to be rewritten in Lua)
+  // LuaStackSize recvMsg(lua_State *L);
 
   /** Receive a raw string (not encoded by msgpack).
    * This IO call blocks.
@@ -174,15 +175,17 @@ public:
   /** Send a message packed with msgpack.
    * Varying parameters.
    */
-  void sendMsg(lua_State *L);
+  // ENABLE ONLY IF NEEDED (needs to be rewritten in Lua)
+  // void sendMsg(lua_State *L);
 
   /** Request = remote call (uses msgpack to encode data).
    * This is really just a sendMsg with a recvMsg.
    */
-  LuaStackSize request(lua_State *L) {
-    sendMsg(L);
-    return recvMsg(L);
-  }
+  // ENABLE ONLY IF NEEDED (needs to be rewritten in Lua)
+  // LuaStackSize request(lua_State *L) {
+  //   sendMsg(L);
+  //   return recvMsg(L);
+  // }
 
   const char *localHost() const {
     return local_host_.c_str();

@@ -164,7 +164,7 @@ static int Socket_connect(lua_State *L) {
 
 
 /** int lk::Socket::fd() const 
- * include/lk/Socket.h:207
+ * include/lk/Socket.h:210
  */
 static int Socket_fd(lua_State *L) {
   try {
@@ -203,7 +203,7 @@ static int Socket_listen(lua_State *L) {
 
 
 /** const char* lk::Socket::localHost() const 
- * include/lk/Socket.h:187
+ * include/lk/Socket.h:190
  */
 static int Socket_localHost(lua_State *L) {
   try {
@@ -223,7 +223,7 @@ static int Socket_localHost(lua_State *L) {
 
 
 /** int lk::Socket::localPort() const 
- * include/lk/Socket.h:191
+ * include/lk/Socket.h:194
  */
 static int Socket_localPort(lua_State *L) {
   try {
@@ -243,7 +243,7 @@ static int Socket_localPort(lua_State *L) {
 
 
 /** int lk::Socket::port() const 
- * include/lk/Socket.h:203
+ * include/lk/Socket.h:206
  */
 static int Socket_port(lua_State *L) {
   try {
@@ -263,7 +263,7 @@ static int Socket_port(lua_State *L) {
 
 
 /** LuaStackSize lk::Socket::recv(lua_State *L)
- * include/lk/Socket.h:166
+ * include/lk/Socket.h:167
  */
 static int Socket_recv(lua_State *L) {
   try {
@@ -282,28 +282,8 @@ static int Socket_recv(lua_State *L) {
 
 
 
-/** LuaStackSize lk::Socket::recvMsg(lua_State *L)
- * include/lk/Socket.h:160
- */
-static int Socket_recvMsg(lua_State *L) {
-  try {
-    Socket *self = *((Socket**)dubL_checksdata(L, 1, "lk.Socket"));
-    if (!self) throw dub::Exception("Using deleted lk.Socket in recvMsg");
-    
-    LuaStackSize  retval__ = self->recvMsg(L);
-    return retval__;
-  } catch (std::exception &e) {
-    lua_pushfstring(L, "recvMsg: %s", e.what());
-  } catch (...) {
-    lua_pushfstring(L, "recvMsg: Unknown exception");
-  }
-  return lua_error(L);
-}
-
-
-
 /** const char* lk::Socket::remoteHost() const 
- * include/lk/Socket.h:195
+ * include/lk/Socket.h:198
  */
 static int Socket_remoteHost(lua_State *L) {
   try {
@@ -323,7 +303,7 @@ static int Socket_remoteHost(lua_State *L) {
 
 
 /** int lk::Socket::remotePort() const 
- * include/lk/Socket.h:199
+ * include/lk/Socket.h:202
  */
 static int Socket_remotePort(lua_State *L) {
   try {
@@ -342,28 +322,8 @@ static int Socket_remotePort(lua_State *L) {
 
 
 
-/** LuaStackSize lk::Socket::request(lua_State *L)
- * include/lk/Socket.h:182
- */
-static int Socket_request(lua_State *L) {
-  try {
-    Socket *self = *((Socket**)dubL_checksdata(L, 1, "lk.Socket"));
-    if (!self) throw dub::Exception("Using deleted lk.Socket in request");
-    
-    LuaStackSize  retval__ = self->request(L);
-    return retval__;
-  } catch (std::exception &e) {
-    lua_pushfstring(L, "request: %s", e.what());
-  } catch (...) {
-    lua_pushfstring(L, "request: Unknown exception");
-  }
-  return lua_error(L);
-}
-
-
-
 /** int lk::Socket::send(lua_State *L)
- * include/lk/Socket.h:172
+ * include/lk/Socket.h:173
  */
 static int Socket_send(lua_State *L) {
   try {
@@ -377,26 +337,6 @@ static int Socket_send(lua_State *L) {
     lua_pushfstring(L, "send: %s", e.what());
   } catch (...) {
     lua_pushfstring(L, "send: Unknown exception");
-  }
-  return lua_error(L);
-}
-
-
-
-/** void lk::Socket::sendMsg(lua_State *L)
- * include/lk/Socket.h:177
- */
-static int Socket_sendMsg(lua_State *L) {
-  try {
-    Socket *self = *((Socket**)dubL_checksdata(L, 1, "lk.Socket"));
-    if (!self) throw dub::Exception("Using deleted lk.Socket in sendMsg");
-    
-    self->sendMsg(L);
-    return 0;
-  } catch (std::exception &e) {
-    lua_pushfstring(L, "sendMsg: %s", e.what());
-  } catch (...) {
-    lua_pushfstring(L, "sendMsg: Unknown exception");
   }
   return lua_error(L);
 }
@@ -477,12 +417,9 @@ static const struct luaL_Reg Socket_member_methods[] = {
   {"localPort"         , Socket_localPort},
   {"port"              , Socket_port},
   {"recv"              , Socket_recv},
-  {"recvMsg"           , Socket_recvMsg},
   {"remoteHost"        , Socket_remoteHost},
   {"remotePort"        , Socket_remotePort},
-  {"request"           , Socket_request},
   {"send"              , Socket_send},
-  {"sendMsg"           , Socket_sendMsg},
   {"setNonBlocking"    , Socket_setNonBlocking},
   {"setRecvTimeout"    , Socket_setRecvTimeout},
   {"setSendTimeout"    , Socket_setSendTimeout},
