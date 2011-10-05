@@ -34,7 +34,7 @@ function lib:bind(host, port)
 end
 
 function lib:recv(len)
-  if not len then
+  if not len or len == '*l' then
     return self:recvLine()
   end
   local buffer = self.buffer or ''

@@ -34,25 +34,18 @@ setmetatable(lib, {
 
   --======================================= PUB server
   self.pub = zmq.Pub()
+  self.info.pub = self.pub:port()
 
   --======================================= REP server (sync)
+  -- FIXME: REMOVE (risk of hanging)
   self.rep = zmq.SimpleRep(function(...)
     local url = ...
     if url == lubyk.info_url then
       -- get other ports from service
-      if not self.info.pub then
-        -- publish and pull ports
-        self.info.pub  = self.pub:port()
-        self.info.pull = self.pull:port()
-      end
       return self.info
     elseif url == lubyk.quit_url then
       -- quit
-      if app then
-        app:quit()
-      else
-        self.callback(...)
-      end
+      sched:quit()
     else
       -- handle requests here. Maybe we need two different callbacks
       -- for reply and pull...
@@ -66,8 +59,10 @@ setmetatable(lib, {
     self.callback(...)
   end)
 
+  self.info.pull = self.pull:port()
+
   --======================================= announce REP server
-  self.registration = mdns.Registration(service_type, name, self.rep:port())
+  self.registration = mdns.Registration(service_type, name, self.rep:port(), self.info)
   -- TODO: act on name change ....
 
   setmetatable(self, lib)

@@ -61,7 +61,7 @@ function lib:subscribe(remote_name)
     -- allready subscribed, abort
     return
   end
-  subscription = {subscriber = self.sub}
+  local subscription = {subscriber = self.sub}
   self.subscriptions[remote_name] = subscription
   local service = self.browser.services[remote_name]
   if service then

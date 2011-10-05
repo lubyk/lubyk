@@ -34,8 +34,6 @@
 #include "lubyk.h"
 using namespace lubyk;
 
-#define ALLOWED_CHARS "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-
 
 namespace mdns {
 

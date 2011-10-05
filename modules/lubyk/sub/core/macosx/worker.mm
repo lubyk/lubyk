@@ -162,7 +162,6 @@ LuaStackSize Worker::spawn(const char *script, lua_State *L)
     char arg1[] = "-e";
     char *argv[] = {path, arg1, const_cast<char*>(script), NULL};
 
-    printf("Execute %s with script '%s'\n", path, script);
     int pid = fork();
     if (pid == 0) {
       // child process

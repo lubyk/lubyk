@@ -44,6 +44,10 @@ function lib:sleep(delay)
   end
 end
 
+function lib:quit()
+  self.should_run = false
+end
+
 --- Waits a given number of milliseconds starting from the
 -- logical time. This should be used as a timer because it will not
 -- drift.
@@ -135,7 +139,18 @@ function lib:loop()
         local ev_idx = poller:event()
         if ev_idx then
           local thread = idx_to_thread[ev_idx]
-          private.runThread(self, thread)
+          if thread then
+            private.runThread(self, thread)
+          else
+            -- if process then
+            --   print(process.name, ev_idx, '???')
+            -- elseif morph then
+            --   print('morph', ev_idx, '???')
+            -- else
+            --   print('???', ev_idx, '???')
+            -- end
+            poller:remove(ev_idx)
+          end
         else
           break
         end
@@ -261,6 +276,13 @@ function private:runThread(thread)
       self.fd_count = self.fd_count + 1
       -- keep zmq.Socket object to avoid gc
       thread.idx = self.poller:add(b, event)
+      -- if process then
+      --   print(process.name, 'ADD', thread.idx, b, event)
+      -- elseif morph then
+      --   print('morph', 'ADD', thread.idx, b, event)
+      -- else
+      --   print('???', 'ADD', thread.idx, b, event)
+      -- end
       self.idx_to_thread[thread.idx] = thread
     end
     -- We need this information in case we change poller.

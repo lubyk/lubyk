@@ -30,6 +30,9 @@ local function buildTXT(dict)
 
   local txt = ''
   for key, value in pairs(dict) do
+    if type(value) == 'number' then
+      value = string.format('%i', value)
+    end
     if type(key) == 'string' and type(value) == 'string' then
       if string.match(key, INVALID_KEY_CHARS) then
         error(string.format("Invalid key '%s' in TXT record (contains invalid characters).", key))
@@ -50,9 +53,10 @@ end
 -- This socket could be the default zmq.REQ socket used to by lk.Service ?
 function mdns.Registration(service_type, name, port, txt, func)
   if not func then
-    -- optional 'txt' record
-    func = txt
-    txt = nil
+    if type(txt) == 'function' then
+      func = txt
+      txt = nil
+    end
   end
   func = func or dummy
   txt = buildTXT(txt)

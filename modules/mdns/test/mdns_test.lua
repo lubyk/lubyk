@@ -85,10 +85,10 @@ end
 function should.registerTxt(t)
   local continue = false
   -- register our service at port 12345
-  local registration = mdns.Registration(lubyk.service_type, 'Service3', 12345, {planet='Dune', name='Worm'}, function()
+  local registration = mdns.Registration(lubyk.service_type, 'Service3', 12345, {planet='Dune', name='Worm', pull=34}, function()
     continue = true
   end)
-  assertEqual(string.char(11) .. 'planet=Dune' .. string.char(9) .. 'name=Worm', registration.txt)
+  assertEqual(string.char(11) .. 'planet=Dune' .. string.char(9) .. 'name=Worm' .. string.char(7) .. 'pull=34', registration.txt)
   t:timeout(3000, function(done)
     return done or continue
   end)
@@ -106,6 +106,7 @@ function should.registerTxt(t)
   end)
   assertEqual('Dune', txt.planet)
   assertEqual('Worm', txt.name)
+  assertEqual(34, txt.pull)
 end
 
 test.all()

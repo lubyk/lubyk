@@ -97,13 +97,13 @@ end
 --=============================================== lk.ProcessWatch delegate
 
 --- When services are brought online
-function lib:processConnected(process)
+function lib:processConnected(remote_process)
   -- We need to receive notifications from this process so that
   -- we can write the changes to file.
-  local process = self.processes[process.name]
+  local process = self.processes[remote_process.name]
   if process then
     -- we are interested in this process
-    private.process.connect(self, process)
+    private.process.connect(self, process, remote_process)
   end
 end
 
@@ -231,12 +231,12 @@ end
 
 --=============================================== PRIVATE process
 
-function private.process:connect(process)
+function private.process:connect(process, remote_process)
   process.sub = zmq.SimpleSub(function(changes)
     -- we receive notifications, update content
     private.process.changed(self, process, changes)
   end)
-  process.sub:connect(process.sub_url)
+  process.sub:connect(remote_process.sub_url)
 end
 
 function private.process:disconnect(process)

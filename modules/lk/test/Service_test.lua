@@ -10,7 +10,19 @@ require 'lubyk'
 
 local should = test.Suite('lk.Service')
 
-function should.connectWhenRemoteAppears()
+function should.garbageCollectService()
+  local deleted = false
+  local service = lk.Service('ToBeDeleted')
+  service.del = lk.Finalizer(function()
+    deleted = true
+  end)
+  service = nil
+  collectgarbage()
+  collectgarbage()
+  assertTrue(deleted)
+end
+
+function should.connectWhenRemoteAppears(t)
   local continue = false
   local received_count = 0
   local function receiveMessage(message)
@@ -33,16 +45,18 @@ function should.connectWhenRemoteAppears()
   local mars = lk.Service('Mars')
 
   -- connected becomes true when 'Mars' appears on the network
-  while not venus:connected() do
-    sleep(50) -- make sure everything is ready before sending
-  end
+  t:timeout(3000, function(done)
+    return done or venus:connected()
+  end)
+  assertTrue(venus:connected())
 
+  sleep(20) -- let zmq make connection before sending
   mars:notify('One')
   mars:notify('message from Mars')
 
-  while not continue do
-    sleep(50)
-  end
+  t:timeout(3000, function(done)
+    return done or continue
+  end)
 
   assertEqual(2, received_count)
 end

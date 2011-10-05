@@ -80,12 +80,15 @@ function lib:request(...)
   return unpack(data)
 end
 
+local zmq_POLLIN = zmq.POLLIN
 function lib:recv()
-  sched:waitRead(self.super)
+  local super = self.super
+  while not super:hasEvent(zmq_POLLIN) do
+    sched:waitRead(self.super)
+  end
   return self.super:recv()
 end
 
-local zmq_POLLIN = zmq.POLLIN
 function lib:mimasRecv()
   local super = self.super
   if not super:hasEvent(zmq_POLLIN) then

@@ -54,9 +54,9 @@ function lib:process(name)
 end
 
 function lib:addDevice(service)
-  local zone, name = string.match(service.name, '^([^:]+):(.*)$')
+  local zone, name = string.match(service.fullname, '^([^:]+):(.*)$')
   if not zone then
-    print('Error in ProcessWatch: found service without zone', service.name)
+    print('Error in ProcessWatch: found service without zone', service.fullname)
     return
   elseif zone ~= Lubyk.zone then
     -- ignore

@@ -34,6 +34,8 @@
 
 using namespace lubyk;
 
+#include <stdlib.h> // atoi
+
 namespace mdns {
 
 /** Browse for devices matching a give service type. Call a lua function
@@ -138,7 +140,11 @@ private:
         key   = line.substr(0, sep);
         value = line.substr(sep + 1);
         lua_pushlstring(L, key.c_str(), key.size());
-        lua_pushlstring(L, value.c_str(), value.size());
+        if (value.find_first_not_of("0123456789") == std::string::npos) {
+          lua_pushnumber(L, atoi(value.c_str()));
+        } else {
+          lua_pushlstring(L, value.c_str(), value.size());
+        }
       }
       lua_settable(L, -3);
       pos = pos + l;
