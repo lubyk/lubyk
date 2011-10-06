@@ -43,6 +43,7 @@ namespace mimas {
 /** GLWidget.
  *
  * @dub destructor: 'luaDestroy'
+ *      super: 'QWidget'
  */
 class GLWidget : public QGLWidget, public ThreadedLuaObject
 {
@@ -60,76 +61,12 @@ public:
     MIMAS_DEBUG_GC
   }
 
-  // ============================ common code to all mimas Widgets
-
   QString cssClass() const {
     return parent() ? QString("glwindow") : QString("glwidget");
   }
 
-  QWidget *widget() {
-    return this;
-  }
-
-  QObject *object() {
-    return this;
-  }
-
-  /** Get the widget's name.
-   */
-  LuaStackSize name(lua_State *L) {
-    lua_pushstring(L, QObject::objectName().toUtf8().data());
-    return 1;
-  }
-
-  /** Set the widget's name.
-   */
-  void setName(const char *name) {
-    QObject::setObjectName(QString(name));
-  }
-
-  void move(int x, int y) {
-    QWidget::move(x, y);
-  }
-
-  void resize(int w, int h) {
-    QWidget::resize(w, h);
-  }
-
-  int x() {
-    return QWidget::x();
-  }
-
-  int y() {
-    return QWidget::y();
-  }
-
-  int width() {
-    return QWidget::width();
-  }
-
-  int height() {
-    return QWidget::height();
-  }
-
+  QSize size_hint_;
   // =============================================================
-
-  /** Close and delete the window.
-   */
-  bool close() {
-    return QWidget::close();
-  }
-
-  bool isVisible() const {
-    return QWidget::isVisible();
-  }
-
-  void show() {
-    QWidget::show();
-  }
-
-  void activateWindow() {
-    QWidget::activateWindow();
-  }
 
   void updateGL() {
     QGLWidget::updateGL();

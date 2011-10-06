@@ -23,6 +23,9 @@ function withUser.should.connectToCallback(t)
     t.continue = true
   end)
 
+  t.btn2 = mimas.Button('ignore me')
+  t.win:addWidget(t.btn2)
+  t.btn2:move(40,40)
   t.callback:connect(t.btn, 'clicked')
   t.win:show()
   t:timeout(function(done)

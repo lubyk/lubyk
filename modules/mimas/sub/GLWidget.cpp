@@ -12,7 +12,7 @@ using namespace mimas;
 /* ============================ Constructors     ====================== */
 
 /** mimas::GLWidget::GLWidget()
- * include/mimas/GLWidget.h:53
+ * include/mimas/GLWidget.h:54
  */
 static int GLWidget_GLWidget(lua_State *L) {
   try {
@@ -70,10 +70,10 @@ static int GLWidget__tostring(lua_State *L) {
 /* ============================ Member Methods   ====================== */
 
 
-/** void mimas::GLWidget::activateWindow()
- * include/mimas/GLWidget.h:130
+/** void mimas::QWidget::activateWindow()
+ * mimas/bind/QWidget.h:32
  */
-static int GLWidget_activateWindow(lua_State *L) {
+static int QWidget_activateWindow(lua_State *L) {
   try {
     GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
     if (!self) throw dub::Exception("Using deleted mimas.GLWidget in activateWindow");
@@ -89,10 +89,61 @@ static int GLWidget_activateWindow(lua_State *L) {
 
 
 
-/** bool mimas::GLWidget::close()
- * include/mimas/GLWidget.h:118
+/** void mimas::QWidget::addAction(Action *action)
+ * mimas/bind/QWidget.h:34
  */
-static int GLWidget_close(lua_State *L) {
+static int QWidget_addAction(lua_State *L) {
+  try {
+    GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
+    if (!self) throw dub::Exception("Using deleted mimas.GLWidget in addAction");
+    Action *action = *((Action **)dubL_checksdata(L, 2, "mimas.Action"));
+    self->addAction(action);
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "addAction: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "addAction: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** void mimas::QWidget::addWidget(QWidget *widget, float x=0, float y=0)
+ * mimas/bind/QWidget.h:41
+ */
+static int QWidget_addWidget(lua_State *L) {
+  try {
+    GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
+    if (!self) throw dub::Exception("Using deleted mimas.GLWidget in addWidget");
+    int top__ = lua_gettop(L);
+    QWidget *widget = *((QWidget **)dubL_checksdata(L, 2, "mimas.QWidget"));
+    float x = 0;
+    float y = 0;
+    if (top__ >= 3) {
+      x = dubL_checknumber(L, 3);
+      if (top__ >= 4) {
+        y = dubL_checknumber(L, 4);
+      }
+    }
+    widget->setParent(self);
+    widget->move(x, y);
+    widget->show();
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "addWidget: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "addWidget: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** bool mimas::QWidget::close()
+ * mimas/bind/QWidget.h:26
+ */
+static int QWidget_close(lua_State *L) {
   try {
     GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
     if (!self) throw dub::Exception("Using deleted mimas.GLWidget in close");
@@ -110,7 +161,7 @@ static int GLWidget_close(lua_State *L) {
 
 
 /** QString mimas::GLWidget::cssClass() const 
- * include/mimas/GLWidget.h:65
+ * include/mimas/GLWidget.h:64
  */
 static int GLWidget_cssClass(lua_State *L) {
   try {
@@ -129,10 +180,56 @@ static int GLWidget_cssClass(lua_State *L) {
 
 
 
-/** int mimas::GLWidget::height()
- * include/mimas/GLWidget.h:110
+/** void mimas::QWidget::globalMove(float x, float y)
+ * mimas/bind/QWidget.h:70
  */
-static int GLWidget_height(lua_State *L) {
+static int QWidget_globalMove(lua_State *L) {
+  try {
+    GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
+    if (!self) throw dub::Exception("Using deleted mimas.GLWidget in globalMove");
+    float x = dubL_checknumber(L, 2);
+    float y = dubL_checknumber(L, 3);
+    self->move(
+      self->mapToParent(
+        self->mapFromGlobal(QPoint(x, y))
+      )
+    );
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "globalMove: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "globalMove: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** LuaStackSize mimas::QWidget::globalPosition()
+ * mimas/bind/QWidget.h:67
+ */
+static int QWidget_globalPosition(lua_State *L) {
+  try {
+    GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
+    if (!self) throw dub::Exception("Using deleted mimas.GLWidget in globalPosition");
+    QPoint pt = self->mapToGlobal(QPoint(0, 0));
+    lua_pushnumber(L, pt.x());
+    lua_pushnumber(L, pt.y());
+    return 2;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "globalPosition: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "globalPosition: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** int mimas::QWidget::height()
+ * mimas/bind/QWidget.h:18
+ */
+static int QWidget_height(lua_State *L) {
   try {
     GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
     if (!self) throw dub::Exception("Using deleted mimas.GLWidget in height");
@@ -149,10 +246,49 @@ static int GLWidget_height(lua_State *L) {
 
 
 
-/** bool mimas::GLWidget::isVisible() const 
- * include/mimas/GLWidget.h:122
+/** void mimas::QWidget::hide()
+ * mimas/bind/QWidget.h:29
  */
-static int GLWidget_isVisible(lua_State *L) {
+static int QWidget_hide(lua_State *L) {
+  try {
+    GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
+    if (!self) throw dub::Exception("Using deleted mimas.GLWidget in hide");
+    self->hide();
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "hide: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "hide: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** bool mimas::QWidget::isFullScreen()
+ * mimas/bind/QWidget.h:33
+ */
+static int QWidget_isFullScreen(lua_State *L) {
+  try {
+    GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
+    if (!self) throw dub::Exception("Using deleted mimas.GLWidget in isFullScreen");
+    bool  retval__ = self->isFullScreen();
+    lua_pushboolean(L, retval__);
+    return 1;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "isFullScreen: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "isFullScreen: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** bool mimas::QWidget::isVisible()
+ * mimas/bind/QWidget.h:27
+ */
+static int QWidget_isVisible(lua_State *L) {
   try {
     GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
     if (!self) throw dub::Exception("Using deleted mimas.GLWidget in isVisible");
@@ -169,10 +305,29 @@ static int GLWidget_isVisible(lua_State *L) {
 
 
 
-/** void mimas::GLWidget::move(int x, int y)
- * include/mimas/GLWidget.h:90
+/** void mimas::QWidget::lower()
+ * mimas/bind/QWidget.h:30
  */
-static int GLWidget_move(lua_State *L) {
+static int QWidget_lower(lua_State *L) {
+  try {
+    GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
+    if (!self) throw dub::Exception("Using deleted mimas.GLWidget in lower");
+    self->lower();
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "lower: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "lower: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** void mimas::QWidget::move(int x, int y)
+ * mimas/bind/QWidget.h:13
+ */
+static int QWidget_move(lua_State *L) {
   try {
     GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
     if (!self) throw dub::Exception("Using deleted mimas.GLWidget in move");
@@ -190,16 +345,15 @@ static int GLWidget_move(lua_State *L) {
 
 
 
-/** LuaStackSize mimas::GLWidget::name(lua_State *L)
- * include/mimas/GLWidget.h:79
+/** void mimas::QObject::name()
+ * mimas/bind/QObject.h:12
  */
-static int GLWidget_name(lua_State *L) {
+static int QObject_name(lua_State *L) {
   try {
     GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
     if (!self) throw dub::Exception("Using deleted mimas.GLWidget in name");
-    
-    LuaStackSize  retval__ = self->name(L);
-    return retval__;
+    lua_pushstring(L, self->objectName().toUtf8().data());
+    return 1;
   } catch (std::exception &e) {
     lua_pushfstring(L, "name: %s", e.what());
   } catch (...) {
@@ -210,14 +364,14 @@ static int GLWidget_name(lua_State *L) {
 
 
 
-/** QObject* mimas::GLWidget::object()
- * include/mimas/GLWidget.h:73
+/** void mimas::QObject::object()
+ * mimas/bind/QObject.h:11
  */
-static int GLWidget_object(lua_State *L) {
+static int QObject_object(lua_State *L) {
   try {
     GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
     if (!self) throw dub::Exception("Using deleted mimas.GLWidget in object");
-    QObject * retval__ = self->object();
+    QObject * retval__ = self;
     lua_pushclass<QObject>(L, retval__, "mimas.QObject");
     return 1;
   } catch (std::exception &e) {
@@ -230,10 +384,29 @@ static int GLWidget_object(lua_State *L) {
 
 
 
-/** void mimas::GLWidget::resize(int w, int h)
- * include/mimas/GLWidget.h:94
+/** void mimas::QWidget::raise()
+ * mimas/bind/QWidget.h:31
  */
-static int GLWidget_resize(lua_State *L) {
+static int QWidget_raise(lua_State *L) {
+  try {
+    GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
+    if (!self) throw dub::Exception("Using deleted mimas.GLWidget in raise");
+    self->raise();
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "raise: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "raise: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** void mimas::QWidget::resize(int w, int h)
+ * mimas/bind/QWidget.h:14
+ */
+static int QWidget_resize(lua_State *L) {
   try {
     GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
     if (!self) throw dub::Exception("Using deleted mimas.GLWidget in resize");
@@ -251,15 +424,56 @@ static int GLWidget_resize(lua_State *L) {
 
 
 
-/** void mimas::GLWidget::setName(const char *name)
- * include/mimas/GLWidget.h:86
+/** void mimas::QWidget::setMinimumSize(float w, float h)
+ * mimas/bind/QWidget.h:22
  */
-static int GLWidget_setName(lua_State *L) {
+static int QWidget_setMinimumSize(lua_State *L) {
+  try {
+    GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
+    if (!self) throw dub::Exception("Using deleted mimas.GLWidget in setMinimumSize");
+    float w = dubL_checknumber(L, 2);
+    float h = dubL_checknumber(L, 3);
+    self->setMinimumSize(w, h);
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "setMinimumSize: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "setMinimumSize: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** void mimas::QWidget::setMouseTracking(bool enable)
+ * mimas/bind/QWidget.h:25
+ */
+static int QWidget_setMouseTracking(lua_State *L) {
+  try {
+    GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
+    if (!self) throw dub::Exception("Using deleted mimas.GLWidget in setMouseTracking");
+    bool enable = lua_toboolean(L, 2);
+    self->setMouseTracking(enable);
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "setMouseTracking: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "setMouseTracking: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** void mimas::QObject::setName(const char *name)
+ * mimas/bind/QObject.h:13
+ */
+static int QObject_setName(lua_State *L) {
   try {
     GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
     if (!self) throw dub::Exception("Using deleted mimas.GLWidget in setName");
     const char *name = dubL_checkstring(L, 2);
-    self->setName(name);
+    self->setObjectName(QString(name));
     return 0;
   } catch (std::exception &e) {
     lua_pushfstring(L, "setName: %s", e.what());
@@ -271,10 +485,114 @@ static int GLWidget_setName(lua_State *L) {
 
 
 
-/** void mimas::GLWidget::show()
- * include/mimas/GLWidget.h:126
+/** void mimas::QWidget::setParent(QWidget *parent)
+ * mimas/bind/QWidget.h:19
  */
-static int GLWidget_show(lua_State *L) {
+static int QWidget_setParent(lua_State *L) {
+  try {
+    GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
+    if (!self) throw dub::Exception("Using deleted mimas.GLWidget in setParent");
+    QWidget *parent = *((QWidget **)dubL_checksdata(L, 2, "mimas.QWidget"));
+    self->setParent(parent);
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "setParent: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "setParent: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** void mimas::QWidget::setSizeHint(float w, float h)
+ * mimas/bind/QWidget.h:54
+ */
+static int QWidget_setSizeHint(lua_State *L) {
+  try {
+    GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
+    if (!self) throw dub::Exception("Using deleted mimas.GLWidget in setSizeHint");
+    float w = dubL_checknumber(L, 2);
+    float h = dubL_checknumber(L, 3);
+    self->size_hint_ = QSize(w, h);
+    self->updateGeometry();
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "setSizeHint: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "setSizeHint: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** void mimas::QWidget::setSizePolicy(int horizontal, int vertical)
+ * mimas/bind/QWidget.h:58
+ */
+static int QWidget_setSizePolicy(lua_State *L) {
+  try {
+    GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
+    if (!self) throw dub::Exception("Using deleted mimas.GLWidget in setSizePolicy");
+    int horizontal = dubL_checkint(L, 2);
+    int vertical = dubL_checkint(L, 3);
+    self->setSizePolicy((QSizePolicy::Policy)horizontal, (QSizePolicy::Policy)vertical);
+    self->updateGeometry();
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "setSizePolicy: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "setSizePolicy: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** void mimas::QWidget::setStyle(const char *text)
+ * mimas/bind/QWidget.h:46
+ */
+static int QWidget_setStyle(lua_State *L) {
+  try {
+    GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
+    if (!self) throw dub::Exception("Using deleted mimas.GLWidget in setStyle");
+    const char *text = dubL_checkstring(L, 2);
+    self->setStyleSheet(QString(".%1 { %2 }").arg(self->cssClass()).arg(text));
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "setStyle: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "setStyle: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** void mimas::QWidget::setStyleSheet(const char *text)
+ * mimas/bind/QWidget.h:47
+ */
+static int QWidget_setStyleSheet(lua_State *L) {
+  try {
+    GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
+    if (!self) throw dub::Exception("Using deleted mimas.GLWidget in setStyleSheet");
+    const char *text = dubL_checkstring(L, 2);
+    self->setStyleSheet(text);
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "setStyleSheet: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "setStyleSheet: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** void mimas::QWidget::show()
+ * mimas/bind/QWidget.h:28
+ */
+static int QWidget_show(lua_State *L) {
   try {
     GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
     if (!self) throw dub::Exception("Using deleted mimas.GLWidget in show");
@@ -290,8 +608,123 @@ static int GLWidget_show(lua_State *L) {
 
 
 
+/** void mimas::QWidget::showFullScreen(bool enable=true)
+ * mimas/bind/QWidget.h:60
+ */
+static int QWidget_showFullScreen(lua_State *L) {
+  try {
+    GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
+    if (!self) throw dub::Exception("Using deleted mimas.GLWidget in showFullScreen");
+    int top__ = lua_gettop(L);
+    bool enable;
+    if (top__ >= 2) {
+      enable = lua_toboolean(L, 2);
+    } else {
+      enable = true;
+    }
+    if (enable) {
+      self->showFullScreen();
+    } else {
+      self->showNormal();
+    }
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "showFullScreen: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "showFullScreen: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** void mimas::QWidget::size()
+ * mimas/bind/QWidget.h:45
+ */
+static int QWidget_size(lua_State *L) {
+  try {
+    GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
+    if (!self) throw dub::Exception("Using deleted mimas.GLWidget in size");
+    QRect rect = self->geometry();
+    lua_pushnumber(L, rect.width());
+    lua_pushnumber(L, rect.height());
+    return 2;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "size: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "size: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** void mimas::QWidget::swapFullScreen()
+ * mimas/bind/QWidget.h:63
+ */
+static int QWidget_swapFullScreen(lua_State *L) {
+  try {
+    GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
+    if (!self) throw dub::Exception("Using deleted mimas.GLWidget in swapFullScreen");
+    bool enable = !self->isFullScreen();
+    if (enable) {
+      self->showFullScreen();
+    } else {
+      self->showNormal();
+    }
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "swapFullScreen: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "swapFullScreen: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** void mimas::QWidget::textSize(const char *text)
+ * mimas/bind/QWidget.h:50
+ */
+static int QWidget_textSize(lua_State *L) {
+  try {
+    GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
+    if (!self) throw dub::Exception("Using deleted mimas.GLWidget in textSize");
+    const char *text = dubL_checkstring(L, 2);
+    lua_pushnumber(L, self->fontMetrics().width(text));
+    lua_pushnumber(L, self->fontMetrics().height());
+    return 2;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "textSize: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "textSize: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** void mimas::QWidget::update()
+ * mimas/bind/QWidget.h:20
+ */
+static int QWidget_update(lua_State *L) {
+  try {
+    GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
+    if (!self) throw dub::Exception("Using deleted mimas.GLWidget in update");
+    self->update();
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "update: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "update: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
 /** void mimas::GLWidget::updateGL()
- * include/mimas/GLWidget.h:134
+ * include/mimas/GLWidget.h:71
  */
 static int GLWidget_updateGL(lua_State *L) {
   try {
@@ -309,14 +742,14 @@ static int GLWidget_updateGL(lua_State *L) {
 
 
 
-/** QWidget* mimas::GLWidget::widget()
- * include/mimas/GLWidget.h:69
+/** void mimas::QWidget::widget()
+ * mimas/bind/QWidget.h:40
  */
-static int GLWidget_widget(lua_State *L) {
+static int QWidget_widget(lua_State *L) {
   try {
     GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
     if (!self) throw dub::Exception("Using deleted mimas.GLWidget in widget");
-    QWidget * retval__ = self->widget();
+    QWidget* retval__ = self;
     lua_pushclass<QWidget>(L, retval__, "mimas.QWidget");
     return 1;
   } catch (std::exception &e) {
@@ -329,10 +762,10 @@ static int GLWidget_widget(lua_State *L) {
 
 
 
-/** int mimas::GLWidget::width()
- * include/mimas/GLWidget.h:106
+/** int mimas::QWidget::width()
+ * mimas/bind/QWidget.h:17
  */
-static int GLWidget_width(lua_State *L) {
+static int QWidget_width(lua_State *L) {
   try {
     GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
     if (!self) throw dub::Exception("Using deleted mimas.GLWidget in width");
@@ -349,10 +782,10 @@ static int GLWidget_width(lua_State *L) {
 
 
 
-/** int mimas::GLWidget::x()
- * include/mimas/GLWidget.h:98
+/** int mimas::QWidget::x()
+ * mimas/bind/QWidget.h:15
  */
-static int GLWidget_x(lua_State *L) {
+static int QWidget_x(lua_State *L) {
   try {
     GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
     if (!self) throw dub::Exception("Using deleted mimas.GLWidget in x");
@@ -369,10 +802,10 @@ static int GLWidget_x(lua_State *L) {
 
 
 
-/** int mimas::GLWidget::y()
- * include/mimas/GLWidget.h:102
+/** int mimas::QWidget::y()
+ * mimas/bind/QWidget.h:16
  */
-static int GLWidget_y(lua_State *L) {
+static int QWidget_y(lua_State *L) {
   try {
     GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
     if (!self) throw dub::Exception("Using deleted mimas.GLWidget in y");
@@ -394,22 +827,42 @@ static int GLWidget_y(lua_State *L) {
 /* ============================ Lua Registration ====================== */
 
 static const struct luaL_Reg GLWidget_member_methods[] = {
-  {"activateWindow"    , GLWidget_activateWindow},
-  {"close"             , GLWidget_close},
+  {"activateWindow"    , QWidget_activateWindow},
+  {"addAction"         , QWidget_addAction},
+  {"addWidget"         , QWidget_addWidget},
+  {"close"             , QWidget_close},
   {"cssClass"          , GLWidget_cssClass},
-  {"height"            , GLWidget_height},
-  {"isVisible"         , GLWidget_isVisible},
-  {"move"              , GLWidget_move},
-  {"name"              , GLWidget_name},
-  {"object"            , GLWidget_object},
-  {"resize"            , GLWidget_resize},
-  {"setName"           , GLWidget_setName},
-  {"show"              , GLWidget_show},
+  {"globalMove"        , QWidget_globalMove},
+  {"globalPosition"    , QWidget_globalPosition},
+  {"height"            , QWidget_height},
+  {"hide"              , QWidget_hide},
+  {"isFullScreen"      , QWidget_isFullScreen},
+  {"isVisible"         , QWidget_isVisible},
+  {"lower"             , QWidget_lower},
+  {"move"              , QWidget_move},
+  {"name"              , QObject_name},
+  {"object"            , QObject_object},
+  {"raise"             , QWidget_raise},
+  {"resize"            , QWidget_resize},
+  {"setMinimumSize"    , QWidget_setMinimumSize},
+  {"setMouseTracking"  , QWidget_setMouseTracking},
+  {"setName"           , QObject_setName},
+  {"setParent"         , QWidget_setParent},
+  {"setSizeHint"       , QWidget_setSizeHint},
+  {"setSizePolicy"     , QWidget_setSizePolicy},
+  {"setStyle"          , QWidget_setStyle},
+  {"setStyleSheet"     , QWidget_setStyleSheet},
+  {"show"              , QWidget_show},
+  {"showFullScreen"    , QWidget_showFullScreen},
+  {"size"              , QWidget_size},
+  {"swapFullScreen"    , QWidget_swapFullScreen},
+  {"textSize"          , QWidget_textSize},
+  {"update"            , QWidget_update},
   {"updateGL"          , GLWidget_updateGL},
-  {"widget"            , GLWidget_widget},
-  {"width"             , GLWidget_width},
-  {"x"                 , GLWidget_x},
-  {"y"                 , GLWidget_y},
+  {"widget"            , QWidget_widget},
+  {"width"             , QWidget_width},
+  {"x"                 , QWidget_x},
+  {"y"                 , QWidget_y},
   {"__tostring"        , GLWidget__tostring},
   {"__gc"              , GLWidget_destructor},
   {"deleted"           , GLWidget_deleted},

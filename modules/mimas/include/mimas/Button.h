@@ -46,6 +46,7 @@ namespace mimas {
  *
  * @dub lib_name:'Button_core'
  *      destructor: 'luaDestroy'
+ *      super: 'QWidget'
  */
 class Button : public QPushButton, public ThreadedLuaObject {
   Q_OBJECT
@@ -60,64 +61,11 @@ public:
     MIMAS_DEBUG_GC
   }
 
-  // ============================ common code to all mimas Widgets
-
   QString cssClass() const {
     return QString("button");
   }
 
-  QWidget *widget() {
-    return this;
-  }
-
-  QObject *object() {
-    return this;
-  }
-
-  /** Get the widget's name.
-   */
-  LuaStackSize name(lua_State *L) {
-    lua_pushstring(L, QObject::objectName().toUtf8().data());
-    return 1;
-  }
-
-  /** Set the widget's name.
-   */
-  void setName(const char *name) {
-    QObject::setObjectName(QString(name));
-  }
-
-  void move(int x, int y) {
-    QWidget::move(x, y);
-  }
-
-  void resize(int w, int h) {
-    QWidget::resize(w, h);
-  }
-
-  int x() {
-    return QWidget::x();
-  }
-
-  int y() {
-    return QWidget::y();
-  }
-
-  int width() {
-    return QWidget::width();
-  }
-
-  int height() {
-    return QWidget::height();
-  }
-
-  void setStyle(const char *text) {
-    QWidget::setStyleSheet(QString(".%1 { %2 }").arg(cssClass()).arg(text));
-  }
-
-  void setStyleSheet(const char *text) {
-    QWidget::setStyleSheet(text);
-  }
+  QSize size_hint_;
 
   void setHue(float hue) {
     hue_ = hue;

@@ -12,9 +12,10 @@ require 'lubyk'
 
 local should = test.Suite('mimas.GLWindow')
 
-function should.displayGLWindow(t)
+function should.displayGlWindow(t)
   -- we use the test env to protect from gc
   t.win = mimas.GLWindow()
+  t.win:move(10,10)
   function t.win:initializeGL()
     gl.Enable("POINT_SMOOTH")
     gl.Enable("SMOOTH")
@@ -91,7 +92,19 @@ function should.displayGLWindow(t)
     glut.SolidCube(2.6)
   end
 
+  t.btn = mimas.Button('ok', function()
+    t.continue = true
+  end)
+  t.win:addWidget(t.btn)
+  t.btn:move(10,10)
+
+  t.win:resize(200,200)
   t.win:show()
+  t:timeout(2000, function(done)
+    return done or t.continue
+  end)
+  assertTrue(t.continue)
+  t.win:close()
 end
 
 function should.acceptDestroyFromGui(t)

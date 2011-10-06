@@ -15,6 +15,8 @@ function mimas.Widget(...)
   return mimas.bootstrap('Widget', constr, ...)
 end
 
+
+--=============================================== COPY CODE TO GLWidget
 local addWidget = mt.addWidget
 function mt:addWidget(other, ...)
   addWidget(self, other:widget(), ...)
@@ -45,13 +47,10 @@ end
 
 local close  = mt.close
 function mt:close()
-  -- close is like delete: ensure it only runs in GUI thread
   if self:deleted() then
     return false
   else
-    app:post(function()
-      close(self)
-    end)
+    close(self)
     return true
   end
 end
@@ -61,6 +60,9 @@ function mt:center()
   local sw, sh = self:size()
   self:move((w - sw) / 2, (h - sh) / 2)
 end
+
+--=============================================== dialog (maybe we should have
+--                                                        this in GLWidget too)
 
 local getOpenFileName = mt.getOpenFileName
 
