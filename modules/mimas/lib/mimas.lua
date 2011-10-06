@@ -22,7 +22,23 @@ app = singleApp
 function mimas.Application()
   return singleApp
 end
---=============================================== alter scheduler
+--=============================================== scheduler
+-- First calls to Window creation in mimas should
+-- yield so that the mimas scheduler can start
+function mimas.bootstrap(class_name, func, ...)
+  if sched.mimas then
+    -- already running mimas
+  else
+    -- restart with mimas scheduler
+    if coroutine.running() then
+      coroutine.yield('mimas')
+    end
+  end
+  -- Replace bootstrapping constructor by original
+  -- function for further calls.
+  mimas[class_name] = func
+  return func(...)
+end
 
 -- no need for a custom loader for these
 mimas.Brush   = mimas_core.Brush

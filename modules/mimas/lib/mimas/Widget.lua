@@ -10,6 +10,11 @@ mimas.Widget  = mimas_core.Widget
 local mt      = mimas_core.Widget_
 mimas.Widget_ = mt
 
+local constr  = mimas.Widget
+function mimas.Widget(...)
+  return mimas.bootstrap('Widget', constr, ...)
+end
+
 local addWidget = mt.addWidget
 function mt:addWidget(other, ...)
   addWidget(self, other:widget(), ...)

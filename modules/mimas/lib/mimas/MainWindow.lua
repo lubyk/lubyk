@@ -6,9 +6,13 @@
   ...
 
 --]]------------------------------------------------------
-mimas.MainWindow  = mimas_core.MainWindow
 local mt          = mimas_core.MainWindow_
 mimas.MainWindow_ = mt
+
+local constr  = mimas_core.MainWindow
+function mimas.MainWindow(...)
+  return mimas.bootstrap('MainWindow', constr, ...)
+end
 
 local addWidget = mt.addWidget
 function mt:addWidget(other, ...)

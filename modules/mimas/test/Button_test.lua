@@ -25,13 +25,11 @@ function withUser.should.connectToCallback(t)
 
   t.callback:connect(t.btn, 'clicked')
   t.win:show()
-  t:guiTimeout(function(done)
-    if done or t.continue then
-      t.win:close()
-      assertTrue(t.continue)
-      return true -- done
-    end
+  t:timeout(function(done)
+    return done or t.continue
   end)
+  t.win:close()
+  assertTrue(t.continue)
 end
 
 function withUser.should.createWithFunction(t)
@@ -39,21 +37,19 @@ function withUser.should.createWithFunction(t)
   t.win:move(200, 200)
   t.win:resize(200,200)
   t.lay = mimas.HBoxLayout(t.win)
-  t.btn = mimas.Button("click me", function()
+  local btn = mimas.Button("click me", function()
     t.continue = true
   end)
   collectgarbage('collect')
   -- should not remove the callback because it is saved with
   -- the button's env
-  t.lay:addWidget(t.btn)
+  t.lay:addWidget(btn)
   t.win:show()
-  t:guiTimeout(function(done)
-    if done or t.continue then
-      t.win:close()
-      assertTrue(t.continue)
-      return true
-    end
+  t:timeout(function(done)
+    return done or t.continue
   end)
+  t.win:close()
+  assertTrue(t.continue)
 end
 
 function should.styleButtons(t)

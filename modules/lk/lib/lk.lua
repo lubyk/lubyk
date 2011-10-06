@@ -71,19 +71,6 @@ end
 function run()
   sched:run()
 end
--- dummy mimas to detect loading
-
-mimas = {}
-setmetatable(mimas, {
-__index = function(lib, key)
-  -- we need to load mimas
-  --mimas = nil
-  require 'mimas'
-  sched:mimasLoaded()
-  return mimas[key]
-end
-})
-
 
 -------------------------------- pack/unpack (msgpack.vendor)
 require 'msgpack.vendor'

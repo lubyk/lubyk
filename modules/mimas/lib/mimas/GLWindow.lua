@@ -6,4 +6,7 @@
   A window to draw OpenGL content.
 
 --]]------------------------------------------------------
-mimas.GLWindow = mimas.GLWidget
+local constr  = mimas_core.GLWidget
+function mimas.GLWindow(...)
+  return mimas.bootstrap('GLWindow', constr, ...)
+end

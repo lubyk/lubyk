@@ -200,14 +200,6 @@ function lib:removeFd(thread)
   thread.fd  = nil
 end
 
-function lib:mimasLoaded()
-  if coroutine.running() then
-    coroutine.yield('mimas')
-    -- we will continue here when triggered from within
-    -- app:exec()
-  end
-end
-
 --=============================================== PRIVATE
 
 local zmq_POLLIN, zmq_POLLOUT = zmq.POLLIN, zmq.POLLOUT
