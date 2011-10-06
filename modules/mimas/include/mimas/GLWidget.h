@@ -34,24 +34,58 @@ using namespace lubyk;
 
 #include "mimas/mimas.h"
 #include <QtGui/QWidget>
+#include <QtGui/QGraphicsScene>
 #include <QtOpenGL/QtOpenGL>
 
 #include <iostream>
 
 namespace mimas {
 
-/** GLWidget.
+
+/** GLWidget
+ * This class lets you draw OpenGL elements with Widgets on top.
+ * http://doc.trolltech.com/qq/qq26-openglcanvas.html
  *
  * @dub destructor: 'luaDestroy'
  *      super: 'QWidget'
  */
-class GLWidget : public QGLWidget, public ThreadedLuaObject
+class GLWidget : public QGraphicsView, public ThreadedLuaObject
 {
   Q_OBJECT
   Q_PROPERTY(QString class READ cssClass)
 
+  class OpenGLScene : public QGraphicsScene {
+  public:
+    GLWidget *master_;
+    bool resized_;
+
+    OpenGLScene(GLWidget *master)
+        : master_(master)
+        , resized_(false)
+    {}
+
+    virtual void drawBackground(QPainter *painter, const QRectF &rect) {
+      master_->initializeGL();
+      if (resized_) {
+        master_->resizeGL(width(), height());
+        resized_ = false;
+      }
+      master_->paintGL();
+      // Could we draw 2D stuff with painter also ?
+      // master_->paint(painter, width(), height());
+    }
+  };
+
+  OpenGLScene *gl_scene_;
 public:
   GLWidget() {
+    setViewport(new QGLWidget());
+          //QGLFormat(QGL::SampleBuffers)));
+    setViewportUpdateMode(
+        QGraphicsView::FullViewportUpdate);
+    gl_scene_ = new OpenGLScene(this);
+    setScene(gl_scene_);
+    
     setAttribute(Qt::WA_DeleteOnClose);
     // get focus on tab and click
     setFocusPolicy(Qt::StrongFocus);
@@ -59,6 +93,12 @@ public:
 
   ~GLWidget() {
     MIMAS_DEBUG_GC
+  }
+
+  void addWidgetToScene(QWidget *widget, float x=0, float y=0) {
+    gl_scene_->addWidget(widget);
+    widget->move(x, y);
+    widget->show();
   }
 
   QString cssClass() const {
@@ -69,10 +109,18 @@ public:
   // =============================================================
 
   void updateGL() {
-    QGLWidget::updateGL();
+    gl_scene_->update();
   }
 
 protected:
+  /** Force the scene to have the same size as the view.
+   */
+  void resizeEvent(QResizeEvent *event) {
+    gl_scene_->resized_ = true;
+    gl_scene_->setSceneRect(QRect(QPoint(0, 0), event->size()));
+    QGraphicsView::resizeEvent(event);
+  }
+
   virtual void initializeGL() {
     lua_State *L = lua_;
     ScopedLock lock(worker_);

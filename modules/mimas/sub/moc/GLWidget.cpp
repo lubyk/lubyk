@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'GLWidget.h'
 **
-** Created: Thu Oct 6 12:01:31 2011
+** Created: Thu Oct 6 14:22:05 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.3)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -41,7 +41,7 @@ static const char qt_meta_stringdata_mimas__GLWidget[] = {
 };
 
 const QMetaObject mimas::GLWidget::staticMetaObject = {
-    { &QGLWidget::staticMetaObject, qt_meta_stringdata_mimas__GLWidget,
+    { &QGraphicsView::staticMetaObject, qt_meta_stringdata_mimas__GLWidget,
       qt_meta_data_mimas__GLWidget, 0 }
 };
 
@@ -61,12 +61,12 @@ void *mimas::GLWidget::qt_metacast(const char *_clname)
         return static_cast<void*>(const_cast< GLWidget*>(this));
     if (!strcmp(_clname, "ThreadedLuaObject"))
         return static_cast< ThreadedLuaObject*>(const_cast< GLWidget*>(this));
-    return QGLWidget::qt_metacast(_clname);
+    return QGraphicsView::qt_metacast(_clname);
 }
 
 int mimas::GLWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
-    _id = QGLWidget::qt_metacall(_c, _id, _a);
+    _id = QGraphicsView::qt_metacall(_c, _id, _a);
     if (_id < 0)
         return _id;
     

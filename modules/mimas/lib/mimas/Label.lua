@@ -21,3 +21,8 @@ function mimas.Label(title, parent)
   return self
 end
 
+local resize = mt.resize
+function mt:resize(w, h)
+  h = h or self:height()
+  resize(self, w, h)
+end

@@ -16,7 +16,7 @@ function mimas.GLWidget(...)
 end
 
 --=============================================== COPY CODE FROM Widget
-local addWidget = mt.addWidget
+local addWidget = mt.addWidgetToScene
 function mt:addWidget(other, ...)
   addWidget(self, other:widget(), ...)
 end

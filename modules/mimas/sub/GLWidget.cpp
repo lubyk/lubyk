@@ -12,7 +12,7 @@ using namespace mimas;
 /* ============================ Constructors     ====================== */
 
 /** mimas::GLWidget::GLWidget()
- * include/mimas/GLWidget.h:54
+ * include/mimas/GLWidget.h:77
  */
 static int GLWidget_GLWidget(lua_State *L) {
   try {
@@ -140,6 +140,37 @@ static int QWidget_addWidget(lua_State *L) {
 
 
 
+/** void mimas::GLWidget::addWidgetToScene(QWidget *widget, float x=0, float y=0)
+ * include/mimas/GLWidget.h:94
+ */
+static int GLWidget_addWidgetToScene(lua_State *L) {
+  try {
+    GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
+    if (!self) throw dub::Exception("Using deleted mimas.GLWidget in addWidgetToScene");
+    int top__ = lua_gettop(L);
+    QWidget *widget = *((QWidget **)dubL_checksdata(L, 2, "mimas.QWidget"));
+    if (top__ < 3) {
+      self->addWidgetToScene(widget);
+    } else {
+      float x = dubL_checknumber(L, 3);
+      if (top__ < 4) {
+        self->addWidgetToScene(widget, x);
+      } else {
+        float y = dubL_checknumber(L, 4);
+        self->addWidgetToScene(widget, x, y);
+      }
+    }
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "addWidgetToScene: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "addWidgetToScene: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
 /** bool mimas::QWidget::close()
  * mimas/bind/QWidget.h:26
  */
@@ -161,7 +192,7 @@ static int QWidget_close(lua_State *L) {
 
 
 /** QString mimas::GLWidget::cssClass() const 
- * include/mimas/GLWidget.h:64
+ * include/mimas/GLWidget.h:100
  */
 static int GLWidget_cssClass(lua_State *L) {
   try {
@@ -724,7 +755,7 @@ static int QWidget_update(lua_State *L) {
 
 
 /** void mimas::GLWidget::updateGL()
- * include/mimas/GLWidget.h:71
+ * include/mimas/GLWidget.h:107
  */
 static int GLWidget_updateGL(lua_State *L) {
   try {
@@ -830,6 +861,7 @@ static const struct luaL_Reg GLWidget_member_methods[] = {
   {"activateWindow"    , QWidget_activateWindow},
   {"addAction"         , QWidget_addAction},
   {"addWidget"         , QWidget_addWidget},
+  {"addWidgetToScene"  , GLWidget_addWidgetToScene},
   {"close"             , QWidget_close},
   {"cssClass"          , GLWidget_cssClass},
   {"globalMove"        , QWidget_globalMove},

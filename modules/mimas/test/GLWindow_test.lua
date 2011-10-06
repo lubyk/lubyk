@@ -55,25 +55,28 @@ function should.displayGlWindow(t)
   t.y = 0
   t.z = 0
   t.dt = (math.pi / 100)
-  t.now = worker:now()
+  t.last = worker:now()
 
-  t.timer = lk.Timer(20, function()
+  t.fps  = 0
+  local AVG = 100
+  local function computeFps(now)
+    local fps = 1000 / (now - t.last)
+    t.fps = (AVG * t.fps + fps) / (AVG+1)
+    return t.fps
+  end
+
+  local function animate(now)
+    local dt = (now - t.last) * t.dt
     t.n = t.n + t.dt
     t.x = math.cos(t.n / 0.9) * 360 / math.pi
     t.y = math.sin(t.n / 0.7) * 360 / math.pi
     t.z = math.sin(t.n) * 360 / math.pi
-    t.win:updateGL()
-    if worker:now() > t.now + 11500 then
-      app:post(function()
-        t.timer:stop()
-        -- proves that the window was open and all is fine
-        assertTrue(t.win:close())
-      end)
-    end
-  end)
-  t.timer:start()
+    t.label:setText(string.format('fps: %.2f', computeFps(now)))
+    t.last = now
+  end
 
   function t.win:paintGL()
+    animate(worker:now())
     gl.Clear( "COLOR_BUFFER_BIT, DEPTH_BUFFER_BIT")
     gl.MatrixMode("MODELVIEW")
     gl.LoadIdentity()
@@ -90,21 +93,34 @@ function should.displayGlWindow(t)
 
     gl.Color(0.5,0.5,0.0,0.1)
     glut.SolidCube(2.6)
+    t.win:updateGL()
   end
 
   t.btn = mimas.Button('ok', function()
     t.continue = true
   end)
-  t.win:addWidget(t.btn)
-  t.btn:move(10,10)
+  t.win:addWidget(t.btn, 10, 10)
+  t.label = mimas.Label('Hello')
 
-  t.win:resize(200,200)
+  t.shape = mimas.Widget()
+  t.win:addWidget(t.shape, 100, 100)
+  t.shape:resize(100, 100)
+  function t.shape:paint(p, w, h)
+    p:setBrush(mimas.Color(0, 0.8, 0.8, 0.3))
+    p:setPen(3, mimas.Color(0.3, 0.8, 0.8, 0.5))
+    p:drawRoundedRect(5, 5, 90, 90, 10, 10)
+  end
+  t.shape:setStyle('background:transparent')
+  t.shape:addWidget(t.label, 20, 40)
+  t.label:resize(100)
+
+  t.win:resize(300,300)
   t.win:show()
-  t:timeout(2000, function(done)
+  t:timeout(14000, function(done)
     return done or t.continue
   end)
-  assertTrue(t.continue)
   t.win:close()
+  assertTrue(t.continue)
 end
 
 function should.acceptDestroyFromGui(t)

@@ -48,6 +48,8 @@ function mimas.Application(type)
       selection-background-color: rgb(40,85,140);
     }
     .widget { background:rgb(38, 38, 38); }
+    .glwindow { border-style: none;}
+    .glwidget { border-style: none;}
     .label { background: transparent; color: rgb(180,180,180); }
     .slider { qproperty-border:2;
       background:transparent;
