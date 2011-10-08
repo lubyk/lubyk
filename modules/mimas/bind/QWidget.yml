@@ -64,8 +64,7 @@ lua:
     }
 
   swapFullScreen: |
-    bool enable = !self->isFullScreen();
-    if (enable) {
+    if (!self->isFullScreen()) {
       self->showFullScreen();
     } else {
       self->showNormal();

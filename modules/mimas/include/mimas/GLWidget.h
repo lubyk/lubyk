@@ -79,10 +79,10 @@ class GLWidget : public QGraphicsView, public ThreadedLuaObject
   OpenGLScene *gl_scene_;
 public:
   GLWidget() {
-    setViewport(new QGLWidget());
-          //QGLFormat(QGL::SampleBuffers)));
-    setViewportUpdateMode(
-        QGraphicsView::FullViewportUpdate);
+    setViewport(new QGLWidget(QGLFormat(
+            QGL::SampleBuffers
+            )));
+    setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
     gl_scene_ = new OpenGLScene(this);
     setScene(gl_scene_);
     

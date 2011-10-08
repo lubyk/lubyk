@@ -58,6 +58,7 @@ class QWidget {
   void setSizePolicy(int horizontal, int vertical);
   
   void showFullScreen(bool enable=true);
+
   /** Swap fullscreen mode.
    */
   void swapFullScreen();
