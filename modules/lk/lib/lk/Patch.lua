@@ -252,7 +252,8 @@ end
 function lib:findCode(url)
   -- TODO: make async
   if self.morph then
-    return self.morph:request(lubyk.get_url, url)
+    local r = self.morph:request(lubyk.get_url, url)
+    return r
   else
     -- error
     return nil
@@ -327,6 +328,7 @@ end
 
 --- We found the morph server, load patch
 function lib:setMorph(process)
+  print('SET MORPH')
   if process then
     self.morph = process.req
     self:sync()

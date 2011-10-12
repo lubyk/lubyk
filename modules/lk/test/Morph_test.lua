@@ -10,9 +10,11 @@ require 'lubyk'
 
 local should = test.Suite('lk.Morph')
 
-local function makeMorph(filepath)
+local function makeMorph(t, filepath)
   local morph = lk.Morph()
-  morph.spawn = function() end -- do not spawn when testing
+  morph.spawn = function(self, ...)
+    t.spawn = ...
+  end
   if filepath then
     morph:openFile(filepath)
   end
@@ -23,27 +25,29 @@ function should.loadCode()
   assertTrue(lk.Morph)
 end
 
-function should.createEmptyFile()
+function should.createEmptyFile(t)
   local lkp = fixture.path('empty.lkp')
   lk.rmFile(lkp)
   assertFalse(lk.exist(lkp))
-  local morph = makeMorph(lkp)
+  local morph = makeMorph(t, lkp)
   assertTrue(lk.exist(lkp))
   lk.rmFile(lkp)
 end
 
-function should.readLkpFile()
+function should.readLkpFile(t)
   local lkp = fixture.path('project/example.lkp')
-  local morph = makeMorph(lkp)
+  local morph = makeMorph(t, lkp)
   assertEqual(0, morph.lubyk.version.major)
   assertEqual(3, morph.lubyk.version.minor)
   assertEqual('saturn', morph.processes.foobar.host)
+  -- Started process name
+  assertEqual('inline', t.spawn)
 end
   
-function should.saveToFile()
+function should.saveToFile(t)
   local lkp = fixture.path('empty.lkp')
   lk.rmFile(lkp)
-  local morph = makeMorph(lkp)
+  local morph = makeMorph(t, lkp)
   morph.processes.hello = {host='waga', dir='hello'}
   morph.private.writeFile(morph)
   -- should have created empty.lkp with all data
@@ -54,12 +58,12 @@ function should.saveToFile()
   lk.rmFile(lkp)
 end
 
-function should.createFilesOnNewProcess()
+function should.createFilesOnNewProcess(t)
   local lkp = fixture.path('empty.lkp')
   local hello = fixture.path('hello')
   lk.rmFile(lkp)
   lk.rmTree(hello)
-  local morph = makeMorph(lkp)
+  local morph = makeMorph(t, lkp)
   morph.private.process.add(morph, 'hello', {host='waga'})
   -- should create 'hello' directory and 'hello/_patch.yml'
   assertEqual('directory', lk.fileType(hello))
@@ -73,9 +77,9 @@ function should.createFilesOnNewProcess()
   lk.rmTree(hello)
 end
 
-function should.dump()
+function should.dump(t)
   local lkp = fixture.path('project/example.lkp')
-  local morph = makeMorph(lkp)
+  local morph = makeMorph(t, lkp)
   local data = morph.private.dumpAll(morph)
   assertEqual(0, data.lubyk.version.major)
   assertEqual(3, data.lubyk.version.minor)

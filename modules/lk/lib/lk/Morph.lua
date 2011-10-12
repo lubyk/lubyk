@@ -366,14 +366,11 @@ end
 -- make it accessible from 'self'.
 function lib.spawn(self, name)
   -- spawn Process
-  -- We start a mimas.Application in case the process needs GUI elements.
   worker:spawn([[
   require 'lubyk'
   process = lk.Process(%s)
   run()
   ]], name)
-  -- TODO: We might make things faster by giving the ip/port stuff to the
-  -- process...
   -- the process will find the morph's ip/port by it's own service discovery
 end
 

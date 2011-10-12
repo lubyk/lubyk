@@ -55,17 +55,18 @@ function should.browse(t)
     if service.op == should_op and
       (service.name == name1 or
       service.name == name2) then
+      port = service.port
       continue = continue + 1
     end
   end)
 
   -- wait (and give time for callback to enter Lua State)
   t:timeout(3000, function(done)
-    if done or continue == 2 then
-      assertEqual(2, continue)
-      return true
-    end
+    return done or continue == 2
   end)
+
+  assertEqual(2, continue)
+  assertEqual(12346, port)
 
   continue   = 0
   should_op  = 'remove'

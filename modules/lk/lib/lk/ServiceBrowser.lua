@@ -43,6 +43,7 @@ setmetatable(lib, {
     remote_service.fullname = remote_service.name
     local found_service = self.services[remote_service.fullname]
     if not found_service then
+      self.services[remote_service.fullname] = remote_service
       -- start a new thread to announce object (so we do not risk crashing the
       -- listening thread)
       lk.Thread(function()
@@ -63,7 +64,6 @@ setmetatable(lib, {
         -- do not keep unsent messages on quit
         remote_service.push:setsockopt(zmq.LINGER, 0)
         remote_service.push:connect(remote_service.push_url)
-        self.services[remote_service.fullname] = remote_service
         for _, delegate in ipairs(browser.delegates) do
           delegate:addDevice(remote_service)
         end

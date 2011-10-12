@@ -221,7 +221,7 @@ public:
                              device->master_->protocol_.c_str(),
                              device->name_.c_str(),
                              hostname,
-                             port,
+                             ntohs(port),
                              interface_index,
                              std::string((const char *)txt, txt_len),
                              device->flags_ & kDNSServiceFlagsAdd
