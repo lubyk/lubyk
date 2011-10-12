@@ -11,19 +11,19 @@ local mt      = mimas_core.Slider_
 mimas.Slider_ = mt
 
 function mimas.Slider(slider_type, func, parent)
-  local instance
-  if type(func) == 'userdata' then
+  local self
+  if type(func) ~= 'function' then
     parent = func
     func = nil
   end
   if parent then
-    instance = constr(worker, slider_type, parent:widget())
+    self = constr(slider_type, parent:widget())
   else
-    instance = constr(worker, slider_type)
+    self = constr(slider_type)
   end
   if func then
-    instance:set_callback(func)
+    self.sliderChanged = func
   end
-  return instance
+  return self
 end
 

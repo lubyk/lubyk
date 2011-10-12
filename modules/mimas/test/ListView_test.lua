@@ -45,19 +45,24 @@ function withUser.should.reloadOnClick(t)
     return t.data[row_i]
   end
 
+  function t.view:select(row)
+    assertEqual(2, row)
+    t.continue = true
+  end
+
   t.btn = mimas.Button('click to change')
   t.lay:addWidget(t.btn)
   function t.btn:click()
-    t.data = {'cat', 'dog', 'mouse'}
+    t.data = {'cat', 'select me', 'mouse'}
     t.view:reset()
   end
 
   t.win:show()
-  t.thread = lk.Thread(function()
-    sleep(200000)
-    t.win:close()
-    assertTrue(true)
+  t:timeout(function(done)
+    return done or t.continue
   end)
+  t.win:close()
+  assertTrue(t.continue)
 end
 
 function should.accessDataSource(t)
@@ -115,5 +120,5 @@ function should.useDataSource(t)
   t.view:show()
 end
 
-test.gui()
+test.all()
 

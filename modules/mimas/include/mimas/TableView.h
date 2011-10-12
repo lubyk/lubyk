@@ -49,15 +49,15 @@ namespace mimas {
  *
  * @dub destructor: 'luaDestroy'
  *      ignore: 'luaInit'
+ *      super: 'QWidget'
  */
 class TableView : public QTableView, public ThreadedLuaObject {
   Q_OBJECT
   Q_PROPERTY(QString class READ cssClass)
   Q_PROPERTY(float hue READ hue WRITE setHue)
 
-  QSize size_hint_;
 public:
-  TableView(lubyk::Worker *worker) {
+  TableView() {
     setAttribute(Qt::WA_DeleteOnClose);
     // Not editable
     setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -106,61 +106,10 @@ public:
 
   // ============================ common code to all mimas Widgets
 
+  QSize size_hint_;
+
   QString cssClass() const {
     return QString("table");
-  }
-
-  QWidget *widget() {
-    return this;
-  }
-
-  QObject *object() {
-    return this;
-  }
-
-  /** Get the widget's name.
-   */
-  LuaStackSize name(lua_State *L) {
-    lua_pushstring(L, QObject::objectName().toUtf8().data());
-    return 1;
-  }
-
-  /** Set the widget's name.
-   */
-  void setName(const char *name) {
-    QObject::setObjectName(QString(name));
-  }
-
-  void move(int x, int y) {
-    QWidget::move(x, y);
-  }
-
-  void resize(int w, int h) {
-    QWidget::resize(w, h);
-  }
-
-  int x() {
-    return QWidget::x();
-  }
-
-  int y() {
-    return QWidget::y();
-  }
-
-  int width() {
-    return QWidget::width();
-  }
-
-  int height() {
-    return QWidget::height();
-  }
-
-  void setStyle(const char *text) {
-    QWidget::setStyleSheet(QString(".%1 { %2 }").arg(cssClass()).arg(text));
-  }
-
-  void setStyleSheet(const char *text) {
-    QWidget::setStyleSheet(text);
   }
 
   void setHue(float hue) {
@@ -170,92 +119,6 @@ public:
 
   float hue() {
     return hue_;
-  }
-
-  void update() {
-    QWidget::update();
-  }
-
-  /** Get size of text with current widget font.
-   */
-  LuaStackSize textSize(const char *text, lua_State *L) {
-    lua_pushnumber(L, fontMetrics().width(text));
-    lua_pushnumber(L, fontMetrics().height());
-    return 2;
-  }
-
-  /** Set the prefered size. Use setSizePolicy to define how the
-   * widget resizes compared to this value.
-   */
-  void setSizeHint(float w, float h) {
-    size_hint_ = QSize(w, h);
-    updateGeometry();
-  }
-
-  /** Control how the widget behaves in a layout related to it's sizeHint().
-   */
-  void setSizePolicy(int horizontal, int vertical) {
-    QWidget::setSizePolicy((QSizePolicy::Policy)horizontal, (QSizePolicy::Policy)vertical);
-    updateGeometry();
-  }
-
-  // FIXME: maybe we can remove this and only use setSizeHint + setSizePolicy...
-  void setMinimumSize(float w, float h) {
-    QWidget::setMinimumSize(w, h);
-  }
-
-  /** Receive mouse move events even if no button is pressed.
-   */
-  void setMouseTracking(bool enable) {
-    QWidget::setMouseTracking(enable);
-  }
-
-  // =============================================================
-
-  /** Close and delete the window.
-   */
-  bool close() {
-    return QWidget::close();
-  }
-
-  bool isVisible() const {
-    return QWidget::isVisible();
-  }
-
-  void show() {
-    QWidget::show();
-  }
-
-  void hide() {
-    QWidget::hide();
-  }
-
-  /** Returns (x,y) position of the widget in the global
-   * screen coordinates.
-   */
-  LuaStackSize globalPosition(lua_State *L) {
-    QPoint pt = mapToGlobal(QPoint(0, 0));
-    lua_pushnumber(L, pt.x());
-    lua_pushnumber(L, pt.y());
-    return 2;
-  }
-
-  /** Move the widget to the given global coordinates.
-   */
-  void globalMove(float x, float y) {
-    QWidget::move(mapToParent(mapFromGlobal(QPoint(x, y))));
-  }
-
-  /** Bring to bottom of parent widget.
-   */
-  void lower() {
-    QWidget::lower();
-  }
-
-  /** Bring to top of parent widget.
-   */
-  void raise() {
-    QWidget::raise();
   }
 
   /** Use an external model instead of the default one.
@@ -285,7 +148,25 @@ public:
     setModel(data);
     return 1;
   }
+
 protected:
+  virtual void mouseMoveEvent(QMouseEvent *event);
+
+  virtual void mousePressEvent(QMouseEvent *event) {
+    if (!click(event, MousePress))
+      QTableView::mousePressEvent(event);
+  }
+
+  virtual void mouseDoubleClickEvent(QMouseEvent *event) {
+    if (!click(event, DoubleClick))
+      QTableView::mouseDoubleClickEvent(event);
+  }
+
+  virtual void mouseReleaseEvent(QMouseEvent *event) {
+    if (!click(event, MouseRelease))
+      QTableView::mouseReleaseEvent(event);
+  }
+
   virtual QSize sizeHint() const {
     return size_hint_;
   }
@@ -295,6 +176,8 @@ protected:
   float hue_;
 
 private:
+  bool click(QMouseEvent *event, int type);
+  bool select(QMouseEvent *event, int type);
 };
 
 } // mimas

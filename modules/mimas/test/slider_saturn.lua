@@ -12,7 +12,7 @@ continue = false
 value = 0
 counter = 0
 now = worker:now()
-function set_value(message)
+function setValue(message)
   counter = counter + 1
   if counter == 20 then
     if worker:now() - now > 0 then
@@ -32,12 +32,11 @@ end
 
 -- create a service called 'Saturn' with a Reply socket
 saturn = lk.Service('Saturn', function(message)
-  if message == nil then
+  if message == 'Quit' then
     print('Quit')
-    saturn.rep:kill()
-    saturn.pull:quit()
+    sched:quit()
   else
-    set_value(message)
+    setValue(message)
   end
   return message
 end)
@@ -46,8 +45,8 @@ i = 0
 -- random update of value
 timer = lk.Timer(100, function()
   i = i + 1
-  set_value(0.5 + 0.49 * math.sin(i * math.pi / 20))
+  setValue(0.5 + 0.49 * math.sin(i * math.pi / 20))
 end)
 timer:start()
 print('Random updates started. Ready for GUI.')
-saturn:join()
+run()

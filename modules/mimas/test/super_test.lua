@@ -18,34 +18,34 @@ local should = test.Suite('mimas.Window')
 --        or use ___call in metatable ?
 --
 -- mock a subclass of mimas.Window
-local LogWindow = {}
-LogWindow.__index = LogWindow
+local LogWindow = lk.SubClass(mimas, 'Window')
 
-function LogWindow:new(o)
-  local o = o or {hue = 0.3}
-  return setmetatable({super = mimas.Window()}, self)
+function LogWindow:init(hue)
+  self.hue = hue
 end
 
 function LogWindow:paint(p, w, h)
-  --p:setBrush(self.hue)
-  p:fillRect(self.hue, 0, 0, w, h)
+  p:fillRect(0, 0, w, h, mimas.Color(self.hue))
 end
-setmetatable(LogWindow, mimas.Window_)
 
 function should.displayWindow(t)
-  -- we use the test env to protect from gc
-  t.win = LogWindow:new{hue = 0.7}
+  t.win = LogWindow(0.7)
   t.layout = mimas.HBoxLayout(t.win)
-  t.win:move(10, 10)
+  t.win:move(100, 100)
+  t.win:resize(100, 100)
   t.win:show()
-  t.label = mimas.Label("Super window closes in 200ms")
+  function t.win:click()
+    t.continue = true
+  end
+
+  t.label = mimas.Label("Super window. Click to close.")
   t.layout:addWidget(t.label)
 
-  t.thread = lk.Thread(function()
-    sleep(1200)
-    t.win:close()
-    assertTrue(true)
+  t:timeout(500, function(done)
+    return done or t.continue
   end)
+  t.win:close()
+  assertTrue(true)
 end
 
 test.all()

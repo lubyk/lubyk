@@ -11,13 +11,12 @@ using namespace mimas;
 
 /* ============================ Constructors     ====================== */
 
-/** mimas::TableView::TableView(lubyk::Worker *worker)
+/** mimas::TableView::TableView()
  * include/mimas/TableView.h:60
  */
 static int TableView_TableView(lua_State *L) {
   try {
-    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checksdata(L, 1, "lubyk.Worker"));
-    TableView * retval__ = new TableView(worker);
+    TableView * retval__ = new TableView();
     return retval__->luaInit(L, retval__, "mimas.TableView");
   } catch (std::exception &e) {
     lua_pushfstring(L, "TableView: %s", e.what());
@@ -71,10 +70,80 @@ static int TableView__tostring(lua_State *L) {
 /* ============================ Member Methods   ====================== */
 
 
-/** bool mimas::TableView::close()
- * include/mimas/TableView.h:217
+/** void mimas::QWidget::activateWindow()
+ * mimas/bind/QWidget.h:32
  */
-static int TableView_close(lua_State *L) {
+static int QWidget_activateWindow(lua_State *L) {
+  try {
+    TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
+    if (!self) throw dub::Exception("Using deleted mimas.TableView in activateWindow");
+    self->activateWindow();
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "activateWindow: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "activateWindow: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** void mimas::QWidget::addAction(Action *action)
+ * mimas/bind/QWidget.h:34
+ */
+static int QWidget_addAction(lua_State *L) {
+  try {
+    TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
+    if (!self) throw dub::Exception("Using deleted mimas.TableView in addAction");
+    Action *action = *((Action **)dubL_checksdata(L, 2, "mimas.Action"));
+    self->addAction(action);
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "addAction: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "addAction: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** void mimas::QWidget::addWidget(QWidget *widget, float x=0, float y=0)
+ * mimas/bind/QWidget.h:41
+ */
+static int QWidget_addWidget(lua_State *L) {
+  try {
+    TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
+    if (!self) throw dub::Exception("Using deleted mimas.TableView in addWidget");
+    int top__ = lua_gettop(L);
+    QWidget *widget = *((QWidget **)dubL_checksdata(L, 2, "mimas.QWidget"));
+    float x = 0;
+    float y = 0;
+    if (top__ >= 3) {
+      x = dubL_checknumber(L, 3);
+      if (top__ >= 4) {
+        y = dubL_checknumber(L, 4);
+      }
+    }
+    widget->setParent(self);
+    widget->move(x, y);
+    widget->show();
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "addWidget: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "addWidget: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** bool mimas::QWidget::close()
+ * mimas/bind/QWidget.h:26
+ */
+static int QWidget_close(lua_State *L) {
   try {
     TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
     if (!self) throw dub::Exception("Using deleted mimas.TableView in close");
@@ -92,7 +161,7 @@ static int TableView_close(lua_State *L) {
 
 
 /** QString mimas::TableView::cssClass() const 
- * include/mimas/TableView.h:109
+ * include/mimas/TableView.h:111
  */
 static int TableView_cssClass(lua_State *L) {
   try {
@@ -111,16 +180,20 @@ static int TableView_cssClass(lua_State *L) {
 
 
 
-/** void mimas::TableView::globalMove(float x, float y)
- * include/mimas/TableView.h:245
+/** void mimas::QWidget::globalMove(float x, float y)
+ * mimas/bind/QWidget.h:71
  */
-static int TableView_globalMove(lua_State *L) {
+static int QWidget_globalMove(lua_State *L) {
   try {
     TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
     if (!self) throw dub::Exception("Using deleted mimas.TableView in globalMove");
     float x = dubL_checknumber(L, 2);
     float y = dubL_checknumber(L, 3);
-    self->globalMove(x, y);
+    self->move(
+      self->mapToParent(
+        self->mapFromGlobal(QPoint(x, y))
+      )
+    );
     return 0;
   } catch (std::exception &e) {
     lua_pushfstring(L, "globalMove: %s", e.what());
@@ -132,16 +205,17 @@ static int TableView_globalMove(lua_State *L) {
 
 
 
-/** LuaStackSize mimas::TableView::globalPosition(lua_State *L)
- * include/mimas/TableView.h:236
+/** LuaStackSize mimas::QWidget::globalPosition()
+ * mimas/bind/QWidget.h:68
  */
-static int TableView_globalPosition(lua_State *L) {
+static int QWidget_globalPosition(lua_State *L) {
   try {
     TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
     if (!self) throw dub::Exception("Using deleted mimas.TableView in globalPosition");
-    
-    LuaStackSize  retval__ = self->globalPosition(L);
-    return retval__;
+    QPoint pt = self->mapToGlobal(QPoint(0, 0));
+    lua_pushnumber(L, pt.x());
+    lua_pushnumber(L, pt.y());
+    return 2;
   } catch (std::exception &e) {
     lua_pushfstring(L, "globalPosition: %s", e.what());
   } catch (...) {
@@ -152,10 +226,10 @@ static int TableView_globalPosition(lua_State *L) {
 
 
 
-/** int mimas::TableView::height()
- * include/mimas/TableView.h:154
+/** int mimas::QWidget::height()
+ * mimas/bind/QWidget.h:18
  */
-static int TableView_height(lua_State *L) {
+static int QWidget_height(lua_State *L) {
   try {
     TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
     if (!self) throw dub::Exception("Using deleted mimas.TableView in height");
@@ -172,10 +246,10 @@ static int TableView_height(lua_State *L) {
 
 
 
-/** void mimas::TableView::hide()
- * include/mimas/TableView.h:229
+/** void mimas::QWidget::hide()
+ * mimas/bind/QWidget.h:29
  */
-static int TableView_hide(lua_State *L) {
+static int QWidget_hide(lua_State *L) {
   try {
     TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
     if (!self) throw dub::Exception("Using deleted mimas.TableView in hide");
@@ -192,7 +266,7 @@ static int TableView_hide(lua_State *L) {
 
 
 /** float mimas::TableView::hue()
- * include/mimas/TableView.h:171
+ * include/mimas/TableView.h:120
  */
 static int TableView_hue(lua_State *L) {
   try {
@@ -211,10 +285,30 @@ static int TableView_hue(lua_State *L) {
 
 
 
-/** bool mimas::TableView::isVisible() const 
- * include/mimas/TableView.h:221
+/** bool mimas::QWidget::isFullScreen()
+ * mimas/bind/QWidget.h:33
  */
-static int TableView_isVisible(lua_State *L) {
+static int QWidget_isFullScreen(lua_State *L) {
+  try {
+    TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
+    if (!self) throw dub::Exception("Using deleted mimas.TableView in isFullScreen");
+    bool  retval__ = self->isFullScreen();
+    lua_pushboolean(L, retval__);
+    return 1;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "isFullScreen: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "isFullScreen: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** bool mimas::QWidget::isVisible()
+ * mimas/bind/QWidget.h:27
+ */
+static int QWidget_isVisible(lua_State *L) {
   try {
     TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
     if (!self) throw dub::Exception("Using deleted mimas.TableView in isVisible");
@@ -231,10 +325,10 @@ static int TableView_isVisible(lua_State *L) {
 
 
 
-/** void mimas::TableView::lower()
- * include/mimas/TableView.h:251
+/** void mimas::QWidget::lower()
+ * mimas/bind/QWidget.h:30
  */
-static int TableView_lower(lua_State *L) {
+static int QWidget_lower(lua_State *L) {
   try {
     TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
     if (!self) throw dub::Exception("Using deleted mimas.TableView in lower");
@@ -250,10 +344,10 @@ static int TableView_lower(lua_State *L) {
 
 
 
-/** void mimas::TableView::move(int x, int y)
- * include/mimas/TableView.h:134
+/** void mimas::QWidget::move(int x, int y)
+ * mimas/bind/QWidget.h:13
  */
-static int TableView_move(lua_State *L) {
+static int QWidget_move(lua_State *L) {
   try {
     TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
     if (!self) throw dub::Exception("Using deleted mimas.TableView in move");
@@ -271,16 +365,15 @@ static int TableView_move(lua_State *L) {
 
 
 
-/** LuaStackSize mimas::TableView::name(lua_State *L)
- * include/mimas/TableView.h:123
+/** void mimas::QObject::name()
+ * mimas/bind/QObject.h:12
  */
-static int TableView_name(lua_State *L) {
+static int QObject_name(lua_State *L) {
   try {
     TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
     if (!self) throw dub::Exception("Using deleted mimas.TableView in name");
-    
-    LuaStackSize  retval__ = self->name(L);
-    return retval__;
+    lua_pushstring(L, self->objectName().toUtf8().data());
+    return 1;
   } catch (std::exception &e) {
     lua_pushfstring(L, "name: %s", e.what());
   } catch (...) {
@@ -291,14 +384,14 @@ static int TableView_name(lua_State *L) {
 
 
 
-/** QObject* mimas::TableView::object()
- * include/mimas/TableView.h:117
+/** void mimas::QObject::object()
+ * mimas/bind/QObject.h:11
  */
-static int TableView_object(lua_State *L) {
+static int QObject_object(lua_State *L) {
   try {
     TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
     if (!self) throw dub::Exception("Using deleted mimas.TableView in object");
-    QObject * retval__ = self->object();
+    QObject * retval__ = self;
     lua_pushclass<QObject>(L, retval__, "mimas.QObject");
     return 1;
   } catch (std::exception &e) {
@@ -311,10 +404,10 @@ static int TableView_object(lua_State *L) {
 
 
 
-/** void mimas::TableView::raise()
- * include/mimas/TableView.h:257
+/** void mimas::QWidget::raise()
+ * mimas/bind/QWidget.h:31
  */
-static int TableView_raise(lua_State *L) {
+static int QWidget_raise(lua_State *L) {
   try {
     TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
     if (!self) throw dub::Exception("Using deleted mimas.TableView in raise");
@@ -330,10 +423,10 @@ static int TableView_raise(lua_State *L) {
 
 
 
-/** void mimas::TableView::resize(int w, int h)
- * include/mimas/TableView.h:138
+/** void mimas::QWidget::resize(int w, int h)
+ * mimas/bind/QWidget.h:14
  */
-static int TableView_resize(lua_State *L) {
+static int QWidget_resize(lua_State *L) {
   try {
     TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
     if (!self) throw dub::Exception("Using deleted mimas.TableView in resize");
@@ -432,7 +525,7 @@ static int TableView_setGridStyle(lua_State *L) {
 
 
 /** void mimas::TableView::setHue(float hue)
- * include/mimas/TableView.h:166
+ * include/mimas/TableView.h:115
  */
 static int TableView_setHue(lua_State *L) {
   try {
@@ -451,10 +544,10 @@ static int TableView_setHue(lua_State *L) {
 
 
 
-/** void mimas::TableView::setMinimumSize(float w, float h)
- * include/mimas/TableView.h:203
+/** void mimas::QWidget::setMinimumSize(float w, float h)
+ * mimas/bind/QWidget.h:22
  */
-static int TableView_setMinimumSize(lua_State *L) {
+static int QWidget_setMinimumSize(lua_State *L) {
   try {
     TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
     if (!self) throw dub::Exception("Using deleted mimas.TableView in setMinimumSize");
@@ -473,7 +566,7 @@ static int TableView_setMinimumSize(lua_State *L) {
 
 
 /** void mimas::TableView::setModel(DataSource *model)
- * include/mimas/TableView.h:263
+ * include/mimas/TableView.h:126
  */
 static int TableView_setModel(lua_State *L) {
   try {
@@ -492,10 +585,10 @@ static int TableView_setModel(lua_State *L) {
 
 
 
-/** void mimas::TableView::setMouseTracking(bool enable)
- * include/mimas/TableView.h:209
+/** void mimas::QWidget::setMouseTracking(bool enable)
+ * mimas/bind/QWidget.h:25
  */
-static int TableView_setMouseTracking(lua_State *L) {
+static int QWidget_setMouseTracking(lua_State *L) {
   try {
     TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
     if (!self) throw dub::Exception("Using deleted mimas.TableView in setMouseTracking");
@@ -512,15 +605,15 @@ static int TableView_setMouseTracking(lua_State *L) {
 
 
 
-/** void mimas::TableView::setName(const char *name)
- * include/mimas/TableView.h:130
+/** void mimas::QObject::setName(const char *name)
+ * mimas/bind/QObject.h:13
  */
-static int TableView_setName(lua_State *L) {
+static int QObject_setName(lua_State *L) {
   try {
     TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
     if (!self) throw dub::Exception("Using deleted mimas.TableView in setName");
     const char *name = dubL_checkstring(L, 2);
-    self->setName(name);
+    self->setObjectName(QString(name));
     return 0;
   } catch (std::exception &e) {
     lua_pushfstring(L, "setName: %s", e.what());
@@ -532,16 +625,37 @@ static int TableView_setName(lua_State *L) {
 
 
 
-/** void mimas::TableView::setSizeHint(float w, float h)
- * include/mimas/TableView.h:190
+/** void mimas::QWidget::setParent(QWidget *parent)
+ * mimas/bind/QWidget.h:19
  */
-static int TableView_setSizeHint(lua_State *L) {
+static int QWidget_setParent(lua_State *L) {
+  try {
+    TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
+    if (!self) throw dub::Exception("Using deleted mimas.TableView in setParent");
+    QWidget *parent = *((QWidget **)dubL_checksdata(L, 2, "mimas.QWidget"));
+    self->setParent(parent);
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "setParent: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "setParent: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** void mimas::QWidget::setSizeHint(float w, float h)
+ * mimas/bind/QWidget.h:54
+ */
+static int QWidget_setSizeHint(lua_State *L) {
   try {
     TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
     if (!self) throw dub::Exception("Using deleted mimas.TableView in setSizeHint");
     float w = dubL_checknumber(L, 2);
     float h = dubL_checknumber(L, 3);
-    self->setSizeHint(w, h);
+    self->size_hint_ = QSize(w, h);
+    self->updateGeometry();
     return 0;
   } catch (std::exception &e) {
     lua_pushfstring(L, "setSizeHint: %s", e.what());
@@ -553,16 +667,17 @@ static int TableView_setSizeHint(lua_State *L) {
 
 
 
-/** void mimas::TableView::setSizePolicy(int horizontal, int vertical)
- * include/mimas/TableView.h:197
+/** void mimas::QWidget::setSizePolicy(int horizontal, int vertical)
+ * mimas/bind/QWidget.h:58
  */
-static int TableView_setSizePolicy(lua_State *L) {
+static int QWidget_setSizePolicy(lua_State *L) {
   try {
     TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
     if (!self) throw dub::Exception("Using deleted mimas.TableView in setSizePolicy");
     int horizontal = dubL_checkint(L, 2);
     int vertical = dubL_checkint(L, 3);
-    self->setSizePolicy(horizontal, vertical);
+    self->setSizePolicy((QSizePolicy::Policy)horizontal, (QSizePolicy::Policy)vertical);
+    self->updateGeometry();
     return 0;
   } catch (std::exception &e) {
     lua_pushfstring(L, "setSizePolicy: %s", e.what());
@@ -574,15 +689,15 @@ static int TableView_setSizePolicy(lua_State *L) {
 
 
 
-/** void mimas::TableView::setStyle(const char *text)
- * include/mimas/TableView.h:158
+/** void mimas::QWidget::setStyle(const char *text)
+ * mimas/bind/QWidget.h:46
  */
-static int TableView_setStyle(lua_State *L) {
+static int QWidget_setStyle(lua_State *L) {
   try {
     TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
     if (!self) throw dub::Exception("Using deleted mimas.TableView in setStyle");
     const char *text = dubL_checkstring(L, 2);
-    self->setStyle(text);
+    self->setStyleSheet(QString(".%1 { %2 }").arg(self->cssClass()).arg(text));
     return 0;
   } catch (std::exception &e) {
     lua_pushfstring(L, "setStyle: %s", e.what());
@@ -594,10 +709,10 @@ static int TableView_setStyle(lua_State *L) {
 
 
 
-/** void mimas::TableView::setStyleSheet(const char *text)
- * include/mimas/TableView.h:162
+/** void mimas::QWidget::setStyleSheet(const char *text)
+ * mimas/bind/QWidget.h:47
  */
-static int TableView_setStyleSheet(lua_State *L) {
+static int QWidget_setStyleSheet(lua_State *L) {
   try {
     TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
     if (!self) throw dub::Exception("Using deleted mimas.TableView in setStyleSheet");
@@ -635,10 +750,10 @@ static int TableView_setVisibleHeaders(lua_State *L) {
 
 
 
-/** void mimas::TableView::show()
- * include/mimas/TableView.h:225
+/** void mimas::QWidget::show()
+ * mimas/bind/QWidget.h:28
  */
-static int TableView_show(lua_State *L) {
+static int QWidget_show(lua_State *L) {
   try {
     TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
     if (!self) throw dub::Exception("Using deleted mimas.TableView in show");
@@ -654,17 +769,91 @@ static int TableView_show(lua_State *L) {
 
 
 
-/** LuaStackSize mimas::TableView::textSize(const char *text, lua_State *L)
- * include/mimas/TableView.h:181
+/** void mimas::QWidget::showFullScreen(bool enable=true)
+ * mimas/bind/QWidget.h:60
  */
-static int TableView_textSize(lua_State *L) {
+static int QWidget_showFullScreen(lua_State *L) {
+  try {
+    TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
+    if (!self) throw dub::Exception("Using deleted mimas.TableView in showFullScreen");
+    int top__ = lua_gettop(L);
+    bool enable;
+    if (top__ >= 2) {
+      enable = lua_toboolean(L, 2);
+    } else {
+      enable = true;
+    }
+    if (enable) {
+      self->showFullScreen();
+    } else {
+      self->showNormal();
+    }
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "showFullScreen: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "showFullScreen: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** void mimas::QWidget::size()
+ * mimas/bind/QWidget.h:45
+ */
+static int QWidget_size(lua_State *L) {
+  try {
+    TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
+    if (!self) throw dub::Exception("Using deleted mimas.TableView in size");
+    QRect rect = self->geometry();
+    lua_pushnumber(L, rect.width());
+    lua_pushnumber(L, rect.height());
+    return 2;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "size: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "size: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** void mimas::QWidget::swapFullScreen()
+ * mimas/bind/QWidget.h:64
+ */
+static int QWidget_swapFullScreen(lua_State *L) {
+  try {
+    TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
+    if (!self) throw dub::Exception("Using deleted mimas.TableView in swapFullScreen");
+    if (!self->isFullScreen()) {
+      self->showFullScreen();
+    } else {
+      self->showNormal();
+    }
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "swapFullScreen: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "swapFullScreen: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** void mimas::QWidget::textSize(const char *text)
+ * mimas/bind/QWidget.h:50
+ */
+static int QWidget_textSize(lua_State *L) {
   try {
     TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
     if (!self) throw dub::Exception("Using deleted mimas.TableView in textSize");
     const char *text = dubL_checkstring(L, 2);
-    
-    LuaStackSize  retval__ = self->textSize(text, L);
-    return retval__;
+    lua_pushnumber(L, self->fontMetrics().width(text));
+    lua_pushnumber(L, self->fontMetrics().height());
+    return 2;
   } catch (std::exception &e) {
     lua_pushfstring(L, "textSize: %s", e.what());
   } catch (...) {
@@ -675,10 +864,10 @@ static int TableView_textSize(lua_State *L) {
 
 
 
-/** void mimas::TableView::update()
- * include/mimas/TableView.h:175
+/** void mimas::QWidget::update()
+ * mimas/bind/QWidget.h:20
  */
-static int TableView_update(lua_State *L) {
+static int QWidget_update(lua_State *L) {
   try {
     TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
     if (!self) throw dub::Exception("Using deleted mimas.TableView in update");
@@ -694,14 +883,14 @@ static int TableView_update(lua_State *L) {
 
 
 
-/** QWidget* mimas::TableView::widget()
- * include/mimas/TableView.h:113
+/** void mimas::QWidget::widget()
+ * mimas/bind/QWidget.h:40
  */
-static int TableView_widget(lua_State *L) {
+static int QWidget_widget(lua_State *L) {
   try {
     TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
     if (!self) throw dub::Exception("Using deleted mimas.TableView in widget");
-    QWidget * retval__ = self->widget();
+    QWidget* retval__ = self;
     lua_pushclass<QWidget>(L, retval__, "mimas.QWidget");
     return 1;
   } catch (std::exception &e) {
@@ -714,10 +903,10 @@ static int TableView_widget(lua_State *L) {
 
 
 
-/** int mimas::TableView::width()
- * include/mimas/TableView.h:150
+/** int mimas::QWidget::width()
+ * mimas/bind/QWidget.h:17
  */
-static int TableView_width(lua_State *L) {
+static int QWidget_width(lua_State *L) {
   try {
     TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
     if (!self) throw dub::Exception("Using deleted mimas.TableView in width");
@@ -734,10 +923,10 @@ static int TableView_width(lua_State *L) {
 
 
 
-/** int mimas::TableView::x()
- * include/mimas/TableView.h:142
+/** int mimas::QWidget::x()
+ * mimas/bind/QWidget.h:15
  */
-static int TableView_x(lua_State *L) {
+static int QWidget_x(lua_State *L) {
   try {
     TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
     if (!self) throw dub::Exception("Using deleted mimas.TableView in x");
@@ -754,10 +943,10 @@ static int TableView_x(lua_State *L) {
 
 
 
-/** int mimas::TableView::y()
- * include/mimas/TableView.h:146
+/** int mimas::QWidget::y()
+ * mimas/bind/QWidget.h:16
  */
-static int TableView_y(lua_State *L) {
+static int QWidget_y(lua_State *L) {
   try {
     TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
     if (!self) throw dub::Exception("Using deleted mimas.TableView in y");
@@ -779,41 +968,49 @@ static int TableView_y(lua_State *L) {
 /* ============================ Lua Registration ====================== */
 
 static const struct luaL_Reg TableView_member_methods[] = {
-  {"close"             , TableView_close},
+  {"activateWindow"    , QWidget_activateWindow},
+  {"addAction"         , QWidget_addAction},
+  {"addWidget"         , QWidget_addWidget},
+  {"close"             , QWidget_close},
   {"cssClass"          , TableView_cssClass},
-  {"globalMove"        , TableView_globalMove},
-  {"globalPosition"    , TableView_globalPosition},
-  {"height"            , TableView_height},
-  {"hide"              , TableView_hide},
+  {"globalMove"        , QWidget_globalMove},
+  {"globalPosition"    , QWidget_globalPosition},
+  {"height"            , QWidget_height},
+  {"hide"              , QWidget_hide},
   {"hue"               , TableView_hue},
-  {"isVisible"         , TableView_isVisible},
-  {"lower"             , TableView_lower},
-  {"move"              , TableView_move},
-  {"name"              , TableView_name},
-  {"object"            , TableView_object},
-  {"raise"             , TableView_raise},
-  {"resize"            , TableView_resize},
+  {"isFullScreen"      , QWidget_isFullScreen},
+  {"isVisible"         , QWidget_isVisible},
+  {"lower"             , QWidget_lower},
+  {"move"              , QWidget_move},
+  {"name"              , QObject_name},
+  {"object"            , QObject_object},
+  {"raise"             , QWidget_raise},
+  {"resize"            , QWidget_resize},
   {"selectColumn"      , TableView_selectColumn},
   {"selectRow"         , TableView_selectRow},
   {"setAlternatingRowColors", TableView_setAlternatingRowColors},
   {"setGridStyle"      , TableView_setGridStyle},
   {"setHue"            , TableView_setHue},
-  {"setMinimumSize"    , TableView_setMinimumSize},
+  {"setMinimumSize"    , QWidget_setMinimumSize},
   {"setModel"          , TableView_setModel},
-  {"setMouseTracking"  , TableView_setMouseTracking},
-  {"setName"           , TableView_setName},
-  {"setSizeHint"       , TableView_setSizeHint},
-  {"setSizePolicy"     , TableView_setSizePolicy},
-  {"setStyle"          , TableView_setStyle},
-  {"setStyleSheet"     , TableView_setStyleSheet},
+  {"setMouseTracking"  , QWidget_setMouseTracking},
+  {"setName"           , QObject_setName},
+  {"setParent"         , QWidget_setParent},
+  {"setSizeHint"       , QWidget_setSizeHint},
+  {"setSizePolicy"     , QWidget_setSizePolicy},
+  {"setStyle"          , QWidget_setStyle},
+  {"setStyleSheet"     , QWidget_setStyleSheet},
   {"setVisibleHeaders" , TableView_setVisibleHeaders},
-  {"show"              , TableView_show},
-  {"textSize"          , TableView_textSize},
-  {"update"            , TableView_update},
-  {"widget"            , TableView_widget},
-  {"width"             , TableView_width},
-  {"x"                 , TableView_x},
-  {"y"                 , TableView_y},
+  {"show"              , QWidget_show},
+  {"showFullScreen"    , QWidget_showFullScreen},
+  {"size"              , QWidget_size},
+  {"swapFullScreen"    , QWidget_swapFullScreen},
+  {"textSize"          , QWidget_textSize},
+  {"update"            , QWidget_update},
+  {"widget"            , QWidget_widget},
+  {"width"             , QWidget_width},
+  {"x"                 , QWidget_x},
+  {"y"                 , QWidget_y},
   {"__tostring"        , TableView__tostring},
   {"__gc"              , TableView_destructor},
   {"deleted"           , TableView_deleted},

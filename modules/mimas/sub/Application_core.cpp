@@ -153,7 +153,7 @@ static int QObject_object(lua_State *L) {
 
 
 /** void mimas::Application::post(lua_State *L)
- * include/mimas/Application.h:119
+ * include/mimas/Application.h:123
  */
 static int Application_post(lua_State *L) {
   try {
@@ -193,7 +193,7 @@ static int Application_processEvents(lua_State *L) {
 
 
 /** void mimas::Application::quit()
- * include/mimas/Application.h:128
+ * include/mimas/Application.h:132
  */
 static int Application_quit(lua_State *L) {
   try {
@@ -212,7 +212,7 @@ static int Application_quit(lua_State *L) {
 
 
 /** LuaStackSize mimas::Application::screenSize(lua_State *L)
- * include/mimas/Application.h:138
+ * include/mimas/Application.h:142
  */
 static int Application_screenSize(lua_State *L) {
   try {
@@ -252,7 +252,7 @@ static int QObject_setName(lua_State *L) {
 
 
 /** void mimas::Application::setStyleSheet(const char *text)
- * include/mimas/Application.h:132
+ * include/mimas/Application.h:136
  */
 static int Application_setStyleSheet(lua_State *L) {
   try {
@@ -272,7 +272,7 @@ static int Application_setStyleSheet(lua_State *L) {
 
 
 /** void mimas::Application::singleShot(int msec, QObject *receiver, const char *member)
- * include/mimas/Application.h:149
+ * include/mimas/Application.h:153
  */
 static int Application_singleShot(lua_State *L) {
   try {
@@ -294,7 +294,7 @@ static int Application_singleShot(lua_State *L) {
 
 
 /** static void mimas::Application::terminate(int sig)
- * include/mimas/Application.h:115
+ * include/mimas/Application.h:119
  */
 static int Application_terminate(lua_State *L) {
   try {

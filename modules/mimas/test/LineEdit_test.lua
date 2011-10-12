@@ -66,13 +66,11 @@ function withUser.should.callback(t)
   -- visual check
   assertTrue(true)
   t.win:show()
-  t:guiTimeout(function(done)
-    if done or t.continue then
-      t.win:close()
-      assertTrue(t.continue)
-      return true
-    end
+  t:timeout(function(done)
+    return done or t.continue
   end)
+  t.win:close()
+  assertTrue(t.continue)
 end
 
 function should.respondToText()
@@ -102,13 +100,11 @@ function withUser.should.haveKeyboardCallback(t)
     end
   end
   t.win:show()
-  t:guiTimeout(function(done)
-    if done or t.continue then
-      t.win:close()
-      assertTrue(t.continue)
-      return true
-    end
+  t:timeout(function(done)
+    return done or t.continue
   end)
+  t.win:close()
+  assertTrue(t.continue)
 end
 
 function withUser.should.haveClickCallback(t)
@@ -122,13 +118,11 @@ function withUser.should.haveClickCallback(t)
     t.continue = true
   end
   t.win:show()
-  t:guiTimeout(function(done)
-    if done or t.continue then
-      t.win:close()
-      assertTrue(t.continue)
-      return true
-    end
+  t:timeout(function(done)
+    return done or t.continue
   end)
+  t.win:close()
+  assertTrue(t.continue)
 end
 
 function should.styleLineEdits(t)

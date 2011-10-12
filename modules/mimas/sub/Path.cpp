@@ -13,7 +13,7 @@ using namespace mimas;
 
 
 /** mimas::Path::Path()
- * include/mimas/Path.h:46
+ * include/mimas/Path.h:47
  */
 static int Path_Path1(lua_State *L) {
   try {
@@ -31,7 +31,7 @@ static int Path_Path1(lua_State *L) {
 
 
 /** mimas::Path::Path(const QPainterPath &path)
- * include/mimas/Path.h:50
+ * include/mimas/Path.h:51
  */
 static int Path_Path2(lua_State *L) {
   try {
@@ -93,10 +93,10 @@ static int Path__tostring(lua_State *L) {
 /* ============================ Member Methods   ====================== */
 
 
-/** void mimas::Path::addRect(float x, float y, float w, float h)
- * include/mimas/Path.h:69
+/** void mimas::QPainterPath::addRect(float x, float y, float w, float h)
+ * mimas/bind/QPainterPath.h:16
  */
-static int Path_addRect(lua_State *L) {
+static int QPainterPath_addRect(lua_State *L) {
   try {
     Path *self = *((Path**)dubL_checksdata(L, 1, "mimas.Path"));
     float x = dubL_checknumber(L, 2);
@@ -116,7 +116,7 @@ static int Path_addRect(lua_State *L) {
 
 
 /** bool mimas::Path::contains(float x, float y)
- * include/mimas/Path.h:93
+ * include/mimas/Path.h:76
  */
 static int Path_contains(lua_State *L) {
   try {
@@ -136,10 +136,10 @@ static int Path_contains(lua_State *L) {
 
 
 
-/** void mimas::Path::cubicTo(float c1X, float c1Y, float c2X, float c2Y, float endPointX, float endPointY)
- * include/mimas/Path.h:65
+/** void mimas::QPainterPath::cubicTo(float c1X, float c1Y, float c2X, float c2Y, float endPointX, float endPointY)
+ * mimas/bind/QPainterPath.h:14
  */
-static int Path_cubicTo(lua_State *L) {
+static int QPainterPath_cubicTo(lua_State *L) {
   try {
     Path *self = *((Path**)dubL_checksdata(L, 1, "mimas.Path"));
     float c1X = dubL_checknumber(L, 2);
@@ -160,10 +160,10 @@ static int Path_cubicTo(lua_State *L) {
 
 
 
-/** void mimas::Path::lineTo(float x, float y)
- * include/mimas/Path.h:73
+/** void mimas::QPainterPath::lineTo(float x, float y)
+ * mimas/bind/QPainterPath.h:18
  */
-static int Path_lineTo(lua_State *L) {
+static int QPainterPath_lineTo(lua_State *L) {
   try {
     Path *self = *((Path**)dubL_checksdata(L, 1, "mimas.Path"));
     float x = dubL_checknumber(L, 2);
@@ -180,10 +180,10 @@ static int Path_lineTo(lua_State *L) {
 
 
 
-/** void mimas::Path::moveTo(float x, float y)
- * include/mimas/Path.h:59
+/** void mimas::QPainterPath::moveTo(float x, float y)
+ * mimas/bind/QPainterPath.h:10
  */
-static int Path_moveTo(lua_State *L) {
+static int QPainterPath_moveTo(lua_State *L) {
   try {
     Path *self = *((Path**)dubL_checksdata(L, 1, "mimas.Path"));
     float x = dubL_checknumber(L, 2);
@@ -201,7 +201,7 @@ static int Path_moveTo(lua_State *L) {
 
 
 /** Path mimas::Path::outlineForWidth(float width)
- * include/mimas/Path.h:81
+ * include/mimas/Path.h:64
  */
 static int Path_outlineForWidth(lua_State *L) {
   try {
@@ -225,11 +225,11 @@ static int Path_outlineForWidth(lua_State *L) {
 /* ============================ Lua Registration ====================== */
 
 static const struct luaL_Reg Path_member_methods[] = {
-  {"addRect"           , Path_addRect},
+  {"addRect"           , QPainterPath_addRect},
   {"contains"          , Path_contains},
-  {"cubicTo"           , Path_cubicTo},
-  {"lineTo"            , Path_lineTo},
-  {"moveTo"            , Path_moveTo},
+  {"cubicTo"           , QPainterPath_cubicTo},
+  {"lineTo"            , QPainterPath_lineTo},
+  {"moveTo"            , QPainterPath_moveTo},
   {"outlineForWidth"   , Path_outlineForWidth},
   {"__tostring"        , Path__tostring},
   {"__gc"              , Path_destructor},

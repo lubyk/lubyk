@@ -9,24 +9,16 @@
 local constr     = mimas_core.TableView
 local mt         = mimas_core.TableView_
 mimas.TableView_ = mt
-local close  = mt.cloase
 
-function mimas.TableView(parent)
-  local instance
-  if parent then
-    instance = constr(worker, parent:widget())
-  else
-    instance = constr(worker)
-  end
-  return instance
+function mimas.TableView(...)
+  return mimas.bootstrap('TableView', constr, ...)
 end
 
+local close = mt.close
 function mt:close()
   -- close is like delete: ensure it only runs in GUI thread
   if not self:deleted() then
-    app:post(function()
-      close(self)
-    end)
+    close(self)
   end
 end
 

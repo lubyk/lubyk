@@ -10,25 +10,33 @@
 --]]------------------------------------------------------
 require 'lubyk'
 require 'mimas'
-local should = test.Suite('mimas.Slider')
+local should   = test.Suite('mimas.Slider')
+local withUser = should:testWithUser()
+withUser.should2 = {}
+local should2 = {}
 
-function should.accept_destroy_from_gui()
+function should.autoload()
+  assertTrue(mimas.Slider)
+end
+
+function should.acceptDestroyFromGui(t)
   local win = mimas.Window()
   win:resize(200, 200)
   win:show()
   local slider = mimas.Slider(mimas.Horizontal, win)
-
-  thread = lk.Thread(function()
-    win = nil
-    collectgarbage('collect')
-    -- not deleted by Lua, but marked as deleted in C++
-    assertTrue(slider:deleted())
+  sleep(100)
+  win = nil
+  t:timeout(function(done)
+    collectgarbage() -- deletes window --> delete slider (child widget)
+    return done or slider:deleted()
   end)
+  assertTrue(slider:deleted())
 end
 
-function should.accept_destroy_from_Lua(t)
+function withUser.should.acceptDestroyFromLua(t)
   t.win = mimas.Window()
   t.win:move(100,50)
+  t.win:resize(100, 100)
   t.layout = mimas.VBoxLayout(t.win)
   t.label  = mimas.Label("Slider destroyed by Lua in 1s")
   t.layout:addWidget(t.label)
@@ -37,19 +45,24 @@ function should.accept_destroy_from_Lua(t)
   t.layout:addWidget(t.slider)
   t.win:show()
   t.thread = lk.Thread(function()
-    sleep(1000)
     t.slider = nil
     collectgarbage('collect')
     -- Slider destroyed by Lua
-    app:post(function()
-      t.label:setText("Slider should be deleted")
-    end)
-    sleep(1000)
-    assertTrue(t.win:close()) -- visual feedback needed..
+    t.label:setText("Slider should2 be deleted. Click to continue.")
   end)
+
+  function t.win:click()
+    t.continue = true
+  end
+
+  t:timeout(function(done)
+    return done or t.continue
+  end)
+  assertTrue(t.continue)
+  t.win:close()
 end
 
-function should.draw_one_slider(t)
+function withUser.should.drawOneSlider(t)
   t.win = mimas.Window()
   t.win:move(100, 150)
 
@@ -61,24 +74,24 @@ function should.draw_one_slider(t)
   t.slider:setValue(50)
   t.layout:addWidget(t.slider)
 
-  t.callback = mimas.Callback(function(value)
+  function t.slider:sliderChanged(value)
     -- do something with value change
+    self:setValue(value)
     if value == 0 then
-      t.win:close()
+      t.continue = true
     end
     t.label:setText(string.format('value: %f', value))
-  end)
+  end
 
-  -- callback listens for Slider events
-  t.callback:connect(t.slider, 'valueChanged(double)')
-  t.thread = lk.Thread(function()
-    sleep(1000)
-    t.win:close()
-  end)
   t.win:show()
+  t:timeout(function(done)
+    return done or t.continue
+  end)
+  t.win:close()
+  assertTrue(t.continue)
 end
 
-function should.style_slider(t)
+function withUser.should.styleSlider(t)
   t.win = mimas.Window()
   t.win:move(100, 250)
 
@@ -156,15 +169,20 @@ function should.style_slider(t)
   end)
   t.timer:start()
 
-  t.thread = lk.Thread(function()
-    sleep(3000)
-    t.timer:stop()
-    t.win:close()
-  end)
   t.win:show()
+  function t.win:click()
+    t.timer:stop()
+    t.continue = true
+  end
+
+  t:timeout(function(done)
+    return done or t.continue
+  end)
+  assertTrue(t.continue)
+  t.win:close()
 end
 
-function should.sync_two_sliders(t)
+function withUser.should.syncTwoSliders(t)
   t.win = mimas.Window()
   t.win:move(320, 50)
 
@@ -180,29 +198,28 @@ function should.sync_two_sliders(t)
   t.slider2:setValue(50)
   t.layout:addWidget(t.slider2)
 
-  t.callback1 = mimas.Callback(function(value)
+  -- Use function (simplest method)
+  function t.slider1:sliderChanged(value)
     if value == 0 then
-      app:quit()
+      t.continue = true
     end
     t.slider2:setValue(value)
-  end)
+  end
 
-  t.callback2 = mimas.Callback(function(value)
+  -- Use a callback (enables many listeners)
+  t.callback2 = mimas.Callback(function(self, value)
     t.slider1:setValue(value)
     t.label:setText(string.format('value: %f', value))
   end)
 
-  -- callback listens for quit_btn's clicked events.
-  t.callback1:connect(t.slider1, 'valueChanged(double)')
+  t.callback2:connect(t.slider2, 'sliderChanged(double)')
 
-  -- callback listens for quit_btn's clicked events.
-  t.callback2:connect(t.slider2, 'valueChanged(double)')
-
-  t.thread = lk.Thread(function()
-    sleep(3000)
-    t.win:close()
-  end)
   t.win:show()
+  t:timeout(function(done)
+    return done or t.continue
+  end)
+  t.win:close()
+  assertTrue(t.continue)
 end
 
 test.all()

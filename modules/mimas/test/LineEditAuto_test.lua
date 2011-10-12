@@ -67,8 +67,8 @@ function withUser.should.callback(t)
   t:timeout(function(done)
     return done or t.continue
   end)
-  assertTrue(t.continue)
   t.win:close()
+  assertTrue(t.continue)
 end
 
 test.all()

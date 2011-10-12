@@ -191,8 +191,8 @@ public slots:
 
     if (!pushLuaCallback("sliderChanged")) return;
     lua_pushnumber(lua_, value);
-    // <self> <sliderChanged> <value>
-    int status = lua_pcall(L, 3, 0, 0);
+    // ... <sliderChanged> <self> <value>
+    int status = lua_pcall(L, 2, 0, 0);
 
     if (status) {
       fprintf(stderr, "Error in 'sliderChanged' callback: %s\n", lua_tostring(L, -1));

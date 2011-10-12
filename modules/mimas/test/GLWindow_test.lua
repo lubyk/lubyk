@@ -11,8 +11,9 @@
 require 'lubyk'
 
 local should = test.Suite('mimas.GLWindow')
+local withUser = should:testWithUser()
 
-function should.displayGlWindow(t)
+function withUser.should.displayGlWindow(t)
   -- we use the test env to protect from gc
   t.win = mimas.GLWindow()
   t.win:move(10,10)

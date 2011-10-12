@@ -38,6 +38,7 @@ namespace mimas {
 
 /** Pen used by Painter.
  *
+ * @dub super: 'QPainterPath'
  */
 class Path : public QPainterPath
 {
@@ -54,24 +55,6 @@ public:
     if (stroker_) {
       delete stroker_;
     }
-  }
-
-  void moveTo(float x, float y) {
-    QPainterPath::moveTo(x, y);
-  }
-
-  /** Bezier curve from current point to endPoint with control points c1, c2.
-   */
-  void cubicTo(float c1X, float c1Y, float c2X, float c2Y, float endPointX, float endPointY) {
-    QPainterPath::cubicTo(c1X, c1Y, c2X, c2Y, endPointX, endPointY);
-  }
-
-  void addRect(float x, float y, float w, float h) {
-    QPainterPath::addRect(x, y, w, h);
-  }
-
-  void lineTo(float x, float y) {
-    QPainterPath::lineTo(x, y);
   }
 
   /** Return a new path that corresponds to the outline of the current

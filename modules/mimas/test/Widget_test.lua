@@ -51,11 +51,14 @@ function should.centerWidget(t)
   t.lbl:setStyle "color:#fee; text-align:center; background:orange"
   t.lay:addWidget(t.lbl)
   t.win:show()
-  t.thread = lk.Thread(function()
-    sleep(1400)
-    t.win:close()
-    assertTrue(true)
+  function t.win:click()
+    t.continue = true
+  end
+
+  t:timeout(500, function(done)
+    return done or t.continue
   end)
+  t.win:close()
 end
 
 function should.addWidgetsToWindow(t)
@@ -70,11 +73,14 @@ function should.addWidgetsToWindow(t)
   t.win:resize(400, 400)
   t.win:show()
 
-  t.thread = lk.Thread(function()
-    sleep(2400)
-    t.win:close()
-    assertTrue(true)
+  function t.win:click()
+    t.continue = true
+  end
+
+  t:timeout(500, function(done)
+    return done or t.continue
   end)
+  t.win:close()
 end
 
 local function opName(op)
@@ -130,6 +136,10 @@ function withUser.should.respondToClick(t)
   t.win:move(100, 300)
   t.win:resize(400, 400)
   t.win:show()
+  t:timeout(1000, function(done)
+    return done
+  end)
+  t.win:close()
 end
 
 function withUser.should.openFileDialog(t)

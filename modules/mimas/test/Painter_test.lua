@@ -11,17 +11,18 @@
 require 'lubyk'
 
 local should = test.Suite('mimas.Painter')
+local withUser = should:testWithUser()
 
 function should.loadConstants()
   assertEqual(1, mimas.SolidPattern)
 end
 
-function should.paintPath(t)
+function withUser.should.paintPath(t)
   -- we use the test env to protect from gc
   t.win = mimas.Window()
   t.win:move(300, 300)
-  t.win:resize(100, 100)
-  function t.win.paint(p, w, h)
+  t.win:resize(150, 100)
+  function t.win:paint(p, w, h)
     local box_padding = 5
     local path = mimas.Path()
     local hpen_width = 5 -- half pen width
@@ -37,23 +38,27 @@ function should.paintPath(t)
     p:setBrush(mimas.Color(0.5, 0.5, 0.5))
     p:setPen(mimas.Pen(hpen_width * 2, mimas.Color(0.2, 0.8, 0.8, 0.8)))
     p:drawPath(path)
-    p:drawText(text_padding, text_padding, w - 2*text_padding, h - 2*text_padding, mimas.AlignCenter, 'Saturn')
+    p:drawText(text_padding, text_padding, w - 2*text_padding, h - 2*text_padding, mimas.AlignCenter, 'click if OK')
   end
   t.win:show()
+  function t.win:click()
+    t.continue = true
+  end
 
-  t.thread = lk.Thread(function()
-    sleep(400)
-    t.win:close()
-    assertTrue(true)
+
+  t:timeout(function(done)
+    return done or t.continue
   end)
+  assertTrue(t.continue)
+  t.win:close()
 end
 
-function should.draw_rounded_rect(t)
+function should.drawRoundedRect(t)
   -- we use the test env to protect from gc
   t.win = mimas.Window()
   t.win:move(300, 450)
   t.win:resize(100, 100)
-  function t.win.paint(p, w, h)
+  function t.win:paint(p, w, h)
     local box_padding = 5
     local hpen_width = 2 -- half pen width
     local bp = hpen_width + box_padding -- full box padding
@@ -80,7 +85,7 @@ function should.drawRect(t)
   t.win = mimas.Window()
   t.win:move(300, 600)
   t.win:resize(100, 100)
-  function t.win.paint(p, w, h)
+  function t.win:paint(p, w, h)
     local box_padding = 5
     local hpen_width = 5 -- half pen width
     local bp = hpen_width + box_padding -- full box padding

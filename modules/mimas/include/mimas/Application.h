@@ -105,6 +105,10 @@ public:
    * FIXME: check deffered delete....
    */
   void processEvents(int maxtime);
+
+  // void postEvent(QObject *receiver, QEvent *event) {
+  //   QApplication::postEvent(receiver, event);
+  // }
   
 
   /** Key to retrieve 'this' value from a running thread.
