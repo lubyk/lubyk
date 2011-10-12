@@ -11,10 +11,11 @@
 require 'lubyk'
 
 local should = test.Suite('mimas.HBoxLayout')
+local withUser = should:testWithUser()
 
 local app = mimas.Application()
 
-function should.display_widgets()
+function should.displayWidgets()
   local win = mimas.Window()
   local lay = mimas.HBoxLayout(win)
   local btn1 = mimas.Button("Hello")
@@ -33,4 +34,26 @@ function should.display_widgets()
   win:show()
 end
 
+function withUser.should.displayWidgets(t)
+  local win = mimas.Window()
+  local lay = mimas.HBoxLayout(win)
+  local btn1 = mimas.Button("Hello")
+  local btn2 = mimas.Button("Quit")
+  lay:addWidget(btn1)
+  lay:addWidget(btn2)
+
+  win:move(100, 100)
+  local callback = mimas.Callback(function()
+    t.continue = true
+  end)
+
+  callback:connect(btn1, 'clicked')
+  callback:connect(btn2, 'clicked')
+
+  win:show()
+  t:timeout(function(done)
+    return done or t.continue
+  end)
+  assertTrue(t.continue)
+end
 test.all()

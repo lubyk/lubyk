@@ -28,6 +28,7 @@ end
 
 function should.acceptDestroyFromLua(t)
   t.win = mimas.Window()
+  t.win:resize(50, 50)
   t.win:move(100,50)
   t.layout = mimas.HBoxLayout(t.win)
   local label = mimas.Label("Label destroyed by Lua in 1s")

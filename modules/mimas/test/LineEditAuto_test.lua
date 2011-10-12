@@ -58,17 +58,17 @@ function withUser.should.callback(t)
   function t.lb:editingFinished(text)
     self:autoFinished()
     assertEqual('m=lubyk.Value', text)
+    t.continue = true
   end
   -- ====================================================
 
   t.win:show()
 
-  -- visual check
-  assertTrue(true)
-  t.thread = lk.Thread(function()
-    sleep(12000)
-    t.win:close()
+  t:timeout(function(done)
+    return done or t.continue
   end)
+  assertTrue(t.continue)
+  t.win:close()
 end
 
 test.all()

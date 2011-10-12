@@ -49,7 +49,7 @@ bool Application::event(QEvent *event) {
     lua_State *L = lua_;
 
     if (!pushLuaCallback("openFile")) {
-      printf("'openFile' method not defined for application.\n");
+      // printf("Called 'openFile' for '%s' but Lua method is not defined for 'app'.\n", file.toUtf8().data());
       return false;
     }
 

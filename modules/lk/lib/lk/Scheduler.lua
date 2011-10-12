@@ -72,7 +72,7 @@ function lib:run(func)
     self.main = lk.Thread(func)
   end
 
-  if not rawget(_G, mimas) then
+  if not rawget(_G, 'mimas') then
     -- without mimas
     self:loop()
   end
@@ -303,6 +303,8 @@ function private:runThread(thread)
   elseif a == 'mimas' then
     self.should_run = false
     self.restart_with_mimas = true
+    -- restart as soon as we have restarted mimas scheduler
+    self:scheduleAt(0, thread)
   else
     if thread.fd then
       self:removeFd(thread)

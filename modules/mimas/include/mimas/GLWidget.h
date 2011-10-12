@@ -175,6 +175,47 @@ protected:
   }
 
 private:
+  // virtual void paintEvent(QPaintEvent *event) {
+  //   makeCurrent();
+
+  //   glMatrixMode(GL_MODELVIEW);
+  //   glPushMatrix();
+
+  //   setupViewport(width(), height());
+  //   initializeGL();
+  //   paintGL();
+
+  //   // Paint
+  //   glShadeModel(GL_FLAT);
+  //   glDisable(GL_CULL_FACE);
+  //   glDisable(GL_DEPTH_TEST);
+  //   glDisable(GL_LIGHTING);
+  //   glMatrixMode(GL_MODELVIEW);
+  //   glPopMatrix();
+  //   Painter painter(this);
+  //   painter.setRenderHint(QPainter::Antialiasing);
+  //   paint(painter);
+  //   // Paint children ??
+  //   painter.end();
+  // }
+
+  // void paint(Painter &p) {
+  //   lua_State *L = lua_;
+  //   ScopedLock lock(worker_);
+
+  //   if (!pushLuaCallback("paint")) return;
+
+  //   // Deletable out of Lua
+  //   lua_pushclass2<Painter>(L, &p, "mimas.Painter");
+  //   lua_pushnumber(L, width());
+  //   lua_pushnumber(L, height());
+  //   // <func> <self> <Painter> <width> <height>
+  //   int status = lua_pcall(L, 4, 0, 0);
+
+  //   if (status) {
+  //     fprintf(stderr, "Error in 'paint' callback: %s\n", lua_tostring(L, -1));
+  //   }
+  // }
   void keyboard(QKeyEvent *event, bool isPressed) {
     lua_State *L = lua_;
     ScopedLock lock(worker_);
