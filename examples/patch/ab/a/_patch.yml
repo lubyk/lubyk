@@ -1,7 +1,24 @@
----
-hue: 0
-x: 262
-name: a
-h: 150
+x: 100
+y: 40
 w: 150
-y: 41
+h: 150
+hue: 0
+nodes:
+  metro:
+    class: lubyk.Metro
+    x: 30
+    y: 45
+    hue: 0
+    links:
+      bang:
+        counter/in/bang: true
+    params:
+      tempo: 580
+  counter:
+    x: 30
+    y: 75
+    hue: 0
+    links:
+      count:
+        /b/play/in/trigger: true
+
