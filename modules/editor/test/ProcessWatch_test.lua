@@ -70,4 +70,4 @@ function should.add_widgets_to_list(t)
   end)
 end
 
-test.gui()
+test.all()

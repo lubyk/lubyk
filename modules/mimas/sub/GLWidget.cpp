@@ -12,7 +12,7 @@ using namespace mimas;
 /* ============================ Constructors     ====================== */
 
 /** mimas::GLWidget::GLWidget()
- * include/mimas/GLWidget.h:77
+ * include/mimas/GLWidget.h:81
  */
 static int GLWidget_GLWidget(lua_State *L) {
   try {
@@ -141,7 +141,7 @@ static int QWidget_addWidget(lua_State *L) {
 
 
 /** void mimas::GLWidget::addWidgetToScene(QWidget *widget, float x=0, float y=0)
- * include/mimas/GLWidget.h:94
+ * include/mimas/GLWidget.h:98
  */
 static int GLWidget_addWidgetToScene(lua_State *L) {
   try {
@@ -192,7 +192,7 @@ static int QWidget_close(lua_State *L) {
 
 
 /** QString mimas::GLWidget::cssClass() const 
- * include/mimas/GLWidget.h:100
+ * include/mimas/GLWidget.h:104
  */
 static int GLWidget_cssClass(lua_State *L) {
   try {
@@ -212,7 +212,7 @@ static int GLWidget_cssClass(lua_State *L) {
 
 
 /** void mimas::QWidget::globalMove(float x, float y)
- * mimas/bind/QWidget.h:70
+ * mimas/bind/QWidget.h:71
  */
 static int QWidget_globalMove(lua_State *L) {
   try {
@@ -237,7 +237,7 @@ static int QWidget_globalMove(lua_State *L) {
 
 
 /** LuaStackSize mimas::QWidget::globalPosition()
- * mimas/bind/QWidget.h:67
+ * mimas/bind/QWidget.h:68
  */
 static int QWidget_globalPosition(lua_State *L) {
   try {
@@ -691,14 +691,13 @@ static int QWidget_size(lua_State *L) {
 
 
 /** void mimas::QWidget::swapFullScreen()
- * mimas/bind/QWidget.h:63
+ * mimas/bind/QWidget.h:64
  */
 static int QWidget_swapFullScreen(lua_State *L) {
   try {
     GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
     if (!self) throw dub::Exception("Using deleted mimas.GLWidget in swapFullScreen");
-    bool enable = !self->isFullScreen();
-    if (enable) {
+    if (!self->isFullScreen()) {
       self->showFullScreen();
     } else {
       self->showNormal();
@@ -755,7 +754,7 @@ static int QWidget_update(lua_State *L) {
 
 
 /** void mimas::GLWidget::updateGL()
- * include/mimas/GLWidget.h:107
+ * include/mimas/GLWidget.h:111
  */
 static int GLWidget_updateGL(lua_State *L) {
   try {

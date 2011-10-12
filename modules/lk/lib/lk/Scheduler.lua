@@ -72,7 +72,7 @@ function lib:run(func)
     self.main = lk.Thread(func)
   end
 
-  if not rawget(mimas, 'Application') then
+  if not rawget(_G, mimas) then
     -- without mimas
     self:loop()
   end

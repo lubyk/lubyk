@@ -39,6 +39,9 @@ function should.callProcessConnected(t)
   local pw = lk.ProcessWatch():addDelegate(del)
   local p = pw:process('hello')
   assertFalse(p.online)
+  -- get processConnected stuff
+  sleep(200)
+  t.continue = false
   -- register 'hello'
   local s = lk.Service(Lubyk.zone .. ':hello')
   t:timeout(3000, function(done)

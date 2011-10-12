@@ -221,7 +221,7 @@ static int Menu_cssClass(lua_State *L) {
 
 
 /** void mimas::QWidget::globalMove(float x, float y)
- * mimas/bind/QWidget.h:70
+ * mimas/bind/QWidget.h:71
  */
 static int QWidget_globalMove(lua_State *L) {
   try {
@@ -246,7 +246,7 @@ static int QWidget_globalMove(lua_State *L) {
 
 
 /** LuaStackSize mimas::QWidget::globalPosition()
- * mimas/bind/QWidget.h:67
+ * mimas/bind/QWidget.h:68
  */
 static int QWidget_globalPosition(lua_State *L) {
   try {
@@ -700,14 +700,13 @@ static int QWidget_size(lua_State *L) {
 
 
 /** void mimas::QWidget::swapFullScreen()
- * mimas/bind/QWidget.h:63
+ * mimas/bind/QWidget.h:64
  */
 static int QWidget_swapFullScreen(lua_State *L) {
   try {
     Menu *self = *((Menu**)dubL_checksdata(L, 1, "mimas.Menu"));
     if (!self) throw dub::Exception("Using deleted mimas.Menu in swapFullScreen");
-    bool enable = !self->isFullScreen();
-    if (enable) {
+    if (!self->isFullScreen()) {
       self->showFullScreen();
     } else {
       self->showNormal();
