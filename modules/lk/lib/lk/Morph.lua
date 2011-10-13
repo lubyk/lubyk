@@ -245,21 +245,18 @@ end
 
 function private.process.changed(self, process, changes)
   -- write changes to file    
-  -- nodes:
-  --   fo:
-  --     y: 54
-  --     x: 36
-  --     has_all_slots: true
-  --     code: "--[[\ninlet('input', 'Information on input [type].')\noutput = outlet('output',
-  --       'Information on output [type].')\n\nfunction inlet.input(val)\n  -- print and
-  --       pass through\n  print(val)\n  output(val)\nend\n--]]\n\n\n"
   local cache = process.cache
   for base_k, base_v in pairs(changes) do
     if base_k == 'nodes' then
       local nodes = base_v
-      local cache_nodes = cache[base_k] or {}
+      local cache_nodes = cache[base_k]
+      if not cache_nodes then
+        cache_nodes = {}
+        cache[base_k] = cache_nodes
+      end
       for name,node in pairs(nodes) do
         local cache_node = cache_nodes[name]
+        local links
         if not cache_node then
           -- new node
           local resource = process.dir:createChild(name .. '.lua', node.code or '')
@@ -271,9 +268,27 @@ function private.process.changed(self, process, changes)
         for k, v in pairs(node) do
           if k == 'code' then
             -- ignore code change notifications (we sent the code)
+          elseif k == 'inlets' then
+            -- ignore (not in patch)
+          elseif k == 'outlets' then
+            -- extract links
+            for _, outlet in ipairs(v) do
+              local l = outlet.links
+              if l then
+                if not links then
+                  links = {}
+                end
+                links[outlet.name] = l
+              end
+            end
           else
             patch_changed = deepMerge(cache_node, k, v) or patch_changed
           end
+        end
+        
+        if links then
+          patch_changed = true
+          cache_node.links = links
         end
       end
     else

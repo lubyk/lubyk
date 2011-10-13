@@ -60,11 +60,17 @@ function lib:disconnect(target_url)
 end
 
 local function dumpLinks(self)
+  local has_links = false
   local res = {}
   for _,slot in ipairs(self.connections) do
+    has_links = true
     res[slot:url()] = true
   end
-  return res
+  if has_links then
+    return res
+  else
+    return nil
+  end
 end
 
 function lib:dump(links)

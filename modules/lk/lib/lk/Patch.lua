@@ -252,8 +252,7 @@ end
 function lib:findCode(url)
   -- TODO: make async
   if self.morph then
-    local r = self.morph:request(lubyk.get_url, url)
-    return r
+    return self.morph:request(lubyk.get_url, url)
   else
     -- error
     return nil
@@ -261,11 +260,12 @@ function lib:findCode(url)
 end
 
 function lib:findClass(class_name)
+  -- TODO: make async ?
   local code
-  -- if self.morph then
-  --   code = self.morph:request(lubyk.get_url, '/lib/' .. class_name)
-  -- end
-  -- TODO: make async
+  if self.morph then
+    local path_name = string.gsub(class_name, '%.','/')
+    code = self.morph:request(lubyk.get_url, '/lib/' .. path_name .. '.lua')
+  end
   return code or lk.findCode(class_name)
 end
 
