@@ -281,12 +281,8 @@ function lib:callback(url, ...)
     local data = ...
     -- async call, no return value
     --print(yaml.dump(data))
-    app:post(function()
-      -- We eval code in app (GUI) thread so that
-      -- object (Widgets) creation is done in this thread.
-      self:set(data)
-      self:notify(self:partialDump(data))
-    end)
+    self:set(data)
+    self:notify(self:partialDump(data))
   else
     -- Inter process communication
     local inlet = self:get(url)

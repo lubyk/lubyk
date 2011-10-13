@@ -86,7 +86,7 @@ function lib:eval(code_str)
   end
   -- code will execute in node's environment
   setfenv(code, self.env)
-  local ok, err = pcall(code)
+  local ok, err = sched:pcall(code)
   if not ok then
     self.sorted_outlets = old_outlets
     self.sorted_inlets  = old_inlets
@@ -172,7 +172,7 @@ end
 
 function lib:error(...)
   print(string.format(...))
-  print(debug.traceback())
+  print(debug.traceback(coroutine.running()))
   print('----------------')
 --  table.insert(self.errors, string.format(...))
 end

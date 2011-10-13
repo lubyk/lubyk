@@ -200,6 +200,23 @@ function lib:removeFd(thread)
   thread.fd  = nil
 end
 
+function lib:pcall(f, errorHandler)
+  errorHandler = errorHandler or private.errorHandler
+  local co = coroutine.create(f)
+  while true do
+    local status, a, b = coroutine.resume(co)
+    if coroutine.status(co) == 'suspended' then
+      coroutine.yield(a, b)   -- suspend across `mypcall'
+    elseif not status then
+      -- error
+      return false, errorHandler(a, co)
+    else
+      -- ended normally
+      return status, a, b   -- error or normal return
+    end
+  end
+end
+  
 --=============================================== PRIVATE
 
 local zmq_POLLIN, zmq_POLLOUT = zmq.POLLIN, zmq.POLLOUT
@@ -319,6 +336,27 @@ function private:finalize()
     -- if one fails, should not crash all finalizers...
     pcall(func)
   end
+end
+
+
+-- FIXME: traceback not working good enough
+function private.errorHandler(err, co)
+  if true then
+    return err .. '\n' .. debug.traceback(co)
+  end
+  local tb = lk.split(debug.traceback(co), '\n')
+  local max_i = 5
+  local message = err
+  for i = 4,#tb do
+    if string.find(tb[i], 'lubyk/lib/test.lua') then
+      max_i = i - 2
+      break
+    end
+  end
+  for i = 4,max_i do
+    message = message .. '\n' .. tb[i]
+  end
+  return message
 end
 
 --=============================================== Without mimas

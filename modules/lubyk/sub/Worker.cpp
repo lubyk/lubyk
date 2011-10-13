@@ -12,7 +12,7 @@ using namespace lubyk;
 /* ============================ Constructors     ====================== */
 
 /** lubyk::Worker::Worker()
- * include/lubyk/worker.h:79
+ * include/lubyk/worker.h:88
  */
 static int Worker_Worker(lua_State *L) {
   try {
@@ -58,7 +58,7 @@ static int Worker__tostring(lua_State *L) {
 
 
 /** LuaStackSize lubyk::Worker::execPath(lua_State *L)
- * include/lubyk/worker.h:117
+ * include/lubyk/worker.h:132
  */
 static int Worker_execPath(lua_State *L) {
   try {
@@ -76,8 +76,27 @@ static int Worker_execPath(lua_State *L) {
 
 
 
+/** void lubyk::Worker::execute(const char *cmd)
+ * include/lubyk/worker.h:117
+ */
+static int Worker_execute(lua_State *L) {
+  try {
+    Worker *self = *((Worker**)dubL_checksdata(L, 1, "lubyk.Worker"));
+    const char *cmd = dubL_checkstring(L, 2);
+    self->execute(cmd);
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "execute: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "execute: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
 /** void lubyk::Worker::exit(int status)
- * include/lubyk/worker.h:113
+ * include/lubyk/worker.h:128
  */
 static int Worker_exit(lua_State *L) {
   try {
@@ -96,7 +115,7 @@ static int Worker_exit(lua_State *L) {
 
 
 /** void lubyk::Worker::fdErrorClear(int fd)
- * include/lubyk/worker.h:178
+ * include/lubyk/worker.h:193
  */
 static int Worker_fdErrorClear(lua_State *L) {
   try {
@@ -115,7 +134,7 @@ static int Worker_fdErrorClear(lua_State *L) {
 
 
 /** bool lubyk::Worker::fdErrorIsSet(int fd)
- * include/lubyk/worker.h:174
+ * include/lubyk/worker.h:189
  */
 static int Worker_fdErrorIsSet(lua_State *L) {
   try {
@@ -135,7 +154,7 @@ static int Worker_fdErrorIsSet(lua_State *L) {
 
 
 /** void lubyk::Worker::fdErrorSet(int fd)
- * include/lubyk/worker.h:169
+ * include/lubyk/worker.h:184
  */
 static int Worker_fdErrorSet(lua_State *L) {
   try {
@@ -154,7 +173,7 @@ static int Worker_fdErrorSet(lua_State *L) {
 
 
 /** void lubyk::Worker::fdReadClear(int fd)
- * include/lubyk/worker.h:146
+ * include/lubyk/worker.h:161
  */
 static int Worker_fdReadClear(lua_State *L) {
   try {
@@ -173,7 +192,7 @@ static int Worker_fdReadClear(lua_State *L) {
 
 
 /** bool lubyk::Worker::fdReadIsSet(int fd)
- * include/lubyk/worker.h:142
+ * include/lubyk/worker.h:157
  */
 static int Worker_fdReadIsSet(lua_State *L) {
   try {
@@ -193,7 +212,7 @@ static int Worker_fdReadIsSet(lua_State *L) {
 
 
 /** void lubyk::Worker::fdReadSet(int fd)
- * include/lubyk/worker.h:137
+ * include/lubyk/worker.h:152
  */
 static int Worker_fdReadSet(lua_State *L) {
   try {
@@ -212,7 +231,7 @@ static int Worker_fdReadSet(lua_State *L) {
 
 
 /** void lubyk::Worker::fdWriteClear(int fd)
- * include/lubyk/worker.h:162
+ * include/lubyk/worker.h:177
  */
 static int Worker_fdWriteClear(lua_State *L) {
   try {
@@ -231,7 +250,7 @@ static int Worker_fdWriteClear(lua_State *L) {
 
 
 /** bool lubyk::Worker::fdWriteIsSet(int fd)
- * include/lubyk/worker.h:158
+ * include/lubyk/worker.h:173
  */
 static int Worker_fdWriteIsSet(lua_State *L) {
   try {
@@ -251,7 +270,7 @@ static int Worker_fdWriteIsSet(lua_State *L) {
 
 
 /** void lubyk::Worker::fdWriteSet(int fd)
- * include/lubyk/worker.h:153
+ * include/lubyk/worker.h:168
  */
 static int Worker_fdWriteSet(lua_State *L) {
   try {
@@ -270,7 +289,7 @@ static int Worker_fdWriteSet(lua_State *L) {
 
 
 /** static Worker* lubyk::Worker::getWorker(lua_State *L)
- * include/lubyk/worker.h:207
+ * include/lubyk/worker.h:222
  */
 static int Worker_getWorker(lua_State *L) {
   try {
@@ -289,7 +308,7 @@ static int Worker_getWorker(lua_State *L) {
 
 
 /** int lubyk::Worker::maxFd()
- * include/lubyk/worker.h:200
+ * include/lubyk/worker.h:215
  */
 static int Worker_maxFd(lua_State *L) {
   try {
@@ -308,7 +327,7 @@ static int Worker_maxFd(lua_State *L) {
 
 
 /** double lubyk::Worker::now()
- * include/lubyk/worker.h:131
+ * include/lubyk/worker.h:146
  */
 static int Worker_now(lua_State *L) {
   try {
@@ -327,7 +346,7 @@ static int Worker_now(lua_State *L) {
 
 
 /** void lubyk::Worker::run()
- * include/lubyk/worker.h:129
+ * include/lubyk/worker.h:144
  */
 static int Worker_run(lua_State *L) {
   try {
@@ -345,7 +364,7 @@ static int Worker_run(lua_State *L) {
 
 
 /** int lubyk::Worker::select(float msec)
- * include/lubyk/worker.h:185
+ * include/lubyk/worker.h:200
  */
 static int Worker_select(lua_State *L) {
   try {
@@ -365,7 +384,7 @@ static int Worker_select(lua_State *L) {
 
 
 /** void lubyk::Worker::sleep(double duration)
- * include/lubyk/worker.h:85
+ * include/lubyk/worker.h:94
  */
 static int Worker_sleep(lua_State *L) {
   try {
@@ -384,7 +403,7 @@ static int Worker_sleep(lua_State *L) {
 
 
 /** LuaStackSize lubyk::Worker::spawn(const char *script, lua_State *L)
- * include/lubyk/worker.h:105
+ * include/lubyk/worker.h:113
  */
 static int Worker_spawn(lua_State *L) {
   try {
@@ -404,7 +423,7 @@ static int Worker_spawn(lua_State *L) {
 
 
 /** LuaStackSize lubyk::Worker::swap(lua_State *L)
- * include/lubyk/worker.h:96
+ * include/lubyk/worker.h:105
  */
 static int Worker_swap(lua_State *L) {
   try {
@@ -423,7 +442,7 @@ static int Worker_swap(lua_State *L) {
 
 
 /** void lubyk::Worker::test_lock()
- * include/lubyk/worker.h:120
+ * include/lubyk/worker.h:135
  */
 static int Worker_test_lock(lua_State *L) {
   try {
@@ -441,7 +460,7 @@ static int Worker_test_lock(lua_State *L) {
 
 
 /** void lubyk::Worker::test_unlock()
- * include/lubyk/worker.h:125
+ * include/lubyk/worker.h:140
  */
 static int Worker_test_unlock(lua_State *L) {
   try {
@@ -459,7 +478,7 @@ static int Worker_test_unlock(lua_State *L) {
 
 
 /** void lubyk::Worker::wait(double duration)
- * include/lubyk/worker.h:92
+ * include/lubyk/worker.h:101
  */
 static int Worker_wait(lua_State *L) {
   try {
@@ -478,7 +497,7 @@ static int Worker_wait(lua_State *L) {
 
 
 /** int lubyk::Worker::waitpid(int pid)
- * include/lubyk/worker.h:109
+ * include/lubyk/worker.h:124
  */
 static int Worker_waitpid(lua_State *L) {
   try {
@@ -503,6 +522,7 @@ static int Worker_waitpid(lua_State *L) {
 
 static const struct luaL_Reg Worker_member_methods[] = {
   {"execPath"          , Worker_execPath},
+  {"execute"           , Worker_execute},
   {"exit"              , Worker_exit},
   {"fdErrorClear"      , Worker_fdErrorClear},
   {"fdErrorIsSet"      , Worker_fdErrorIsSet},

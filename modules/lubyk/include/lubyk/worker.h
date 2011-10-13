@@ -112,6 +112,13 @@ public:
    */
   LuaStackSize spawn(const char *script, lua_State *L);
 
+  /** Execute a system command in a new thread
+   */
+  void execute(const char *cmd) {
+    lubyk::Thread *thread = new lubyk::Thread();
+    thread->startThread<Worker, &Worker::doExecute>(this, (void*)cmd);
+  }
+
   /** Wait for another process to finish.
    */
   int waitpid(int pid);
@@ -224,6 +231,13 @@ public:
         }
       }
     }
+  }
+
+  void doExecute(Thread *runner) {
+    std::string cmd_ = (const char*)runner->parameter_;
+    runner->threadReady();
+    system(cmd_.c_str());
+    delete runner;
   }
 };
 

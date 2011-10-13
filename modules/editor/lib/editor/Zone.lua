@@ -83,11 +83,11 @@ local editor_cmd = (Lubyk.editor or {}).editor_cmd
 function lib:editFile(filepath, node)
   if editor_cmd then
     local cmd = string.format("%s '%s'", editor_cmd, filepath)
-    os.execute(cmd)
+    worker:execute(cmd)
   else
     -- FIXME
     -- use internal editor ?
-    os.execute(string.format("open '%s'", filepath))
+    worker:execute(string.format("open '%s'", filepath))
   end
 end
 
@@ -199,7 +199,7 @@ function lib:processConnected(remote_process)
     -- We could use option -S == do not prompt when server goes offline
     local cmd = string.format('mount_webdav -S %s %s', self.morph.dav_url, self:workPath())
     print(cmd)
-    os.execute(cmd)
+    worker:execute(cmd)
   end
 end
 

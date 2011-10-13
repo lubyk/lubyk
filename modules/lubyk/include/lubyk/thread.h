@@ -143,12 +143,12 @@ class Thread : public Mutex {
     should_run_ = false;
     if (!thread_id_) return;  // not running
 
-    assert(!pthread_equal(thread_id_, pthread_self()));
-
-    // pthread_kill(thread_id_, SIGTERM);
-    pthread_cancel(thread_id_);
-    pthread_join(thread_id_, NULL);
-    thread_id_ = NULL;
+    if (!pthread_equal(thread_id_, pthread_self())) {
+      // pthread_kill(thread_id_, SIGTERM);
+      pthread_cancel(thread_id_);
+      pthread_join(thread_id_, NULL);
+      thread_id_ = NULL;
+    }
   }
 
   /** Send a signal to the running thread.

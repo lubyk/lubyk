@@ -84,26 +84,6 @@ function lib.loadAll(...)
   end
 end
 
--- FIXME: traceback not working good enough
-local function errorHandler(err, co)
-  if true then
-    return err .. '\n' .. debug.traceback(co)
-  end
-  local tb = lk.split(debug.traceback(co), '\n')
-  local max_i = 5
-  local message = err
-  for i = 4,#tb do
-    if string.find(tb[i], 'lubyk/lib/test.lua') then
-      max_i = i - 2
-      break
-    end
-  end
-  for i = 4,max_i do
-    message = message .. '\n' .. tb[i]
-  end
-  return message
-end
-
 -- Prints traceback on error
 function lib.trace(fun, ...)
   local some_args = {...}
@@ -120,23 +100,6 @@ function lib.trace(fun, ...)
     return nil
   end
 end
-
-local function mypcall(f)
-  local co = coroutine.create(f)
-  while true do
-    local status, a, b = coroutine.resume(co)
-    if coroutine.status(co) == 'suspended' then
-      coroutine.yield(a, b)   -- suspend across `mypcall'
-    elseif not status then
-      -- error
-      return false, errorHandler(a, co)
-    else
-      -- ended normally
-      return status, a, b   -- error or normal return
-    end
-  end
-end
-  
 
 function lib.runSuite(suite)
   local test_count = 0
@@ -166,7 +129,7 @@ function lib.runSuite(suite)
           skip_count = skip_count + 1
         elseif not lib.only or lib.only == name then
           suite.setup(gc_protect[name])
-            local ok, err = mypcall(pass_args, error_handler)
+            local ok, err = sched:pcall(pass_args)
             collectgarbage('collect')
             if not ok then
               fail_count = fail_count + 1
