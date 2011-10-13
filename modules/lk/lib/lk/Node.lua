@@ -14,6 +14,7 @@ lk.Node     = lib
 
 -- node's environment metatable
 local env_mt= {}
+local private = {}
 
 setmetatable(lib, {
   -- new method
@@ -145,9 +146,27 @@ function lib:set(definition)
 end
 
 function lib:setParams(params)
+  self.params = {}
+  local p   = self.params
   local env = self.env
   for k, v in pairs(params) do
     env[k] = v
+    p[k] = true
+  end
+end
+
+function private.dumpParams(self)
+  local env = self.env
+  local has_params = false
+  local res = {}
+  for k, _ in pairs(self.params or {}) do
+    has_params = true
+    res[k] = env[k]
+  end
+  if has_params then
+    return res
+  else
+    return nil
   end
 end
 
@@ -239,6 +258,7 @@ function lib:dump()
     x    = self.x,
     y    = self.y,
     code = self.code,
+    params = private.dumpParams(self),
     inlets  = dumpSlots(self.sorted_inlets),
     outlets = dumpSlots(self.sorted_outlets),
   }

@@ -13,13 +13,13 @@ lk.Patch    = lib
 
 -- PRIVATE
 local ALLOWED_KEYS = {
-  nodes = true,
-  x     = true,
-  y     = true,
-  w     = true,
-  h     = true,
-  hue   = true,
-  name  = true,
+  nodes  = true,
+  x      = true,
+  y      = true,
+  w      = true,
+  h      = true,
+  hue    = true,
+  name   = true,
 }
 
 local function loadFromYaml(self, yaml_code)
@@ -328,7 +328,6 @@ end
 
 --- We found the morph server, load patch
 function lib:setMorph(process)
-  print('SET MORPH')
   if process then
     self.morph = process.req
     self:sync()
