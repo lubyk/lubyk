@@ -40,15 +40,15 @@ namespace midi {
  *
  * @dub lib_name:'Out_core'
  *      string_format:'%%s (%%f)'
- *      string_args:'(*userdata)->port_name(), (*userdata)->port()'
+ *      string_args:'(*userdata)->portName(), (*userdata)->port()'
  */
 class Out {
 public:
-  Out(lubyk::Worker *worker)
-   : port_id_(-1),
-     port_name_("lubyk"),
-     midi_out_(NULL),
-     buffer_(3, 0) {
+  Out()
+     : port_id_(-1)
+     , port_name_("lubyk")
+     , midi_out_(NULL)
+     , buffer_(3, 0) {
     midi_out_ = new RtMidiOut;
   }
 
@@ -62,11 +62,11 @@ public:
     return port_id_;
   }
 
-  const char *port_name() const {
+  const char *portName() const {
     return port_name_.c_str();
   }
 
-  void open_port(int port, lua_State *L) {
+  void openPort(int port, lua_State *L) {
     if (midi_out_ == NULL) {
       lua_pushstring(L, "RtMidiOut not initialized: cannot open port.");
       lua_error(L);
@@ -84,7 +84,7 @@ public:
     port_id_ = port;
   }
 
-  void open_port(const char *port_name, lua_State *L) {
+  void openPort(const char *port_name, lua_State *L) {
     // 1. find port from given name
     int port_count = midi_out_->getPortCount();
     std::string name;
@@ -92,16 +92,16 @@ public:
     for (int i = 0; i < port_count; ++i) {
       name = midi_out_->getPortName(i);
       if (name == port_name) {
-        return open_port(i, L);
+        return openPort(i, L);
       }
     }
     lua_pushfstring(L, "Port '%s' not found.", port_name);
     lua_error(L);
   }
 
-  void virtual_port(const char *port_name, lua_State *L) {
+  void virtualPort(const char *port_name, lua_State *L) {
     port_name_ = port_name;
-    return open_port(-1, L);
+    return openPort(-1, L);
   }
 
   void send(int a, int b, int c) {
@@ -197,7 +197,7 @@ class MidiOut : public Node {
     if (error_.is_error()) {
       return error_;
     } else if (!is_ok()) {
-      return open_port(port_id_);
+      return openPort(port_id_);
     } else {
       return gNilValue;
     }
@@ -224,7 +224,7 @@ class MidiOut : public Node {
   // [2] Get/set midi out port
   const Value port(const Value &val) {
     if (val.is_real()) {
-      return open_port(val.r);
+      return openPort(val.r);
     } else if (val.is_string()) {
       if (midi_out_ == NULL) return error_;
       // 1. find port
@@ -235,7 +235,7 @@ class MidiOut : public Node {
         try {
           name = midi_out_->getPortName(i);
           if (val.str() == name) {
-            return open_port(i);
+            return openPort(i);
           }
         } catch (RtError &error) {
           error_.set(UNKNOWN_ERROR, error.getMessageString());
@@ -294,7 +294,7 @@ class MidiOut : public Node {
     }
   }
 private:
-  const Value open_port(int port) {
+  const Value openPort(int port) {
     if (midi_out_ == NULL) return error_;
     midi_out_->closePort();
     set_is_ok(false);

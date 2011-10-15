@@ -40,9 +40,7 @@ function lib:setName(name)
   local w, h = self.super:textSize(name)
   self.lbl_w = w + 4 * TEXT_PADDING -- 2 paddings on sides
   self.lbl_h = h + 2 * TEXT_PADDING
-  app:post(function()
-    self:update()
-  end)
+  self:update()
 end
 
 function lib:processChanged()
@@ -111,9 +109,7 @@ function lib:paint(p, w, h)
 end
 
 function lib:delete()
-  app:post(function()
-    self.super:__gc()
-  end)
+  self.super:__gc()
 end
 
 local MousePress,       MouseRelease,       DoubleClick =

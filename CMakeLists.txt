@@ -75,10 +75,8 @@ if(LUBYK_BUILD_DOXYGEN_DOCS AND DOXYGEN_FOUND)
   file (GLOB MODULES ${LUBYK_SOURCE_DIR}/modules/*)
   foreach(MODULE ${MODULES})
     get_filename_component (MODULE_NAME ${MODULE} NAME_WE)
-    file(GLOB MODULE_DUB_HEADERS ${MODULE}/include/${MODULE_NAME}/*.h)
-    list(APPEND DOXYGEN_INPUT_LIST_B ${MODULE_DUB_HEADERS})
-    # Dummy headers used to created automatic bindings to super-classes
-    file(GLOB MODULE_DUB_HEADERS ${MODULE}/bind/*.h)
+    # Include headers and dummy headers used to created automatic bindings to super-classes
+    file(GLOB MODULE_DUB_HEADERS ${MODULE}/include/${MODULE_NAME}/*.h ${MODULE}/bind/*.h)
     list(APPEND DOXYGEN_INPUT_LIST_B ${MODULE_DUB_HEADERS})
   endforeach(MODULE ${MODULES})
 

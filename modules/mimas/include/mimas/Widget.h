@@ -112,7 +112,6 @@ protected:
 
   virtual void moveEvent(QMoveEvent * event) {
     lua_State *L = lua_;
-    ScopedLock lock(worker_);
 
     if (!pushLuaCallback("moved")) return;
     lua_pushnumber(L, event->pos().x());

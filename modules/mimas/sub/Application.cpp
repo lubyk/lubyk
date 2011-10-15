@@ -21,7 +21,6 @@ Application::Application()
 
 
 int Application::exec() {
-  ScopedUnlock unlock(worker_);
   // register interrupt signal
   pthread_setspecific(sAppKey, (void*)this);
   signal(SIGINT, terminate);

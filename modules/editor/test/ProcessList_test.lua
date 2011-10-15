@@ -30,10 +30,8 @@ function should.drawProcessList(t)
 
   t.thread = lk.Thread(function()
     sleep(800)
-    app:post(function()
-      -- new widgets must be created in the GUI thread
-      t.list:addProcess{name = 'Dune', hue = 0.2}
-    end)
+    -- new widgets must be created in the GUI thread
+    t.list:addProcess{name = 'Dune', hue = 0.2}
     sleep(800)
     t.list:removeProcess('Process One')
     sleep(800)

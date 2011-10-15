@@ -82,11 +82,9 @@ end
 -- creating/changing views.
 function lib:set(definition)
   if self.view then
-    app:post(function()
-      doSet(self, definition)
-      self:updateView()
-      self.view:processChanged()
-    end)
+    doSet(self, definition)
+    self:updateView()
+    self.view:processChanged()
   else
     doSet(self, definition)
   end

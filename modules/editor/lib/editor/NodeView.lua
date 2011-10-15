@@ -105,9 +105,7 @@ function lib:setName(name)
   self.height = h + 2 * TEXT_VPADDING + 2*PAD
   self:setSizeHint(self.width, self.height)
   self:setSizePolicy(mimas.Minimum, mimas.Fixed)
-  app:post(function()
-    self:update()
-  end)
+  self:update()
 end
 
 -- function lib:addInlet(inlet)
@@ -233,7 +231,5 @@ function lib:delete()
     -- remove ghost from selection my selecting only self
     self.delegate:selectNodeView(self)
   end
-  app:post(function()
-    self.super:__gc()
-  end)
+  self.super:__gc()
 end

@@ -124,9 +124,7 @@ function makePathSelector(self)
     end
 
     -- open file dialog
-    app:post(function()
-      self.dlg:openProjectDialog()
-    end)
+    self.dlg:openProjectDialog()
   end
 end
 

@@ -187,7 +187,6 @@ public slots:
    */
   void sliderChangedSlot(double value) {
     lua_State *L = lua_;
-    lubyk::ScopedLock lock(worker_);
 
     if (!pushLuaCallback("sliderChanged")) return;
     lua_pushnumber(lua_, value);

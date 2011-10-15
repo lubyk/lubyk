@@ -57,9 +57,6 @@ class Socket : public LuaObject
   void *socket_;
   std::string location_;
   int type_;
-  /** Mutex used to enable zmq.REQ sharing between threads.
-   */
-  Mutex req_mutex_;
 
   /** Timer used for timeout in request.
    */
@@ -188,7 +185,6 @@ public:
    * send() or recv().
    */
   void connect(const char *location) {
-    ScopedSLock lock(req_mutex_);
     if (zmq_connect(socket_, location))
       throw Exception("Could not connect to '%s'.", location);
     location_ = location; // store last connection for info string
@@ -280,50 +276,44 @@ public:
         { socket_,    0, ZMQ_POLLIN, 0 }
     };
 
-    { // unlock worker
-      ScopedUnlock unlock(worker_);
-      // lock socket
-      ScopedSLock lock(req_mutex_);
+    if (zmq_send(socket_, &msg, 0)) {
+      zmq_msg_close(&msg);
+      throw_send_error(errno);
+    }
 
-      if (zmq_send(socket_, &msg, 0)) {
-        zmq_msg_close(&msg);
-        throw_send_error(errno);
+    zmq_msg_close(&msg);
+
+    zmq_msg_init(&recv_msg);
+
+
+    double start = time_ref_.elapsed();
+    static const long total_timeout = 200000;
+    long timeout = total_timeout;
+    // Receive with (relatively short) timeout
+    // [us] = 200ms
+    while (1) {
+      if (zmq_poll(items, 1, timeout) == -1) {
+        zmq_msg_close(&recv_msg);
+        throw_poll_error(errno);
       }
 
-      zmq_msg_close(&msg);
-
-      zmq_msg_init(&recv_msg);
-
-
-      double start = time_ref_.elapsed();
-      static const long total_timeout = 200000;
-      long timeout = total_timeout;
-      // Receive with (relatively short) timeout
-      // [us] = 200ms
-      while (1) {
-        if (zmq_poll(items, 1, timeout) == -1) {
-          zmq_msg_close(&recv_msg);
-          throw_poll_error(errno);
-        }
-
-        if (!items[0].revents & ZMQ_POLLIN) {
-          // timeout: no message
-          double now = time_ref_.elapsed();
-          if (now >= start + total_timeout/1000) {
-            timed_out = true;
-            break;
-          } else {
-            // poll can return before total_timeout
-            // wait the rest of the timeout
-            timeout = total_timeout - (now - start);
-          }
-        } else {
-          if (zmq_recv(socket_, &recv_msg, 0)) {
-            zmq_msg_close(&recv_msg);
-            throw_recv_error(errno);
-          }
+      if (!items[0].revents & ZMQ_POLLIN) {
+        // timeout: no message
+        double now = time_ref_.elapsed();
+        if (now >= start + total_timeout/1000) {
+          timed_out = true;
           break;
+        } else {
+          // poll can return before total_timeout
+          // wait the rest of the timeout
+          timeout = total_timeout - (now - start);
         }
+      } else {
+        if (zmq_recv(socket_, &recv_msg, 0)) {
+          zmq_msg_close(&recv_msg);
+          throw_recv_error(errno);
+        }
+        break;
       }
     }
 

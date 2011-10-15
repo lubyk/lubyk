@@ -16,14 +16,6 @@ function lubyk.Worker()
   error('Already one worker created (lives as \'worker\' in global namespace).')
 end
 
-function sleep(duration)
-  worker:sleep(duration)
-end
-
-function wait(duration)
-  worker:wait(duration)
-end
-
 local spawn = lubyk.Worker_.spawn
 --- We use yaml to pass arguments from one process to the other.
 function mt:spawn(code, args)

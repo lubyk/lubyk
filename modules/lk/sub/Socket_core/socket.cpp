@@ -164,12 +164,9 @@ LuaStackSize lk::Socket::accept(lua_State *L) {
 
   int fd;
 
-  { ScopedUnlock unlock(worker_);
-    fd = ::accept(socket_fd_, &sa, &sa_len);
-
-    //printf("[%p] accept(%i) --> %i\n", this, socket_fd_, fd);
-  }
-
+  fd = ::accept(socket_fd_, &sa, &sa_len);
+  //printf("[%p] accept(%i) --> %i\n", this, socket_fd_, fd);
+  
   if (fd == -1) {
     throw Exception("Error while accepting connection (%s).", strerror(errno));
   }
@@ -208,7 +205,6 @@ LuaStackSize lk::Socket::accept(lua_State *L) {
 //     size_t sz;
 // 
 //     // unlock while waiting
-//     { lubyk::ScopedUnlock unlock(worker_);
 // 
 //       // Receive buffer length
 //       char *sz_ptr = (char*)&sz;
@@ -283,7 +279,6 @@ LuaStackSize lk::Socket::accept(lua_State *L) {
 //       }
 //       done += received;
 //     }
-//   }
 // 
 //   int arg_size = msgpack_bin_to_lua(L, msg_buffer, sz);
 //   if (tmp_buffer) free(tmp_buffer);
@@ -399,15 +394,13 @@ int lk::Socket::recvLine(lua_State *L) {
     }
       
     // read more data
-    { lubyk::ScopedUnlock unlock(worker_);
-      buffer_length_ = ::recv(socket_fd_, buffer_, MAX_BUFF_SIZE, 0);
-      if (buffer_length_ == 0) {
-        // connection closed
-        return 0;
-      } else if (buffer_length_ < 0) {
-        buffer_length_ = 0;
-        throw Exception("Could not receive (%s).", strerror(errno));
-      }
+    buffer_length_ = ::recv(socket_fd_, buffer_, MAX_BUFF_SIZE, 0);
+    if (buffer_length_ == 0) {
+      // connection closed
+      return 0;
+    } else if (buffer_length_ < 0) {
+      buffer_length_ = 0;
+      throw Exception("Could not receive (%s).", strerror(errno));
     }
     buffer_i_ = 0;
   }                             
@@ -434,18 +427,16 @@ int lk::Socket::recvBytes(lua_State *L, int sz) {
 
   while (sz) {
     // read more data
-    { lubyk::ScopedUnlock unlock(worker_);
-      // we prefer not reading too much so that we might simplify read operation
-      // with a single pushlstring
-      buffer_length_ = ::recv(socket_fd_, buffer_, sz < MAX_BUFF_SIZE ? sz : MAX_BUFF_SIZE, 0);
-      if (buffer_length_ == 0) {
-        // connection closed
-        // abort
-        return 0;
-      } else if (buffer_length_ < 0) {
-        buffer_length_ = 0;
-        throw Exception("Could not receive (%s).", strerror(errno));
-      }
+    // we prefer not reading too much so that we might simplify read operation
+    // with a single pushlstring
+    buffer_length_ = ::recv(socket_fd_, buffer_, sz < MAX_BUFF_SIZE ? sz : MAX_BUFF_SIZE, 0);
+    if (buffer_length_ == 0) {
+      // connection closed
+      // abort
+      return 0;
+    } else if (buffer_length_ < 0) {
+      buffer_length_ = 0;
+      throw Exception("Could not receive (%s).", strerror(errno));
     }
     
     luaL_addlstring(&buffer, buffer_, buffer_length_);
@@ -468,19 +459,17 @@ int lk::Socket::recvAll(lua_State *L) {
 
   while (true) {
     // read more data
-    { lubyk::ScopedUnlock unlock(worker_);
-      buffer_length_ = ::recv(socket_fd_, buffer_, MAX_BUFF_SIZE, 0);
-      if (buffer_length_ == 0) {
-        // connection closed
-        // done
+    buffer_length_ = ::recv(socket_fd_, buffer_, MAX_BUFF_SIZE, 0);
+    if (buffer_length_ == 0) {
+      // connection closed
+      // done
+      break;
+    } else if (buffer_length_ < 0) {
+      buffer_length_ = 0;
+      if (errno == EAGAIN) {
         break;
-      } else if (buffer_length_ < 0) {
-        buffer_length_ = 0;
-        if (errno == EAGAIN) {
-          break;
-        } else {
-          throw Exception("Could not receive (%s).", strerror(errno));
-        }
+      } else {
+        throw Exception("Could not receive (%s).", strerror(errno));
       }
     }
     luaL_addlstring(&buffer, buffer_, buffer_length_);

@@ -147,6 +147,10 @@ function private:specialCommand(cmd, ...)
     return nil
   elseif cmd == 'halt' then
     return '/*/lk/quit'
+  elseif cmd == 'start' then
+    morph = lk.DavMorph(...)
+    run()
+    return nil
   else
     return cmd
   end

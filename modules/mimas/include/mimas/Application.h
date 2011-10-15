@@ -106,6 +106,7 @@ public:
    */
   void processEvents(int maxtime);
 
+  // Maybe this could be used for automated testing.
   // void postEvent(QObject *receiver, QEvent *event) {
   //   QApplication::postEvent(receiver, event);
   // }
@@ -117,17 +118,6 @@ public:
 
   /** Thread should stop. */
   static void terminate(int sig);
-
-  /** Create a callback to execute events in the GUI thread.
-   */
-  void post(lua_State *L) {
-    // <app> <func>
-    Callback *clbk = new Callback();
-    clbk->luaInit(L, clbk, "mimas.Callback");
-    // <app> <func> <clbk>
-    clbk->setCallbackFromApp(L);
-    postEvent(&lua_events_processor_, new Callback::Event(clbk));
-  }
 
   void quit() {
     QApplication::quit();
@@ -153,23 +143,6 @@ public:
   void singleShot(int msec, QObject *receiver, const char *member) {
     QTimer::singleShot(msec, receiver, member);
   }
-private:
-  class LuaEventsProcessor : public QObject
-  {
-  public:
-    LuaEventsProcessor() {}
-
-    virtual bool event(QEvent *e) {
-      if (e->type() == Callback::EventType) {
-        Callback::Event *ce = static_cast<Callback::Event*>(e);
-        ce->callback_->callback();
-        return true;
-      }
-      return QObject::event(e);
-    }
-  };
-
-  LuaEventsProcessor lua_events_processor_;
 };
 
 } // mimas

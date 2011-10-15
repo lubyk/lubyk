@@ -11,7 +11,7 @@ require 'lubyk'
 local should = test.Suite('editor.SlotView')
 
 local function mockSlot(hue)
-  return {node = {color = mimas.Color(hue, 0.3, 0.8, 0.8)}}
+  return {node = {delegate = {}, color = mimas.Color(hue, 0.3, 0.8, 0.8)}}
 end
 
 -- editor needs a 'main' state with currently selected objects
@@ -38,7 +38,7 @@ function should.drawSlot(t)
   t.win:addWidget(t.link)
   t.link:slotMoved()
   t.win:show()
-  function t.win.mouse(x,y)
+  function t.win:mouse(x,y)
     t.oview:move(x-30, y-30)
     t.link:slotMoved()
   end
@@ -49,9 +49,7 @@ function should.drawSlot(t)
   --  t.oview:move(sz/2 + r * math.cos(1.5*i), sz/2 + r * math.sin(i))
   --  t.link:slotMoved()
   --
-  --  app:post(function()
-  --    t.win:update()
-  --  end)
+  --  t.win:update()
   --end)
   --t.timer:start()
 
@@ -64,4 +62,4 @@ function should.drawSlot(t)
   end)
 end
 
-test.gui()
+test.all()

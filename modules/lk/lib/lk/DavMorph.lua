@@ -26,6 +26,13 @@ function lk.DavMorph(filepath)
 end
 
 --=============================================== PRIVATE
+function private:delete()
+end
+
+function private:quit()
+  self.dav_thread:quit()
+  lk.Morph.quit(self)
+end
 
 --=============================================== Morph
 

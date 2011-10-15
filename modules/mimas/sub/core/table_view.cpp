@@ -34,7 +34,6 @@ namespace mimas {
 
 void TableView::mouseMoveEvent(QMouseEvent *event) {
   lua_State *L = lua_;
-  ScopedLock lock(worker_);
 
   if (!pushLuaCallback("mouse")) return;
   lua_pushnumber(L, event->x());
@@ -55,7 +54,6 @@ void TableView::mouseMoveEvent(QMouseEvent *event) {
 
 bool TableView::click(QMouseEvent *event, int type) {
   lua_State *L = lua_;
-  ScopedLock lock(worker_);
 
   if (pushLuaCallback("select")) {
     // ... <select> <self>
@@ -89,7 +87,6 @@ bool TableView::click(QMouseEvent *event, int type) {
 
 bool TableView::select(QMouseEvent *event, int type) {
   lua_State *L = lua_;
-  // in ScopedLock
   // ... <select> <self>
   if (type != MousePress) {
     lua_pop(L, 2);

@@ -82,7 +82,9 @@ protected:
   }
 };
 
-
+/** FIXME: replace with a non-recursive mutex: we do not need recursion any
+ * more !
+ */
 /** Scoped recursive Mutex Lock for exclusive access to a resource.
  */
 class ScopedLock : private NonCopyable {

@@ -66,7 +66,6 @@ public:
 private slots:
   void triggeredSlot() {
     lua_State *L = lua_;
-    ScopedLock lock(worker_);
 
     if (!pushLuaCallback("trigger")) return;
     // <func> <self>

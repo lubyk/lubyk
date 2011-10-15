@@ -70,7 +70,6 @@ public:
    */
   void acceleration(const char *sensor, float x, float y, float z) {
     lua_State *L = lua_;
-    ScopedLock lock(worker_);
 
     if (!pushLuaCallback("acceleration")) return;
     lua_pushstring(L, sensor);
@@ -89,7 +88,6 @@ public:
    */
   void button(const char *type, bool pressed) {
     lua_State *L = lua_;
-    ScopedLock lock(worker_);
 
     if (!pushLuaCallback("button")) return;
     lua_pushstring(L, type);
@@ -106,7 +104,6 @@ public:
    */
   void disconnected() {
     lua_State *L = lua_;
-    ScopedLock lock(worker_);
 
     if (!pushLuaCallback("disconnected")) return;
     // <func> <self>
@@ -121,7 +118,6 @@ public:
    */
   void connected() {
     lua_State *L = lua_;
-    ScopedLock lock(worker_);
 
     if (!pushLuaCallback("connected")) {
       // default action

@@ -48,7 +48,6 @@ void Widget::paintEvent(QPaintEvent *event) {
 
 void Widget::paint(Painter &p) {
   lua_State *L = lua_;
-  ScopedLock lock(worker_);
 
   if (!pushLuaCallback("paint")) return;
 
@@ -66,7 +65,6 @@ void Widget::paint(Painter &p) {
 
 void Widget::resizeEvent(QResizeEvent *event) {
   lua_State *L = lua_;
-  ScopedLock lock(worker_);
 
   if (!pushLuaCallback("resized")) return;
   lua_pushnumber(L, width());
@@ -81,7 +79,6 @@ void Widget::resizeEvent(QResizeEvent *event) {
 
 void Widget::mouseMoveEvent(QMouseEvent *event) {
   lua_State *L = lua_;
-  ScopedLock lock(worker_);
 
   if (!pushLuaCallback("mouse")) return;
   lua_pushnumber(L, event->x());
@@ -102,7 +99,6 @@ void Widget::mouseMoveEvent(QMouseEvent *event) {
 
 void Widget::click(QMouseEvent *event, int type) {
   lua_State *L = lua_;
-  ScopedLock lock(worker_);
 
   if (!pushLuaCallback("click")) return;
   lua_pushnumber(L, event->x());
@@ -127,7 +123,6 @@ void Widget::click(QMouseEvent *event, int type) {
 void Widget::keyboard(QKeyEvent *event, bool isPressed) {
   lua_State *L = lua_;
   if (!L) return;
-  ScopedLock lock(worker_);
 
   if (!pushLuaCallback("keyboard")) return;
   lua_pushnumber(L, event->key());

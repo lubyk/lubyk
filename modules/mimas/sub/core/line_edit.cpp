@@ -34,7 +34,6 @@ namespace mimas {
 
 bool LineEdit::keyboard(QKeyEvent *event, bool isPressed) {
   lua_State *L = lua_;
-  ScopedLock lock(worker_);
 
   if (!pushLuaCallback("keyboard")) return false;
   lua_pushnumber(L, event->key());
@@ -60,7 +59,6 @@ bool LineEdit::keyboard(QKeyEvent *event, bool isPressed) {
 
 void LineEdit::moveEvent(QMoveEvent * event) {
   lua_State *L = lua_;
-  ScopedLock lock(worker_);
 
   if (!pushLuaCallback("moved")) return;
   lua_pushnumber(L, event->pos().x());
@@ -75,7 +73,6 @@ void LineEdit::moveEvent(QMoveEvent * event) {
 
 void LineEdit::resizeEvent(QResizeEvent *event) {
   lua_State *L = lua_;
-  ScopedLock lock(worker_);
 
   if (!pushLuaCallback("resized")) return;
   lua_pushnumber(L, width());
@@ -90,7 +87,6 @@ void LineEdit::resizeEvent(QResizeEvent *event) {
 
 bool LineEdit::click(QMouseEvent *event, int type) {
   lua_State *L = lua_;
-  ScopedLock lock(worker_);
 
   if (!pushLuaCallback("click")) return false;
   lua_pushnumber(L, event->x());
@@ -119,7 +115,6 @@ bool LineEdit::click(QMouseEvent *event, int type) {
 void LineEdit::editingFinishedSlot() {
   // get data from Lua
   lua_State *L = lua_;
-  ScopedLock lock(worker_);
 
   if (!pushLuaCallback("editingFinished")) return;
   lua_pushstring(L, text());
@@ -135,7 +130,6 @@ void LineEdit::editingFinishedSlot() {
 void LineEdit::textEditedSlot(const QString &text) {
   // get data from Lua
   lua_State *L = lua_;
-  ScopedLock lock(worker_);
 
   if (!pushLuaCallback("textEdited")) return;
   lua_pushstring(L, text.toUtf8().data());

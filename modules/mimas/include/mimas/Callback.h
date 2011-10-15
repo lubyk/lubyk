@@ -81,7 +81,6 @@ public:
 public slots:
   void callback() {
     lua_State *L = lua_;
-    lubyk::ScopedLock lock(worker_);
 
     if (!pushLuaCallback("callback")) return;
     // <func> <self>
@@ -95,7 +94,6 @@ public slots:
 
   void callback(double value) {
     lua_State *L = lua_;
-    lubyk::ScopedLock lock(worker_);
 
     if (!pushLuaCallback("callback")) return;
     lua_pushnumber(L, value);

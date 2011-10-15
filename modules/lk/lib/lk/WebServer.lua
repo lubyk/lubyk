@@ -160,7 +160,7 @@ function lib:listen()
             print(string.format("Could not handle '%s' method with url '%s'.", request.method, request.path))
           end
         end
-        self[client.sock_fd] = nil
+        self.clients[client.sock_fd] = nil
         client:close()
       end)
     end

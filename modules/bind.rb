@@ -40,6 +40,10 @@ Dir[MODULES_PATH + 'mimas/include/mimas/*.h'].each do |p|
 end
 mimas_classes.sort!
 
+
+# 'lubyk' namespace should be parsed first because it is used by others
+Dub::Lua.bind namespace = Dub.parse(XML_DOC_PATH + "namespacelubyk.xml")[:lubyk]
+
 modules = {
   'dummy' => %w{Dummy},
   'lk' => {

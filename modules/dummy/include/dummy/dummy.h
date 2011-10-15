@@ -39,18 +39,15 @@ namespace dummy {
  * @dub lib_name: 'Dummy_core'
  *      filename: 'Dummy_core/Dummy'
  */
-class Dummy : public LuaObject {
+class Dummy : public ThreadedLuaObject {
 public:
   Dummy() {}
 
   /** Used to test if the callback is properly set.
-   * In a normal class, the callback method is called from a C context and should
-   * protect the worker_ with ScopedLock lock(worker_);
    */
   float callback(const char *func, float value) {
     // lua_ = LuaCallback's thread
     lua_State *L = lua_;
-    // ScopedLock lock(worker_); // <--- this is needed in a real callback (not called from Lua).
 
     if (!pushLuaCallback(func)) return 0;
     lua_pushnumber(L, value);

@@ -9,59 +9,54 @@
 require 'lubyk'
 
 local should = test.Suite('midi.In')
+local withUser = should:testWithUser()
 
 function should.auto_load()
   assertTrue(midi.In)
 end
 
-function should.raise_error_on_bad_port()
+function should.raiseErrorOnBadPort()
   assertError("the 'portNumber' argument .88. is invalid", function()
     midi.In(88)
   end)
 end
 
-function should.open_port()
-  local mi = midi.In(0)
+function withUser.should.openPort(t)
+  local mi = midi.In(1)
   assertTrue(mi)
-  print('Found', mi:port_name(), 'please produce midi events...')
-  io.flush()
+  print('Found', mi:portName(), 'please produce midi events...')
   local continue = false
   local i= 0
-  function mi.receive(a, b, c)
-    print(a, b, c)
-    io.flush()
+  function mi.receive(msg)
+    print(yaml.dump(msg))
     i = i + 1
     if i > 4 then
       continue = true
     end
   end
-  local start = worker:now()
-  while not continue and worker:now() < start + 2000 do
-    sleep(10)
-  end
-  assertTrue(continue)
+  t:timeout(function(done)
+    return done or continue
+  end)
+  assertTrue(i > 4)
 end
 
-function should.create_virtual_port()
+function withUsershouldcreateVirtualPort(t)
   local mi = midi.In('foo')
   assertTrue(mi)
-  print('Created virtual port', mi:port_name(), 'please produce midi events...')
-  io.flush()
+  print('Created virtual port', mi:portName(), 'please produce midi events...')
   local continue = false
   local i= 0
   function mi.receive(a, b, c)
     print(a, b, c)
-    io.flush()
     i = i + 1
     if i > 4 then
       continue = true
     end
   end
-  local start = worker:now()
-  while not continue and worker:now() < start + 2000 do
-    sleep(10)
-  end
-  assertTrue(continue)
+  t:timeout(function(done)
+    return done or continue
+  end)
+  assertTrue(i > 4)
 end
 
 test.all()

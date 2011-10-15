@@ -53,7 +53,7 @@ namespace lubyk {
  * @dub string_format:'%%f'
  *      string_args:'(*userdata)->now()'
  */
-class Worker : public RMutex
+class Worker
 {
   class Implementation;
   Implementation *impl_;
@@ -63,22 +63,22 @@ public:
    */
   TimeRef time_ref_;
 
-  /** These sets contain the bitfields set by fdSet methods.
-   */
-  fd_set fd_[3];
-
-  /** These sets contain the bitfields after the select operation.
-   */
-  fd_set res_fd_[3];
-
-  /** Stores the maximum value of all fd sets.
-   */
-  int max_fd_;
+  // /** These sets contain the bitfields set by fdSet methods.
+  //  */
+  // fd_set fd_[3];
+  //
+  // /** These sets contain the bitfields after the select operation.
+  //  */
+  // fd_set res_fd_[3];
+  //
+  // /** Stores the maximum value of all fd sets.
+  //  */
+  // int max_fd_;
 
   /** Context use by zmq::Socket.
    */
   void *zmq_context_;
-   
+
   /** Counts the number of zmq::Socket depending on the
    * socket.
    */
@@ -88,24 +88,6 @@ public:
   Worker();
 
   ~Worker();
-
-  /** Sleep for a given number of ms. Should not be used in nodes (risk of Lua State corruption).
-   */
-  void sleep(double duration) {
-    ScopedUnlock unlock(this);
-    Thread::millisleep(duration);
-  }
-
-  /** Wait (lock sleep) for a given number of ms.
-   */
-  void wait(double duration) {
-    Thread::millisleep(duration);
-  }
-
-  LuaStackSize swap(lua_State *L) throw() {
-    lua_pushthread(L);
-    return 1;
-  }
 
   /** Start a new process with the given Lua script.
    * @return new process id or nil on failure
@@ -119,7 +101,7 @@ public:
     thread->startThread<Worker, &Worker::doExecute>(this, (void*)cmd);
   }
 
-  /** Wait for another process to finish.
+  /** Wait for another process to finish (BLOCKING).
    */
   int waitpid(int pid);
 
@@ -131,16 +113,6 @@ public:
    */
   LuaStackSize execPath(lua_State *L);
 
-  /** Used for testing. */
-  void test_lock() {
-    lock();
-  }
-
-  /** Used for testing. */
-  void test_unlock() {
-    unlock();
-  }
-
   void run();
 
   double now() {
@@ -148,73 +120,73 @@ public:
   }
 
   //=============================================== Scheduler
-
-  void fdReadSet(int fd) {
-    max_fd_ = fd > max_fd_ ? fd : max_fd_;
-    FD_SET(fd, &fd_[0]);
-  }
-
-  bool fdReadIsSet(int fd) {
-    return FD_ISSET(fd, &res_fd_[0]);
-  }
-
-  void fdReadClear(int fd) {
-    FD_CLR(fd, &fd_[0]);
-    if (max_fd_ == fd) {
-      rebuildMaxFd();
-    }
-  }
-
-  void fdWriteSet(int fd) {
-    max_fd_ = fd > max_fd_ ? fd : max_fd_;
-    FD_SET(fd, &fd_[1]);
-  }
-
-  bool fdWriteIsSet(int fd) {
-    return FD_ISSET(fd, &res_fd_[1]);
-  }
-
-  void fdWriteClear(int fd) {
-    FD_CLR(fd, &fd_[1]);
-    if (max_fd_ == fd) {
-      rebuildMaxFd();
-    }
-  }
-
-  void fdErrorSet(int fd) {
-    max_fd_ = fd > max_fd_ ? fd : max_fd_;
-    FD_SET(fd, &fd_[2]);
-  }
-  
-  bool fdErrorIsSet(int fd) {
-    return FD_ISSET(fd, &res_fd_[2]);
-  }
-
-  void fdErrorClear(int fd) {
-    FD_CLR(fd, &fd_[2]);
-    if (max_fd_ == fd) {
-      rebuildMaxFd();
-    }
-  }
-
-  int select(float msec) {
-    memcpy(res_fd_, fd_, sizeof(res_fd_));
-    if (msec >= 0) {
-      struct timeval timeout;
-      timeout.tv_sec  = (int)(msec / 1000);
-      timeout.tv_usec = (msec - 1000 * timeout.tv_sec) * 1000;
-      return ::select(max_fd_ + 1, &res_fd_[0], &res_fd_[1], &res_fd_[2], &timeout);
-    } else {
-      return ::select(max_fd_ + 1, &res_fd_[0], &res_fd_[1], &res_fd_[2], NULL);
-    }
-
-  };
-
-  /** For testing purpose.
-   */
-  int maxFd() {
-    return max_fd_;
-  }
+  // NOT USED (we use zmq scheduler poller)
+  // void fdReadSet(int fd) {
+  //   max_fd_ = fd > max_fd_ ? fd : max_fd_;
+  //   FD_SET(fd, &fd_[0]);
+  // }
+  //
+  // bool fdReadIsSet(int fd) {
+  //   return FD_ISSET(fd, &res_fd_[0]);
+  // }
+  //
+  // void fdReadClear(int fd) {
+  //   FD_CLR(fd, &fd_[0]);
+  //   if (max_fd_ == fd) {
+  //     rebuildMaxFd();
+  //   }
+  // }
+  //
+  // void fdWriteSet(int fd) {
+  //   max_fd_ = fd > max_fd_ ? fd : max_fd_;
+  //   FD_SET(fd, &fd_[1]);
+  // }
+  //
+  // bool fdWriteIsSet(int fd) {
+  //   return FD_ISSET(fd, &res_fd_[1]);
+  // }
+  //
+  // void fdWriteClear(int fd) {
+  //   FD_CLR(fd, &fd_[1]);
+  //   if (max_fd_ == fd) {
+  //     rebuildMaxFd();
+  //   }
+  // }
+  //
+  // void fdErrorSet(int fd) {
+  //   max_fd_ = fd > max_fd_ ? fd : max_fd_;
+  //   FD_SET(fd, &fd_[2]);
+  // }
+  //
+  // bool fdErrorIsSet(int fd) {
+  //   return FD_ISSET(fd, &res_fd_[2]);
+  // }
+  //
+  // void fdErrorClear(int fd) {
+  //   FD_CLR(fd, &fd_[2]);
+  //   if (max_fd_ == fd) {
+  //     rebuildMaxFd();
+  //   }
+  // }
+  //
+  // int select(float msec) {
+  //   memcpy(res_fd_, fd_, sizeof(res_fd_));
+  //   if (msec >= 0) {
+  //     struct timeval timeout;
+  //     timeout.tv_sec  = (int)(msec / 1000);
+  //     timeout.tv_usec = (msec - 1000 * timeout.tv_sec) * 1000;
+  //     return ::select(max_fd_ + 1, &res_fd_[0], &res_fd_[1], &res_fd_[2], &timeout);
+  //   } else {
+  //     return ::select(max_fd_ + 1, &res_fd_[0], &res_fd_[1], &res_fd_[2], NULL);
+  //   }
+  //
+  // };
+  //
+  // /** For testing purpose.
+  //  */
+  // int maxFd() {
+  //   return max_fd_;
+  // }
 
 
   //===============================================
@@ -222,16 +194,16 @@ public:
   static Worker *getWorker(lua_State *L);
 
  private:
-  void rebuildMaxFd() {
-    max_fd_ = 0;
-    for(int i=0; i<3; ++i) {
-      for(int j=max_fd_; j<FD_SETSIZE; ++j) {
-        if (FD_ISSET(j, &fd_[i])) {
-          max_fd_ = j;
-        }
-      }
-    }
-  }
+  // void rebuildMaxFd() {
+  //   max_fd_ = 0;
+  //   for(int i=0; i<3; ++i) {
+  //     for(int j=max_fd_; j<FD_SETSIZE; ++j) {
+  //       if (FD_ISSET(j, &fd_[i])) {
+  //         max_fd_ = j;
+  //       }
+  //     }
+  //   }
+  // }
 
   void doExecute(Thread *runner) {
     std::string cmd_ = (const char*)runner->parameter_;

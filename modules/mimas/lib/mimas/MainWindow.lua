@@ -48,9 +48,7 @@ function mt:close()
   if self:deleted() then
     return false
   else
-    app:post(function()
-      close(self)
-    end)
+    close(self)
     return true
   end
 end

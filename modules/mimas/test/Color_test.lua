@@ -9,8 +9,9 @@
 require 'lubyk'
 
 local should = test.Suite('mimas.Color')
+local withUser = should:testWithUser()
 
-function make_colors()
+function makeColors()
   collectgarbage('collect')
   local colors = {}
   for i = 1,200 do
@@ -25,11 +26,11 @@ end
 function should.create_many_colors_and_gc(t)
   t.win = mimas.Window()
   -- warmup
-  make_colors()
+  makeColors()
 
   collectgarbage('collect')
   local before = collectgarbage('count')
-  make_colors()
+  makeColors()
 
   collectgarbage('collect')
   local after = collectgarbage('count')
@@ -44,17 +45,17 @@ function should.create_many_colors_and_gc(t)
   t.win:close()
 end
 
-function should.create_new_color()
+function should.createNewColor()
   local color = mimas.Color(0.54, 0.11, 0.22, 0.33)
   local other = color:colorWithHue(0.32)
-  assert_in_range(0.31999, 0.32001, other:hue())
-  assert_in_range(0.10999, 0.11001, other:saturation())
-  assert_in_range(0.21999, 0.22001, other:value())
-  assert_in_range(0.32999, 0.33001, other:alpha())
-  assert_not_equal(color, other)
+  assertInRange(0.31999, 0.32001, other:hue())
+  assertInRange(0.10999, 0.11001, other:saturation())
+  assertInRange(0.21999, 0.22001, other:value())
+  assertInRange(0.32999, 0.33001, other:alpha())
+  assertNotEqual(color, other)
 end
 
-local Col = mimas.WidgetClass('test.Col')
+local Col = lk.SubClass(mimas, 'Widget')
 function Col:init(name, color)
   self.name  = name
   self.color = color
@@ -70,8 +71,14 @@ function Col:paint(p, w, h)
   p:drawText(0, 0, w, h, mimas.AlignCenter, self.name)
 end
 
-function should.create_constant_colors(t)
+function Col:click()
+  -- pass click to parent
+  return false
+end
+
+function withUser.should.createConstantColors(t)
   t.win = mimas.Window()
+  t.win:move(10,10)
   t.win:resize(200,340)
   t.lay = mimas.VBoxLayout(t.win)
   t.col = {}
@@ -79,11 +86,14 @@ function should.create_constant_colors(t)
     t.col[k] = Col(k, color)
     t.lay:addWidget(t.col[k])
   end
-  t.timer = lk.Thread(function()
-    sleep(3000)
-    t.win:close()
-  end)
   t.win:show()
-  assertTrue(true)
+  function t.win:click()
+    t.continue = true
+  end
+  t:timeout(function(done)
+    return done or t.continue
+  end)
+  assertTrue(t.continue)
+  t.win:close()
 end
 test.all()

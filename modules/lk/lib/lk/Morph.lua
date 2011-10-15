@@ -244,6 +244,7 @@ function private.process:disconnect(process)
 end
 
 function private.process.changed(self, process, changes)
+  print('Morph: process.changed', process.name, yaml.dump(changes))
   -- write changes to file    
   local cache = process.cache
   for base_k, base_v in pairs(changes) do
@@ -300,15 +301,19 @@ function private.process.changed(self, process, changes)
   end                                         
 end
 
--- This is called when we do an update on the resource.
+-- This is called when we do an update on the resource (file save).
 function private.node.updateCallback(process, node_name, resource)
-  if process.online then
-    process.push:send(lubyk.update_url, {
-      nodes = {
-        [node_name] = { code = resource:body()}
-      }
-    })
-  end
+  -- We launch a new thread to make sure that we do not hang the server
+  -- if this fails.
+  lk.Thread(function()
+    if process.online then
+      process.push:send(lubyk.update_url, {
+        nodes = {
+          [node_name] = { code = resource:body()}
+        }
+      })
+    end
+  end)
 end
 
 function private.process.readFile(self, process)

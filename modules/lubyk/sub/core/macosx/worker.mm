@@ -63,15 +63,13 @@ public:
 };                            
 
 Worker::Worker()
-    : max_fd_(0),
-      zmq_context_(NULL),
-      zmq_context_refcount_(0) {
+    : zmq_context_(NULL)
+    , zmq_context_refcount_(0) {
   //impl_ = new Worker::Implementation;
-  for(int i=0; i<3; ++i) {
-    FD_ZERO(&fd_[i]);
-    FD_ZERO(&res_fd_[i]);
-  }
-  lock();
+  // for(int i=0; i<3; ++i) {
+  //   FD_ZERO(&fd_[i]);
+  //   FD_ZERO(&res_fd_[i]);
+  // }
 }
 
 Worker *Worker::getWorker(lua_State *L) {
@@ -88,12 +86,10 @@ Worker *Worker::getWorker(lua_State *L) {
 
 Worker::~Worker() {
   //delete impl_;
-  unlock();
 }
 
 void Worker::run() {
   printf("Run App\n");
-  ScopedUnlock unlock(this);
   [NSApplication sharedApplication];
   [NSApp run];
 }
@@ -145,9 +141,12 @@ static void startProcess(const char *string) {
   lua_State *L = lua_open();
   luaL_openlibs(L);  /* open libraries */
 
-  int status = luaL_loadstring(L, string);
-  if (lua_pcall(L, 0, 0, 0)) {
-    fprintf(stderr, "Error in 'spawn': %s\n", lua_tostring(L, -1));
+  if (luaL_loadstring(L, string)) {
+    fprintf(stderr, "Compilation error in 'spawn': %s\n", lua_tostring(L, -1));
+  } else {
+    if (lua_pcall(L, 0, 0, 0)) {
+      fprintf(stderr, "Error in 'spawn': %s\n", lua_tostring(L, -1));
+    }
   }
 
   lua_close(L);
@@ -183,13 +182,54 @@ LuaStackSize Worker::spawn(const char *script, lua_State *L)
 }
 
 void Worker::exit(int status) {
-  unlock();
   ::exit(status);
 }
 
+/** FIXME: Replace with selfpipe so that we have a FD and we can treat
+ * waitpid like a non-blocking socket read.
+ * This could also be used to spawn actions through pipes and get result back
+ * without the need for zmq...
+ *
+ * http://stackoverflow.com/questions/282176/waitpid-equivalent-with-timeout
+ *
+int selfpipe[2];
+void selfpipe_sigh(int n)
+{
+    write(selfpipe[1], "",1);
+}
+void selfpipe_setup(void)
+{
+    static struct sigaction act;
+    if (pipe(selfpipe) == -1) { abort(); }
+    fcntl(selfpipe[0],F_SETFL,fctnl(selfpipe[0],F_GETFL)|O_NONBLOCK);
+    fcntl(selfpipe[1],F_SETFL,fctnl(selfpipe[1],F_GETFL)|O_NONBLOCK);
+    memset(&act, 0, sizeof(act));
+    act.sa_handler = selfpipe_sigh;
+    act.sa_flags |= 0;
+    sigaction(SIGCHLD, &act, NULL);
+}
+Then, your waitpid-like function looks like this:
+
+int selfpipe_waitpid(void)
+{
+    static char dummy[4096];
+    fd_set rfds;
+    struct timeval tv;
+    int died = 0, st;
+
+    tv.tv_sec = 5;
+    tv.tv_usec = 0;
+    FD_ZERO(&rfds);
+    FD_SET(selfpipe[0], &rfds);
+    if (select(selfpipe[0]+1, &rfds, NULL, NULL, &tv) > 0) {
+       while (read(selfpipe[0],dummy,sizeof(dummy)) > 0);
+       while (waitpid(-1, &st, WNOHANG) != -1) died++;
+    }
+    return died;
+}
+*/
 int Worker::waitpid(int pid) {
   int child_status;
-  ScopedUnlock unlock(this);
   ::waitpid(pid, &child_status, 0);
   if (WIFEXITED(child_status)) {
     return WEXITSTATUS(child_status);

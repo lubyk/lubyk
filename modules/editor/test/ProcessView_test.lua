@@ -124,12 +124,10 @@ local function mockDelegate(t)
   local delegate = {}
   t.views = {}
   function delegate:addProcess(process)
-    app:post(function()
-      local view = editor.ProcessView(process)
-      view:move(100, 500)
-      view:show()
-      t.views[process.name] = view
-    end)
+    local view = editor.ProcessView(process)
+    view:move(100, 500)
+    view:show()
+    t.views[process.name] = view
   end
 
   function delegate:removeProcess(process)

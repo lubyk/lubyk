@@ -7,7 +7,6 @@ nodes:
     y: 95
     x: 70
     name: play
-    has_all_slots: true
     hue: 0.3
     params:
       channel: 2

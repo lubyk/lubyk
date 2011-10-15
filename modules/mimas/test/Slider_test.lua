@@ -161,11 +161,9 @@ function withUser.should.styleSlider(t)
     --- BUGS ---
     t.i = t.i + 0.05
     local val = 0.5 + 0.5 * math.sin(t.i)
-    app:post(function()
-      -- BUG...
-      t.slider3:setStyle(string.format('color:hsv(%i, 255, 255)', val * 360))
-      t.slider3:setValue(val)
-    end)
+    -- BUG...
+    t.slider3:setStyle(string.format('color:hsv(%i, 255, 255)', val * 360))
+    t.slider3:setValue(val)
   end)
   t.timer:start()
 

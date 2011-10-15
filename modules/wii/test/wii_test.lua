@@ -13,10 +13,8 @@ local should = test.Suite('wii.Browser')
 function should.loadWiiCodeInOtherThread(t)
   t.win = mimas.Window()
   t.win:show()
-  app:post(function()
-    print(wii)
-    assertTrue(wii)
-  end)
+  print(wii)
+  assertTrue(wii)
 end
 
 --[[

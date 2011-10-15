@@ -82,7 +82,6 @@ protected:
 
   virtual int rowCount(const QModelIndex &parent = QModelIndex()) const {
     lua_State *L = lua_;
-    ScopedLock lock(worker_);
 
     if (!pushLuaCallback("rowCount")) {
       return 0;
@@ -102,7 +101,6 @@ protected:
 
   virtual int columnCount(const QModelIndex &parent = QModelIndex()) const {
     lua_State *L = lua_;
-    ScopedLock lock(worker_);
 
     if (!pushLuaCallback("columnCount")) return 0;
     // <func> <self>
@@ -121,7 +119,6 @@ protected:
   virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const {
     if (role != Qt::DisplayRole) return QVariant();
     lua_State *L = lua_;
-    ScopedLock lock(worker_);
 
     if (!pushLuaCallback("data")) return QVariant();
     lua_pushnumber(L, index.row() + 1);
@@ -141,7 +138,6 @@ protected:
   virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const {
     if (role != Qt::DisplayRole) return QVariant();
     lua_State *L = lua_;
-    ScopedLock lock(worker_);
 
     if (!pushLuaCallback("header")) return QVariant();
     lua_pushnumber(L, section + 1);

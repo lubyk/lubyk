@@ -44,6 +44,10 @@ function lib:sleep(delay)
   end
 end
 
+function sleep(delay)
+  sched:sleep(delay)
+end
+
 function lib:quit()
   self.should_run = false
 end
@@ -59,11 +63,11 @@ function lib:wait(delay)
   end
 end
 
-function lib:waitRead(fd)         
+function lib:waitRead(fd)
   coroutine.yield('read', fd)
 end
 
-function lib:waitWrite(fd)         
+function lib:waitWrite(fd)
   coroutine.yield('write', fd)
 end
 
@@ -124,7 +128,7 @@ function lib:loop()
         timeout = next_thread.at - now
       end
     end
-      
+
     if self.fd_count == 0 and timeout == -1 and not self.mimas then
       -- done
       self.should_run = false
@@ -186,7 +190,7 @@ function lib:remove(thread)
   self:removeFd(thread)
   thread.t.t = nil
 end
-  
+
 function lib:removeFd(thread)
   local fd = thread.fd
   if thread.idx then
@@ -216,7 +220,7 @@ function lib:pcall(f, errorHandler)
     end
   end
 end
-  
+
 --=============================================== PRIVATE
 
 local zmq_POLLIN, zmq_POLLOUT = zmq.POLLIN, zmq.POLLOUT
@@ -259,7 +263,7 @@ function private:runThread(thread)
     sched.now = thread.at
   else
     sched.now = worker:now()
-  end                
+  end
   -- FIXME: pcall ?
   thread.at = nil
   local ok, a, b = coroutine.resume(t.co)

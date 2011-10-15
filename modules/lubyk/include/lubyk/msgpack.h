@@ -26,11 +26,14 @@
 
   ==============================================================================
 */
-#ifndef LUBYK_INCLUDE_ZMQ_MSGPACK_H_
-#define LUBYK_INCLUDE_ZMQ_MSGPACK_H_
+#ifndef LUBYK_INCLUDE_LUBYK_MSGPACK_H_
+#define LUBYK_INCLUDE_LUBYK_MSGPACK_H_
 
 #include "lubyk.h"
 
+// This header only declares msgpack_bin_to_lua and msgpack_lua_to_bin with
+// the minimal other information needed to use these.
+// If you need to manually pack/unpack data, please include 'msgpack/msgpack.h'
 // methods defined in msgpack/vendor/lubyk.c
 extern "C" {
   typedef struct msgpack_sbuffer {
@@ -46,4 +49,4 @@ extern "C" {
 }
 
 
-#endif // LUBYK_INCLUDE_ZMQ_MSGPACK_H_
+#endif // LUBYK_INCLUDE_LUBYK_MSGPACK_H_

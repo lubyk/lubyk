@@ -152,26 +152,6 @@ static int QObject_object(lua_State *L) {
 
 
 
-/** void mimas::Application::post(lua_State *L)
- * include/mimas/Application.h:123
- */
-static int Application_post(lua_State *L) {
-  try {
-    Application *self = *((Application**)dubL_checksdata(L, 1, "mimas.Application"));
-    if (!self) throw dub::Exception("Using deleted mimas.Application in post");
-    
-    self->post(L);
-    return 0;
-  } catch (std::exception &e) {
-    lua_pushfstring(L, "post: %s", e.what());
-  } catch (...) {
-    lua_pushfstring(L, "post: Unknown exception");
-  }
-  return lua_error(L);
-}
-
-
-
 /** void mimas::Application::processEvents(int maxtime)
  * include/mimas/Application.h:107
  */
@@ -193,7 +173,7 @@ static int Application_processEvents(lua_State *L) {
 
 
 /** void mimas::Application::quit()
- * include/mimas/Application.h:132
+ * include/mimas/Application.h:122
  */
 static int Application_quit(lua_State *L) {
   try {
@@ -212,7 +192,7 @@ static int Application_quit(lua_State *L) {
 
 
 /** LuaStackSize mimas::Application::screenSize(lua_State *L)
- * include/mimas/Application.h:142
+ * include/mimas/Application.h:132
  */
 static int Application_screenSize(lua_State *L) {
   try {
@@ -252,7 +232,7 @@ static int QObject_setName(lua_State *L) {
 
 
 /** void mimas::Application::setStyleSheet(const char *text)
- * include/mimas/Application.h:136
+ * include/mimas/Application.h:126
  */
 static int Application_setStyleSheet(lua_State *L) {
   try {
@@ -272,7 +252,7 @@ static int Application_setStyleSheet(lua_State *L) {
 
 
 /** void mimas::Application::singleShot(int msec, QObject *receiver, const char *member)
- * include/mimas/Application.h:153
+ * include/mimas/Application.h:143
  */
 static int Application_singleShot(lua_State *L) {
   try {
@@ -294,7 +274,7 @@ static int Application_singleShot(lua_State *L) {
 
 
 /** static void mimas::Application::terminate(int sig)
- * include/mimas/Application.h:119
+ * include/mimas/Application.h:120
  */
 static int Application_terminate(lua_State *L) {
   try {
@@ -320,7 +300,6 @@ static const struct luaL_Reg Application_member_methods[] = {
   {"exec"              , Application_exec},
   {"name"              , QObject_name},
   {"object"            , QObject_object},
-  {"post"              , Application_post},
   {"processEvents"     , Application_processEvents},
   {"quit"              , Application_quit},
   {"screenSize"        , Application_screenSize},

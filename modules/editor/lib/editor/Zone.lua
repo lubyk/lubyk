@@ -159,6 +159,7 @@ end
 
 --=============================================== lk.ProcessWatch delegate
 function lib:processConnected(remote_process)
+  print('processConnected', remote_process.name)
   -- FIXME: remove pending_processes
   local name = remote_process.name
   if name ~= '' then
@@ -176,19 +177,15 @@ function lib:processConnected(remote_process)
 
     --- Update views
     if self.process_list_view then
-      app:post(function()
-        -- Adding widgets must be done in the GUI thread
-        -- FIXME: use updateView()
-        self.process_list_view:addProcess(process)
-        self.main_view:placeElements()
-        self.found_processes[name] = process
-      end)
+      -- Adding widgets must be done in the GUI thread
+      -- FIXME: use updateView()
+      self.process_list_view:addProcess(process)
+      self.main_view:placeElements()
+      self.found_processes[name] = process
     else
       self.found_processes[name] = process
     end
-    app:post(function()
-      self:toggleView(process)
-    end)
+    self:toggleView(process)
   else
     -- found morph server
     -- TODO: create editor.Morph to proxy calls to morph server
@@ -213,21 +210,18 @@ function lib:processDisconnected(process)
       --- Update views
       if process.name then
         -- not morph
-        app:post(function()
-          -- This should run in the GUI thread
-          if self.process_list_view then
-            self.process_list_view:removeProcess(process.name)
-            process:deleteView()
-          end
-          self.main_view:placeElements()
-          self.found_processes[name] = nil
-          -- this could run anywhere but it has to run after the process is removed
-          -- from process_list
-          for _, p in pairs(self.found_processes) do
-            -- transform outgoing links to the dying process to pending links.
-            p:disconnectProcess(process)
-          end
-        end)
+        if self.process_list_view then
+          self.process_list_view:removeProcess(process.name)
+          process:deleteView()
+        end
+        self.main_view:placeElements()
+        self.found_processes[name] = nil
+        -- this could run anywhere but it has to run after the process is removed
+        -- from process_list
+        for _, p in pairs(self.found_processes) do
+          -- transform outgoing links to the dying process to pending links.
+          p:disconnectProcess(process)
+        end
       end
     end
   else

@@ -59,9 +59,7 @@ function should.add_widgets_to_list(t)
 
   t.thread = lk.Thread(function()
     sleep(1000)
-    app:post(function()
-      t.win:resize(300, 300)
-    end)
+    t.win:resize(300, 300)
     for i=1,service_count do
       t.threads[i]:join()
     end

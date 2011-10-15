@@ -40,22 +40,16 @@ function should.drawNodeView(t)
   t.view = editor.NodeView(mockNode())
   local delegate = t.view.node.delegate
   t.view:show()
+  t.view:move(10, 10)
 
-  t.thread = lk.Thread(function()
-    sleep(1000)
-    delegate.dragging.type = 'outlet'
-    app:post(function()
-      t.view:update()
-    end)
-    sleep(1000)
-    delegate.dragging.type = 'inlet'
-    app:post(function()
-      t.view:update()
-    end)
-    sleep(1000)
-    t.view:close()
-    assertTrue(true)
-  end)
+  sleep(1000)
+  delegate.dragging.type = 'outlet'
+  t.view:update()
+  sleep(1000)
+  delegate.dragging.type = 'inlet'
+  t.view:update()
+  sleep(1000)
+  t.view:close()
 end
 
-test.gui()
+test.all()

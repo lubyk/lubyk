@@ -82,9 +82,7 @@ function lib:paint(p, w, h)
 end
 
 function lib:delete()
-  app:post(function()
-    self.super:__gc()
-  end)
+  self.super:__gc()
 end
 
 local MousePress,       MouseRelease,       DoubleClick =

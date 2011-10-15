@@ -35,12 +35,10 @@ end
 -- Cleanup after editing finished.
 function lib:autoFinished()
   if self.list then
-    app:post(function()
-      if self.list then
-        self.list:__gc()
-        self.list = nil
-      end
-    end)
+    if self.list then
+      self.list:__gc()
+      self.list = nil
+    end
   end
 end
 

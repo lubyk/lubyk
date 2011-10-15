@@ -273,7 +273,7 @@ function lib.makeGhost(node_def, delegate)
       edit:autoFinished()
       -- avoid double call ?
       edit.editingFinished = nil
-      app:post(finish_func)
+      finish_func()
     end
   end
   return ghost

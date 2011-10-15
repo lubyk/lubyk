@@ -14,7 +14,7 @@ lib.__index    = lib
 editor.Library = lib
 
 -- Prepare the database for events
-local function prepare_db(self)
+local function prepareDb(self)
   local db = self.db
   -- FIXME: only create tables if db tables do not exist yet
 
@@ -84,7 +84,7 @@ setmetatable(lib, {
     lk.makePath(lk.directory(self.filepath))
     self.db = sqlite3.open(self.filepath)
   end
-  prepare_db(self)
+  prepareDb(self)
   for lib_name, path in pairs(Lubyk.library_sources) do
     self.sources[lib_name] = path
   end

@@ -73,7 +73,6 @@ void MainWindow::paintEvent(QPaintEvent *event) {
 
 void MainWindow::paint(Painter &p) {
   lua_State *L = lua_;
-  ScopedLock lock(worker_);
 
   if (!pushLuaCallback("paint")) return;
 
@@ -91,7 +90,6 @@ void MainWindow::paint(Painter &p) {
 
 void MainWindow::resizeEvent(QResizeEvent *event) {
   lua_State *L = lua_;
-  ScopedLock lock(worker_);
 
   if (!pushLuaCallback("resized")) return;
   lua_pushnumber(L, width());
@@ -106,7 +104,6 @@ void MainWindow::resizeEvent(QResizeEvent *event) {
 
 void MainWindow::mouseMoveEvent(QMouseEvent *event) {
   lua_State *L = lua_;
-  ScopedLock lock(worker_);
 
   if (!pushLuaCallback("mouse")) return;
   lua_pushnumber(L, event->x());
@@ -127,7 +124,6 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event) {
 
 void MainWindow::click(QMouseEvent *event, int type) {
   lua_State *L = lua_;
-  ScopedLock lock(worker_);
 
   if (!pushLuaCallback("click")) return;
   lua_pushnumber(L, event->x());
@@ -152,7 +148,6 @@ void MainWindow::click(QMouseEvent *event, int type) {
 void MainWindow::keyboard(QKeyEvent *event, bool isPressed) {
   lua_State *L = lua_;
   if (!L) return;
-  ScopedLock lock(worker_);
 
   if (!pushLuaCallback("keyboard")) return;
   lua_pushnumber(L, event->key());

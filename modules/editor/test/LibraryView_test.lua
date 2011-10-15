@@ -14,13 +14,13 @@ data:sync()
 
 function should.drawLibraryView(t)
   t.view = editor.LibraryView(data)
+  t.view:move(10,10)
   t.view:show()
-  t.thread = lk.Thread(function()
-    sleep(2000)
-    t.view:close()
-    assertTrue(true)
+  t:timeout(function(done)
+    return done or t.continue
   end)
+  assertTrue(t.continue)
+  t.view:close()
 end
 
-test.gui()
-
+test.all()

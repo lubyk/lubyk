@@ -12,12 +12,11 @@ using namespace midi;
 /* ============================ Constructors     ====================== */
 
 /** midi::In::In()
- * include/midi/In.h:51
+ * include/midi/In.h:56
  */
 static int In_In(lua_State *L) {
   try {
     In * retval__ = new In();
-    // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
     return retval__->luaInit(L, retval__, "midi.In");
   } catch (std::exception &e) {
     lua_pushfstring(L, "In: %s", e.what());
@@ -35,7 +34,9 @@ static int In_destructor(lua_State *L) {
   In **userdata = (In**)dubL_checksdata_n(L, 1, "midi.In");
 
   
-  if (*userdata) delete *userdata;
+  // custom destructor
+  In *self = *userdata;
+  if (self) self->luaDestroy();
   
   *userdata = NULL;
   return 0;
@@ -43,13 +44,25 @@ static int In_destructor(lua_State *L) {
 
 
 
+// test if class is deleted
+static int In_deleted(lua_State *L) {
+  In **userdata = (In**)dubL_checksdata_n(L, 1, "midi.In");
+  lua_pushboolean(L, *userdata == NULL);
+  return 1;
+}
+
 /* ============================ tostring         ====================== */
 
 static int In__tostring(lua_State *L) {
   In **userdata = (In**)dubL_checksdata_n(L, 1, "midi.In");
   
+  if (!*userdata) {
+    lua_pushstring(L, "<midi.In: NULL>");
+    return 1;
+  }
   
-  lua_pushfstring(L, "<midi.In: %p %s (%f)>", *userdata, (*userdata)->port_name(), (*userdata)->port());
+  
+  lua_pushfstring(L, "<midi.In: %p %s (%f)>", *userdata, (*userdata)->portName(), (*userdata)->port());
   
   return 1;
 }
@@ -57,41 +70,63 @@ static int In__tostring(lua_State *L) {
 /* ============================ Member Methods   ====================== */
 
 
-
-/** void midi::In::open_port(int port, lua_State *L)
- * include/midi/In.h:73
+/** int lubyk::FifoMethods::fd()
+ * lubyk/bind/Fifo.h:8
  */
-static int In_open_port1(lua_State *L) {
+static int FifoMethods_fd(lua_State *L) {
   try {
     In *self = *((In**)dubL_checksdata(L, 1, "midi.In"));
+    if (!self) throw dub::Exception("Using deleted midi.In in fd");
+    int  retval__ = self->fd();
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "fd: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "fd: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+
+/** void midi::In::openPort(int port, lua_State *L)
+ * include/midi/In.h:74
+ */
+static int In_openPort1(lua_State *L) {
+  try {
+    In *self = *((In**)dubL_checksdata(L, 1, "midi.In"));
+    if (!self) throw dub::Exception("Using deleted midi.In in openPort");
     int port = dubL_checkint(L, 2);
     
-    self->open_port(port, L);
+    self->openPort(port, L);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "open_port: %s", e.what());
+    lua_pushfstring(L, "openPort: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "open_port: Unknown exception");
+    lua_pushfstring(L, "openPort: Unknown exception");
   }
   return lua_error(L);
 }
 
 
 
-/** void midi::In::open_port(const char *port_name, lua_State *L)
- * include/midi/In.h:91
+/** void midi::In::openPort(const char *port_name, lua_State *L)
+ * include/midi/In.h:92
  */
-static int In_open_port2(lua_State *L) {
+static int In_openPort2(lua_State *L) {
   try {
     In *self = *((In**)dubL_checksdata(L, 1, "midi.In"));
+    if (!self) throw dub::Exception("Using deleted midi.In in openPort");
     const char *port_name = dubL_checkstring(L, 2);
     
-    self->open_port(port_name, L);
+    self->openPort(port_name, L);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "open_port: %s", e.what());
+    lua_pushfstring(L, "openPort: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "open_port: Unknown exception");
+    lua_pushfstring(L, "openPort: Unknown exception");
   }
   return lua_error(L);
 }
@@ -99,26 +134,47 @@ static int In_open_port2(lua_State *L) {
 
 
 
-/** Overloaded function chooser for open_port(...) */
-static int In_open_port(lua_State *L) {
+/** Overloaded function chooser for openPort(...) */
+static int In_openPort(lua_State *L) {
   int type__ = lua_type(L, 2);
   if (type__ == LUA_TSTRING) {
-    return In_open_port2(L);
+    return In_openPort2(L);
   } else if (type__ == LUA_TNUMBER) {
-    return In_open_port1(L);
+    return In_openPort1(L);
   } else {
     // use any to raise errors
-    return In_open_port1(L);
+    return In_openPort1(L);
   }
 }
+
+
+/** LuaStackSize lubyk::FifoMethods::pop(lua_State *L)
+ * lubyk/bind/Fifo.h:9
+ */
+static int FifoMethods_pop(lua_State *L) {
+  try {
+    In *self = *((In**)dubL_checksdata(L, 1, "midi.In"));
+    if (!self) throw dub::Exception("Using deleted midi.In in pop");
+    
+    LuaStackSize  retval__ = self->pop(L);
+    return retval__;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "pop: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "pop: Unknown exception");
+  }
+  return lua_error(L);
+}
+
 
 
 /** int midi::In::port() const 
- * include/midi/In.h:65
+ * include/midi/In.h:66
  */
 static int In_port(lua_State *L) {
   try {
     In *self = *((In**)dubL_checksdata(L, 1, "midi.In"));
+    if (!self) throw dub::Exception("Using deleted midi.In in port");
     int  retval__ = self->port();
     lua_pushnumber(L, retval__);
     return 1;
@@ -132,39 +188,41 @@ static int In_port(lua_State *L) {
 
 
 
-/** const char* midi::In::port_name() const 
- * include/midi/In.h:69
+/** const char* midi::In::portName() const 
+ * include/midi/In.h:70
  */
-static int In_port_name(lua_State *L) {
+static int In_portName(lua_State *L) {
   try {
     In *self = *((In**)dubL_checksdata(L, 1, "midi.In"));
-    const char * retval__ = self->port_name();
+    if (!self) throw dub::Exception("Using deleted midi.In in portName");
+    const char * retval__ = self->portName();
     lua_pushstring(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "port_name: %s", e.what());
+    lua_pushfstring(L, "portName: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "port_name: Unknown exception");
+    lua_pushfstring(L, "portName: Unknown exception");
   }
   return lua_error(L);
 }
 
 
 
-/** void midi::In::virtual_port(const char *port_name, lua_State *L)
- * include/midi/In.h:106
+/** void midi::In::virtualPort(const char *port_name, lua_State *L)
+ * include/midi/In.h:107
  */
-static int In_virtual_port(lua_State *L) {
+static int In_virtualPort(lua_State *L) {
   try {
     In *self = *((In**)dubL_checksdata(L, 1, "midi.In"));
+    if (!self) throw dub::Exception("Using deleted midi.In in virtualPort");
     const char *port_name = dubL_checkstring(L, 2);
     
-    self->virtual_port(port_name, L);
+    self->virtualPort(port_name, L);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "virtual_port: %s", e.what());
+    lua_pushfstring(L, "virtualPort: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "virtual_port: Unknown exception");
+    lua_pushfstring(L, "virtualPort: Unknown exception");
   }
   return lua_error(L);
 }
@@ -176,12 +234,15 @@ static int In_virtual_port(lua_State *L) {
 /* ============================ Lua Registration ====================== */
 
 static const struct luaL_Reg In_member_methods[] = {
-  {"open_port"         , In_open_port},
+  {"fd"                , FifoMethods_fd},
+  {"openPort"          , In_openPort},
+  {"pop"               , FifoMethods_pop},
   {"port"              , In_port},
-  {"port_name"         , In_port_name},
-  {"virtual_port"      , In_virtual_port},
+  {"portName"          , In_portName},
+  {"virtualPort"       , In_virtualPort},
   {"__tostring"        , In__tostring},
   {"__gc"              , In_destructor},
+  {"deleted"           , In_deleted},
   {NULL, NULL},
 };
 

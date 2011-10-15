@@ -44,9 +44,7 @@ end
 function lib:removeProcess(process_name)
   for i, v in ipairs(self.list) do
     if v.name == process_name then
-      app:post(function()
-        v.super:__gc() -- delete
-      end)
+      v.super:__gc() -- delete
       table.remove(self.list, i)
       break
     end

@@ -76,7 +76,6 @@ private slots:
   // connected to the pathChanged signal
 	void pathChangedSlot(const QString &path) {
     lua_State *L = lua_;
-    ScopedLock lock(worker_);
 
     if (!pushLuaCallback("pathChanged")) return;
     lua_pushstring(L, path.toUtf8().data());

@@ -61,7 +61,6 @@ public:
    */
   wii::Remote *found(const char *name) {
     lua_State *L = lua_;
-    ScopedLock lock(worker_);
     if (!pushLuaCallback("found")) {
       printf("Remote found without browser callback.\n");
       return NULL;

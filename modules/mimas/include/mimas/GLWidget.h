@@ -123,7 +123,6 @@ protected:
 
   virtual void initializeGL() {
     lua_State *L = lua_;
-    ScopedLock lock(worker_);
 
     if (!pushLuaCallback("initializeGL")) return;
     // <func> <self>
@@ -136,7 +135,6 @@ protected:
 
   virtual void resizeGL(int width, int height) {
     lua_State *L = lua_;
-    ScopedLock lock(worker_);
 
     if (!pushLuaCallback("resizeGL")) return;
     lua_pushnumber(L, width);
@@ -151,7 +149,6 @@ protected:
 
   virtual void paintGL() {
     lua_State *L = lua_;
-    ScopedLock lock(worker_);
 
     if (!pushLuaCallback("paintGL")) return;
     // <func> <self>
@@ -201,7 +198,6 @@ private:
 
   // void paint(Painter &p) {
   //   lua_State *L = lua_;
-  //   ScopedLock lock(worker_);
 
   //   if (!pushLuaCallback("paint")) return;
 
@@ -218,7 +214,6 @@ private:
   // }
   void keyboard(QKeyEvent *event, bool isPressed) {
     lua_State *L = lua_;
-    ScopedLock lock(worker_);
 
     if (!pushLuaCallback("keyboard")) return;
     lua_pushnumber(L, event->key());
