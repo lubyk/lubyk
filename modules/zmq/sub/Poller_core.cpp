@@ -66,7 +66,7 @@ static int Poller__tostring(lua_State *L) {
 
 
 /** int zmq::Poller::add(int fd, int events)
- * include/zmq/Poller.h:216
+ * include/zmq/Poller.h:215
  */
 static int Poller_add1(lua_State *L) {
   try {
@@ -87,7 +87,7 @@ static int Poller_add1(lua_State *L) {
 
 
 /** int zmq::Poller::add(zmq::Socket *sock, int events)
- * include/zmq/Poller.h:220
+ * include/zmq/Poller.h:219
  */
 static int Poller_add2(lua_State *L) {
   try {
@@ -123,7 +123,7 @@ static int Poller_add(lua_State *L) {
 
 
 /** int zmq::Poller::count()
- * include/zmq/Poller.h:281
+ * include/zmq/Poller.h:266
  */
 static int Poller_count(lua_State *L) {
   try {
@@ -142,7 +142,7 @@ static int Poller_count(lua_State *L) {
 
 
 /** LuaStackSize zmq::Poller::events(lua_State *L)
- * include/zmq/Poller.h:196
+ * include/zmq/Poller.h:197
  */
 static int Poller_events(lua_State *L) {
   try {
@@ -161,7 +161,7 @@ static int Poller_events(lua_State *L) {
 
 
 /** LuaStackSize zmq::Poller::idxToPos(int idx, lua_State *L)
- * include/zmq/Poller.h:288
+ * include/zmq/Poller.h:273
  */
 static int Poller_idxToPos(lua_State *L) {
   try {
@@ -181,7 +181,7 @@ static int Poller_idxToPos(lua_State *L) {
 
 
 /** void zmq::Poller::modify(int idx, int events, lua_State *L)
- * include/zmq/Poller.h:226
+ * include/zmq/Poller.h:225
  */
 static int Poller_modify(lua_State *L) {
   try {
@@ -222,7 +222,7 @@ static int Poller_poll(lua_State *L) {
 
 
 /** LuaStackSize zmq::Poller::posToEvent(int pos, lua_State *L)
- * include/zmq/Poller.h:315
+ * include/zmq/Poller.h:300
  */
 static int Poller_posToEvent(lua_State *L) {
   try {
@@ -242,7 +242,7 @@ static int Poller_posToEvent(lua_State *L) {
 
 
 /** LuaStackSize zmq::Poller::posToFd(int pos, lua_State *L)
- * include/zmq/Poller.h:306
+ * include/zmq/Poller.h:291
  */
 static int Poller_posToFd(lua_State *L) {
   try {
@@ -262,7 +262,7 @@ static int Poller_posToFd(lua_State *L) {
 
 
 /** LuaStackSize zmq::Poller::posToIdx(int pos, lua_State *L)
- * include/zmq/Poller.h:297
+ * include/zmq/Poller.h:282
  */
 static int Poller_posToIdx(lua_State *L) {
   try {
@@ -282,7 +282,7 @@ static int Poller_posToIdx(lua_State *L) {
 
 
 /** void zmq::Poller::remove(int idx)
- * include/zmq/Poller.h:249
+ * include/zmq/Poller.h:247
  */
 static int Poller_remove(lua_State *L) {
   try {

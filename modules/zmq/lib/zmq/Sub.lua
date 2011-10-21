@@ -22,7 +22,6 @@ function zmq.Sub(filter, func)
   local self = zmq.Socket(zmq.SUB, func)
   -- will not start until we sleep or unlock in another way
   -- so it is safe to setsockopt now
-  
   self:setsockopt(zmq.SUBSCRIBE, filter)
   return self
 end

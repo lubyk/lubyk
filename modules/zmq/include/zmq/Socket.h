@@ -57,6 +57,7 @@ class Socket : public LuaObject
   void *socket_;
   std::string location_;
   int type_;
+  int send_flags_;
 
   /** Timer used for timeout in request.
    */
@@ -66,8 +67,10 @@ public:
    * This call happens after full object construction. We need the worker
    * to set the zmq context, so we pass it as argument.
    */
-  Socket(int type, lubyk::Worker *worker) :
-   type_(type) {
+  Socket(int type, lubyk::Worker *worker)
+      : type_(type)
+      , send_flags_(0) 
+  {
 
     if (!worker->zmq_context_) {
       // initialize zmq context
@@ -95,7 +98,6 @@ public:
   }
 
   ~Socket() {
-    printf("zmq::Socket %s (%s) HAS EVENT: %s\n", location(), type(), hasEvent(ZMQ_POLLIN) ? "YES" : "NO");
     zmq_close(socket_);
     if (!--worker_->zmq_context_refcount_) {
       zmq_term(worker_->zmq_context_);
@@ -112,40 +114,63 @@ public:
     return fd;
   }
 
+  void setNonBlocking(bool non_blocking) {
+    if (non_blocking) {
+      send_flags_ |= ZMQ_NOBLOCK;
+    } else {
+      send_flags_ &= ~ZMQ_NOBLOCK;
+    }
+  }
+
   /** Set socket options.
-   * Should NOT be used while in a request() or recv().
    */
   void setsockopt(int type, lua_State *L) {
-    const void *ptr;
-    size_t ptr_len;
-
-    // different types for the option value
-    int i;
+    uint64_t ui;
+    int64_t  li;
+    int      i;
+    size_t   sz;
     const char *str;
 
-    if (lua_isnumber(L, 3)) {
-      i = lua_tonumber(L, 3);
-      ptr = &i;
-      ptr_len = sizeof(i);
-    } else if (lua_isstring(L, 3)) {
-      str = lua_tostring(L, 3);
-      ptr = str;
-      ptr_len = strlen(str);
-    } else {
-      ptr = NULL;
-      ptr_len = 0;
+    // <self> <type> <value>
+    int status;
+    switch(type) {
+      case ZMQ_HWM:    // continue
+      case ZMQ_SNDBUF: // continue
+      case ZMQ_RCVBUF:
+        ui = luaL_checknumber(L, 3);
+        status = zmq_setsockopt(socket_, type, &ui, sizeof(ui));
+        break;
+      case ZMQ_SWAP:  // continue
+      case ZMQ_RATE:  // continue
+      case ZMQ_RECOVERY_IVL: // continue
+      case ZMQ_RECOVERY_IVL_MSEC:
+      case ZMQ_MCAST_LOOP:
+        li = luaL_checknumber(L, 3);
+        status = zmq_setsockopt(socket_, type, &li, sizeof(li));
+        break;
+      case ZMQ_LINGER: // continue
+      case ZMQ_RECONNECT_IVL: // continue
+      case ZMQ_RECONNECT_IVL_MAX:
+        i = luaL_checknumber(L, 3);
+        status = zmq_setsockopt(socket_, type, &i, sizeof(i));
+        break;
+      case ZMQ_SUBSCRIBE: // continue
+      case ZMQ_UNSUBSCRIBE:
+        if (lua_isstring(L, 3)) {
+          str = lua_tolstring(L, 3, &sz);
+        } else {
+          str = NULL;
+          sz  = 0;
+        }
+        status = zmq_setsockopt(socket_, type, str, sz);
+        break;
+      default:
+        throw Exception("Could not set socket option: unknown option %i.", type);
     }
 
-    if (ptr) {
-      if (zmq_setsockopt(socket_, type, ptr, ptr_len)) {
-        if (lua_isstring(L, -1))
-          throw Exception("Could not set socket option %i (value: '%s').", type, str);
-        else
-          throw Exception("Could not set socket option %i (value: '%i').", type, i);
-      }
-    } else {
-      if (zmq_setsockopt(socket_, type, NULL, 0))
-        throw Exception("Could not set socket option %i (no value).", type);
+
+    if (status) {
+      throw Exception("Could not set socket option %i (%s).", type, str, zmq_strerror(errno));
     }
   }
 
@@ -182,8 +207,6 @@ public:
   }
 
   /** Connect to a server.
-   * It is safe to use this while in a request() but NOT while in a
-   * send() or recv().
    */
   void connect(const char *location) {
     if (zmq_connect(socket_, location))
@@ -226,11 +249,10 @@ public:
   }
 
   /** Send a message packed with msgpack.
-   * Should NOT be used while in a request() or recv().
    * Varying parameters.
-   * @return msg data in case sending failed (use rawSend to send again).
+   * @return false in case the send buffer is full.
    */
-  void send(lua_State *L) {
+  bool send(lua_State *L) {
     msgpack_sbuffer *buffer;
 
     msgpack_lua_to_bin(L, &buffer, 1);
@@ -238,26 +260,31 @@ public:
     zmq_msg_t msg;
     zmq_msg_init_data(&msg, buffer->data, buffer->size, free_msgpack_msg, buffer);
 
-    if (zmq_send(socket_, &msg, 0)) {
+    if (zmq_send(socket_, &msg, send_flags_)) {
       zmq_msg_close(&msg);
+      if (errno == EAGAIN) return false;
       throw_send_error(errno);
     }
     zmq_msg_close(&msg);
+    return true;
   }
 
   /** Sends raw bytes without using msgpack.
+   * @return false in case the send buffer is full.
    */
-  void rawSend(lua_State *L) {
+  bool rawSend(lua_State *L) {
     size_t size;
     const char *data = lua_tolstring(L, -1, &size);
     zmq_msg_t msg;
     zmq_msg_init_data(&msg, (void*)data, size, NULL, NULL);
 
-    if (zmq_send(socket_, &msg, 0)) {
+    if (zmq_send(socket_, &msg, send_flags_)) {
       zmq_msg_close(&msg);
+      if (errno == EAGAIN) return false;
       throw_send_error(errno);
     }
     zmq_msg_close(&msg);
+    return true;
   }
 
   /** Request = remote call. Can be used by multiple threads.
@@ -277,8 +304,9 @@ public:
         { socket_,    0, ZMQ_POLLIN, 0 }
     };
 
-    if (zmq_send(socket_, &msg, 0)) {
+    if (zmq_send(socket_, &msg, send_flags_)) {
       zmq_msg_close(&msg);
+      // TODO: EAGAIN
       throw_send_error(errno);
     }
 
@@ -410,7 +438,7 @@ private:
   void throw_send_error(int err) {
     switch(err) {
     case EAGAIN:
-      throw Exception("Non-blocking mode was requested and no messages are available at the moment.");
+      throw Exception("Non-blocking mode was requested and the message cannot be sent at the moment.");
     case ENOTSUP:
       throw Exception("The zmq_send() operation is not supported by this socket type (%s).", type());
     case EFSM:

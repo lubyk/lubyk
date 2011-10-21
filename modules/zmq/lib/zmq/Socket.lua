@@ -19,9 +19,15 @@ lib.type = 'zmq.Socket'
 
 function lib.new(type, func)
   local self = constr(type, worker)
-  local super = self.super
-  local sched = sched
   self.loop = func
+  --- Only keep 500 messages in the send queue per subscriber (this avoids
+  -- memory exhaustion when receiver is slow). By default, sending messages
+  -- blocks (only the sending coroutine) until we can send again.
+  -- HWM = AVAIL MEMORY / SUBSCRIBERS / MSG_SIZE = nb messages per subscriber
+  self:setsockopt(zmq.HWM, 500)
+
+  -- FIXME: ZMQ_NOBLOCK hangs ???
+  self:setNonBlocking(true)
 
   setmetatable(self, lib)
   if self.loop then
@@ -66,20 +72,18 @@ end
 
 function lib:send(...)
   local super = self.super
-  local msg = super:send(...)
-  if msg then
+  if not super:send(...) then
     -- could not send
+    print('COULD NOT SEND')
     sched:waitWrite(super)
-    super:rawSend(msg)
+    -- should be ok now
+    super:send(...)
   end
 end
 
 function lib:request(...)
-  print('REQ SEND', self.super)
   self:send(...)
-  print('REQ SEND OK')
   local data = {self:recv()}
-  print('RECV OK')
   return unpack(data)
 end
 
