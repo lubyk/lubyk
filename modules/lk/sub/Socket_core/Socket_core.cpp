@@ -72,7 +72,7 @@ static int Socket__tostring(lua_State *L) {
 
 
 /** LuaStackSize lk::Socket::accept(lua_State *L)
- * include/lk/Socket.h:148
+ * include/lk/Socket.h:149
  */
 static int Socket_accept(lua_State *L) {
   try {
@@ -184,7 +184,7 @@ static int Socket_connectFinish(lua_State *L) {
 
 
 /** int lk::Socket::fd() const 
- * include/lk/Socket.h:223
+ * include/lk/Socket.h:224
  */
 static int Socket_fd(lua_State *L) {
   try {
@@ -203,14 +203,20 @@ static int Socket_fd(lua_State *L) {
 
 
 
-/** void lk::Socket::listen()
- * include/lk/Socket.h:143
+/** void lk::Socket::listen(int backlog=BACKLOG)
+ * include/lk/Socket.h:144
  */
 static int Socket_listen(lua_State *L) {
   try {
     Socket *self = *((Socket**)dubL_checksdata(L, 1, "lk.Socket"));
     if (!self) throw dub::Exception("Using deleted lk.Socket in listen");
-    self->listen();
+    int top__ = lua_gettop(L);
+    if (top__ < 2) {
+      self->listen();
+    } else {
+      int backlog = dubL_checkint(L, 2);
+      self->listen(backlog);
+    }
     return 0;
   } catch (std::exception &e) {
     lua_pushfstring(L, "listen: %s", e.what());
@@ -223,7 +229,7 @@ static int Socket_listen(lua_State *L) {
 
 
 /** const char* lk::Socket::localHost() const 
- * include/lk/Socket.h:203
+ * include/lk/Socket.h:204
  */
 static int Socket_localHost(lua_State *L) {
   try {
@@ -243,7 +249,7 @@ static int Socket_localHost(lua_State *L) {
 
 
 /** int lk::Socket::localPort() const 
- * include/lk/Socket.h:207
+ * include/lk/Socket.h:208
  */
 static int Socket_localPort(lua_State *L) {
   try {
@@ -263,7 +269,7 @@ static int Socket_localPort(lua_State *L) {
 
 
 /** int lk::Socket::port() const 
- * include/lk/Socket.h:219
+ * include/lk/Socket.h:220
  */
 static int Socket_port(lua_State *L) {
   try {
@@ -283,7 +289,7 @@ static int Socket_port(lua_State *L) {
 
 
 /** LuaStackSize lk::Socket::recv(lua_State *L)
- * include/lk/Socket.h:180
+ * include/lk/Socket.h:181
  */
 static int Socket_recv(lua_State *L) {
   try {
@@ -303,7 +309,7 @@ static int Socket_recv(lua_State *L) {
 
 
 /** const char* lk::Socket::remoteHost() const 
- * include/lk/Socket.h:211
+ * include/lk/Socket.h:212
  */
 static int Socket_remoteHost(lua_State *L) {
   try {
@@ -323,7 +329,7 @@ static int Socket_remoteHost(lua_State *L) {
 
 
 /** int lk::Socket::remotePort() const 
- * include/lk/Socket.h:215
+ * include/lk/Socket.h:216
  */
 static int Socket_remotePort(lua_State *L) {
   try {
@@ -343,7 +349,7 @@ static int Socket_remotePort(lua_State *L) {
 
 
 /** int lk::Socket::send(lua_State *L)
- * include/lk/Socket.h:186
+ * include/lk/Socket.h:187
  */
 static int Socket_send(lua_State *L) {
   try {
@@ -364,7 +370,7 @@ static int Socket_send(lua_State *L) {
 
 
 /** void lk::Socket::setNonBlocking()
- * include/lk/Socket.h:158
+ * include/lk/Socket.h:159
  */
 static int Socket_setNonBlocking(lua_State *L) {
   try {
@@ -383,7 +389,7 @@ static int Socket_setNonBlocking(lua_State *L) {
 
 
 /** void lk::Socket::setRecvTimeout(int timeout)
- * include/lk/Socket.h:150
+ * include/lk/Socket.h:151
  */
 static int Socket_setRecvTimeout(lua_State *L) {
   try {
@@ -403,7 +409,7 @@ static int Socket_setRecvTimeout(lua_State *L) {
 
 
 /** void lk::Socket::setSendTimeout(int timeout)
- * include/lk/Socket.h:154
+ * include/lk/Socket.h:155
  */
 static int Socket_setSendTimeout(lua_State *L) {
   try {

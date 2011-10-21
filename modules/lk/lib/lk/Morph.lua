@@ -386,11 +386,12 @@ end
 -- make it accessible from 'self'.
 function lib.spawn(self, name)
   -- spawn Process
-  worker:spawn([[
+  local pid = worker:spawn([[
   require 'lubyk'
   process = lk.Process(%s)
   run()
   ]], name)
+  print(pid, name)
   -- the process will find the morph's ip/port by it's own service discovery
 end
 

@@ -35,11 +35,12 @@ function lib:bind(host, port)
 end
 
 function lib:connect(...)
-  local ok = self.super:connect(...)
-  self.sock_fd = self.super:fd()
+  local super = self.super
+  local ok = super:connect(...)
+  self.sock_fd = super:fd()
   if not ok then
     sched:waitWrite(self.sock_fd)
-    self.super:connectFinish()
+    super:connectFinish()
   end
 end
 

@@ -118,7 +118,6 @@ public:
 
   void close() {
     if (socket_fd_ != -1) {
-      printf("close(%i)\n", socket_fd_);
       ::close(socket_fd_);
       socket_fd_ = -1;
     }
@@ -139,8 +138,9 @@ public:
   void connectFinish();
 
   /** Start listening for incoming connections.
+   * @param backlog number of accepted connections in queue before refusing.
    */
-  void listen();
+  void listen(int backlog = BACKLOG);
 
   /** Accept a new incomming connection.
    * @return a new lk.Socket connected to the remote end.

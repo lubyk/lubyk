@@ -21,7 +21,8 @@ nodes:
     hue: 0
     links:
       count:
-        /b/play/in/trigger: true
+        /c/v/in/value: true
+        /b/div/in/input: true
 h: 150
 w: 150
 hue: 0

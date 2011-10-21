@@ -1,16 +1,23 @@
 ---
-y: 200
-x: 110
+y: 203
+x: 114
 name: b
 nodes:
   play:
-    y: 95
-    x: 70
+    y: 99
+    x: 28
     name: play
-    has_all_slots: true
     hue: 0.3
     params:
       channel: 2
+  div:
+    y: 41
+    x: 59
+    name: div
+    hue: 0.3
+    links:
+      output:
+        play/in/trigger: true
 h: 150
 w: 150
 hue: 0.3

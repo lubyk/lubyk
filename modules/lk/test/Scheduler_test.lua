@@ -25,7 +25,7 @@ function should.autoload()
   assertType('table', lk.Scheduler)
 end
 
-function should_createThread(t)
+function should.createThread(t)
   local sched = lk.Scheduler()
   lk.Thread.setScheduler(sched)
   local function foo() 
@@ -38,7 +38,7 @@ function should_createThread(t)
   assertTrue(t.continue)
 end
 
-function should_run(t)
+function should.run(t)
   local sched = lk.Scheduler()
   lk.Thread.setScheduler(sched)
   local x = lk.Thread(function()
@@ -48,7 +48,7 @@ function should_run(t)
   assertTrue(t.continue)
 end
 
-function should_runWithSocket(t)
+function should.runWithSocket(t)
   local sched = lk.Scheduler()
   lk.Thread.setScheduler(sched)
   local port
@@ -83,7 +83,7 @@ function should_runWithSocket(t)
   assertTrue(t.continue)
 end
 
-function should_runWithZmqSocket(t)
+function should.runWithZmqSocket(t)
   -- This test also ensures that created threads are run in creation order
   -- (server first, then client).
   local sched = lk.Scheduler()
@@ -108,7 +108,7 @@ function should_runWithZmqSocket(t)
 end
 
 
-function should_runWithManyZmqSockets(t)
+function should.runWithManyZmqSockets(t)
   -- Ensure that many REQ or REP messages are read during a single select loop.
   -- simple echo server
   local srv = zmq.SimpleRep(function(...)
@@ -161,7 +161,6 @@ function should.runWithManySockets(t)
   --win = mimas.Window()
   -- Ensure that many REQ or REP messages are read during a single select loop.
   -- simple echo server
-  local states = {}
   --
   local port
   local srv = lk.Socket()
@@ -170,10 +169,11 @@ function should.runWithManySockets(t)
   srv.thread = lk.Thread(function()
     while srv:shouldRun() do
       srv:accept(function(cli)
-        print(string.format("%i accepted", cli:fd()))
+        --print(string.format("%i accepted", cli:fd()))
         local data = cli:recvLine()
-        print(string.format("%i SEND %s", cli:fd(), data))
+        --print(string.format("%i SEND %s", cli:fd(), data))
         cli:send(data .. ' OK\n')
+        sleep(100) -- Or sent data is not received. FIXME !!
         cli:close()
       end)
     end
@@ -188,35 +188,27 @@ function should.runWithManySockets(t)
     req:connect('127.0.0.1', port)
     --print('[2]', i)
     req:send(string.format('Hello %i\n', i))
-    states[i] = '[3] data sent'
     cli[i] = {
       thread = lk.Thread(function()
         -- inserts req in select with waitRead
-        states[i] = '[4] thread started'
         local msg = req:recv('*l')
-        states[i] = '[5] received'
         assertEqual(string.format('Hello %i OK', i), msg)
         cli[i] = 'DONE'
-        states[i] = '[6] done'
-        --collectgarbage('collect')
+        collectgarbage('collect')
       end)
     }
   end
-  -- We yield so that all the req threads get started
-  sleep(1000)
-
 
   local all_ok
   t:timeout(function(done)
     all_ok = true
-    print("\n\n")
     for i=1,NB do
       if cli[i] ~= 'DONE' then
         all_ok = false
+        return done
       end
-      print(string.format('%2i %s', i, states[i]))
     end
-    return all_ok or done
+    return true
   end)
   assertTrue(all_ok)
 end

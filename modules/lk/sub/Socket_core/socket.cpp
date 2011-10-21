@@ -167,11 +167,11 @@ void lk::Socket::connectFinish() {
 
 /** Start listening for incoming connections.
  */
-void lk::Socket::listen() {
+void lk::Socket::listen(int backlog) {
   if (local_port_ == -1)
     throw Exception("Listen called before bind.");
 
-  if (::listen(socket_fd_, BACKLOG)) {
+  if (::listen(socket_fd_, backlog)) {
     throw Exception("Could not listen (%s).", strerror(errno));
   }
 }

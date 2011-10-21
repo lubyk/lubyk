@@ -123,12 +123,12 @@ function lib:loop()
 
     -- the running thread might have added new elements
     next_thread = self.at_next
+    now = worker:now()
 
     if next_thread then
-      if next_thread.at < worker:now() then
+      if next_thread.at < now then
         timeout = 0
       else
-        -- timeout
         timeout = next_thread.at - now
       end
     end
@@ -265,7 +265,12 @@ function private:runThread(thread)
     return
   end
   if thread.at and thread.at > 0 then
+    -- logical time
     sched.now = thread.at
+    if worker:now() > thread.at + 2 then
+      -- 2 == jitter between realtime and logical time.
+      print("OUT OF REAL TIME", worker:now() - thread.at)
+    end
   else
     sched.now = worker:now()
   end

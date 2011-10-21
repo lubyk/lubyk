@@ -12,17 +12,15 @@ outlet('bang', 'Sends a bang on every beat [true].')
 -- Public values
 tempo = tempo or 120
 
+timer = nil
 -- Private
 if not timer then
-  if tempo > 0 then
-    timer = lk.Timer(60000 / tempo)
-    timer:start()
-  else
-    timer = lk.Timer(0)
-  end
+  timer = lk.Thread(function()
+    while timer:shouldRun() do
+      timer:run()
+    end
+  end)
 end
-timer:setInterval(50)
-timer:start()
 
 -- Accessor
 function inlet.tempo(va)
@@ -35,6 +33,8 @@ function inlet.tempo(va)
   end
 end
 
-function timer.tick()
+function timer:run()
+  sleep(10)
+  --sleep(0.01)
   bang(true)
 end

@@ -59,12 +59,12 @@ public:
     QObject::connect(this, SIGNAL(activated(int)),
                      this, SLOT(activatedSlot(int)));
 
-    printf("[%p] SocketNotifier\n", this);
+    //printf("[%p] SocketNotifier\n", this);
     MIMAS_DEBUG_CC
   }
 
   virtual ~SocketNotifier() {
-    printf("[%p] ~SocketNotifier\n", this);
+    //printf("[%p] ~SocketNotifier\n", this);
     MIMAS_DEBUG_GC
   }
 
@@ -81,7 +81,7 @@ public:
 
 private slots:
   void activatedSlot(int socket) {
-    printf("[%p] activatedSlot %i (%s)\n", this, socket, isEnabled() ? "ON" : "OFF");
+    //printf("[%p] activatedSlot %i (%s)\n", this, socket, isEnabled() ? "ON" : "OFF");
     // Callback
     // FIXME: ThreadedLuaObject stores L as lua_ (no need for a new thread)
     lua_State *L = lua_;
