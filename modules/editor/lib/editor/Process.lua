@@ -69,7 +69,9 @@ end
 
 -- Synchronize with remote process.
 function lib:sync()
+  print('SYNC', self.name)
   local definition = self.req:request(lubyk.dump_url)
+  print('GET DONE SYNC', self.name)
   self:set(definition)
 end
 

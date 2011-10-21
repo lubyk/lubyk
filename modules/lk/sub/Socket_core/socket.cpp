@@ -63,6 +63,7 @@ int lk::Socket::bind(const char *localhost, int port) {
 
   if (socket_fd_ != -1) {
     ::close(socket_fd_);
+    socket_fd_ = -1;
   }
 
   // we use getaddrinfo to stay IPv4/IPv6 agnostic
@@ -71,6 +72,7 @@ int lk::Socket::bind(const char *localhost, int port) {
   if (socket_fd_ == -1) {
     throw Exception("Could not create socket for %s:%i (%s).", local_host_.c_str(), port, strerror(errno));
   }
+  if (non_blocking_) setNonBlocking();
 
   // bind to port
   if (::bind(socket_fd_, res->ai_addr, res->ai_addrlen)) {
@@ -88,7 +90,7 @@ int lk::Socket::bind(const char *localhost, int port) {
   return local_port_;
 }
 
-void lk::Socket::connect(const char *host, int port) {
+bool lk::Socket::connect(const char *host, int port) {
   char port_str[10];
   snprintf(port_str, 10, "%i", port);
   struct addrinfo hints, *res;
@@ -108,6 +110,7 @@ void lk::Socket::connect(const char *host, int port) {
   if (socket_fd_ != -1) {
     // printf("close(%i)\n", socket_fd_);
     ::close(socket_fd_);
+    socket_fd_ = -1;
   }
 
   // we use getaddrinfo to stay IPv4/IPv6 agnostic
@@ -116,9 +119,13 @@ void lk::Socket::connect(const char *host, int port) {
   if (socket_fd_ == -1) {
     throw Exception("Could not create socket for %s:%i (%s).", host, port, strerror(errno));
   }
+  if (non_blocking_) setNonBlocking();
 
   // connect
   if (::connect(socket_fd_, res->ai_addr, res->ai_addrlen)) {
+    if (errno == EINPROGRESS) {
+      return false; // wait for 'write' and try again later
+    }
     throw Exception("Could not connect socket to %s:%i (%s).", host, port, strerror(errno));
   }
 
@@ -134,6 +141,28 @@ void lk::Socket::connect(const char *host, int port) {
 
   remote_host_ = host;
   remote_port_ = port;
+  return true;
+}
+
+void lk::Socket::connectFinish() {
+  if (socket_fd_ == -1) {
+    throw Exception("Should only be called after 'connect' (no socket).");
+  }
+  // After select(2) indicates writability, use getsockopt(2) to read the 
+  // SO_ERROR option at level SOL_SOCKET to determine whether connect() 
+  // completed successfully (SO_ERROR is zero) or unsuccessfully 
+  // (SO_ERROR is one of the usual error codes listed here, 
+  // explaining the reason for the failure).
+
+  int err;
+  socklen_t len = sizeof(err);
+  if (getsockopt(socket_fd_, SOL_SOCKET, SO_ERROR, &err, &len)) {
+    throw Exception("Could not finalize connection (%s).", strerror(errno));
+  }
+
+  if (err) {
+    throw Exception("Could not finalize connection (%s).", strerror(err));
+  }
 }
 
 /** Start listening for incoming connections.
@@ -463,7 +492,7 @@ int lk::Socket::recvAll(lua_State *L) {
     if (buffer_length_ == 0) {
       // connection closed
       // done
-      break;
+      return 0;
     } else if (buffer_length_ < 0) {
       buffer_length_ = 0;
       if (errno == EAGAIN) {

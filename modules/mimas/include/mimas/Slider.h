@@ -71,6 +71,7 @@ public:
     QObject::connect(
       this,  SIGNAL(sliderChanged(double)),
       this,  SLOT(sliderChangedSlot(double)));
+    MIMAS_DEBUG_CC
   }
 
   virtual ~Slider() {

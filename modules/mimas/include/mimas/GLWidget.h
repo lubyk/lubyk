@@ -89,7 +89,8 @@ public:
     setAttribute(Qt::WA_DeleteOnClose);
     // get focus on tab and click
     setFocusPolicy(Qt::StrongFocus);
-  }
+    MIMAS_DEBUG_CC
+  }   
 
   ~GLWidget() {
     MIMAS_DEBUG_GC

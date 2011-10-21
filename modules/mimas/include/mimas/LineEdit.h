@@ -60,6 +60,7 @@ public:
 
     QObject::connect(this, SIGNAL(textEdited(QString)),
                      this, SLOT(textEditedSlot(QString)));
+    MIMAS_DEBUG_CC
   }
 
   ~LineEdit() {

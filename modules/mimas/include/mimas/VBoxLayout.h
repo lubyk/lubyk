@@ -50,7 +50,9 @@ class VBoxLayout : public QVBoxLayout, public DeletableOutOfLua
 
 public:
   VBoxLayout(QWidget *parent = NULL)
-   : QVBoxLayout(parent) {}
+   : QVBoxLayout(parent) {
+    MIMAS_DEBUG_CC
+  }
 
   ~VBoxLayout() {
     MIMAS_DEBUG_GC

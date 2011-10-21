@@ -17,7 +17,9 @@ local private = {}
 setmetatable(lib, {
   -- Create a new mimas.Poller. This is used by mimas.Application.
   __call = function(lib)
-    local self = {}
+    local self = {
+      notifiers = {}
+    }
     self.timeout_callback = mimas.Callback(function()
       private.resume(self)
     end)
@@ -40,11 +42,20 @@ local zmq_to_mimas_ev = {
 }
 
 function private.makeNotifier(self, fd, event)
-  local notifier = mimas.SocketNotifier(fd, zmq_to_mimas_ev[event])
-  notifier.fd    = fd
-  notifier.event = event
-  notifier.poller = self
-  notifier.callback = private.socketCallback
+  local list = self.notifiers[event]
+  if not list then
+    list = {}
+    self.notifiers[event] = list
+  end
+  local notifier = list[fd]
+  if not notifier then
+    notifier = mimas.SocketNotifier(fd, zmq_to_mimas_ev[event])
+    list[fd] = notifier
+    notifier.fd    = fd
+    notifier.event = event
+    notifier.poller = self
+    notifier.callback = private.socketCallback
+  end
   return notifier
 end
 
@@ -67,12 +78,16 @@ end
 
 function private:resume()
   local co = self.co
+  if not co then
+    return
+  end
   local ok, timeout = coroutine.resume(co, true)
   if not ok then
     -- error
-    print('ERROR', timeout, debug.traceback(co))
+    print('ERROR', timeout, debug.traceback(t.co))
     app:quit()
   elseif coroutine.status(co) == 'dead' then
+    self.co = nil
     app:quit()
   elseif timeout >= 0 then
     app:singleShot(timeout, self.timeout_callback)
@@ -130,12 +145,12 @@ function lib:poll(timeout)
   return coroutine.yield(timeout) 
 end
 
---- Return next event signaled in poll.
-function lib:event()
+--- Return list of events signaled in poll.
+function lib:events()
   if self.idx then
     local event = self.idx
     self.idx = nil
-    return event
+    return {event}
   end
   return nil
 end

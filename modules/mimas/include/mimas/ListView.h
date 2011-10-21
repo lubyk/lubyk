@@ -66,6 +66,7 @@ class ListView : public QListView, public ThreadedLuaObject {
 
     // FIXME: find another way to remove the dotted lines around text after click.
     clearFocus();
+    MIMAS_DEBUG_CC
   }
 
   ~ListView() {

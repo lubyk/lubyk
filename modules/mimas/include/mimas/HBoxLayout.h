@@ -51,6 +51,7 @@ class HBoxLayout : public QHBoxLayout, public DeletableOutOfLua
 public:
   HBoxLayout(QWidget *parent = NULL)
       : QHBoxLayout(parent) {
+    MIMAS_DEBUG_CC
   }
 
   ~HBoxLayout() {

@@ -159,7 +159,6 @@ end
 
 --=============================================== lk.ProcessWatch delegate
 function lib:processConnected(remote_process)
-  print('processConnected', remote_process.name)
   -- FIXME: remove pending_processes
   local name = remote_process.name
   if name ~= '' then
@@ -177,7 +176,6 @@ function lib:processConnected(remote_process)
 
     --- Update views
     if self.process_list_view then
-      -- Adding widgets must be done in the GUI thread
       -- FIXME: use updateView()
       self.process_list_view:addProcess(process)
       self.main_view:placeElements()

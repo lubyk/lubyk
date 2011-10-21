@@ -77,10 +77,6 @@ class Poller {
    */
   int event_count_;
 
-  /** Position of next event.
-   */
-  int event_pos_;
-
   /** Time reference for precise timing.
    */
   TimeRef time_;
@@ -99,24 +95,29 @@ public:
         pos_to_idx_(NULL),
         used_count_(0),
         event_count_(0),
-        event_pos_(0),
         interrupted_(false) {
     if (reserve < 0) reserve = 10;
     pollitems_ = (zmq_pollitem_t*)calloc(reserve, sizeof(zmq_pollitem_t));
     if (pollitems_ == NULL) {
       throw Exception("Could not pre-allocate %i pollitems", reserve);
     }
+
     idx_to_pos_ = (int*)calloc(reserve, sizeof(int));
     if (idx_to_pos_ == NULL) {
       free(pollitems_);
       throw Exception("Could not pre-allocate %i pollitems", reserve);
     }
+
     pos_to_idx_ = (int*)calloc(reserve, sizeof(int));
     if (pos_to_idx_ == NULL) {
       free(pollitems_);
+      free(idx_to_pos_);
       throw Exception("Could not pre-allocate %i pollitems", reserve);
     }
     pollitems_size_ = reserve;
+
+    memset(idx_to_pos_, -1, reserve * sizeof(int));
+    memset(pos_to_idx_, -1, reserve * sizeof(int));
 
     setupInterruptHook();
   }
@@ -135,8 +136,8 @@ public:
    * @param timeout in milliseconds.
    */
   bool poll(float timeout) {
-    event_pos_ = 0;
-    interrupted_ = false;
+    // interruption can occur between poll operations
+    if (interrupted_) return false;
     // printf("============================= %f\n", timeout);
     // for(int i=0; i<used_count_; ++i) {
     //   zmq_pollitem_t *item = pollitems_ + i;
@@ -191,21 +192,24 @@ public:
     return true;
   }
 
-  /** Return the next event's idx or nil.
+  /** Return a table with all event idx or nil.
    */
-  LuaStackSize event(lua_State *L) {
-    zmq_pollitem_t *item;
-    while (event_pos_ < used_count_ && event_count_) {
-      item = pollitems_ + event_pos_;
+  LuaStackSize events(lua_State *L) {
+    if (!event_count_) return 0;
+    lua_newtable(L);
+    // <table>
+    int pos = 0;
+    for(int i=0; i < used_count_; ++i) {
+      zmq_pollitem_t *item = pollitems_ + i;
       if (item->revents) {
-        lua_pushnumber(L, pos_to_idx_[event_pos_]);
-        --event_count_;
-        ++event_pos_;
-        return 1;
+        lua_pushnumber(L, pos_to_idx_[i]);
+        // <table> <idx>
+        lua_rawseti(L, -2, ++pos);
       }
-      ++event_pos_;
+      if (pos == event_count_) break;
     }
-    return 0;
+    event_count_ = 0;
+    return 1;
   }
 
   int add(int fd, int events) {
@@ -220,7 +224,7 @@ public:
    */
   void modify(int idx, int events, lua_State *L) {
     assert(events);
-    assert(idx < pollitems_size_);
+    assert(idx < pollitems_size_ && idx >= 0);
     zmq_pollitem_t *item = pollitems_ + idx_to_pos_[idx];
     item->events = events;
     int top = lua_gettop(L);
@@ -241,9 +245,10 @@ public:
   /** Remove an item by its id.
    */
   void remove(int idx) {
-    assert(idx < pollitems_size_);
+    assert(idx < pollitems_size_ && idx >= 0);
     int last_pos = used_count_ - 1;
     int pos = idx_to_pos_[idx];
+    idx_to_pos_[idx] = -1; // now free
     --used_count_;
     if (pos == last_pos) {
       // we removed the last element, we are done.
@@ -251,14 +256,53 @@ public:
     }
     // move last item in the position where idx was
     int last_idx = pos_to_idx_[last_pos];
+    pos_to_idx_[last_pos] = -1;
     idx_to_pos_[last_idx] = pos;
     pos_to_idx_[pos] = last_idx;
-    pollitems_[pos] = pollitems_[last_pos];
+    // pollitems_[pos] <== pollitems_[last_pos];
+    memcpy(pollitems_ + pos, pollitems_ + last_pos, sizeof(zmq_pollitem_t));
   }
 
   int count() {
     return used_count_;
   }
+
+  /** Used for testing only.
+   * @return pos or nil
+   */
+  LuaStackSize idxToPos(int idx, lua_State *L) {
+    if (idx >= pollitems_size_ || idx < 0) return 0;
+    lua_pushnumber(L, idx_to_pos_[idx]);
+    return 1;
+  }
+
+  /** Used for testing only.
+   * @return pos or nil
+   */
+  LuaStackSize posToIdx(int pos, lua_State *L) {
+    if (pos >= pollitems_size_ || pos < 0) return 0;
+    lua_pushnumber(L, pos_to_idx_[pos]);
+    return 1;
+  }
+
+  /** Used for testing only.
+   * @return fd or nil
+   */
+  LuaStackSize posToFd(int pos, lua_State *L) {
+    if (pos >= used_count_ || pos < 0) return 0;
+    lua_pushnumber(L, pollitems_[pos].fd);
+    return 1;
+  }
+  
+  /** Used for testing only.
+   * @return fd or nil
+   */
+  LuaStackSize posToEvent(int pos, lua_State *L) {
+    if (pos >= used_count_ || pos < 0) return 0;
+    lua_pushnumber(L, pollitems_[pos].events);
+    return 1;
+  }
+
 
   static pthread_key_t sThisKey;
 private:
@@ -283,9 +327,9 @@ private:
       }
       pollitems_ = ptr;
       // clear new space (same size as pollitems_size_ because we double).
-      memset(idx_to_pos_+ used_count_, 0, pollitems_size_ * sizeof(int));
-      memset(pos_to_idx_+ used_count_, 0, pollitems_size_ * sizeof(int));
-      memset(pollitems_ + used_count_, 0, pollitems_size_ * sizeof(zmq_pollitem_t));
+      memset(idx_to_pos_+ used_count_, -1, pollitems_size_ * sizeof(int));
+      memset(pos_to_idx_+ used_count_, -1, pollitems_size_ * sizeof(int));
+      memset(pollitems_ + used_count_,  0, pollitems_size_ * sizeof(zmq_pollitem_t));
       pollitems_size_ = 2 * pollitems_size_;
     }
     int pos = used_count_;
@@ -295,9 +339,15 @@ private:
     item->socket = socket;
     item->events = events;
     // Hasn't been moved yet: idx == position
-    idx_to_pos_[pos] = pos;
-    pos_to_idx_[pos] = pos;
-    return pos;
+    // find a free idx
+    int idx;
+    for(idx = 0; idx < pollitems_size_; ++idx) {
+      if (idx_to_pos_[idx] < 0) break;
+    }
+    idx_to_pos_[idx] = pos;
+    pos_to_idx_[pos] = idx;
+
+    return idx;
   }
 
   static void sInterrupted(int i) {

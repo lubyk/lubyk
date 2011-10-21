@@ -17,8 +17,8 @@ function should.garbageCollectService()
     deleted = true
   end)
   service = nil
-  collectgarbage()
-  collectgarbage()
+  collectgarbage('collect')
+  collectgarbage('collect')
   assertTrue(deleted)
 end
 

@@ -48,7 +48,9 @@ class MenuBar : public QMenuBar, public ThreadedLuaObject {
   Q_OBJECT
 public:
   MenuBar(QWidget *parent = 0)
-      : QMenuBar(parent) {}
+      : QMenuBar(parent) {
+    MIMAS_DEBUG_CC
+  }
 
   ~MenuBar() {
     MIMAS_DEBUG_GC

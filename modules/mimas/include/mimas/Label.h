@@ -47,11 +47,15 @@ class Label : public QLabel, public LuaObject
 public:
   Label(const char *title = NULL)
    : QLabel(title),
-     hue_(-1) {}
+     hue_(-1) {
+    MIMAS_DEBUG_CC
+  }
 
   Label(const char *title, QWidget *parent)
    : QLabel(title, parent),
-     hue_(-1) {}
+     hue_(-1) {
+    MIMAS_DEBUG_CC
+  }
 
   ~Label() {
     MIMAS_DEBUG_GC

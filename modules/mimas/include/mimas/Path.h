@@ -48,10 +48,12 @@ public:
 
   Path(const QPainterPath &path)
    : QPainterPath(path),
-     stroker_(NULL) {}
+     stroker_(NULL) {
+    MIMAS_DEBUG_GX("Path")
+  }
 
   ~Path() {
-    MIMAS_DEBUG_GC
+    MIMAS_DEBUG_GX("~Path")
     if (stroker_) {
       delete stroker_;
     }

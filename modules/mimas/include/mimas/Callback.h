@@ -56,7 +56,9 @@ public:
   // Our own custom event id
   static const QEvent::Type EventType;
 
-  Callback() : self_in_app_(-1) {}
+  Callback() : self_in_app_(-1) {
+    MIMAS_DEBUG_CC
+  }
 
   virtual ~Callback() {
     MIMAS_DEBUG_GC

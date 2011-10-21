@@ -21,6 +21,8 @@ if not timer then
     timer = lk.Timer(0)
   end
 end
+timer:setInterval(50)
+timer:start()
 
 -- Accessor
 function inlet.tempo(va)

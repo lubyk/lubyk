@@ -43,16 +43,22 @@ namespace mimas {
 class Pen : public QPen
 {
 public:
-  Pen() : QPen(Qt::NoPen) {}
+  Pen() : QPen(Qt::NoPen) {
+    MIMAS_DEBUG_GX("Pen")
+  }
 
   Pen(float width, const Color &color, int style = Qt::SolidLine, int cap = Qt::SquareCap, int join = Qt::MiterJoin)
-   : QPen(QBrush(color, Qt::SolidPattern), width, (Qt::PenStyle)style, (Qt::PenCapStyle)cap, (Qt::PenJoinStyle)join) {}
+   : QPen(QBrush(color, Qt::SolidPattern), width, (Qt::PenStyle)style, (Qt::PenCapStyle)cap, (Qt::PenJoinStyle)join) {
+    MIMAS_DEBUG_GX("Pen")
+   }
 
  Pen(float width, float h, float s=1.0, float v=1.0, float a=1.0)
-  : QPen(Color(h, s, v, a), width, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin) {}
+  : QPen(Color(h, s, v, a), width, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin) {
+    MIMAS_DEBUG_GX("Pen")
+  }
 
   ~Pen() {
-    MIMAS_DEBUG_GC
+    MIMAS_DEBUG_GX("~Pen")
   }
 
   void setWidth(float w) {

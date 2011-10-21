@@ -12,7 +12,7 @@ using namespace zmq;
 /* ============================ Constructors     ====================== */
 
 /** zmq::Socket::Socket(int type, lubyk::Worker *worker)
- * include/zmq/Socket.h:73
+ * include/zmq/Socket.h:70
  */
 static int Socket_Socket(lua_State *L) {
   try {
@@ -74,7 +74,7 @@ static int Socket__tostring(lua_State *L) {
 
 
 /** void zmq::Socket::bind(const char *location)
- * include/zmq/Socket.h:165
+ * include/zmq/Socket.h:155
  */
 static int Socket_bind1(lua_State *L) {
   try {
@@ -94,7 +94,7 @@ static int Socket_bind1(lua_State *L) {
 
 
 /** int zmq::Socket::bind(int min_port=2000, int max_port=20000, int retries=100)
- * include/zmq/Socket.h:175
+ * include/zmq/Socket.h:165
  */
 static int Socket_bind2(lua_State *L) {
   try {
@@ -135,11 +135,11 @@ static int Socket_bind2(lua_State *L) {
 static int Socket_bind(lua_State *L) {
   int type__ = lua_type(L, 2);
   int top__  = lua_gettop(L);
-  if (type__ == LUA_TNUMBER) {
-    return Socket_bind2(L);
-  } else if (type__ == LUA_TSTRING) {
+  if (type__ == LUA_TSTRING) {
     return Socket_bind1(L);
   } else if (top__ < 2) {
+    return Socket_bind2(L);
+  } else if (type__ == LUA_TNUMBER) {
     return Socket_bind2(L);
   } else {
     // use any to raise errors
@@ -149,7 +149,7 @@ static int Socket_bind(lua_State *L) {
 
 
 /** void zmq::Socket::connect(const char *location)
- * include/zmq/Socket.h:198
+ * include/zmq/Socket.h:188
  */
 static int Socket_connect(lua_State *L) {
   try {
@@ -169,7 +169,7 @@ static int Socket_connect(lua_State *L) {
 
 
 /** int zmq::Socket::fd()
- * include/zmq/Socket.h:116
+ * include/zmq/Socket.h:106
  */
 static int Socket_fd(lua_State *L) {
   try {
@@ -189,7 +189,7 @@ static int Socket_fd(lua_State *L) {
 
 
 /** bool zmq::Socket::hasEvent(int event)
- * include/zmq/Socket.h:209
+ * include/zmq/Socket.h:198
  */
 static int Socket_hasEvent(lua_State *L) {
   try {
@@ -210,7 +210,7 @@ static int Socket_hasEvent(lua_State *L) {
 
 
 /** const char* zmq::Socket::location()
- * include/zmq/Socket.h:348
+ * include/zmq/Socket.h:331
  */
 static int Socket_location(lua_State *L) {
   try {
@@ -230,7 +230,7 @@ static int Socket_location(lua_State *L) {
 
 
 /** int zmq::Socket::port()
- * include/zmq/Socket.h:352
+ * include/zmq/Socket.h:335
  */
 static int Socket_port(lua_State *L) {
   try {
@@ -250,7 +250,7 @@ static int Socket_port(lua_State *L) {
 
 
 /** void zmq::Socket::rawSend(lua_State *L)
- * include/zmq/Socket.h:261
+ * include/zmq/Socket.h:250
  */
 static int Socket_rawSend(lua_State *L) {
   try {
@@ -270,7 +270,7 @@ static int Socket_rawSend(lua_State *L) {
 
 
 /** LuaStackSize zmq::Socket::recv(lua_State *L)
- * include/zmq/Socket.h:223
+ * include/zmq/Socket.h:212
  */
 static int Socket_recv(lua_State *L) {
   try {
@@ -290,7 +290,7 @@ static int Socket_recv(lua_State *L) {
 
 
 /** LuaStackSize zmq::Socket::request(lua_State *L)
- * include/zmq/Socket.h:276
+ * include/zmq/Socket.h:265
  */
 static int Socket_request(lua_State *L) {
   try {
@@ -310,7 +310,7 @@ static int Socket_request(lua_State *L) {
 
 
 /** void zmq::Socket::send(lua_State *L)
- * include/zmq/Socket.h:244
+ * include/zmq/Socket.h:233
  */
 static int Socket_send(lua_State *L) {
   try {
@@ -330,7 +330,7 @@ static int Socket_send(lua_State *L) {
 
 
 /** void zmq::Socket::setsockopt(int type, lua_State *L)
- * include/zmq/Socket.h:128
+ * include/zmq/Socket.h:118
  */
 static int Socket_setsockopt(lua_State *L) {
   try {
@@ -351,7 +351,7 @@ static int Socket_setsockopt(lua_State *L) {
 
 
 /** const char* zmq::Socket::type() const 
- * include/zmq/Socket.h:363
+ * include/zmq/Socket.h:346
  */
 static int Socket_type(lua_State *L) {
   try {

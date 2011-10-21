@@ -43,14 +43,20 @@ namespace mimas {
 class Brush : public QBrush
 {
 public:
-  Brush() : QBrush(Qt::NoBrush) {}
+  Brush() : QBrush(Qt::NoBrush) {
+    MIMAS_DEBUG_GX("Brush")
+  }
 
-  Brush(const Color &color, int style = Qt::SolidPattern) : QBrush(color, (Qt::BrushStyle)style) {}
+  Brush(const Color &color, int style = Qt::SolidPattern) : QBrush(color, (Qt::BrushStyle)style) {
+    MIMAS_DEBUG_GX("Brush")
+  }
 
-  Brush(float h, float s=1.0, float v=1.0, float a=1.0, int style = Qt::SolidPattern) : QBrush(Color(h, s, v, a), (Qt::BrushStyle)style) {}
+  Brush(float h, float s=1.0, float v=1.0, float a=1.0, int style = Qt::SolidPattern) : QBrush(Color(h, s, v, a), (Qt::BrushStyle)style) {
+    MIMAS_DEBUG_GX("Brush")
+  }
 
   ~Brush() {
-    MIMAS_DEBUG_GC
+    MIMAS_DEBUG_GX("~Brush")
   }
 
   void setStyle(int style) {

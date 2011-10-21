@@ -46,7 +46,7 @@ setmetatable(lib, {
       self.services[remote_service.fullname] = remote_service
       -- start a new thread to announce object (so we do not risk crashing the
       -- listening thread)
-      lk.Thread(function()
+      remote_service.announce_thread = lk.Thread(function()
         remote_service.req = zmq.Req()
         -- new device
         remote_service.url = string.format('tcp://%s:%i', remote_service.ip, remote_service.port)
@@ -67,6 +67,7 @@ setmetatable(lib, {
         for _, delegate in ipairs(browser.delegates) do
           delegate:addDevice(remote_service)
         end
+        remote_service.announce_thread = nil
       end)
     end
   end
@@ -77,7 +78,7 @@ setmetatable(lib, {
     if found_service then
       -- removed device. Start a new thread in case an error occurs to avoid 
       -- crashing the listening thread.
-      lk.Thread(function()
+      found_service.announce_thread = lk.Thread(function()
         for k, delegate in ipairs(browser.delegates) do
           delegate:removeDevice(remote_service)
         end

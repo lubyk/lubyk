@@ -52,10 +52,11 @@ public:
   Painter(QWidget *widget) :
    QPainter(widget) {
     setRenderHints(QPainter::Antialiasing);
+    MIMAS_DEBUG_GX("Painter")
   }
 
   ~Painter() {
-    MIMAS_DEBUG_GC
+    MIMAS_DEBUG_GX("~Painter")
   }
 
   void fillRect( int x, int y, int width, int height, const Color &color) {

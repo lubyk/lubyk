@@ -30,9 +30,13 @@
 #define LUBYK_INCLUDE_MIMAS_MIMAS_H_
 
 #if 0
+#define MIMAS_DEBUG_CC printf("[%p] %s\n", this, this->metaObject()->className());
 #define MIMAS_DEBUG_GC printf("[%p] ~%s\n", this, this->metaObject()->className());
+#define MIMAS_DEBUG_GX(name) printf("[%p] %s\n", this, name);
 #else
+#define MIMAS_DEBUG_CC
 #define MIMAS_DEBUG_GC
+#define MIMAS_DEBUG_GX(name)
 #endif
 
 #include "lubyk.h"

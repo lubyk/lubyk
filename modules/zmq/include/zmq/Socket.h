@@ -95,6 +95,7 @@ public:
   }
 
   ~Socket() {
+    printf("zmq::Socket %s (%s) HAS EVENT: %s\n", location(), type(), hasEvent(ZMQ_POLLIN) ? "YES" : "NO");
     zmq_close(socket_);
     if (!--worker_->zmq_context_refcount_) {
       zmq_term(worker_->zmq_context_);

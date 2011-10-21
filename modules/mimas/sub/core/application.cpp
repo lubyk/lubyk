@@ -17,6 +17,7 @@ Application::Application()
    : QApplication(app_argc, app_argv) {
   // create a key to find 'app' object in current thread
   if (!sAppKey) pthread_key_create(&sAppKey, NULL);
+  MIMAS_DEBUG_CC
 }
 
 

@@ -16,6 +16,7 @@ local private = {}
 setmetatable(lib, {
   __call = function()
     local self = {
+      now        = 0,
       should_run = true,
       -- Ordered linked list of events by event time.
       at_next    = nil,
@@ -71,6 +72,10 @@ function lib:waitWrite(fd)
   coroutine.yield('write', fd)
 end
 
+function lib:abort()
+  coroutine.yield('abort')
+end
+
 function lib:run(func)
   if func then
     self.main = lk.Thread(func)
@@ -87,7 +92,6 @@ function lib:run(func)
     self.should_run = true
     -- now we are with mimas
     self.mimas = true
-    zmq.Socket.mimasLoaded()
     private.usePoller(self, mimas.Poller())
     app:exec()
   end
@@ -139,9 +143,12 @@ function lib:loop()
         print("\nBye...")
         break
       end
-      while true do
-        local ev_idx = poller:event()
-        if ev_idx then
+      -- First collect events so that running the threads (and
+      -- possibly adding new file descriptors) does not alter
+      -- the list.
+      local events = poller:events()
+      if events then
+        for _, ev_idx in ipairs(events) do
           local thread = idx_to_thread[ev_idx]
           if thread then
             private.runThread(self, thread)
@@ -155,8 +162,6 @@ function lib:loop()
             -- end
             poller:remove(ev_idx)
           end
-        else
-          break
         end
       end
 
@@ -273,7 +278,7 @@ function private:runThread(thread)
     if thread.fd then
       self:removeFd(thread)
     end
-    print('ERROR', a, debug.traceback(t.co))
+    print('ERROR', a, t.co, debug.traceback(t.co))
   elseif event then
     if thread.fd then
       if thread.fd == b then
@@ -312,12 +317,11 @@ function private:runThread(thread)
     -- b = at
     -- a value of 0 == execute again as soon as possible
     self:scheduleAt(b, thread)
-  elseif not t.co or coroutine.status(t.co) == 'dead' then
+  elseif not t.co or coroutine.status(t.co) == 'dead' or a == 'abort' then
     if thread.fd then
       self:removeFd(thread)
     end
     -- let it repose in peace
-
     thread.fd = nil
     t.co = nil
     t:finalize(self)

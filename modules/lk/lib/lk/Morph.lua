@@ -305,7 +305,7 @@ end
 function private.node.updateCallback(process, node_name, resource)
   -- We launch a new thread to make sure that we do not hang the server
   -- if this fails.
-  lk.Thread(function()
+  process.update_thread = lk.Thread(function()
     if process.online then
       process.push:send(lubyk.update_url, {
         nodes = {

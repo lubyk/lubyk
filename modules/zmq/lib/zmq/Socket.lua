@@ -75,21 +75,16 @@ function lib:send(...)
 end
 
 function lib:request(...)
+  print('REQ SEND', self.super)
   self:send(...)
+  print('REQ SEND OK')
   local data = {self:recv()}
+  print('RECV OK')
   return unpack(data)
 end
 
 local zmq_POLLIN = zmq.POLLIN
 function lib:recv()
-  local super = self.super
-  while not super:hasEvent(zmq_POLLIN) do
-    sched:waitRead(self.super)
-  end
-  return self.super:recv()
-end
-
-function lib:mimasRecv()
   local super = self.super
   if not super:hasEvent(zmq_POLLIN) then
     self.recv_start = nil
@@ -104,9 +99,4 @@ function lib:mimasRecv()
     self.recv_start = worker:now()
   end
   return super:recv()
-end
-
-function lib.mimasLoaded()
-  -- Alter 'recv' to work with external event loop.
-  lib.recv = lib.mimasRecv
 end

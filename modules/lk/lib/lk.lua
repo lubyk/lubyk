@@ -68,8 +68,8 @@ function sleep(ms)
   sched:sleep(ms)
 end
 
-function run()
-  sched:run()
+function run(...)
+  sched:run(...)
 end
 
 -------------------------------- pack/unpack (msgpack.vendor)
@@ -79,5 +79,4 @@ require 'msgpack.vendor'
 require 'lk.constants'
 -- FIXME: Do we need to load all these now ?
 require 'lk.util'
-
 

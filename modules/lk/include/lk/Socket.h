@@ -86,6 +86,11 @@ class Socket : public LuaObject
   /** Buffer that contains received data not yet used by Lua.
    */
   char buffer_[MAX_BUFF_SIZE];
+
+  /** Non-blocking flag when setNonBlocking is called before creating the
+   * socket.
+   */
+  bool non_blocking_;
 public:
 
   enum SocketType {
@@ -93,17 +98,18 @@ public:
     UDP = SOCK_DGRAM,
   };
 
-  Socket(int socket_type) :
+  Socket(int socket_type)
       // When changing this, also change the private
       // constructor.
-      socket_fd_(-1),
-      socket_type_(socket_type),
-      local_host_("*"),
-      local_port_(-1),
-      remote_host_("?"),
-      remote_port_(-1),
-      buffer_length_(0),
-      buffer_i_(0) {
+      : socket_fd_(-1)
+      , socket_type_(socket_type)
+      , local_host_("*")
+      , local_port_(-1)
+      , remote_host_("?")
+      , remote_port_(-1)
+      , buffer_length_(0)
+      , buffer_i_(0)
+      , non_blocking_(false) {
   }
 
   ~Socket() {
@@ -112,7 +118,7 @@ public:
 
   void close() {
     if (socket_fd_ != -1) {
-      // printf("close(%i)\n", socket_fd_);
+      printf("close(%i)\n", socket_fd_);
       ::close(socket_fd_);
       socket_fd_ = -1;
     }
@@ -123,7 +129,14 @@ public:
    */
   int bind(const char *localhost = NULL, int port = 0);
 
-  void connect(const char *host, int port);
+  /** Connect to a remote socket.
+   * @return false if the socket is not ready and we should waitWrite and 'connectFinish'.
+   */
+  bool connect(const char *host, int port);
+
+  /** Finish connecting for NON-BLOCKING sockets.
+   */
+  void connectFinish();
 
   /** Start listening for incoming connections.
    */
@@ -143,13 +156,13 @@ public:
   }
 
   void setNonBlocking() {
-    if (socket_fd_ == -1) {
-      throw Exception("You have to use bind/connect before setting non-blocking.");
-    }
-    int x;
-    x = fcntl(socket_fd_, F_GETFL, 0);
-    if (-1 == fcntl(socket_fd_, F_SETFL, x | O_NONBLOCK)) {
-      throw Exception("Could not set non-blocking (%s).", strerror(errno));
+    non_blocking_ = true;
+    if (socket_fd_ != -1) {
+      int x;
+      x = fcntl(socket_fd_, F_GETFL, 0);
+      if (-1 == fcntl(socket_fd_, F_SETFL, x | O_NONBLOCK)) {
+        throw Exception("Could not set non-blocking (%s).", strerror(errno));
+      }
     }
   }
   
@@ -215,14 +228,15 @@ private:
    /** Create a socket with an existing file descriptor.
     * This is used as the result of an 'accept()' call.
     */
-   Socket(int fd, const char *local_host, const char *remote_host, int remote_port) :
-      socket_fd_(fd),
-      local_host_(local_host),
-      local_port_(get_port(fd)),
-      remote_host_(remote_host),
-      remote_port_(remote_port),
-      buffer_length_(0),
-      buffer_i_(0) {
+   Socket(int fd, const char *local_host, const char *remote_host, int remote_port)
+       : socket_fd_(fd)
+       , local_host_(local_host)
+       , local_port_(get_port(fd))
+       , remote_host_(remote_host)
+       , remote_port_(remote_port)
+       , buffer_length_(0)
+       , buffer_i_(0)
+       , non_blocking_(false) {
   }
 
   static int get_port(int fd);

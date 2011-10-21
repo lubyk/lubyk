@@ -3,8 +3,8 @@
 cd ~/git
 git clone git://gitorious.org/qt/qt.git
 cd ~/git/qt
-git remote add -t 4.7-stable
-git checkout 4.7-stable
+git remote add -t 4.8
+git checkout 4.8
 # configure with the proper sdk
 ./configure -static -fast -no-dwarf2 -release -sdk /Developer/SDKs/MacOSX10.6.sdk
 # build

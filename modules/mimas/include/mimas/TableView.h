@@ -61,6 +61,7 @@ public:
     setAttribute(Qt::WA_DeleteOnClose);
     // Not editable
     setEditTriggers(QAbstractItemView::NoEditTriggers);
+    MIMAS_DEBUG_CC
   }
 
   ~TableView() {

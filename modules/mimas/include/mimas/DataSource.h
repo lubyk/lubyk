@@ -54,7 +54,9 @@ class DataSource : public QAbstractItemModel, public ThreadedLuaObject
   Q_OBJECT
 
 public:
-  DataSource() {}
+  DataSource() {
+    MIMAS_DEBUG_CC
+  }
 
   ~DataSource() {
     MIMAS_DEBUG_GC

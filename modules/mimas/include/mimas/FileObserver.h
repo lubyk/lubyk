@@ -58,6 +58,7 @@ public:
 
     //QObject::connect(this, SIGNAL(directoryChanged(QString)),
     //                 this, SLOT(pathChangedSlot(QString)));
+    MIMAS_DEBUG_CC
   }
 
   ~FileObserver() {

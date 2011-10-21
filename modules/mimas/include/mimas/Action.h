@@ -50,6 +50,7 @@ public:
       : QAction(QString(name), parent) {
     QObject::connect(this, SIGNAL(triggered()),
                      this, SLOT(triggeredSlot()));
+    MIMAS_DEBUG_CC
   }
 
   /** A sequence can contain multiple shortcuts and the format is:

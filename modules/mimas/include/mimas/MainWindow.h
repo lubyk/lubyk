@@ -59,6 +59,7 @@ class MainWindow : public QMainWindow, public ThreadedLuaObject {
 public:
   MainWindow() {
     setAttribute(Qt::WA_DeleteOnClose);
+    MIMAS_DEBUG_CC
   }
 
   ~MainWindow() {

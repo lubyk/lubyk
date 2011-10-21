@@ -55,7 +55,9 @@ class Button : public QPushButton, public ThreadedLuaObject {
 
 public:
   Button(const char *title = NULL, QWidget *parent = NULL)
-      : QPushButton(title, parent) {}
+      : QPushButton(title, parent) {
+    MIMAS_DEBUG_CC
+  }
 
   ~Button() {
     MIMAS_DEBUG_GC

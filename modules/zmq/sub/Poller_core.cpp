@@ -12,7 +12,7 @@ using namespace zmq;
 /* ============================ Constructors     ====================== */
 
 /** zmq::Poller::Poller(int reserve=8)
- * include/zmq/Poller.h:103
+ * include/zmq/Poller.h:98
  */
 static int Poller_Poller(lua_State *L) {
   try {
@@ -66,7 +66,7 @@ static int Poller__tostring(lua_State *L) {
 
 
 /** int zmq::Poller::add(int fd, int events)
- * include/zmq/Poller.h:205
+ * include/zmq/Poller.h:216
  */
 static int Poller_add1(lua_State *L) {
   try {
@@ -87,7 +87,7 @@ static int Poller_add1(lua_State *L) {
 
 
 /** int zmq::Poller::add(zmq::Socket *sock, int events)
- * include/zmq/Poller.h:209
+ * include/zmq/Poller.h:220
  */
 static int Poller_add2(lua_State *L) {
   try {
@@ -123,7 +123,7 @@ static int Poller_add(lua_State *L) {
 
 
 /** int zmq::Poller::count()
- * include/zmq/Poller.h:253
+ * include/zmq/Poller.h:281
  */
 static int Poller_count(lua_State *L) {
   try {
@@ -141,19 +141,39 @@ static int Poller_count(lua_State *L) {
 
 
 
-/** LuaStackSize zmq::Poller::event(lua_State *L)
- * include/zmq/Poller.h:190
+/** LuaStackSize zmq::Poller::events(lua_State *L)
+ * include/zmq/Poller.h:196
  */
-static int Poller_event(lua_State *L) {
+static int Poller_events(lua_State *L) {
   try {
     Poller *self = *((Poller**)dubL_checksdata(L, 1, "zmq.Poller"));
     
-    LuaStackSize  retval__ = self->event(L);
+    LuaStackSize  retval__ = self->events(L);
     return retval__;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "event: %s", e.what());
+    lua_pushfstring(L, "events: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "event: Unknown exception");
+    lua_pushfstring(L, "events: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** LuaStackSize zmq::Poller::idxToPos(int idx, lua_State *L)
+ * include/zmq/Poller.h:288
+ */
+static int Poller_idxToPos(lua_State *L) {
+  try {
+    Poller *self = *((Poller**)dubL_checksdata(L, 1, "zmq.Poller"));
+    int idx = dubL_checkint(L, 2);
+    
+    LuaStackSize  retval__ = self->idxToPos(idx, L);
+    return retval__;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "idxToPos: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "idxToPos: Unknown exception");
   }
   return lua_error(L);
 }
@@ -161,7 +181,7 @@ static int Poller_event(lua_State *L) {
 
 
 /** void zmq::Poller::modify(int idx, int events, lua_State *L)
- * include/zmq/Poller.h:215
+ * include/zmq/Poller.h:226
  */
 static int Poller_modify(lua_State *L) {
   try {
@@ -182,7 +202,7 @@ static int Poller_modify(lua_State *L) {
 
 
 /** bool zmq::Poller::poll(float timeout)
- * include/zmq/Poller.h:137
+ * include/zmq/Poller.h:138
  */
 static int Poller_poll(lua_State *L) {
   try {
@@ -201,8 +221,68 @@ static int Poller_poll(lua_State *L) {
 
 
 
+/** LuaStackSize zmq::Poller::posToEvent(int pos, lua_State *L)
+ * include/zmq/Poller.h:315
+ */
+static int Poller_posToEvent(lua_State *L) {
+  try {
+    Poller *self = *((Poller**)dubL_checksdata(L, 1, "zmq.Poller"));
+    int pos = dubL_checkint(L, 2);
+    
+    LuaStackSize  retval__ = self->posToEvent(pos, L);
+    return retval__;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "posToEvent: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "posToEvent: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** LuaStackSize zmq::Poller::posToFd(int pos, lua_State *L)
+ * include/zmq/Poller.h:306
+ */
+static int Poller_posToFd(lua_State *L) {
+  try {
+    Poller *self = *((Poller**)dubL_checksdata(L, 1, "zmq.Poller"));
+    int pos = dubL_checkint(L, 2);
+    
+    LuaStackSize  retval__ = self->posToFd(pos, L);
+    return retval__;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "posToFd: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "posToFd: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** LuaStackSize zmq::Poller::posToIdx(int pos, lua_State *L)
+ * include/zmq/Poller.h:297
+ */
+static int Poller_posToIdx(lua_State *L) {
+  try {
+    Poller *self = *((Poller**)dubL_checksdata(L, 1, "zmq.Poller"));
+    int pos = dubL_checkint(L, 2);
+    
+    LuaStackSize  retval__ = self->posToIdx(pos, L);
+    return retval__;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "posToIdx: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "posToIdx: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
 /** void zmq::Poller::remove(int idx)
- * include/zmq/Poller.h:237
+ * include/zmq/Poller.h:249
  */
 static int Poller_remove(lua_State *L) {
   try {
@@ -227,9 +307,13 @@ static int Poller_remove(lua_State *L) {
 static const struct luaL_Reg Poller_member_methods[] = {
   {"add"               , Poller_add},
   {"count"             , Poller_count},
-  {"event"             , Poller_event},
+  {"events"            , Poller_events},
+  {"idxToPos"          , Poller_idxToPos},
   {"modify"            , Poller_modify},
   {"poll"              , Poller_poll},
+  {"posToEvent"        , Poller_posToEvent},
+  {"posToFd"           , Poller_posToFd},
+  {"posToIdx"          , Poller_posToIdx},
   {"remove"            , Poller_remove},
   {"__tostring"        , Poller__tostring},
   {"__gc"              , Poller_destructor},

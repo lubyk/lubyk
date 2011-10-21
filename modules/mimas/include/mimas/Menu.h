@@ -50,7 +50,9 @@ class Menu : public QMenu, public ThreadedLuaObject {
   Q_OBJECT
 public:
   Menu(const char *name)
-      : QMenu(QString(name)) {}
+      : QMenu(QString(name)) {
+    MIMAS_DEBUG_CC
+  }
 
   ~Menu() {
     MIMAS_DEBUG_GC

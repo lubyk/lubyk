@@ -26,16 +26,21 @@ list(REMOVE_ITEM SUB_MODULE_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/../include/mimas
 # Qt header pre-processing
 # QT4_WRAP_CPP(SUB_MODULE_HEADERS_MOC ${SUB_MODULE_HEADERS})
 # Manual processing in-source so that we can build without Qt4 SDK (just headers and static libs).
-set(MOC "moc")
+if(QT_SRC_PATH STREQUAL "")
+  set(MOC "moc")
+else(QT_SRC_PATH STREQUAL "")
+  set(MOC "${QT_SRC_PATH}/bin/moc")
+endif(QT_SRC_PATH STREQUAL "")
+
 set(SUB_MODULE_HEADERS_MOC "")
 foreach(MOC_SRC ${SUB_MODULE_HEADERS})
   get_filename_component(MOC_SRC_NAME ${MOC_SRC} NAME_WE)
   add_custom_command( PRE_BUILD
-    OUTPUT  ${LUBYK_SOURCE_DIR}/modules/mimas/sub/moc/${MOC_SRC_NAME}.cpp
-    COMMAND ${MOC} ${MOC_SRC} -o ${LUBYK_SOURCE_DIR}/modules/mimas/sub/moc/${MOC_SRC_NAME}.cpp
+    OUTPUT  ${CMAKE_CURRENT_SOURCE_DIR}/moc/${MOC_SRC_NAME}.cpp
+    COMMAND ${MOC} ${MOC_SRC} -o ${CMAKE_CURRENT_SOURCE_DIR}/moc/${MOC_SRC_NAME}.cpp
     DEPENDS ${MOC_SRC}
   )
-  list(APPEND SUB_MODULE_HEADERS_MOC ${LUBYK_SOURCE_DIR}/modules/mimas/sub/moc/${MOC_SRC_NAME}.cpp)
+  list(APPEND SUB_MODULE_HEADERS_MOC ${CMAKE_CURRENT_SOURCE_DIR}/moc/${MOC_SRC_NAME}.cpp)
 endforeach(MOC_SRC SUB_MODULE_HEADERS)
 
 if(QT_SRC_PATH STREQUAL "")

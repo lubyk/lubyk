@@ -59,6 +59,7 @@ public:
   Widget(int window_flags = 0) :
     QWidget(NULL, (Qt::WindowFlags)window_flags) {
     setAttribute(Qt::WA_DeleteOnClose);
+    MIMAS_DEBUG_CC
   }
 
   ~Widget() {
