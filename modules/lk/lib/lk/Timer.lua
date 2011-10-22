@@ -7,6 +7,9 @@
   regular intervals. This file helps hide worker dependency
   and simplifies timer creation.
 
+  TODO: Do not trigger on start (makes it behave more like
+  mimas.Timer). This means we have to change 'setInterval'.
+
 --]]------------------------------------------------------
 local lib   = {}
 lib.__index = lib
@@ -19,13 +22,13 @@ setmetatable(lib, {
     }
     self.cb = function() self:run() end
     if func then
-      self.tick = func
+      self.timeout = func
     end
     return setmetatable(self, lib)
   end
 })
 
-function lib:tick() end
+function lib:timeout() end
 
 function lib:start(trigger)
   if trigger == false then
@@ -43,7 +46,7 @@ end
 function lib:run()
   if self.interval > 0 then
     while self.thread do
-      local interval = self:tick()
+      local interval = self:timeout()
       if interval then
         self:setInterval(interval)
         break

@@ -188,7 +188,7 @@ static int QWidget_close(lua_State *L) {
 
 
 /** QString mimas::MenuBar::cssClass() const 
- * include/mimas/MenuBar.h:57
+ * include/mimas/MenuBar.h:59
  */
 static int MenuBar_cssClass(lua_State *L) {
   try {

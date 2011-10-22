@@ -201,7 +201,7 @@ static int QWidget_close(lua_State *L) {
 
 
 /** QString mimas::Menu::cssClass() const 
- * include/mimas/Menu.h:59
+ * include/mimas/Menu.h:61
  */
 static int Menu_cssClass(lua_State *L) {
   try {

@@ -161,7 +161,7 @@ static int QWidget_close(lua_State *L) {
 
 
 /** QString mimas::TableView::cssClass() const 
- * include/mimas/TableView.h:111
+ * include/mimas/TableView.h:112
  */
 static int TableView_cssClass(lua_State *L) {
   try {
@@ -266,7 +266,7 @@ static int QWidget_hide(lua_State *L) {
 
 
 /** float mimas::TableView::hue()
- * include/mimas/TableView.h:120
+ * include/mimas/TableView.h:121
  */
 static int TableView_hue(lua_State *L) {
   try {
@@ -445,7 +445,7 @@ static int QWidget_resize(lua_State *L) {
 
 
 /** virtual void mimas::TableView::selectColumn(int row)
- * include/mimas/TableView.h:103
+ * include/mimas/TableView.h:104
  */
 static int TableView_selectColumn(lua_State *L) {
   try {
@@ -465,7 +465,7 @@ static int TableView_selectColumn(lua_State *L) {
 
 
 /** virtual void mimas::TableView::selectRow(int row)
- * include/mimas/TableView.h:99
+ * include/mimas/TableView.h:100
  */
 static int TableView_selectRow(lua_State *L) {
   try {
@@ -485,7 +485,7 @@ static int TableView_selectRow(lua_State *L) {
 
 
 /** void mimas::TableView::setAlternatingRowColors(bool should_enable)
- * include/mimas/TableView.h:95
+ * include/mimas/TableView.h:96
  */
 static int TableView_setAlternatingRowColors(lua_State *L) {
   try {
@@ -505,7 +505,7 @@ static int TableView_setAlternatingRowColors(lua_State *L) {
 
 
 /** void mimas::TableView::setGridStyle(int style)
- * include/mimas/TableView.h:89
+ * include/mimas/TableView.h:90
  */
 static int TableView_setGridStyle(lua_State *L) {
   try {
@@ -525,7 +525,7 @@ static int TableView_setGridStyle(lua_State *L) {
 
 
 /** void mimas::TableView::setHue(float hue)
- * include/mimas/TableView.h:115
+ * include/mimas/TableView.h:116
  */
 static int TableView_setHue(lua_State *L) {
   try {
@@ -566,7 +566,7 @@ static int QWidget_setMinimumSize(lua_State *L) {
 
 
 /** void mimas::TableView::setModel(DataSource *model)
- * include/mimas/TableView.h:126
+ * include/mimas/TableView.h:127
  */
 static int TableView_setModel(lua_State *L) {
   try {
@@ -730,7 +730,7 @@ static int QWidget_setStyleSheet(lua_State *L) {
 
 
 /** void mimas::TableView::setVisibleHeaders(int orientation, bool visible)
- * include/mimas/TableView.h:72
+ * include/mimas/TableView.h:73
  */
 static int TableView_setVisibleHeaders(lua_State *L) {
   try {

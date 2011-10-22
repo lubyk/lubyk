@@ -141,7 +141,7 @@ static int QWidget_addWidget(lua_State *L) {
 
 
 /** void mimas::GLWidget::addWidgetToScene(QWidget *widget, float x=0, float y=0)
- * include/mimas/GLWidget.h:98
+ * include/mimas/GLWidget.h:99
  */
 static int GLWidget_addWidgetToScene(lua_State *L) {
   try {
@@ -192,7 +192,7 @@ static int QWidget_close(lua_State *L) {
 
 
 /** QString mimas::GLWidget::cssClass() const 
- * include/mimas/GLWidget.h:104
+ * include/mimas/GLWidget.h:105
  */
 static int GLWidget_cssClass(lua_State *L) {
   try {
@@ -754,7 +754,7 @@ static int QWidget_update(lua_State *L) {
 
 
 /** void mimas::GLWidget::updateGL()
- * include/mimas/GLWidget.h:111
+ * include/mimas/GLWidget.h:112
  */
 static int GLWidget_updateGL(lua_State *L) {
   try {

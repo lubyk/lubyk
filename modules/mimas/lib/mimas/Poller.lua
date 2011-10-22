@@ -18,11 +18,14 @@ setmetatable(lib, {
   -- Create a new mimas.Poller. This is used by mimas.Application.
   __call = function(lib)
     local self = {
-      notifiers = {}
+      -- FIXME: REMOVE THIS !!! (SHOULD NOT BE NEEDED)
+      notifiers = {},
+      timer     = mimas.Timer(0)
     }
-    self.timeout_callback = mimas.Callback(function()
+
+    function self.timer.timeout()
       private.resume(self)
-    end)
+    end
 
     self.co = coroutine.create(function()
       assert(sched.poller == self)
@@ -31,7 +34,7 @@ setmetatable(lib, {
     end)
 
     -- This will start the coroutine
-    app:singleShot(0, self.timeout_callback)
+    self.timer:start(0)
     return setmetatable(self, lib)
   end
 })
@@ -54,7 +57,7 @@ function private.makeNotifier(self, fd, event)
     notifier.fd    = fd
     notifier.event = event
     notifier.poller = self
-    notifier.callback = private.socketCallback
+    notifier.activated = private.socketCallback
   end
   return notifier
 end
@@ -62,10 +65,7 @@ end
 -- This callback is called whenever we have an event for a given
 -- socket (we simulate poll return)
 function private.socketCallback(notifier)
-  local self = notifier.poller
-  -- Add idx to events
-  self.idx = notifier
-  private.resume(self)
+  private.resume(notifier.poller, notifier)
 end
 
 function private.zmqSocketCallback(notifier)
@@ -76,11 +76,13 @@ function private.zmqSocketCallback(notifier)
   end
 end
 
-function private:resume()
+-- Resume poller
+function private:resume(idx)
   local co = self.co
   if not co then
     return
   end
+  self.idx = idx
   local ok, timeout = coroutine.resume(co, true)
   if not ok then
     -- error
@@ -90,7 +92,9 @@ function private:resume()
     self.co = nil
     app:quit()
   elseif timeout >= 0 then
-    app:singleShot(timeout, self.timeout_callback)
+    self.timer:start(timeout)
+  else
+    self.timer:stop()
   end
 end
 
@@ -100,7 +104,7 @@ function lib:add(fd, event)
   local notifier
   if type(fd) == 'userdata' then
     notifier = private.makeNotifier(self, fd:fd(), event)
-    notifier.callback = private.zmqSocketCallback
+    notifier.activated = private.zmqSocketCallback
     notifier.zmq_socket = fd
   else
     notifier = private.makeNotifier(self, fd, event)
@@ -154,5 +158,4 @@ function lib:events()
   end
   return nil
 end
-
 

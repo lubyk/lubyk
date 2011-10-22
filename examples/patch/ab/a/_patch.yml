@@ -7,7 +7,6 @@ nodes:
     y: 45
     x: 30
     name: metro
-    has_all_slots: true
     links:
       bang:
         counter/in/bang: true
@@ -21,8 +20,8 @@ nodes:
     hue: 0
     links:
       count:
-        /c/v/in/value: true
         /b/div/in/input: true
+        /c/v/in/win: true
 h: 150
 w: 150
 hue: 0

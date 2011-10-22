@@ -26,77 +26,70 @@
 
   ==============================================================================
 */
-#ifndef LUBYK_INCLUDE_MIMAS_SOCKET_NOTIFIER_H_
-#define LUBYK_INCLUDE_MIMAS_SOCKET_NOTIFIER_H_
+#ifndef LUBYK_INCLUDE_MIMAS_TIMER_H_
+#define LUBYK_INCLUDE_MIMAS_TIMER_H_
 
 #include "mimas/mimas.h"
 
-#include <QtCore/QSocketNotifier>
+#include <QtCore/QTimer.h>
 
 using namespace lubyk;
 
 namespace mimas {
 
-/** SocketNotifer wraps filedescriptors so that they can be used
- * in Qt's event loop. A SocketNotifer can only be used for a single
- * file descriptor and a single event (read or write).
+/** The Timer class calls the "timeout" callback at regular intervals.
  *
- * @dub lib_name:'SocketNotifier_core'
+ * @dub lib_name:'Timer_core'
  *      super: 'QObject'
  */
-class SocketNotifier : public QSocketNotifier, public ThreadedLuaObject {
+class Timer : public QTimer, public ThreadedLuaObject {
   Q_OBJECT
 public:
-  enum EventType {
-    Read  = QSocketNotifier::Read,
-    Write = QSocketNotifier::Write,
-  };
 
-  SocketNotifier(int fd, int event_type)
-      : QSocketNotifier(fd, (QSocketNotifier::Type)event_type) {
-    QObject::connect(this, SIGNAL(activated(int)),
-                     this, SLOT(activatedSlot(int)));
+  /** Private constructor. Use MakeApplication instead.
+   */
+  Timer(int timeout)
+      : QTimer(0)
+  {
+    setInterval(timeout);
+    QObject::connect(this, SIGNAL(timeout()),
+                     this, SLOT(timeoutSlot()));
 
-    //printf("[%p] SocketNotifier\n", this);
+    //printf("[%p] Timer\n", this);
     MIMAS_DEBUG_CC
   }
 
-  virtual ~SocketNotifier() {
-    //printf("[%p] ~SocketNotifier\n", this);
+  virtual ~Timer() {
+    //printf("[%p] ~Timer\n", this);
     MIMAS_DEBUG_GC
   }
 
-  int socket() const {
-    return QSocketNotifier::socket();
+  void start(int timeout) {
+    QTimer::start(timeout);
   }
 
+  void start() {
+    QTimer::start();
+  }
 
-  /** Enable or disable a socket notifier.
-   */
-  void setEnabled(bool enabled) {
-    QSocketNotifier::setEnabled(enabled);
+  void stop() {
+    QTimer::stop();
+  }
+
+  void setInterval(int msec) {
+    QTimer::setInterval(msec);
   }
 
 private slots:
-  void activatedSlot(int socket) {
-    //printf("[%p] activatedSlot %i (%s)\n", this, socket, isEnabled() ? "ON" : "OFF");
-    // Callback
-    // FIXME: ThreadedLuaObject stores L as lua_ (no need for a new thread)
+  void timeoutSlot() {
     lua_State *L = lua_;
-    // FIXME: We might need less lua threads and faster access to callbacks.
-    // We could use:
-    // 1. ref for global weak value table set on create (func_list_idx_)
-    // lua_rawgeti(L, LUA_REGISTRYINDEX, func_list_idx_)
-    // 2. ref for callback set in weak on create (luaL_ref)
-    // lua_rawgeti(L, -1, clbk_idx_)
-    //
-    if (pushLuaCallback("activated")) {
+    if (pushLuaCallback("timeout")) {
       // <func> <self>
       int status = lua_pcall(L, 1, 0, 0);
 
       if (status) {
         // cannot raise an error here...
-        fprintf(stderr, "Error in 'callback': %s\n", lua_tostring(L, -1));
+        fprintf(stderr, "Error in 'timeout': %s\n", lua_tostring(L, -1));
       }
     } else {
       printf("NO CALLBACK!\n");
@@ -105,4 +98,5 @@ private slots:
 };
 
 } // mimas
-#endif // LUBYK_INCLUDE_MIMAS_SOCKET_NOTIFIER_H_
+#endif // LUBYK_INCLUDE_MIMAS_TIMER_H_
+

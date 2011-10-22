@@ -138,7 +138,7 @@ static int QObject_setName(lua_State *L) {
 
 
 /** void mimas::Action::setShortcut(const char *sequence)
- * include/mimas/Action.h:58
+ * include/mimas/Action.h:59
  */
 static int Action_setShortcut(lua_State *L) {
   try {

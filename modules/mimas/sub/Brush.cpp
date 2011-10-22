@@ -31,7 +31,7 @@ static int Brush_Brush1(lua_State *L) {
 
 
 /** mimas::Brush::Brush(const Color &color, int style=Qt::SolidPattern)
- * include/mimas/Brush.h:48
+ * include/mimas/Brush.h:50
  */
 static int Brush_Brush2(lua_State *L) {
   try {
@@ -57,7 +57,7 @@ static int Brush_Brush2(lua_State *L) {
 
 
 /** mimas::Brush::Brush(float h, float s=1.0, float v=1.0, float a=1.0, int style=Qt::SolidPattern)
- * include/mimas/Brush.h:50
+ * include/mimas/Brush.h:54
  */
 static int Brush_Brush3(lua_State *L) {
   try {
@@ -144,7 +144,7 @@ static int Brush__tostring(lua_State *L) {
 
 
 /** void mimas::Brush::setColor(const Color &color)
- * include/mimas/Brush.h:60
+ * include/mimas/Brush.h:66
  */
 static int Brush_setColor(lua_State *L) {
   try {
@@ -163,7 +163,7 @@ static int Brush_setColor(lua_State *L) {
 
 
 /** void mimas::Brush::setStyle(int style)
- * include/mimas/Brush.h:56
+ * include/mimas/Brush.h:62
  */
 static int Brush_setStyle(lua_State *L) {
   try {

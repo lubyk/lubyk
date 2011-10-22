@@ -3,12 +3,11 @@
   mimas.SocketNotifier test
   -------------------------
 
-  Actually, we test zmq.Socket REQ/REP with the
+  We also test zmq.Socket REQ/REP with the
   mimas poller which uses the SocketNotifier internally.
 
 --]]------------------------------------------------------
 require 'lubyk'
-require 'mimas'
 
 local should = test.Suite('mimas.SocketNotifier')
 

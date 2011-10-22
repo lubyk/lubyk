@@ -116,7 +116,7 @@ static int QPainterPath_addRect(lua_State *L) {
 
 
 /** bool mimas::Path::contains(float x, float y)
- * include/mimas/Path.h:76
+ * include/mimas/Path.h:78
  */
 static int Path_contains(lua_State *L) {
   try {
@@ -201,7 +201,7 @@ static int QPainterPath_moveTo(lua_State *L) {
 
 
 /** Path mimas::Path::outlineForWidth(float width)
- * include/mimas/Path.h:64
+ * include/mimas/Path.h:66
  */
 static int Path_outlineForWidth(lua_State *L) {
   try {

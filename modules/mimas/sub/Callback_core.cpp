@@ -71,7 +71,7 @@ static int Callback__tostring(lua_State *L) {
 
 
 /** void mimas::Callback::connect(QObject *obj, const char *method, const char *callback)
- * include/mimas/Callback.h:65
+ * include/mimas/Callback.h:67
  */
 static int Callback_connect(lua_State *L) {
   try {

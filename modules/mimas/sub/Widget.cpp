@@ -168,7 +168,7 @@ static int QWidget_close(lua_State *L) {
 
 
 /** QString mimas::Widget::cssClass() const 
- * include/mimas/Widget.h:68
+ * include/mimas/Widget.h:69
  */
 static int Widget_cssClass(lua_State *L) {
   try {
@@ -188,7 +188,7 @@ static int Widget_cssClass(lua_State *L) {
 
 
 /** LuaStackSize mimas::Widget::getExistingDirectory(const char *caption, const char *base_dir, int options, lua_State *L)
- * include/mimas/Widget.h:94
+ * include/mimas/Widget.h:95
  */
 static int Widget_getExistingDirectory(lua_State *L) {
   try {
@@ -211,7 +211,7 @@ static int Widget_getExistingDirectory(lua_State *L) {
 
 
 /** LuaStackSize mimas::Widget::getOpenFileName(const char *caption, const char *base_dir, const char *filter, int options, lua_State *L)
- * include/mimas/Widget.h:89
+ * include/mimas/Widget.h:90
  */
 static int Widget_getOpenFileName(lua_State *L) {
   try {
@@ -320,7 +320,7 @@ static int QWidget_hide(lua_State *L) {
 
 
 /** float mimas::Widget::hue()
- * include/mimas/Widget.h:79
+ * include/mimas/Widget.h:80
  */
 static int Widget_hue(lua_State *L) {
   try {
@@ -499,7 +499,7 @@ static int QWidget_resize(lua_State *L) {
 
 
 /** void mimas::Widget::setHue(float hue)
- * include/mimas/Widget.h:74
+ * include/mimas/Widget.h:75
  */
 static int Widget_setHue(lua_State *L) {
   try {

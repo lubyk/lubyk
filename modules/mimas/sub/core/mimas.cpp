@@ -108,6 +108,7 @@ int luaload_mimas_Pen(lua_State *L);
 int luaload_mimas_Slider_core(lua_State *L);
 int luaload_mimas_SocketNotifier_core(lua_State *L);
 int luaload_mimas_TableView(lua_State *L);
+int luaload_mimas_Timer_core(lua_State *L);
 int luaload_mimas_VBoxLayout_core(lua_State *L);
 int luaload_mimas_Widget(lua_State *L);
 int luaload_mimas_constants(lua_State *L);
@@ -146,6 +147,7 @@ extern "C" int luaopen_mimas_core(lua_State *L) {
   luaload_mimas_Slider_core(L);
   luaload_mimas_SocketNotifier_core(L);
   luaload_mimas_TableView(L);
+  luaload_mimas_Timer_core(L);
   luaload_mimas_VBoxLayout_core(L);
   luaload_mimas_Widget(L);
   luaload_mimas_constants(L);

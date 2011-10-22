@@ -91,9 +91,7 @@ timer = timer or lk.Timer(10, function()
     moon.cx = planet.cx + moon.dist * math.cos(moon.a)
     moon.cy = planet.cy + moon.dist * math.sin(moon.a)
   end
-  app:post(function()
-    win:update()
-  end)
+  win:update()
 end)
 timer:start()
 

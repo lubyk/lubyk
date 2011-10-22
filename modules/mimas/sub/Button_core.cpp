@@ -173,7 +173,7 @@ static int QWidget_close(lua_State *L) {
 
 
 /** QString mimas::Button::cssClass() const 
- * include/mimas/Button.h:64
+ * include/mimas/Button.h:66
  */
 static int Button_cssClass(lua_State *L) {
   try {
@@ -278,7 +278,7 @@ static int QWidget_hide(lua_State *L) {
 
 
 /** float mimas::Button::hue()
- * include/mimas/Button.h:75
+ * include/mimas/Button.h:77
  */
 static int Button_hue(lua_State *L) {
   try {
@@ -457,7 +457,7 @@ static int QWidget_resize(lua_State *L) {
 
 
 /** void mimas::Button::setHue(float hue)
- * include/mimas/Button.h:70
+ * include/mimas/Button.h:72
  */
 static int Button_setHue(lua_State *L) {
   try {

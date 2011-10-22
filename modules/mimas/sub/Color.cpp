@@ -31,7 +31,7 @@ static int Color_Color1(lua_State *L) {
 
 
 /** mimas::Color::Color(float h, float s=1.0, float v=1.0, float a=1.0)
- * include/mimas/Color.h:50
+ * include/mimas/Color.h:52
  */
 static int Color_Color2(lua_State *L) {
   try {
@@ -111,7 +111,7 @@ static int Color__tostring(lua_State *L) {
 
 
 /** float mimas::Color::alpha() const 
- * include/mimas/Color.h:70
+ * include/mimas/Color.h:73
  */
 static int Color_alpha(lua_State *L) {
   try {
@@ -130,7 +130,7 @@ static int Color_alpha(lua_State *L) {
 
 
 /** Color* mimas::Color::colorWithAlpha(float a)
- * include/mimas/Color.h:110
+ * include/mimas/Color.h:113
  */
 static int Color_colorWithAlpha(lua_State *L) {
   try {
@@ -150,7 +150,7 @@ static int Color_colorWithAlpha(lua_State *L) {
 
 
 /** Color* mimas::Color::colorWithHue(float h)
- * include/mimas/Color.h:98
+ * include/mimas/Color.h:101
  */
 static int Color_colorWithHue(lua_State *L) {
   try {
@@ -170,7 +170,7 @@ static int Color_colorWithHue(lua_State *L) {
 
 
 /** Color* mimas::Color::colorWithSaturation(float s)
- * include/mimas/Color.h:102
+ * include/mimas/Color.h:105
  */
 static int Color_colorWithSaturation(lua_State *L) {
   try {
@@ -190,7 +190,7 @@ static int Color_colorWithSaturation(lua_State *L) {
 
 
 /** Color* mimas::Color::colorWithValue(float v)
- * include/mimas/Color.h:106
+ * include/mimas/Color.h:109
  */
 static int Color_colorWithValue(lua_State *L) {
   try {
@@ -210,7 +210,7 @@ static int Color_colorWithValue(lua_State *L) {
 
 
 /** float mimas::Color::hue() const 
- * include/mimas/Color.h:58
+ * include/mimas/Color.h:61
  */
 static int Color_hue(lua_State *L) {
   try {
@@ -229,7 +229,7 @@ static int Color_hue(lua_State *L) {
 
 
 /** float mimas::Color::saturation() const 
- * include/mimas/Color.h:62
+ * include/mimas/Color.h:65
  */
 static int Color_saturation(lua_State *L) {
   try {
@@ -248,7 +248,7 @@ static int Color_saturation(lua_State *L) {
 
 
 /** void mimas::Color::setAlpha(float a)
- * include/mimas/Color.h:94
+ * include/mimas/Color.h:97
  */
 static int Color_setAlpha(lua_State *L) {
   try {
@@ -267,7 +267,7 @@ static int Color_setAlpha(lua_State *L) {
 
 
 /** void mimas::Color::setHsva(float h, float s=1.0, float v=1.0, float a=1.0)
- * include/mimas/Color.h:78
+ * include/mimas/Color.h:81
  */
 static int Color_setHsva(lua_State *L) {
   try {
@@ -302,7 +302,7 @@ static int Color_setHsva(lua_State *L) {
 
 
 /** void mimas::Color::setHue(float h)
- * include/mimas/Color.h:82
+ * include/mimas/Color.h:85
  */
 static int Color_setHue(lua_State *L) {
   try {
@@ -321,7 +321,7 @@ static int Color_setHue(lua_State *L) {
 
 
 /** void mimas::Color::setRgba(float r, float g, float b, float a=1.0)
- * include/mimas/Color.h:74
+ * include/mimas/Color.h:77
  */
 static int Color_setRgba(lua_State *L) {
   try {
@@ -348,7 +348,7 @@ static int Color_setRgba(lua_State *L) {
 
 
 /** void mimas::Color::setSaturation(float s)
- * include/mimas/Color.h:86
+ * include/mimas/Color.h:89
  */
 static int Color_setSaturation(lua_State *L) {
   try {
@@ -367,7 +367,7 @@ static int Color_setSaturation(lua_State *L) {
 
 
 /** void mimas::Color::setValue(float v)
- * include/mimas/Color.h:90
+ * include/mimas/Color.h:93
  */
 static int Color_setValue(lua_State *L) {
   try {
@@ -386,7 +386,7 @@ static int Color_setValue(lua_State *L) {
 
 
 /** float mimas::Color::value() const 
- * include/mimas/Color.h:66
+ * include/mimas/Color.h:69
  */
 static int Color_value(lua_State *L) {
   try {

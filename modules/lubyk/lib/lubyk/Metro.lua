@@ -33,6 +33,6 @@ function inlet.tempo(va)
   end
 end
 
-function timer.tick()
+function timer:timeout()
   bang(true)
 end

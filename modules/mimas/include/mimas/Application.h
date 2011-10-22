@@ -138,7 +138,7 @@ public:
 
   virtual bool event(QEvent *event);
   
-  /** Calls a slot in msec milliseconds. Used by worker to handle scheduling.
+  /** Calls a slot in msec milliseconds. Used by poller to handle scheduling.
    */
   void singleShot(int msec, QObject *receiver, const char *member) {
     QTimer::singleShot(msec, receiver, member);

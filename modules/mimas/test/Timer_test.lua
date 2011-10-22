@@ -1,38 +1,44 @@
 --[[------------------------------------------------------
 
-  lk.Timer
-  --------
+  mimas.Timer test
+  ----------------
 
-  ...
+  This is *NOT* a replacement for lk.Timer. It is used
+  internally and with the mimas.Poller.
 
 --]]------------------------------------------------------
 require 'lubyk'
 
 local SLEEP = 40
-local should = test.Suite('lk.Timer')
+local should = test.Suite('mimas.Timer')
+
+function should.autoload()
+  assertTrue(mimas.Timer)
+end
 
 function should.loopTimerInExternalThread()
   local counter = 0
-  local timer = lk.Timer(SLEEP, function()
+  local timer = mimas.Timer(SLEEP, function()
     counter = counter + 1
     -- continue until 'timer' is gc or stopped.
   end)
-  timer:start() -- default = trigger on start
+  timer:start()
   -- first trigger now
   now = worker:now()
   sleep(4 * SLEEP + 10)
   -- 00, 20, 40, 60, 80
-  assertEqual(5, counter)
+  assertEqual(4, counter)
   now = worker:now()
   sleep(5 * SLEEP)
   --                   , 100, 120, 140, 160, 180
-  assertEqual(10, counter)
+  assertEqual(9, counter)
   timer:stop()
 end
 
+--[[
 function should.setInterval()
   local counter = 0
-  local timer = lk.Timer(10000, function()
+  local timer = mimas.Timer(10000, function()
     counter = counter + 1
     -- continue until 'timer' is gc or stopped.
   end)
@@ -52,7 +58,7 @@ end
 
 function should.setCallback()
   local counter = 0
-  local timer = lk.Timer(10000)
+  local timer = mimas.Timer(10000)
   function timer:timeout()
     counter = counter + 1
     -- continue until 'timer' is gc or stopped.
@@ -73,7 +79,7 @@ end
 
 function should.joinTimer()
   local counter = 0
-  local timer = lk.Timer(10, function()
+  local timer = mimas.Timer(10, function()
     counter = counter + 1
     if counter == 5 then
       -- stop
@@ -86,4 +92,6 @@ function should.joinTimer()
   assertEqual(5, counter)
 end
 
+--]]
 test.all()
+
