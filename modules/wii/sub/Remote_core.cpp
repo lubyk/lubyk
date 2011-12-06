@@ -24,7 +24,6 @@ static int Remote_Remote(lua_State *L) {
       const char *remote_name = dubL_checkstring(L, 1);
       retval__ = new Remote(remote_name);
     }
-    // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
     return retval__->luaInit(L, retval__, "wii.Remote");
   } catch (std::exception &e) {
     lua_pushfstring(L, "Remote: %s", e.what());
@@ -42,7 +41,9 @@ static int Remote_destructor(lua_State *L) {
   Remote **userdata = (Remote**)dubL_checksdata_n(L, 1, "wii.Remote");
 
   
-  if (*userdata) delete *userdata;
+  // custom destructor
+  Remote *self = *userdata;
+  if (self) self->luaDestroy();
   
   *userdata = NULL;
   return 0;
@@ -50,10 +51,22 @@ static int Remote_destructor(lua_State *L) {
 
 
 
+// test if class is deleted
+static int Remote_deleted(lua_State *L) {
+  Remote **userdata = (Remote**)dubL_checksdata_n(L, 1, "wii.Remote");
+  lua_pushboolean(L, *userdata == NULL);
+  return 1;
+}
+
 /* ============================ tostring         ====================== */
 
 static int Remote__tostring(lua_State *L) {
   Remote **userdata = (Remote**)dubL_checksdata_n(L, 1, "wii.Remote");
+  
+  if (!*userdata) {
+    lua_pushstring(L, "<wii.Remote: NULL>");
+    return 1;
+  }
   
   
   lua_pushfstring(L, "<wii.Remote: %p %s>", *userdata, (*userdata)->name());
@@ -65,11 +78,12 @@ static int Remote__tostring(lua_State *L) {
 
 
 /** void wii::Remote::connected()
- * include/wii/Remote.h:122
+ * include/wii/Remote.h:119
  */
 static int Remote_connected(lua_State *L) {
   try {
     Remote *self = *((Remote**)dubL_checksdata(L, 1, "wii.Remote"));
+    if (!self) throw dub::Exception("Using deleted wii.Remote in connected");
     self->connected();
     return 0;
   } catch (std::exception &e) {
@@ -88,6 +102,7 @@ static int Remote_connected(lua_State *L) {
 static int Remote_disconnect(lua_State *L) {
   try {
     Remote *self = *((Remote**)dubL_checksdata(L, 1, "wii.Remote"));
+    if (!self) throw dub::Exception("Using deleted wii.Remote in disconnect");
     self->disconnect();
     return 0;
   } catch (std::exception &e) {
@@ -106,6 +121,7 @@ static int Remote_disconnect(lua_State *L) {
 static int Remote_name(lua_State *L) {
   try {
     Remote *self = *((Remote**)dubL_checksdata(L, 1, "wii.Remote"));
+    if (!self) throw dub::Exception("Using deleted wii.Remote in name");
     const char * retval__ = self->name();
     lua_pushstring(L, retval__);
     return 1;
@@ -125,6 +141,7 @@ static int Remote_name(lua_State *L) {
 static int Remote_setLeds(lua_State *L) {
   try {
     Remote *self = *((Remote**)dubL_checksdata(L, 1, "wii.Remote"));
+    if (!self) throw dub::Exception("Using deleted wii.Remote in setLeds");
     bool led1 = lua_toboolean(L, 2);
     bool led2 = lua_toboolean(L, 3);
     bool led3 = lua_toboolean(L, 4);
@@ -152,6 +169,7 @@ static const struct luaL_Reg Remote_member_methods[] = {
   {"setLeds"           , Remote_setLeds},
   {"__tostring"        , Remote__tostring},
   {"__gc"              , Remote_destructor},
+  {"deleted"           , Remote_deleted},
   {NULL, NULL},
 };
 

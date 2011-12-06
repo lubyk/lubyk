@@ -21,6 +21,11 @@ function mt:addWidget(other)
   end
 end
 
+function mt:addLayout(other)
+  -- sub layout
+  addLayout(self, other:layout())
+end
+
 function mimas.VBoxLayout(parent)
   if parent then
     return constr(parent:widget())

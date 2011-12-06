@@ -69,9 +69,7 @@ end
 
 -- Synchronize with remote process.
 function lib:sync()
-  print('SYNC', self.name)
   local definition = self.req:request(lubyk.dump_url)
-  print('GET DONE SYNC', self.name)
   self:set(definition)
 end
 
@@ -229,7 +227,11 @@ function lib:connect(remote_process, delegate)
   self:sync()
 end
 
--- A process is going offline, disconnect all links to this dying
+function lib:connected()
+  return self.sub and true
+end
+
+-- A remote process is going offline: disconnect all links to this dying
 -- process and mark them as pending.
 function lib:disconnectProcess(remote_process)
   -- Disconnect all linked inlets
@@ -238,9 +240,10 @@ function lib:disconnectProcess(remote_process)
   end
 end
 
--- The remote process is dying.
+-- Our remote process is dying.
 function lib:disconnect()
   -- disconnect self.sub ?
+  self.sub = nil
 end
 
 function lib:url()

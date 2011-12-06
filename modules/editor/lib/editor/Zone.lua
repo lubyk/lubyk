@@ -20,6 +20,7 @@ setmetatable(lib, {
   local self = {
     selected_node_views = {},
     -- files edited in external editor
+    -- OBSOLETE since WebDAV: remove
     observed_files      = {},
     file_observer       = mimas.FileObserver(),
     -- Manage processes found
@@ -159,7 +160,6 @@ end
 
 --=============================================== lk.ProcessWatch delegate
 function lib:processConnected(remote_process)
-  -- FIXME: remove pending_processes
   local name = remote_process.name
   if name ~= '' then
     -- process
@@ -172,6 +172,9 @@ function lib:processConnected(remote_process)
       -- create new
       process = editor.Process(name)
     end
+    -- We do this before connecting so that node creation
+    -- does not create a pending process.
+    self.found_processes[process.name] = process
     process:connect(remote_process, self)
 
     --- Update views
@@ -179,9 +182,6 @@ function lib:processConnected(remote_process)
       -- FIXME: use updateView()
       self.process_list_view:addProcess(process)
       self.main_view:placeElements()
-      self.found_processes[name] = process
-    else
-      self.found_processes[name] = process
     end
     self:toggleView(process)
   else

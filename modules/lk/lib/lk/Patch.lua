@@ -207,6 +207,7 @@ function lib:dump(data)
       end
     end
   end
+  print(yaml.dump(res))
   return res
 end
 

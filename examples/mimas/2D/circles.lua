@@ -28,11 +28,11 @@ local function move(x, y)
 end
 
 -- do something with mouse input
-function win.mouse(x, y)
+function win:mouse(x, y)
   move(x, y)
 end
 
-function win.keyboard(key, on)
+function win:keyboard(key, on)
   if on then
     if key == mimas.ESC then
       -- ESC
@@ -43,7 +43,7 @@ function win.keyboard(key, on)
   end
 end
 
-function win.paint(p, w, h)
+function win:paint(p, w, h)
   local x_count = math.floor(w/(2*r+pad)) + 1
   local y_count = math.floor(h/(2*r+pad)) + 1
   local diag = math.sqrt(w*w + h*h) * 0.7
@@ -69,4 +69,4 @@ function win.paint(p, w, h)
   end
 end
 win:update()
-app:exec()
+run()

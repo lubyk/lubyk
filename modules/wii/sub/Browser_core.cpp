@@ -17,7 +17,6 @@ using namespace wii;
 static int Browser_Browser(lua_State *L) {
   try {
     Browser * retval__ = new Browser();
-    // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
     return retval__->luaInit(L, retval__, "wii.Browser");
   } catch (std::exception &e) {
     lua_pushfstring(L, "Browser: %s", e.what());
@@ -35,7 +34,9 @@ static int Browser_destructor(lua_State *L) {
   Browser **userdata = (Browser**)dubL_checksdata_n(L, 1, "wii.Browser");
 
   
-  if (*userdata) delete *userdata;
+  // custom destructor
+  Browser *self = *userdata;
+  if (self) self->luaDestroy();
   
   *userdata = NULL;
   return 0;
@@ -43,10 +44,22 @@ static int Browser_destructor(lua_State *L) {
 
 
 
+// test if class is deleted
+static int Browser_deleted(lua_State *L) {
+  Browser **userdata = (Browser**)dubL_checksdata_n(L, 1, "wii.Browser");
+  lua_pushboolean(L, *userdata == NULL);
+  return 1;
+}
+
 /* ============================ tostring         ====================== */
 
 static int Browser__tostring(lua_State *L) {
   Browser **userdata = (Browser**)dubL_checksdata_n(L, 1, "wii.Browser");
+  
+  if (!*userdata) {
+    lua_pushstring(L, "<wii.Browser: NULL>");
+    return 1;
+  }
   
   
   lua_pushfstring(L, "<wii.Browser: %p>", *userdata);
@@ -63,6 +76,7 @@ static int Browser__tostring(lua_State *L) {
 static int Browser_find(lua_State *L) {
   try {
     Browser *self = *((Browser**)dubL_checksdata(L, 1, "wii.Browser"));
+    if (!self) throw dub::Exception("Using deleted wii.Browser in find");
     self->find();
     return 0;
   } catch (std::exception &e) {
@@ -76,11 +90,12 @@ static int Browser_find(lua_State *L) {
 
 
 /** void wii::Browser::findMore()
- * include/wii/Browser.h:106
+ * include/wii/Browser.h:105
  */
 static int Browser_findMore(lua_State *L) {
   try {
     Browser *self = *((Browser**)dubL_checksdata(L, 1, "wii.Browser"));
+    if (!self) throw dub::Exception("Using deleted wii.Browser in findMore");
     self->findMore();
     return 0;
   } catch (std::exception &e) {
@@ -94,11 +109,12 @@ static int Browser_findMore(lua_State *L) {
 
 
 /** bool wii::Browser::needMore()
- * include/wii/Browser.h:100
+ * include/wii/Browser.h:99
  */
 static int Browser_needMore(lua_State *L) {
   try {
     Browser *self = *((Browser**)dubL_checksdata(L, 1, "wii.Browser"));
+    if (!self) throw dub::Exception("Using deleted wii.Browser in needMore");
     bool  retval__ = self->needMore();
     lua_pushboolean(L, retval__);
     return 1;
@@ -122,6 +138,7 @@ static const struct luaL_Reg Browser_member_methods[] = {
   {"needMore"          , Browser_needMore},
   {"__tostring"        , Browser__tostring},
   {"__gc"              , Browser_destructor},
+  {"deleted"           , Browser_deleted},
   {NULL, NULL},
 };
 
