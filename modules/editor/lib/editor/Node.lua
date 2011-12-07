@@ -228,7 +228,7 @@ end
 
 -- ========== HELPERS
 
--- Create a ghost node (before it is droped or name is set)
+-- Create a ghost node (drag operation, before it is droped or name is set)
 function lib.makeGhost(node_def, delegate)
   -- mock a node for NodeView
   local node = {

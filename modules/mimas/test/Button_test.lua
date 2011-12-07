@@ -28,6 +28,14 @@ function withUser.should.connectToCallback(t)
   t.btn2:move(40,40)
   t.callback:connect(t.btn, 'clicked')
   t.win:show()
+  -- t:test {
+  --   -- This is the action that is triggered when the test is run in batch
+  --   -- (not just this file). This is also what we want the user to do for
+  --   -- testing.
+  --   action   = mimas.AutoPilot:click(t.btn),
+  --   -- What exactly are we expecting
+  --   expected = function() return t.continue end
+  -- }
   t:timeout(function(done)
     return done or t.continue
   end)

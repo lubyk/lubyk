@@ -58,14 +58,13 @@ setmetatable(lib, {
 end})
 
 local function makeGhost(self)
-  -- started drag operation (view became ghost), copy
-  -- slot into non-ghost NodeView.
-  self.ghost = self.view
+  -- started drag operation (ghost created), copy
+  -- slot into ghost NodeView.
+  self.ghost = editor.SlotView(self)
   self.ghost.is_ghost = true
-  self.view  = editor.SlotView(self)
-  self.node.view:addWidget(self.view)
-  -- duplicate links
-  self.ghost_links  = self.links
+  self.node.ghost:addWidget(self.ghost)
+  -- create links
+  local links = self.links
   self.links  = {}
   for _, link in ipairs(self.ghost_links) do
     -- current link becomes a ghost (position set in ghost NodeView)
@@ -73,6 +72,8 @@ local function makeGhost(self)
     -- automatically registers in self.links
     editor.Link(link.source, self, link.target_url)
   end
+  self.ghost_links = self.links
+  self.links = links
 end
 
 local function removeGhost(self)

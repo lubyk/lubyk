@@ -90,7 +90,9 @@ end
 
 function lib:updateView()
   local node = self.node
-  self:move(node.x, node.y)
+  -- We use global position to cope with ghost views
+  local gx, gy = node.process.view:globalPosition()
+  self:globalMove(gx + node.x, gy + node.y)
   updateSlotViews(self, node.sorted_inlets, 'inlet')
   updateSlotViews(self, node.sorted_outlets, 'outlet')
   placeElements(self)
@@ -164,15 +166,19 @@ end
 local MousePress,       MouseRelease,       DoubleClick =
       mimas.MousePress, mimas.MouseRelease, mimas.DoubleClick
 
+---- We should replace this by editor.Node.makeGhost
 local function makeGhost(self)
   local node = self.node
-  node.ghost = self
-  self.is_ghost = true
-  -- copy
-  node.view = editor.NodeView(node, node.process.view)
-  self:raise()
-  -- duplicate links
-  node.view:updateView()
+  -- create a ghost
+  local ghost = editor.NodeView(node, self.delegate.main_view)
+  ghost.is_ghost = true
+  self.ghost = ghost
+  local gx, gy = self:globalPosition()
+  ghost:globalMove(gx, gy)
+  -- ghost on top
+  ghost:raise()
+  -- build links for the ghost
+  ghost:updateView()
 end
 
 function lib:click(x, y, type, btn, mod)
@@ -180,19 +186,22 @@ function lib:click(x, y, type, btn, mod)
   if type == MousePress then
     -- store position but only start drag when moved START_DRAG_DIST away
     self.click_position = {x = x, y = y}
-    self.current_pos    = {x = node.x, y = node.y}
   elseif type == DoubleClick then
     -- open external editor
     node:edit()
     self.delegate:selectNodeView(self)
   elseif type == MouseRelease then
-    if node.dragging then
+    if self.ghost then --node.dragging then
       -- drop
-      node.dragging = false
-      node:change {
-        x = self.current_pos.x,
-        y = self.current_pos.y,
-      }
+      -- tmp
+      self.ghost:hide()
+      self.ghost = nil
+      --
+      -- node.dragging = false
+      -- node:change {
+      --   x = self.current_pos.x,
+      --   y = self.current_pos.y,
+      -- }
     else
       self.delegate:selectNodeView(self, mod == mimas.ShiftModifier)
     end
@@ -205,20 +214,19 @@ end
 
 function lib:mouse(x, y)
   local node = self.node
-  if not node.dragging and manhattanDist(self.click_position, {x=x,y=y}) > START_DRAG_DIST then
-    -- start drag operation: self becomes ghost
-    node.dragging = true
+  if not self.ghost and manhattanDist(self.click_position, {x=x,y=y}) > START_DRAG_DIST then
+    -- start drag operation
     makeGhost(self)
   end
 
-  if self.is_ghost then
-    local x = self.current_pos.x + x - self.click_position.x
-    local y = self.current_pos.y + y - self.click_position.y
-    self:move(x, y)
-    self.current_pos = {x = x, y = y}
+  if self.ghost then
+    local ghost = self.ghost
+    local gx, gy = self:globalPosition()
+    local dx, dy = x - self.click_position.x, y - self.click_position.y
+    ghost:globalMove(gx + dx, gy + dy)
     -- Forces link redraw
-    updateSlotViews(self, node.sorted_inlets, 'inlet')
-    updateSlotViews(self, node.sorted_outlets, 'outlet')
+    updateSlotViews(ghost, node.sorted_inlets, 'inlet')
+    updateSlotViews(ghost, node.sorted_outlets, 'outlet')
   end
 end
 
