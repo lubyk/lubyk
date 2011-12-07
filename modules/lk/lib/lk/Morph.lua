@@ -204,31 +204,6 @@ function private.dump:processes(dump)
   end
 end
 
---=============================================== Utility
-
-local function deepMerge(base, key, value)
-  local base_v = base[key]
-  if type(value) == 'table' then
-    if not base_v then
-      base[key] = value
-      return true
-    else
-      -- merge
-      local changed = false
-      for k, v in pairs(value) do
-        changed = deepMerge(base_v, k, v) or changed
-      end
-      return changed
-    end
-  elseif base_v == value then
-    -- nothing changed
-    return false
-  else
-    base[key] = value
-    return true
-  end
-end
-
 --=============================================== PRIVATE process
 
 function private.process:connect(process, remote_process)
@@ -244,8 +219,11 @@ function private.process:disconnect(process)
 end
 
 function private.process.changed(self, process, changes)
-  print('Morph: process.changed', process.name, yaml.dump(changes))
   -- write changes to file    
+  if false then
+    -- TMP: DEBUG: DO NOT WRITE CHANGES
+    return
+  end
   local cache = process.cache
   for base_k, base_v in pairs(changes) do
     if base_k == 'nodes' then
@@ -283,7 +261,7 @@ function private.process.changed(self, process, changes)
               end
             end
           else
-            patch_changed = deepMerge(cache_node, k, v) or patch_changed
+            patch_changed = lk.deepMerge(cache_node, k, v) or patch_changed
           end
         end
         
@@ -293,7 +271,7 @@ function private.process.changed(self, process, changes)
         end
       end
     else
-      patch_changed = deepMerge(cache, base_k, base_v) or patch_changed
+      patch_changed = lk.deepMerge(cache, base_k, base_v) or patch_changed
     end
   end
   if patch_changed then
@@ -303,6 +281,7 @@ end
 
 -- This is called when we do an update on the resource (file save).
 function private.node.updateCallback(process, node_name, resource)
+  print("CODE CHANGE", process.name, node_name)
   -- We launch a new thread to make sure that we do not hang the server
   -- if this fails.
   process.update_thread = lk.Thread(function()
@@ -391,7 +370,6 @@ function lib.spawn(self, name)
   process = lk.Process(%s)
   run()
   ]], name)
-  print(pid, name)
   -- the process will find the morph's ip/port by it's own service discovery
 end
 

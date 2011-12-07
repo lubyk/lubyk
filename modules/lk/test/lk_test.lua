@@ -20,6 +20,14 @@ function should.absolutizePath()
   -- assertEqual('/foo/bar', lk.absolutizePath('/foo/bar', '/One/two'))
 end
 
+function should.deepMerge()
+  local base = {a = { b = {x=1}, c = {d = 4}}}
+  local a2   = { b = {x=3}, c = {e = 5}, g = 2}
+  assertFalse(lk.deepMerge(base, 'a', {c = {d = 4}}))
+  assertTrue(lk.deepMerge(base, 'a', a2))
+  assertValueEqual({a = { b = {x=3}, c = {d = 4, e = 5}, g = 2}}, base)
+end
+
 function should.makePath()
   local path = fixture.path('tmp/foo/bar/baz')
   lk.rmTree(fixture.path('tmp'), true)

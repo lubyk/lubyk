@@ -51,7 +51,7 @@ function lib:updateView()
   if not self.ghost then
     if self.source.view and self.target.ghost then
       self.ghost = editor.LinkView(self.source.view, self.target.ghost)
-    elseif self.source.ghost and self.target.view then
+    elseif self.source.ghost then
       self.ghost = editor.LinkView(self.source.ghost, self.target.view)
     end
     if self.ghost then
@@ -96,6 +96,10 @@ function lib:deleteView()
     end
     self.view:delete()
     self.view = nil
+  end
+  if self.ghost then
+    self.ghost:delete()
+    self.ghost = nil
   end
 end
 

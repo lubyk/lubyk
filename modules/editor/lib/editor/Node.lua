@@ -92,6 +92,22 @@ function lib:set(def)
   end
 end
 
+local function dumpSlots(list)
+  local res = {}
+  for _, slot in ipairs(list) do
+    table.insert(res, slot:dump())
+  end
+end
+
+-- Dump current node definition (used when moving a node from one
+-- process to another)
+function lib:dump()
+  local res = {name = self.name, hue = self.hue, code = self.code}
+  res.inlets  = dumpSlots(self.sorted_inlets)
+  res.outlets = dumpSlots(self.sorted_outlets)
+  return res
+end
+
 function lib:updateView()
   if not self.view then
     self.view = editor.NodeView(self, self.process.view)
@@ -102,6 +118,7 @@ function lib:updateView()
       -- value updated, remove ghost
       self.ghost:delete()
       self.ghost = nil
+      self.ghost_x, self.ghost_y = nil, nil
     else
       self.ghost:updateView()
     end
@@ -216,7 +233,16 @@ function lib:fileChanged(path)
 end
 
 function lib:deleteView()
-  self.view = nil
+  if self.view then
+    self.view:delete()
+    self.view  = nil
+  end
+
+  if self.ghost then
+    self.ghost:delete()
+    self.ghost = nil
+  end
+
   for _, slot in ipairs(self.sorted_outlets) do
     slot:deleteViews()
   end
@@ -229,7 +255,6 @@ end
 function lib:url()
   return self.parent:url() .. '/' .. self.name
 end
-
 
 -- ========== HELPERS
 

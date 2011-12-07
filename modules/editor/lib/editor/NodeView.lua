@@ -196,15 +196,61 @@ function lib:click(x, y, type, btn, mod)
     self.delegate:selectNodeView(self)
   elseif type == MouseRelease then
     if node.dragging then
+      local delegate = self.node.process.delegate
       -- drop
-      local gx,  gy  = node.ghost:globalPosition()
-      local gpx, gpy = node.process.view:globalPosition()
-      node.dragging = false
-      node:change {
-        x = node.ghost_x,
-        y = node.ghost_y,
-      }
-      node.ghost_x, node.ghost_y = nil, nil
+      -- detect drop zone
+      local process = (delegate.process_view_under or self.node.process.view).process
+      if self.node.process ~= process then
+        local old_process = self.node.process
+        -- moving from one process to another
+        local def = self.node:dump()
+        local gx,  gy  = node.ghost:globalPosition()
+        local gpx, gpy = process.view:globalPosition()
+        def.x, def.y = gx - gpx, gy - gpy
+
+        old_process:change {
+          nodes = {
+            [self.node.name] = false,
+          }
+        }
+        print("================================= [editor.NodeView (process:change def)\n", yaml.dump(def))
+        print("=================================  editor.NodeView]")
+        process:change {
+          nodes = {
+            [self.node.name] = def,
+          }
+        }
+        ---- Update all incoming links
+        local changed_processes = {}
+        for _, inlet in ipairs(self.node.sorted_inlets) do
+          local url = process:url() .. string.sub(inlet:url(), string.len(old_process:url()) + 1)
+          print("================================= [editor.NodeView (url)\n", url)
+          for _,link in ipairs(inlet.links) do
+            local node = link.source.node
+            lk.deepMerge(changed_processes, node.process, {
+              nodes = {
+                [node.name] = {
+                  links = {
+                    [link.source.name] = {
+                      [url] = true
+                    }
+                  }
+                }
+              }
+            })
+          end
+        end
+        for p, def in pairs(changed_processes) do
+          print("================================= [editor.NodeView (changed_process)\n", yaml.dump(def))
+          p:change(def)
+        end
+      else
+        node.dragging = false
+        node:change {
+          x = node.ghost_x,
+          y = node.ghost_y,
+        }
+      end
     else
       self.delegate:selectNodeView(self, mod == mimas.ShiftModifier)
     end
@@ -223,8 +269,17 @@ function lib:mouse(x, y)
   end
 
   if node.ghost then
+    local delegate = self.node.process.delegate
     local ghost = node.ghost
-    local gx, gy = self:globalPosition()
+    local gx, gy = ghost:globalPosition()
+    local old_process_view_under = delegate.process_view_under
+    delegate.process_view_under = delegate:processViewAtGlobal(gx + self.click_position.x, gy + self.click_position.y)
+    if delegate.process_view_under then
+      delegate.process_view_under:update()
+    end
+    if old_process_view_under then
+      old_process_view_under:update()
+    end
     node.ghost_x = node.x + x - self.click_position.x
     node.ghost_y = node.y + y - self.click_position.y
     ghost:updateView()

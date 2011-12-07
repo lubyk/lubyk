@@ -63,15 +63,26 @@ local function setNodes(self, nodes_definition)
   for name, def in pairs(nodes_definition) do
     -- parsing each node
     local node = nodes[name]
-    if not node then
-      node = lk.Node(self, name)
-      nodes[name] = node
+    if not def then
+      -- remove node
+      if node then
+        nodes[name] = nil
+      end
+    else
+      if not node then
+        -- create node
+        node = lk.Node(self, name)
+        nodes[name] = node
+      end
+      -- update
+      node:set(def)
     end
-    node:set(def)
   end
 end
 
 function lib:set(definitions)
+  print("================================= [lk.Patch\n", yaml.dump(definitions))
+  print("================================= lk.Patch]")
   for k, v in pairs(definitions) do
     if k == 'nodes' then
       setNodes(self, v)
@@ -207,7 +218,6 @@ function lib:dump(data)
       end
     end
   end
-  print(yaml.dump(res))
   return res
 end
 
@@ -220,7 +230,7 @@ function lib:partialDump(data)
       if k == 'nodes' then
         res.nodes = {}
         local nodes = res.nodes
-        for k,node_data in pairs(v) do
+        for k, node_data in pairs(v) do
           local node = self.nodes[k]
           if node then
             nodes[k] = node:partialDump(node_data)

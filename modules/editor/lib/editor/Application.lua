@@ -101,7 +101,6 @@ function lib:startZone(path)
   morph = lk.DavMorph(%s)
   run()
   ]], path)
-  print('Morph pid', self.morph_pid)
 
   -- Maybe we should make sure it started ok before selecting the zone.
   self:selectZone(Lubyk.zone)
@@ -112,7 +111,6 @@ end
 function lib:openFile(path)
   if string.match(path, '.lkp$') then
     if self.morph_pid then
-      print('kill ?')
       -- kill it
       self.morph.req(lubyk.quit_url)
       worker:waitpid(self.morph_pid)

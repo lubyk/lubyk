@@ -92,13 +92,18 @@ end
 function lib:set(def)
 end
 
+-- Used when moving a node from one process to another.
+function lib:dump()
+  return {name = self.name, info = self.info}
+end
+
 -- Delete all links and views related to this slot.
 function lib:deleteViews()
   for _,link in ipairs(self.links) do
     link:deleteView()
   end
 
-  self.view  = nil
+  self.view = nil
   self.ghost = nil
 end
 

@@ -267,10 +267,11 @@ function private:runThread(thread)
   if thread.at and thread.at > 0 then
     -- logical time
     sched.now = thread.at
-    if worker:now() > thread.at + 2 then
-      -- 2 == jitter between realtime and logical time.
-      print("OUT OF REAL TIME", worker:now() - thread.at)
-    end
+    -- This does not work. Think better and make something that works.
+    -- if worker:now() > thread.at + 2 then
+    --   -- 2 == jitter between realtime and logical time.
+    --   print("OUT OF REAL TIME", worker:now() - thread.at)
+    -- end
   else
     sched.now = worker:now()
   end

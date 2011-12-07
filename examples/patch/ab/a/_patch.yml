@@ -12,7 +12,7 @@ nodes:
         counter/in/bang: true
     hue: 0
     params:
-      tempo: 580
+      tempo: 60
   counter:
     y: 75
     x: 30

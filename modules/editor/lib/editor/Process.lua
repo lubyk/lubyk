@@ -41,7 +41,7 @@ local function setNodes(self, nodes_def)
         node:set(node_def)
       else
         -- remove node
-        node:remove()
+        node:deleteView()
         nodes[node_name] = nil
       end
     elseif node_def then

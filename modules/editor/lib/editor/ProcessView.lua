@@ -71,7 +71,7 @@ function lib:paint(p, w, h)
     p:setBrush(self.process.hue, 0.2, 0.2, 0.3)
     pen = mimas.Pen(HPEN_WIDTH * 2, mimas.Color(self.process.hue, 0.3, 0.8, 0.2))
   elseif self == self.delegate.process_view_under then
-    -- under drag operation from Library
+    -- under drag operation
     p:setBrush(self.process.hue, 0.3, 0.3, 0.5)
   else
     p:setBrush(self.process.hue, 0.2, 0.2, 0.5)

@@ -34,9 +34,9 @@ function lk.readall(basepath, path)
   return s
 end
 
-function lk.absolutizePath(path)
+function lk.absolutizePath(path, base)
   if not string.match(path, '^/') then
-    path = string.format('%s/%s', lfs.currentdir(), path)
+    path = string.format('%s/%s', base or lfs.currentdir(), path)
   end
   -- resolve '/./' and '/../'
   local parts = lk.split(path, '/')
@@ -56,6 +56,30 @@ function lk.absolutizePath(path)
   end
   return lk.join(path, '/')
 end
+
+local function deepMerge(base, key, value)
+  local base_v = base[key]
+  if type(value) == 'table' then
+    if not base_v then
+      base[key] = value
+      return true
+    else
+      -- merge
+      local changed = false
+      for k, v in pairs(value) do
+        changed = deepMerge(base_v, k, v) or changed
+      end
+      return changed
+    end
+  elseif base_v == value then
+    -- nothing changed
+    return false
+  else
+    base[key] = value
+    return true
+  end
+end
+lk.deepMerge = deepMerge
 
 local function makePathPart(path, fullpath)
   local file_type = lk.fileType(path)
