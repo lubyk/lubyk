@@ -233,41 +233,51 @@ function private.process.changed(self, process, changes)
         cache_nodes = {}
         cache[base_k] = cache_nodes
       end
-      for name,node in pairs(nodes) do
+      for name, node in pairs(nodes) do
         local cache_node = cache_nodes[name]
         local links
-        if not cache_node then
-          -- new node
-          local resource = process.dir:createChild(name .. '.lua', node.code or '')
-          resource:addCallback('update', private.node.updateCallback, process, name)
-          cache_node = {}
-          cache_nodes[name] = cache_node
-        end
-
-        for k, v in pairs(node) do
-          if k == 'code' then
-            -- ignore code change notifications (we sent the code)
-          elseif k == 'inlets' then
-            -- ignore (not in patch)
-          elseif k == 'outlets' then
-            -- extract links
-            for _, outlet in ipairs(v) do
-              local l = outlet.links
-              if l then
-                if not links then
-                  links = {}
-                end
-                links[outlet.name] = l
-              end
-            end
+        if not node then
+          if not cache_node then
+            -- ignore
           else
-            patch_changed = lk.deepMerge(cache_node, k, v) or patch_changed
+            -- removed node
+            cache_nodes[name] = nil
+            patch_changed = true
           end
-        end
-        
-        if links then
-          patch_changed = true
-          cache_node.links = links
+        else
+          if not cache_node then
+            -- new node
+            local resource = process.dir:createChild(name .. '.lua', node.code or '')
+            resource:addCallback('update', private.node.updateCallback, process, name)
+            cache_node = {}
+            cache_nodes[name] = cache_node
+          end
+
+          for k, v in pairs(node) do
+            if k == 'code' then
+              -- ignore code change notifications (we sent the code)
+            elseif k == 'inlets' then
+              -- ignore (not in patch)
+            elseif k == 'outlets' then
+              -- extract links
+              for _, outlet in ipairs(v) do
+                local l = outlet.links
+                if l then
+                  if not links then
+                    links = {}
+                  end
+                  links[outlet.name] = l
+                end
+              end
+            else
+              patch_changed = lk.deepMerge(cache_node, k, v) or patch_changed
+            end
+          end
+          
+          if links then
+            patch_changed = true
+            cache_node.links = links
+          end
         end
       end
     else

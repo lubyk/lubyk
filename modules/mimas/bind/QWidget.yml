@@ -70,6 +70,11 @@ lua:
       self->showNormal();
     }
 
+  position: |
+    lua_pushnumber(L, self->x());
+    lua_pushnumber(L, self->y());
+    return 2;
+
   globalPosition: |
     QPoint pt = self->mapToGlobal(QPoint(0, 0));
     lua_pushnumber(L, pt.x());

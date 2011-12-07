@@ -118,7 +118,6 @@ function lib:updateView()
       -- value updated, remove ghost
       self.ghost:delete()
       self.ghost = nil
-      self.ghost_x, self.ghost_y = nil, nil
     else
       self.ghost:updateView()
     end

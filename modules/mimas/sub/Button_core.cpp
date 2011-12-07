@@ -193,7 +193,7 @@ static int Button_cssClass(lua_State *L) {
 
 
 /** void mimas::QWidget::globalMove(float x, float y)
- * mimas/bind/QWidget.h:71
+ * mimas/bind/QWidget.h:77
  */
 static int QWidget_globalMove(lua_State *L) {
   try {
@@ -410,6 +410,26 @@ static int QObject_object(lua_State *L) {
     lua_pushfstring(L, "object: %s", e.what());
   } catch (...) {
     lua_pushfstring(L, "object: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** LuaStackSize mimas::QWidget::position()
+ * mimas/bind/QWidget.h:73
+ */
+static int QWidget_position(lua_State *L) {
+  try {
+    Button *self = *((Button**)dubL_checksdata(L, 1, "mimas.Button"));
+    if (!self) throw dub::Exception("Using deleted mimas.Button in position");
+    lua_pushnumber(L, self->x());
+    lua_pushnumber(L, self->y());
+    return 2;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "position: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "position: Unknown exception");
   }
   return lua_error(L);
 }
@@ -875,6 +895,7 @@ static const struct luaL_Reg Button_member_methods[] = {
   {"move"              , QWidget_move},
   {"name"              , QObject_name},
   {"object"            , QObject_object},
+  {"position"          , QWidget_position},
   {"raise"             , QWidget_raise},
   {"resize"            , QWidget_resize},
   {"setHue"            , Button_setHue},

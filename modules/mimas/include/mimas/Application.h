@@ -91,6 +91,12 @@ public:
     MIMAS_DEBUG_GC
   }
 
+  /** If this is true (default), mimas quits when the last window is closed.
+   */
+  void setQuitOnLastWindowClosed(bool quit) {
+    QApplication::setQuitOnLastWindowClosed(quit);
+  }
+
   // Destructor method called when the object goes out of Lua scope
   virtual void dub_destroy() {
     luaCleanup();

@@ -75,7 +75,7 @@ static int Application_MakeApplication(lua_State *L) {
 
 
 /** virtual void mimas::Application::dub_destroy()
- * include/mimas/Application.h:95
+ * include/mimas/Application.h:101
  */
 static int Application_dub_destroy(lua_State *L) {
   try {
@@ -94,7 +94,7 @@ static int Application_dub_destroy(lua_State *L) {
 
 
 /** int mimas::Application::exec()
- * include/mimas/Application.h:102
+ * include/mimas/Application.h:108
  */
 static int Application_exec(lua_State *L) {
   try {
@@ -153,7 +153,7 @@ static int QObject_object(lua_State *L) {
 
 
 /** void mimas::Application::processEvents(int maxtime)
- * include/mimas/Application.h:107
+ * include/mimas/Application.h:113
  */
 static int Application_processEvents(lua_State *L) {
   try {
@@ -173,7 +173,7 @@ static int Application_processEvents(lua_State *L) {
 
 
 /** void mimas::Application::quit()
- * include/mimas/Application.h:122
+ * include/mimas/Application.h:128
  */
 static int Application_quit(lua_State *L) {
   try {
@@ -192,7 +192,7 @@ static int Application_quit(lua_State *L) {
 
 
 /** LuaStackSize mimas::Application::screenSize(lua_State *L)
- * include/mimas/Application.h:132
+ * include/mimas/Application.h:138
  */
 static int Application_screenSize(lua_State *L) {
   try {
@@ -231,8 +231,28 @@ static int QObject_setName(lua_State *L) {
 
 
 
+/** void mimas::Application::setQuitOnLastWindowClosed(bool quit)
+ * include/mimas/Application.h:96
+ */
+static int Application_setQuitOnLastWindowClosed(lua_State *L) {
+  try {
+    Application *self = *((Application**)dubL_checksdata(L, 1, "mimas.Application"));
+    if (!self) throw dub::Exception("Using deleted mimas.Application in setQuitOnLastWindowClosed");
+    bool quit = lua_toboolean(L, 2);
+    self->setQuitOnLastWindowClosed(quit);
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "setQuitOnLastWindowClosed: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "setQuitOnLastWindowClosed: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
 /** void mimas::Application::setStyleSheet(const char *text)
- * include/mimas/Application.h:126
+ * include/mimas/Application.h:132
  */
 static int Application_setStyleSheet(lua_State *L) {
   try {
@@ -252,7 +272,7 @@ static int Application_setStyleSheet(lua_State *L) {
 
 
 /** void mimas::Application::singleShot(int msec, QObject *receiver, const char *member)
- * include/mimas/Application.h:143
+ * include/mimas/Application.h:149
  */
 static int Application_singleShot(lua_State *L) {
   try {
@@ -274,7 +294,7 @@ static int Application_singleShot(lua_State *L) {
 
 
 /** static void mimas::Application::terminate(int sig)
- * include/mimas/Application.h:120
+ * include/mimas/Application.h:126
  */
 static int Application_terminate(lua_State *L) {
   try {
@@ -304,6 +324,7 @@ static const struct luaL_Reg Application_member_methods[] = {
   {"quit"              , Application_quit},
   {"screenSize"        , Application_screenSize},
   {"setName"           , QObject_setName},
+  {"setQuitOnLastWindowClosed", Application_setQuitOnLastWindowClosed},
   {"setStyleSheet"     , Application_setStyleSheet},
   {"singleShot"        , Application_singleShot},
   {"__tostring"        , Application__tostring},

@@ -11,6 +11,8 @@ local lib   = {type='lk.Patch'}
 lib.__index = lib
 lk.Patch    = lib
 
+Lubyk.mimas_quit_on_close = false
+
 -- PRIVATE
 local ALLOWED_KEYS = {
   nodes  = true,
@@ -66,7 +68,9 @@ local function setNodes(self, nodes_definition)
     if not def then
       -- remove node
       if node then
+        node = nil
         nodes[name] = nil
+        collectgarbage('collect')
       end
     else
       if not node then

@@ -95,11 +95,8 @@ end
 function lib:updateView()
   local node = self.node
   -- We use global position to cope with ghost views
-  local gx, gy = node.process.view:globalPosition()
-  if self.is_ghost then
-    self:globalMove(gx + node.ghost_x, gy + node.ghost_y)
-  else
-    self:globalMove(gx + node.x, gy + node.y)
+  if not self.is_ghost then
+    self:move(node.x, node.y)
   end
   updateSlotViews(node.sorted_inlets)
   updateSlotViews(node.sorted_outlets)
@@ -200,13 +197,16 @@ function lib:click(x, y, type, btn, mod)
       -- drop
       -- detect drop zone
       local process = (delegate.process_view_under or self.node.process.view).process
+      local gx,  gy  = node.ghost:globalPosition()
+      local gpx, gpy = process.view:globalPosition()
+      local node_x = gx - gpx
+      local node_y = gy - gpy
+
       if self.node.process ~= process then
         local old_process = self.node.process
         -- moving from one process to another
         local def = self.node:dump()
-        local gx,  gy  = node.ghost:globalPosition()
-        local gpx, gpy = process.view:globalPosition()
-        def.x, def.y = gx - gpx, gy - gpy
+        def.x, def.y = node_x, node_y
 
         old_process:change {
           nodes = {
@@ -232,7 +232,10 @@ function lib:click(x, y, type, btn, mod)
                 [node.name] = {
                   links = {
                     [link.source.name] = {
-                      [url] = true
+                      -- remove old link
+                      [inlet:url()] = false,
+                      -- create new link
+                      [url] = true,
                     }
                   }
                 }
@@ -246,9 +249,10 @@ function lib:click(x, y, type, btn, mod)
         end
       else
         node.dragging = false
+        local ghost_x, ghost_y = node.ghost:position()
         node:change {
-          x = node.ghost_x,
-          y = node.ghost_y,
+          x = node_x,
+          y = node_y,
         }
       end
     else
@@ -271,17 +275,21 @@ function lib:mouse(x, y)
   if node.ghost then
     local delegate = self.node.process.delegate
     local ghost = node.ghost
-    local gx, gy = ghost:globalPosition()
+    local gpx, gpy = self.node.process.view:globalPosition()
+    local gx = gpx + node.x + x - self.click_position.x
+    local gy = gpy + node.y + y - self.click_position.y
+    ghost:globalMove(gx, gy)
+
     local old_process_view_under = delegate.process_view_under
     delegate.process_view_under = delegate:processViewAtGlobal(gx + self.click_position.x, gy + self.click_position.y)
+
     if delegate.process_view_under then
       delegate.process_view_under:update()
     end
     if old_process_view_under then
       old_process_view_under:update()
     end
-    node.ghost_x = node.x + x - self.click_position.x
-    node.ghost_y = node.y + y - self.click_position.y
+
     ghost:updateView()
   end
 end

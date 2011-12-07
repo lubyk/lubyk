@@ -17,6 +17,7 @@ mimas.Application_ = mt
 
 function mimas.Application(type)
   local self = constr(type)
+  self:setQuitOnLastWindowClosed(Lubyk.mimas_quit_on_close)
   self:setStyleSheet [[
     .window { background:rgb(38, 38, 38); color: rgb(180,180,180);}
     .main_window { background:rgb(38, 38, 38); color: rgb(180,180,180);}

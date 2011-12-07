@@ -25,3 +25,5 @@ Lubyk.service_type = '_lubyk._tcp'
 Lubyk.prototypes_lib = string.format('%s/Documents/Lubyk.db', os.getenv('HOME'))
 Lubyk.library_sources = {}
 Lubyk.dav_port = 8103 -- BLOK
+-- This is set to false by lk.Patch so that lk.Process do not quit on closing windows.
+Lubyk.mimas_quit_on_close = true

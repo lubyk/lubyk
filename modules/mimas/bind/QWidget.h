@@ -66,6 +66,12 @@ class QWidget {
    * screen coordinates.
    */
   LuaStackSize globalPosition();
+
+  /** Returns (x,y) position of the widget in the parent
+   * coordinates.
+   */
+  LuaStackSize position();
+
   /** Move the widget to the given global coordinates.
    */
   void globalMove(float x, float y);

@@ -195,13 +195,13 @@ static int Timer_start2(lua_State *L) {
 static int Timer_start(lua_State *L) {
   int type__ = lua_type(L, 2);
   int top__  = lua_gettop(L);
-  if (top__ < 2) {
-    return Timer_start2(L);
-  } else if (type__ == LUA_TNUMBER) {
+  if (type__ == LUA_TNUMBER) {
     return Timer_start1(L);
+  } else if (top__ < 2) {
+    return Timer_start2(L);
   } else {
     // use any to raise errors
-    return Timer_start1(L);
+    return Timer_start2(L);
   }
 }
 
