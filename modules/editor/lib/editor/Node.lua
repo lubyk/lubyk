@@ -26,7 +26,7 @@ setmetatable(lib, {
     name    = def.name
   end
 
-  local instance = {
+  local self = {
     name           = name,
     hue            = 0.2,
     x              = 100,
@@ -43,14 +43,14 @@ setmetatable(lib, {
   -- List of inlet prototypes (already linked) to use
   -- on inlet creation.
   if process.pending_inlets[name] then
-    instance.pending_inlets = process.pending_inlets[name]
+    self.pending_inlets = process.pending_inlets[name]
     process.pending_inlets[name] = nil
   else
-    instance.pending_inlets = {}
+    self.pending_inlets = {}
   end
-  setmetatable(instance, lib)
-  instance:set(def)
-  return instance
+  setmetatable(self, lib)
+  self:set(def)
+  return self
 end})
 
 local function setCode(self, code)
@@ -97,11 +97,16 @@ function lib:updateView()
     self.view = editor.NodeView(self, self.process.view)
   end
 
-  if self.ghost and not self.dragging then
-    -- value updated, remove ghost
-    self.ghost:delete()
-    self.ghost = nil
+  if self.ghost then
+    if not self.dragging then
+      -- value updated, remove ghost
+      self.ghost:delete()
+      self.ghost = nil
+    else
+      self.ghost:updateView()
+    end
   end
+
   -- update needed views
   self.view:updateView()
 end
@@ -228,7 +233,7 @@ end
 
 -- ========== HELPERS
 
--- Create a ghost node (drag operation, before it is droped or name is set)
+-- Create a ghost node (before it is droped or name is set)
 function lib.makeGhost(node_def, delegate)
   -- mock a node for NodeView
   local node = {

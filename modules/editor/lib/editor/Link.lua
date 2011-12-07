@@ -46,6 +46,26 @@ function lib:updateView()
   if self.view then
     self.view:slotMoved()
   end
+
+  -- ghost
+  if not self.ghost then
+    if self.source.view and self.target.ghost then
+      self.ghost = editor.LinkView(self.source.view, self.target.ghost)
+    elseif self.source.ghost and self.target.view then
+      self.ghost = editor.LinkView(self.source.ghost, self.target.view)
+    end
+    if self.ghost then
+      self.source.node.process.delegate.main_view:addLinkView(self.ghost)
+    end
+  elseif not self.source.ghost and not self.target.ghost then
+    -- remove our ghost link
+    self.ghost:delete()
+    self.ghost = nil
+  end
+
+  if self.ghost then
+    self.ghost:slotMoved()
+  end
 end
 
 local function removeFromList(self, links)

@@ -26,26 +26,28 @@ local GHOST_ALPHA  = 0.3
 local SELECTED_COLOR_VALUE = 0.6
 local START_DRAG_DIST = 4
 
-local function updateSlotViews(self, list, type)
+local function updateSlotViews(list)
   for _, slot in ipairs(list) do
     -- create/update views for each slot
-    slot:updateView(self)
-    --slot.node = self.node
-    --slot.type = type
-    --slot.view = editor.SlotView(slot)
-    --self.super:addWidget(slot.view)
+    slot:updateView()
   end
 end
 
-local function placeSlots(slot_list, x, y, max_x)
+local function placeSlots(self, slot_list, x, y, max_x)
   for _, slot in ipairs(slot_list) do
-    if slot.view then
+    local key
+    if self.is_ghost then
+      view = slot.ghost
+    else
+      view = slot.view
+    end
+    if view then
       if x > max_x then
-        slot.view:hide()
+        view:hide()
       else
-        slot.view:show()
+        view:show()
       end
-      slot.view:move(x, y)
+      view:move(x, y)
       slot:updateLinkViews()
     end
     x = x + SLOTW + SLOT_PADDING
@@ -54,7 +56,8 @@ end
 
 local function placeElements(self)
   -- inlets
-  placeSlots(self.node.sorted_inlets,
+  placeSlots(self,
+    self.node.sorted_inlets,
     -- start x
     PAD + TEXT_HPADDING,
     -- start y
@@ -63,7 +66,8 @@ local function placeElements(self)
     self.width - SLOTW - PAD
   )
 
-  placeSlots(self.node.sorted_outlets,
+  placeSlots(self,
+    self.node.sorted_outlets,
     -- start x
     PAD + TEXT_HPADDING,
     -- start y
@@ -92,9 +96,13 @@ function lib:updateView()
   local node = self.node
   -- We use global position to cope with ghost views
   local gx, gy = node.process.view:globalPosition()
-  self:globalMove(gx + node.x, gy + node.y)
-  updateSlotViews(self, node.sorted_inlets, 'inlet')
-  updateSlotViews(self, node.sorted_outlets, 'outlet')
+  if self.is_ghost then
+    self:globalMove(gx + node.ghost_x, gy + node.ghost_y)
+  else
+    self:globalMove(gx + node.x, gy + node.y)
+  end
+  updateSlotViews(node.sorted_inlets)
+  updateSlotViews(node.sorted_outlets)
   placeElements(self)
   -- forces redraw
   self:update()
@@ -166,19 +174,15 @@ end
 local MousePress,       MouseRelease,       DoubleClick =
       mimas.MousePress, mimas.MouseRelease, mimas.DoubleClick
 
----- We should replace this by editor.Node.makeGhost
 local function makeGhost(self)
   local node = self.node
   -- create a ghost
   local ghost = editor.NodeView(node, self.delegate.main_view)
   ghost.is_ghost = true
-  self.ghost = ghost
-  local gx, gy = self:globalPosition()
-  ghost:globalMove(gx, gy)
+  node.ghost = ghost
+  node.dragging = true
   -- ghost on top
   ghost:raise()
-  -- build links for the ghost
-  ghost:updateView()
 end
 
 function lib:click(x, y, type, btn, mod)
@@ -191,17 +195,16 @@ function lib:click(x, y, type, btn, mod)
     node:edit()
     self.delegate:selectNodeView(self)
   elseif type == MouseRelease then
-    if self.ghost then --node.dragging then
+    if node.dragging then
       -- drop
-      -- tmp
-      self.ghost:hide()
-      self.ghost = nil
-      --
-      -- node.dragging = false
-      -- node:change {
-      --   x = self.current_pos.x,
-      --   y = self.current_pos.y,
-      -- }
+      local gx,  gy  = node.ghost:globalPosition()
+      local gpx, gpy = node.process.view:globalPosition()
+      node.dragging = false
+      node:change {
+        x = node.ghost_x,
+        y = node.ghost_y,
+      }
+      node.ghost_x, node.ghost_y = nil, nil
     else
       self.delegate:selectNodeView(self, mod == mimas.ShiftModifier)
     end
@@ -214,19 +217,17 @@ end
 
 function lib:mouse(x, y)
   local node = self.node
-  if not self.ghost and manhattanDist(self.click_position, {x=x,y=y}) > START_DRAG_DIST then
+  if not node.ghost and manhattanDist(self.click_position, {x=x,y=y}) > START_DRAG_DIST then
     -- start drag operation
     makeGhost(self)
   end
 
-  if self.ghost then
-    local ghost = self.ghost
+  if node.ghost then
+    local ghost = node.ghost
     local gx, gy = self:globalPosition()
-    local dx, dy = x - self.click_position.x, y - self.click_position.y
-    ghost:globalMove(gx + dx, gy + dy)
-    -- Forces link redraw
-    updateSlotViews(ghost, node.sorted_inlets, 'inlet')
-    updateSlotViews(ghost, node.sorted_outlets, 'outlet')
+    node.ghost_x = node.x + x - self.click_position.x
+    node.ghost_y = node.y + y - self.click_position.y
+    ghost:updateView()
   end
 end
 

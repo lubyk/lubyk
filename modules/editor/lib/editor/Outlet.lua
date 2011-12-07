@@ -88,30 +88,21 @@ function lib:set(def)
 end
 
 local function makeGhost(self)
-  -- started drag operation (view became ghost), copy
-  -- slot into non-ghost NodeView.
-  self.ghost = self.view
+  -- Started drag operation (view has a ghost), create ghost slots.
+  self.ghost = editor.SlotView(self)
   self.ghost.is_ghost = true
-  self.view  = editor.SlotView(self)
-  self.node.view:addWidget(self.view)
-  -- duplicate links
-  self.ghost_links  = self.links
-  self.links  = {}
-  for _, link in ipairs(self.ghost_links) do
-    -- current link becomes a ghost
-    link.is_ghost = true
-    -- automatically registers in self.links
-    editor.Link(self, link.target, link.target_url)
-  end
+  self.node.ghost:addWidget(self.ghost)
 end
 
 local function removeGhost(self)
   self.ghost = nil
   -- remove ghost links
-  for _,link in ipairs(self.ghost_links) do
-    link:delete()
+  for _,link in ipairs(self.links) do
+    if link.ghost then
+      link.ghost:delete()
+      link.ghost = nil
+    end
   end
-  self.ghost_links = nil
 end
 
 -- Create or update view.
