@@ -603,6 +603,16 @@ enum FileDialogFlags {
   DontUseSheet          = QFileDialog::DontUseSheet,
 };
 
+enum ActionMenuRoleFlags {
+  NoRole                  = QAction::NoRole,
+  TextHeuristicRole       = QAction::TextHeuristicRole,
+  ApplicationSpecificRole = QAction::ApplicationSpecificRole,
+  AboutQtRole             = QAction::AboutQtRole,
+  AboutRole               = QAction::AboutRole,
+  PreferencesRole         = QAction::PreferencesRole,
+  QuitRole                = QAction::QuitRole,
+};
+
 } // mimas
 
 #endif // LUBYK_INCLUDE_MIMAS_CONSTANTS_H_

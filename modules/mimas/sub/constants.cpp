@@ -511,6 +511,13 @@ static const struct lua_constants_Reg mimas_namespace_constants[] = {
   {"ReadOnly"                      , mimas::ReadOnly},
   {"HideNameFilterDetails"         , mimas::HideNameFilterDetails},
   {"DontUseSheet"                  , mimas::DontUseSheet},
+  {"NoRole"                        , mimas::NoRole},
+  {"TextHeuristicRole"             , mimas::TextHeuristicRole},
+  {"ApplicationSpecificRole"       , mimas::ApplicationSpecificRole},
+  {"AboutQtRole"                   , mimas::AboutQtRole},
+  {"AboutRole"                     , mimas::AboutRole},
+  {"PreferencesRole"               , mimas::PreferencesRole},
+  {"QuitRole"                      , mimas::QuitRole},
   {NULL, NULL},
 };
 

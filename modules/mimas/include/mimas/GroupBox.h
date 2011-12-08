@@ -26,71 +26,46 @@
 
   ==============================================================================
 */
-#ifndef LUBYK_INCLUDE_MIMAS_V_BOX_LAYOUT_H_
-#define LUBYK_INCLUDE_MIMAS_V_BOX_LAYOUT_H_
+#ifndef LUBYK_INCLUDE_MIMAS_GROUP_BOX_H_
+#define LUBYK_INCLUDE_MIMAS_GROUP_BOX_H_
 
 #include "mimas/mimas.h"
 
 using namespace lubyk;
 
-#include <QtGui/QVBoxLayout>
+#include <QtGui/QGroupBox>
 
 #include <iostream>
 
 namespace mimas {
 
-/** VBoxLayout (arrange widgets vertically).
+/** GroupBox (arrange widgets vertically).
  *
- * @dub lib_name:'VBoxLayout_core'
+ * @dub lib_name:'GroupBox_core'
+ *      super: 'QWidget'
  */
-class VBoxLayout : public QVBoxLayout, public LuaObject
+class GroupBox : public QGroupBox, public LuaObject
 {
   Q_OBJECT
+  Q_PROPERTY(QString class READ cssClass)
 
 public:
-  VBoxLayout(QWidget *parent = NULL)
-   : QVBoxLayout(parent) {
+  GroupBox(const char *title = NULL, QWidget *parent = NULL)
+   : QGroupBox(title, parent) {
     MIMAS_DEBUG_CC
   }
 
-  ~VBoxLayout() {
+  ~GroupBox() {
     MIMAS_DEBUG_GC
   }
 
-  void addWidget(QWidget *widget, int stretch = 0, int alignment = 0) {
-    QVBoxLayout::addWidget(widget, stretch, (Qt::Alignment)alignment);
+  QString cssClass() const {
+    return QString("group_box");
   }
 
-  void addLayout(QLayout *layout) {
-    QVBoxLayout::addLayout(layout);
-  }
-
-  /** Add a strechable item.
-   */
-  void addStretch(int stretch = 0) {
-    QVBoxLayout::addStretch(stretch);
-  }
-
-  /** Add a single fixed space.
-   */
-  void addSpacing(int size) {
-    QVBoxLayout::addSpacing(size);
-  }
-
-  /** Fixed spacing between items.
-   */
-  void setSpacing(int space) {
-    QVBoxLayout::setSpacing(space);
-  }
-
-  void setContentsMargins(int left, int top, int right, int bottom) {
-    QVBoxLayout::setContentsMargins(left, top, right, bottom);
-  }
-
-  QLayout *layout() {
-    return this;
-  }
+  QSize size_hint_;
 };
 
 } // mimas
-#endif // LUBYK_INCLUDE_MIMAS_V_BOX_LAYOUT_H_
+#endif // LUBYK_INCLUDE_MIMAS_GROUP_BOX_H_
+

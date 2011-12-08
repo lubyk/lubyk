@@ -117,6 +117,26 @@ static int QObject_object(lua_State *L) {
 
 
 
+/** void mimas::Action::setMenuRole(int role)
+ * include/mimas/Action.h:65
+ */
+static int Action_setMenuRole(lua_State *L) {
+  try {
+    Action *self = *((Action**)dubL_checksdata(L, 1, "mimas.Action"));
+    if (!self) throw dub::Exception("Using deleted mimas.Action in setMenuRole");
+    int role = dubL_checkint(L, 2);
+    self->setMenuRole(role);
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "setMenuRole: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "setMenuRole: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
 /** void mimas::QObject::setName(const char *name)
  * mimas/bind/QObject.h:13
  */
@@ -203,6 +223,7 @@ static int QAction_text(lua_State *L) {
 static const struct luaL_Reg Action_member_methods[] = {
   {"name"              , QObject_name},
   {"object"            , QObject_object},
+  {"setMenuRole"       , Action_setMenuRole},
   {"setName"           , QObject_setName},
   {"setShortcut"       , Action_setShortcut},
   {"setText"           , QAction_setText},

@@ -60,6 +60,12 @@ public:
     QAction::setShortcut(QKeySequence(QString(sequence)));
   }
 
+  /** Set a special menu role (PreferencesRole, AboutRole, QuitRole)
+   */
+  void setMenuRole(int role) {
+    QAction::setMenuRole((MenuRole)role);
+  }
+
   ~Action() {
     MIMAS_DEBUG_GC
   }

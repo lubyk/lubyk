@@ -12,7 +12,7 @@ using namespace mimas;
 /* ============================ Constructors     ====================== */
 
 /** mimas::VBoxLayout::VBoxLayout(QWidget *parent=NULL)
- * include/mimas/VBoxLayout.h:53
+ * include/mimas/VBoxLayout.h:52
  */
 static int VBoxLayout_VBoxLayout(lua_State *L) {
   try {
@@ -24,8 +24,7 @@ static int VBoxLayout_VBoxLayout(lua_State *L) {
       QWidget *parent = *((QWidget **)dubL_checksdata(L, 1, "mimas.QWidget"));
       retval__ = new VBoxLayout(parent);
     }
-    lua_pushclass2<VBoxLayout>(L, retval__, "mimas.VBoxLayout");
-    return 1;
+    return retval__->luaInit(L, retval__, "mimas.VBoxLayout");
   } catch (std::exception &e) {
     lua_pushfstring(L, "VBoxLayout: %s", e.what());
   } catch (...) {
@@ -79,7 +78,7 @@ static int VBoxLayout__tostring(lua_State *L) {
 
 
 /** void mimas::VBoxLayout::addLayout(QLayout *layout)
- * include/mimas/VBoxLayout.h:65
+ * include/mimas/VBoxLayout.h:64
  */
 static int VBoxLayout_addLayout(lua_State *L) {
   try {
@@ -99,7 +98,7 @@ static int VBoxLayout_addLayout(lua_State *L) {
 
 
 /** void mimas::VBoxLayout::addSpacing(int size)
- * include/mimas/VBoxLayout.h:77
+ * include/mimas/VBoxLayout.h:76
  */
 static int VBoxLayout_addSpacing(lua_State *L) {
   try {
@@ -119,7 +118,7 @@ static int VBoxLayout_addSpacing(lua_State *L) {
 
 
 /** void mimas::VBoxLayout::addStretch(int stretch=0)
- * include/mimas/VBoxLayout.h:71
+ * include/mimas/VBoxLayout.h:70
  */
 static int VBoxLayout_addStretch(lua_State *L) {
   try {
@@ -144,7 +143,7 @@ static int VBoxLayout_addStretch(lua_State *L) {
 
 
 /** void mimas::VBoxLayout::addWidget(QWidget *widget, int stretch=0, int alignment=0)
- * include/mimas/VBoxLayout.h:61
+ * include/mimas/VBoxLayout.h:60
  */
 static int VBoxLayout_addWidget(lua_State *L) {
   try {
@@ -175,7 +174,7 @@ static int VBoxLayout_addWidget(lua_State *L) {
 
 
 /** QLayout* mimas::VBoxLayout::layout()
- * include/mimas/VBoxLayout.h:91
+ * include/mimas/VBoxLayout.h:90
  */
 static int VBoxLayout_layout(lua_State *L) {
   try {
@@ -195,7 +194,7 @@ static int VBoxLayout_layout(lua_State *L) {
 
 
 /** void mimas::VBoxLayout::setContentsMargins(int left, int top, int right, int bottom)
- * include/mimas/VBoxLayout.h:87
+ * include/mimas/VBoxLayout.h:86
  */
 static int VBoxLayout_setContentsMargins(lua_State *L) {
   try {
@@ -218,7 +217,7 @@ static int VBoxLayout_setContentsMargins(lua_State *L) {
 
 
 /** void mimas::VBoxLayout::setSpacing(int space)
- * include/mimas/VBoxLayout.h:83
+ * include/mimas/VBoxLayout.h:82
  */
 static int VBoxLayout_setSpacing(lua_State *L) {
   try {

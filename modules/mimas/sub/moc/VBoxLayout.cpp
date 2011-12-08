@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'VBoxLayout.h'
 **
-** Created: Thu Oct 20 12:12:48 2011
+** Created: Thu Dec 8 15:22:29 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.2)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -56,8 +56,8 @@ void *mimas::VBoxLayout::qt_metacast(const char *_clname)
     if (!_clname) return 0;
     if (!strcmp(_clname, qt_meta_stringdata_mimas__VBoxLayout))
         return static_cast<void*>(const_cast< VBoxLayout*>(this));
-    if (!strcmp(_clname, "DeletableOutOfLua"))
-        return static_cast< DeletableOutOfLua*>(const_cast< VBoxLayout*>(this));
+    if (!strcmp(_clname, "LuaObject"))
+        return static_cast< LuaObject*>(const_cast< VBoxLayout*>(this));
     return QVBoxLayout::qt_metacast(_clname);
 }
 
