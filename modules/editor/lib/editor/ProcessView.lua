@@ -171,7 +171,7 @@ function lib:click(x, y, type, btn, mod)
       -- create new empty node
       local vx, vy = self:globalPosition()
       local node_def = { x = x - 15, y = y - 12, name = '', hue = self.process.hue}
-      self.ghost_node = editor.Node.makeGhost(node_def, self)
+      self.ghost_node = editor.Node.makeGhost(node_def, self.delegate)
       local ghost = self.ghost_node
       ghost.gx = vx + node_def.x
       ghost.gy = vy + node_def.y

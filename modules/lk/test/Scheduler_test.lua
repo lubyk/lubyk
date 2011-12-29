@@ -213,4 +213,19 @@ function should.runWithManySockets(t)
   assertTrue(all_ok)
 end
 
+function should.try(t)
+  local count = 0
+  t.test = sched:try(function()
+    count = count + 1
+    assert(false, 'this is an error')
+  end, function()
+    t.continue = true
+  end, 10)
+
+  t:timeout(2000, function(done)
+    return done or t.continue
+  end)
+  assertEqual(4, count)
+end
+
 test.all()

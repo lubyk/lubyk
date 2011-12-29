@@ -93,14 +93,14 @@ local function dumpLinks(self)
   local list = {}
   local purl = self.node.process:url()
   for target_url, link_def in pairs(links_by_target) do
-    list[lk.absolutizePath(target_url, purl)] = link_def
+    list[lk.absolutizePath(target_url, purl)] = true
   end
   return list
 end
 
 -- Used when moving a node from one process to another.
 function lib:dump()
-  return {name = self.name, info = self.info, links = dumpLinks(self)}
+  return dumpLinks(self)
 end
 
 local function makeGhost(self)

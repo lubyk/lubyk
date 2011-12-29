@@ -1,6 +1,6 @@
 ---
-y: 38
-x: 110
+y: 20
+x: 114
 name: a
 nodes:
   metro:
@@ -9,7 +9,7 @@ nodes:
     name: metro
     links:
       bang:
-        counter/in/bang: true
+        /a/counter/in/bang: true
     hue: 0
     params:
       tempo: 60

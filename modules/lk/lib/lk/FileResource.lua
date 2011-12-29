@@ -111,7 +111,9 @@ function lib:update(content)
   if self.is_dir then
     return false
   else
-    lk.writeall(self.path, content or '')
+    --- FIXME:
+    -- Disable write during testing
+    -- lk.writeall(self.path, content or '')
     self:sync()
     self:triggerCallbacks('update')
     return true

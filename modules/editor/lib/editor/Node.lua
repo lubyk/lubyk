@@ -95,16 +95,16 @@ end
 local function dumpSlots(list)
   local res = {}
   for _, slot in ipairs(list) do
-    table.insert(res, slot:dump())
+    res[slot.name] = slot:dump()
   end
+  return res
 end
 
 -- Dump current node definition (used when moving a node from one
 -- process to another)
 function lib:dump()
   local res = {name = self.name, hue = self.hue, code = self.code}
-  res.inlets  = dumpSlots(self.sorted_inlets)
-  res.outlets = dumpSlots(self.sorted_outlets)
+  res.links = dumpSlots(self.sorted_outlets)
   return res
 end
 

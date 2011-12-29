@@ -208,7 +208,7 @@ end
   self:change {nodes = {[definition.name or 'new node'] = definition}}
 end
 
--- Process is coming online.
+-- Process is coming online (delegate = editor.Zone).
 function lib:connect(remote_process, delegate)
   -- The delegate is used by views.
   self.delegate       = delegate

@@ -203,28 +203,28 @@ function lib:click(x, y, type, btn, mod)
       local node_y = gy - gpy
 
       if self.node.process ~= process then
+        -- Processes to update
+        local changed_processes = {}
         local old_process = self.node.process
         -- moving from one process to another
         local def = self.node:dump()
         def.x, def.y = node_x, node_y
 
-        old_process:change {
+        -- Remove from old process
+        changed_processes[old_process] = {
           nodes = {
             [self.node.name] = false,
           }
         }
-        print("================================= [editor.NodeView (process:change def)\n", yaml.dump(def))
-        print("=================================  editor.NodeView]")
-        process:change {
+        -- Add in new process
+        changed_processes[process] = {
           nodes = {
             [self.node.name] = def,
           }
         }
         ---- Update all incoming links
-        local changed_processes = {}
         for _, inlet in ipairs(self.node.sorted_inlets) do
           local url = process:url() .. string.sub(inlet:url(), string.len(old_process:url()) + 1)
-          print("================================= [editor.NodeView (url)\n", url)
           for _,link in ipairs(inlet.links) do
             local node = link.source.node
             lk.deepMerge(changed_processes, node.process, {
@@ -234,6 +234,7 @@ function lib:click(x, y, type, btn, mod)
                     [link.source.name] = {
                       -- remove old link
                       [inlet:url()] = false,
+                      --[lk.absToRel(inlet:url(), node.process:url())] = false,
                       -- create new link
                       [url] = true,
                     }
@@ -243,8 +244,9 @@ function lib:click(x, y, type, btn, mod)
             })
           end
         end
+        -- Execute receipt
         for p, def in pairs(changed_processes) do
-          print("================================= [editor.NodeView (changed_process)\n", yaml.dump(def))
+          printf("--=============================================== %s [\n%s--=============================================== ]", p.name, yaml.dump(def))
           p:change(def)
         end
       else

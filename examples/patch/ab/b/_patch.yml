@@ -1,23 +1,29 @@
 ---
-y: 203
-x: 114
+y: 214
+x: 72
 name: b
 nodes:
-  play:
-    y: 99
-    x: 28
-    name: play
-    hue: 0.3
-    params:
-      channel: 2
   div:
-    y: 41
-    x: 59
+    y: 35
+    x: 68
     name: div
     hue: 0.3
     links:
       output:
-        play/in/trigger: true
+        /b/p/in/print: true
+        /b/play/in/trigger: true
+  play:
+    y: 97
+    x: 9
+    name: play
+    hue: 0.3
+    params:
+      channel: 2
+  p:
+    hue: 0.3
+    x: 96
+    name: p
+    y: 111
 h: 150
 w: 150
 hue: 0.3

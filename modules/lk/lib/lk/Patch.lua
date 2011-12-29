@@ -69,9 +69,9 @@ local function setNodes(self, nodes_definition)
     if not def then
       -- remove node
       if node then
+        node:remove()
         node = nil
         nodes[name] = nil
-        collectgarbage('collect')
       end
     else
       if not node then
@@ -86,8 +86,8 @@ local function setNodes(self, nodes_definition)
 end
 
 function lib:set(definitions)
-  print("================================= [lk.Patch\n", yaml.dump(definitions))
-  print("================================= lk.Patch]")
+  --print(string.format("================================= lk.Patch %s\n%s", self.name, yaml.dump(definitions)))
+  --print("================================= lk.Patch ]")
   for k, v in pairs(definitions) do
     if k == 'nodes' then
       setNodes(self, v)
@@ -95,11 +95,17 @@ function lib:set(definitions)
       self[k] = v
     end
   end
+  if self.need_cleanup then
+    self.need_cleanup = nil
+    collectgarbage('collect')
+    collectgarbage('collect')
+  end
 end
 
 --- Create a pending inlet from an url relative to this process (nearly the same
 -- as editor.Process.pendingInlet).
 function lib:pendingInlet(inlet_url)
+  local inlet_url = lk.absToRel(inlet_url, self:url())
   -- inlet_url example:
   --   node/in/slot
   local parts = lk.split(inlet_url, '/')
@@ -170,8 +176,6 @@ function lib:get(url, mt)
   end
 end
 
--- FIXME: cache relative url !
---
 -- ALSO USED BY editor.Process
 function lib:findByPath(path)
   local parts = lk.split(path, '/')

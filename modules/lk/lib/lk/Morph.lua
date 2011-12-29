@@ -220,11 +220,6 @@ end
 
 function private.process.changed(self, process, changes)
   -- write changes to file    
-  if true then
-    -- FIXME: DEBUG
-    -- TMP: DEBUG: DO NOT WRITE CHANGES
-    return
-  end
   local cache = process.cache
   for base_k, base_v in pairs(changes) do
     if base_k == 'nodes' then
@@ -257,7 +252,7 @@ function private.process.changed(self, process, changes)
           for k, v in pairs(node) do
             if k == 'code' then
               -- ignore code change notifications (we sent the code)
-            elseif k == 'inlets' then
+            elseif k == 'inlets' or k == 'has_all_slots' then
               -- ignore (not in patch)
             elseif k == 'outlets' then
               -- extract links
@@ -267,7 +262,24 @@ function private.process.changed(self, process, changes)
                   if not links then
                     links = {}
                   end
-                  links[outlet.name] = l
+                  if type(l) == 'table' then
+                    local lnks
+                    if node.has_all_slots then
+                      lnks = {}
+                    else
+                      lnks = links[outlet.name] or {}
+                    end
+                    for target_url, on in pairs(l) do
+                      if on then
+                        lnks[target_url] = true
+                      else
+                        lnks[target_url] = nil
+                      end
+                    end
+                    links[outlet.name] = lnks
+                  else
+                    links[outlet.name] = l
+                  end
                 end
               end
             else
@@ -376,8 +388,7 @@ end
 -- make it accessible from 'self'.
 function lib:spawn(name)
   -- spawn Process
-  --local pid = worker:spawn([[
-  print([[
+  local pid = worker:spawn([[
   require 'lubyk'
   process = lk.Process(%s)
   run()

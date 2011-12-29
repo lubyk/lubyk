@@ -1,1 +1,1 @@
-ctags -R --exclude=vendor modules
+ctags -R --exclude=vendor --exclude=b2 --exclude=cv modules

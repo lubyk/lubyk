@@ -70,6 +70,7 @@ function lib:url()
     -- remote
     return self.target_url
   else
-    return self.node.name .. '/in/' .. self.name
+    -- local
+    return self.node:url() .. '/in/' .. self.name
   end
 end

@@ -195,6 +195,29 @@ function lib:scheduleAt(at, thread)
   end
 end
 
+--- Tries to run 'func' count times (retry every 2^n seconds) and calls
+-- 'failed' function on failure.
+function lib:try(count, func, failed, wait)
+  if type(count) == 'function' then
+    func, failed, wait = count, func, failed
+    -- default count
+    count = 4
+  end
+  local wait = wait or 1000
+  return lk.Thread(function()
+    local res, err
+    for i=1,count do
+      res, err = self:pcall(func)
+      if res then
+        return
+      else
+        sleep(wait * 2^i)
+      end
+    end
+    failed(err)
+  end)
+end
+
 -- This is called by lk.Thread when the thread is garbage collected.
 -- We will cleanup any filedescriptor in the main thread (not now or
 -- we crash because we call C from the garbage collector).

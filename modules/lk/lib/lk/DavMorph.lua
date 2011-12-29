@@ -43,17 +43,21 @@ function private:openFile(filepath)
   if self.dav then
     self.dav:setRoot(self.root)
   else
-    self.dav = lk.DavServer(Lubyk.dav_port, self.root)
-    self.dav_thread = lk.Thread(function()
-      self.dav:listen()
+    -- try 5 times (now, 2s, 4s, 8s, 16s)
+    self.start = sched:try(function()
+      self.dav = lk.DavServer(Lubyk.dav_port, self.root)
+      self.start = nil
+    end, function(err)
+      print("Could not start DavServer", err)
+      sched:quit()
     end)
   end
 end
 
 function private:quit()
   lk.Morph.quit(self)
-  if self.dav_thread then
-    self.dav_thread:kill()
+  if self.thread then
+    self.thread:kill()
   end
 end
 --=============================================== WebDAV

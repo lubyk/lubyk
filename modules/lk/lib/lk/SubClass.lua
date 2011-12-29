@@ -31,7 +31,7 @@ function lk.SubClass(mod, class_name, ...)
   end
 
   -- Create the new class
-  local lib = {}
+  local lib = {type = class_name}
   lib.__index = lib
   setmetatable(lib, super_mt)
 

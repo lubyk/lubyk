@@ -298,3 +298,9 @@ function lk.findCode(basedir, class_name)
     end
   end
 end
+
+-------------------------------- printf(format, ...)
+-- Print with formating
+function printf(format, ...)
+  print(string.format(format, ...))
+end

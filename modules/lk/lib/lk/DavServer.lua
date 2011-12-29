@@ -29,6 +29,7 @@ setmetatable(lib, {
     clients    = {},
     server     = lk.Socket(),
   }
+
   self.server:bind('*', port or 0)
   self.host, self.port = self.server:localHost(), self.server:localPort()
   self.href_base = 'http://' .. self.host .. ':' .. self.port

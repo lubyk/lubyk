@@ -95,6 +95,7 @@ function lib:eval(code_str)
     self.code = code_str
     -- Unused inlets and outlets will be collected by the GC.
   end
+  self.process.need_cleanup = true
 end
 
 function lib:set(definition)
@@ -190,8 +191,7 @@ local function setLink(self, out_name, target_url, process)
   if not outlet then
     self:error("Outlet name '%s' does not exist.", out_name)
   else
-    -- change relative url to absolute url
-    local slot, err = process:get(self:makeAbsoluteUrl(target_url), lk.Inlet)
+    local slot, err = process:get(target_url, lk.Inlet)
     if slot == false then
       -- error
       self:error(err)
@@ -222,7 +222,7 @@ end
 function lib:setLinks(all_links)
   local process = self.process
   for out_name, links in pairs(all_links) do
-    if type(links) ~= 'table' then
+    if type(links) == 'string' then
       setLink(self, out_name, links, process)
     else
       for target_url, link_def in pairs(links) do
@@ -238,17 +238,10 @@ end
 
 local function dumpSlots(list, links)
   local res = {}
-  local has_slots = false
   for _,slot in ipairs(list) do
-    has_slots = true
     table.insert(res, slot:dump(links))
   end
-
-  if has_slots then
-    return res
-  else
-    return nil
-  end
+  return res
 end
 
 function lib:dump()
@@ -281,4 +274,13 @@ function lib:partialDump(data)
   end
 
   return res
+end
+
+--- Node has been removed from patch, remove links and gc.
+function lib:remove()
+  self.fin = lk.Finalizer(function()
+    print('******************* DELETED', self.name)
+  end)
+  self.env = nil
+  self.process.need_cleanup = true
 end
