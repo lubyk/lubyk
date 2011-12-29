@@ -36,6 +36,9 @@ function mimas.Application(type)
     .list::item {
       padding:2px;
     }
+    .group_box {
+      background: #222;
+    }
     .list::item:selected {
         border: 0;
         color: rgb(180,180,180);

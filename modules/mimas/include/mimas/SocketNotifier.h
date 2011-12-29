@@ -57,12 +57,10 @@ public:
     QObject::connect(this, SIGNAL(activated(int)),
                      this, SLOT(activatedSlot(int)));
 
-    //printf("[%p] SocketNotifier\n", this);
     MIMAS_DEBUG_CC
   }
 
   virtual ~SocketNotifier() {
-    //printf("[%p] ~SocketNotifier\n", this);
     MIMAS_DEBUG_GC
   }
 

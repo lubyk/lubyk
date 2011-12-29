@@ -71,6 +71,24 @@ static int Debug__tostring(lua_State *L) {
 /* ============================ Member Methods   ====================== */
 
 
+/** static LuaStackSize lk::Debug::userdata(lua_State *L)
+ * include/lk/Debug.h:75
+ */
+static int Debug_userdata(lua_State *L) {
+  try {
+    
+    LuaStackSize  retval__ = Debug::userdata(L);
+    return retval__;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "userdata: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "userdata: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
 
 
 /* ============================ Lua Registration ====================== */
@@ -84,6 +102,7 @@ static const struct luaL_Reg Debug_member_methods[] = {
 
 static const struct luaL_Reg Debug_namespace_methods[] = {
   {"Debug"             , Debug_Debug},
+  {"Debug_userdata"    , Debug_userdata},
   {NULL, NULL},
 };
 

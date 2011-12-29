@@ -56,7 +56,7 @@ static int Poller__tostring(lua_State *L) {
   Poller **userdata = (Poller**)dubL_checksdata_n(L, 1, "zmq.Poller");
   
   
-  lua_pushfstring(L, "<zmq.Poller: %p  (%i)>", *userdata, (*userdata)->count());
+  lua_pushfstring(L, "<zmq.Poller: %p  (%f)>", *userdata, (*userdata)->count());
   
   return 1;
 }

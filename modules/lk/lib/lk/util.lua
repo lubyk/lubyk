@@ -186,7 +186,7 @@ function lk.split(str, pat)
   else
     local fpat = '(.-)' .. pat
     local last_end = 1
-    local s, e, cap = str:find(fpat, 1)
+    local s, e, cap = string.find(str,fpat, 1)
     while s do
       table.insert(t,cap)
       last_end = e+1

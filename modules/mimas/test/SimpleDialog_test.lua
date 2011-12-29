@@ -79,7 +79,7 @@ function withUser.should.askForPath(t)
     {'vbox',
       {'hbox', 'First name', {'input', 'first_name', 'Gaspard'}},
       {'hbox', 'Last name',  {'input', 'last_name',  'Bucher'}},
-      {'hbox', 'In lubyk',  {'folder', 'dir',  lfs.currentdir()}},
+      {'hbox', 'In lubyk',   {'input', 'dir', lfs.currentdir(), folder=true}},
     },
     {'hbox',
       {'btn', 'Cancel'},

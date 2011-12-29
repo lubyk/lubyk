@@ -239,18 +239,20 @@ void register_constants(lua_State *L, const char *name_space, const lua_constant
 
 // The metatable lives in libname.ClassName_
 void register_mt(lua_State *L, const char *libname, const char *class_name) {
-  size_t len = strlen(class_name) + 2;
-  char *buffer = (char*)malloc(sizeof(char) * len);
-  snprintf(buffer, len, "%s_", class_name);
-
   // meta-table should be on top
+  // <mt>
+  lua_pushstring(L, "type");
+  // <mt> "type"
+  lua_pushfstring(L, "%s.%s", libname, class_name);
+  // <mt>."type" = "libname.class_name"
+  lua_settable(L, -3);
   // <mt>
   lua_getglobal(L, libname);
   // <mt> <lib>
-  lua_pushstring(L, buffer);
+  lua_pushfstring(L, "%s_", class_name);
   // <mt> <lib> "Foobar_"
   lua_pushvalue(L, -3);
-  // <mt> <lib> "Foobar" <mt>
+  // <mt> <lib>.Foobar_ = <mt>
   lua_settable(L, -3);
   // <mt> <lib>
   lua_pop(L, 1);

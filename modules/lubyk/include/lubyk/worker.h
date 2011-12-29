@@ -63,18 +63,6 @@ public:
    */
   TimeRef time_ref_;
 
-  // /** These sets contain the bitfields set by fdSet methods.
-  //  */
-  // fd_set fd_[3];
-  //
-  // /** These sets contain the bitfields after the select operation.
-  //  */
-  // fd_set res_fd_[3];
-  //
-  // /** Stores the maximum value of all fd sets.
-  //  */
-  // int max_fd_;
-
   /** Context use by zmq::Socket.
    */
   void *zmq_context_;
@@ -119,91 +107,9 @@ public:
     return time_ref_.elapsed();
   }
 
-  //=============================================== Scheduler
-  // NOT USED (we use zmq scheduler poller)
-  // void fdReadSet(int fd) {
-  //   max_fd_ = fd > max_fd_ ? fd : max_fd_;
-  //   FD_SET(fd, &fd_[0]);
-  // }
-  //
-  // bool fdReadIsSet(int fd) {
-  //   return FD_ISSET(fd, &res_fd_[0]);
-  // }
-  //
-  // void fdReadClear(int fd) {
-  //   FD_CLR(fd, &fd_[0]);
-  //   if (max_fd_ == fd) {
-  //     rebuildMaxFd();
-  //   }
-  // }
-  //
-  // void fdWriteSet(int fd) {
-  //   max_fd_ = fd > max_fd_ ? fd : max_fd_;
-  //   FD_SET(fd, &fd_[1]);
-  // }
-  //
-  // bool fdWriteIsSet(int fd) {
-  //   return FD_ISSET(fd, &res_fd_[1]);
-  // }
-  //
-  // void fdWriteClear(int fd) {
-  //   FD_CLR(fd, &fd_[1]);
-  //   if (max_fd_ == fd) {
-  //     rebuildMaxFd();
-  //   }
-  // }
-  //
-  // void fdErrorSet(int fd) {
-  //   max_fd_ = fd > max_fd_ ? fd : max_fd_;
-  //   FD_SET(fd, &fd_[2]);
-  // }
-  //
-  // bool fdErrorIsSet(int fd) {
-  //   return FD_ISSET(fd, &res_fd_[2]);
-  // }
-  //
-  // void fdErrorClear(int fd) {
-  //   FD_CLR(fd, &fd_[2]);
-  //   if (max_fd_ == fd) {
-  //     rebuildMaxFd();
-  //   }
-  // }
-  //
-  // int select(float msec) {
-  //   memcpy(res_fd_, fd_, sizeof(res_fd_));
-  //   if (msec >= 0) {
-  //     struct timeval timeout;
-  //     timeout.tv_sec  = (int)(msec / 1000);
-  //     timeout.tv_usec = (msec - 1000 * timeout.tv_sec) * 1000;
-  //     return ::select(max_fd_ + 1, &res_fd_[0], &res_fd_[1], &res_fd_[2], &timeout);
-  //   } else {
-  //     return ::select(max_fd_ + 1, &res_fd_[0], &res_fd_[1], &res_fd_[2], NULL);
-  //   }
-  //
-  // };
-  //
-  // /** For testing purpose.
-  //  */
-  // int maxFd() {
-  //   return max_fd_;
-  // }
-
-
-  //===============================================
-
   static Worker *getWorker(lua_State *L);
 
  private:
-  // void rebuildMaxFd() {
-  //   max_fd_ = 0;
-  //   for(int i=0; i<3; ++i) {
-  //     for(int j=max_fd_; j<FD_SETSIZE; ++j) {
-  //       if (FD_ISSET(j, &fd_[i])) {
-  //         max_fd_ = j;
-  //       }
-  //     }
-  //   }
-  // }
 
   void doExecute(Thread *runner) {
     std::string cmd_ = (const char*)runner->parameter_;

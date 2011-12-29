@@ -16,8 +16,9 @@ local private= {}
 --=============================================== PUBLIC
 setmetatable(lib, {
   -- new method
- __call = function(lib, process_watch)
+ __call = function(lib, process_watch, name)
   local self = {
+    name                = name,
     selected_node_views = {},
     -- files edited in external editor
     -- OBSOLETE since WebDAV: remove
@@ -246,6 +247,10 @@ end
 function private.setupView(self)
   local view = editor.ZoneView(self)
   self.main_view = view
+  function view:closed()
+    -- when window is closed, we remove this zone
+    app:removeZone(self.name)
+  end
   self.process_list_view = view.process_list_view
   view:show()
 end

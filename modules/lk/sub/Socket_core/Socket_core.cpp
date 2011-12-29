@@ -72,7 +72,7 @@ static int Socket__tostring(lua_State *L) {
 
 
 /** LuaStackSize lk::Socket::accept(lua_State *L)
- * include/lk/Socket.h:149
+ * include/lk/Socket.h:148
  */
 static int Socket_accept(lua_State *L) {
   try {
@@ -92,7 +92,7 @@ static int Socket_accept(lua_State *L) {
 
 
 /** int lk::Socket::bind(const char *localhost=NULL, int port=0)
- * include/lk/Socket.h:130
+ * include/lk/Socket.h:129
  */
 static int Socket_bind(lua_State *L) {
   try {
@@ -143,7 +143,7 @@ static int Socket_close(lua_State *L) {
 
 
 /** bool lk::Socket::connect(const char *host, int port)
- * include/lk/Socket.h:135
+ * include/lk/Socket.h:134
  */
 static int Socket_connect(lua_State *L) {
   try {
@@ -165,7 +165,7 @@ static int Socket_connect(lua_State *L) {
 
 
 /** void lk::Socket::connectFinish()
- * include/lk/Socket.h:139
+ * include/lk/Socket.h:138
  */
 static int Socket_connectFinish(lua_State *L) {
   try {
@@ -184,7 +184,7 @@ static int Socket_connectFinish(lua_State *L) {
 
 
 /** int lk::Socket::fd() const 
- * include/lk/Socket.h:224
+ * include/lk/Socket.h:223
  */
 static int Socket_fd(lua_State *L) {
   try {
@@ -204,7 +204,7 @@ static int Socket_fd(lua_State *L) {
 
 
 /** void lk::Socket::listen(int backlog=BACKLOG)
- * include/lk/Socket.h:144
+ * include/lk/Socket.h:143
  */
 static int Socket_listen(lua_State *L) {
   try {
@@ -229,7 +229,7 @@ static int Socket_listen(lua_State *L) {
 
 
 /** const char* lk::Socket::localHost() const 
- * include/lk/Socket.h:204
+ * include/lk/Socket.h:203
  */
 static int Socket_localHost(lua_State *L) {
   try {
@@ -249,7 +249,7 @@ static int Socket_localHost(lua_State *L) {
 
 
 /** int lk::Socket::localPort() const 
- * include/lk/Socket.h:208
+ * include/lk/Socket.h:207
  */
 static int Socket_localPort(lua_State *L) {
   try {
@@ -269,7 +269,7 @@ static int Socket_localPort(lua_State *L) {
 
 
 /** int lk::Socket::port() const 
- * include/lk/Socket.h:220
+ * include/lk/Socket.h:219
  */
 static int Socket_port(lua_State *L) {
   try {
@@ -289,7 +289,7 @@ static int Socket_port(lua_State *L) {
 
 
 /** LuaStackSize lk::Socket::recv(lua_State *L)
- * include/lk/Socket.h:181
+ * include/lk/Socket.h:180
  */
 static int Socket_recv(lua_State *L) {
   try {
@@ -309,7 +309,7 @@ static int Socket_recv(lua_State *L) {
 
 
 /** const char* lk::Socket::remoteHost() const 
- * include/lk/Socket.h:212
+ * include/lk/Socket.h:211
  */
 static int Socket_remoteHost(lua_State *L) {
   try {
@@ -329,7 +329,7 @@ static int Socket_remoteHost(lua_State *L) {
 
 
 /** int lk::Socket::remotePort() const 
- * include/lk/Socket.h:216
+ * include/lk/Socket.h:215
  */
 static int Socket_remotePort(lua_State *L) {
   try {
@@ -349,7 +349,7 @@ static int Socket_remotePort(lua_State *L) {
 
 
 /** int lk::Socket::send(lua_State *L)
- * include/lk/Socket.h:187
+ * include/lk/Socket.h:186
  */
 static int Socket_send(lua_State *L) {
   try {
@@ -370,7 +370,7 @@ static int Socket_send(lua_State *L) {
 
 
 /** void lk::Socket::setNonBlocking()
- * include/lk/Socket.h:159
+ * include/lk/Socket.h:158
  */
 static int Socket_setNonBlocking(lua_State *L) {
   try {
@@ -389,7 +389,7 @@ static int Socket_setNonBlocking(lua_State *L) {
 
 
 /** void lk::Socket::setRecvTimeout(int timeout)
- * include/lk/Socket.h:151
+ * include/lk/Socket.h:150
  */
 static int Socket_setRecvTimeout(lua_State *L) {
   try {
@@ -409,7 +409,7 @@ static int Socket_setRecvTimeout(lua_State *L) {
 
 
 /** void lk::Socket::setSendTimeout(int timeout)
- * include/lk/Socket.h:155
+ * include/lk/Socket.h:154
  */
 static int Socket_setSendTimeout(lua_State *L) {
   try {

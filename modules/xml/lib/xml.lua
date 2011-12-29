@@ -48,3 +48,4 @@ function xml.removeNamespace(data, namespace_value)
     end
   end
 end
+

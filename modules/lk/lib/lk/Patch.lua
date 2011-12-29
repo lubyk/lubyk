@@ -41,6 +41,7 @@ setmetatable(lib, {
     nodes             = {},
     pending_nodes     = {},
   }
+  sched.patch = name
   setmetatable(self, lib)
 
   if is_process then

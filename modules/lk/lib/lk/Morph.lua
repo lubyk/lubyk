@@ -220,7 +220,8 @@ end
 
 function private.process.changed(self, process, changes)
   -- write changes to file    
-  if false then
+  if true then
+    -- FIXME: DEBUG
     -- TMP: DEBUG: DO NOT WRITE CHANGES
     return
   end
@@ -373,7 +374,7 @@ end
 -- Spawn a new process that will callback to get data (yml definition, assets).
 -- This is private but we need to modify it during testing so we
 -- make it accessible from 'self'.
-function lib.spawn(self, name)
+function lib:spawn(name)
   -- spawn Process
   local pid = worker:spawn([[
   require 'lubyk'

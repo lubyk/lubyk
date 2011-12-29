@@ -51,6 +51,7 @@ end
 
 function lib:quit()
   self.should_run = false
+  return true
 end
 
 --- Waits a given number of milliseconds starting from the
@@ -166,6 +167,9 @@ function lib:loop()
       end
 
     end
+    if self.garbage then
+      private.cleanup(self)
+    end
   end
 end
 
@@ -191,8 +195,20 @@ function lib:scheduleAt(at, thread)
   end
 end
 
+-- This is called by lk.Thread when the thread is garbage collected.
+-- We will cleanup any filedescriptor in the main thread (not now or
+-- we crash because we call C from the garbage collector).
 function lib:remove(thread)
-  self:removeFd(thread)
+  if thread.idx then
+    self.idx_to_thread[thread.idx] = nil
+  end
+  if thread.fd then
+    if not self.garbage then
+      self.garbage = {thread}
+    else
+      table.insert(self.garbage, thread)
+    end
+  end
   thread.t.t = nil
 end
 
@@ -279,6 +295,7 @@ function private:runThread(thread)
   thread.at = nil
   local ok, a, b = coroutine.resume(t.co)
   local event = zmq_const[a]
+
   if not ok then
     -- a = error
     if thread.fd then
@@ -373,7 +390,10 @@ function private.errorHandler(err, co)
   return message
 end
 
---=============================================== Without mimas
-
---=============================================== With mimas
-collectgarbage('stop')
+--- After each iteration, cleanup any dead thread.
+function private:cleanup()
+  for _, thread in ipairs(self.garbage) do
+    self:removeFd(thread)
+  end
+  self.garbage = nil
+end

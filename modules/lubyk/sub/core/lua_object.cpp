@@ -18,8 +18,8 @@ ThreadedLuaObject::ThreadedLuaObject() throw()
 
 LuaObject::~LuaObject() {
   if (userdata_) {
+    // Cut link from Lua to this object
     *userdata_ = NULL;
-    userdata_ = NULL;
   }
 }
 
@@ -31,6 +31,7 @@ void LuaObject::luaDestroy() {
 }
 
 void LuaObject::luaCleanup() {
+  // Cut link from this object to the Lua.
   userdata_ = NULL;
 }
 
@@ -50,7 +51,8 @@ int LuaObject::luaInit(lua_State *L, void *ptr, const char *type_name) throw() {
 int ThreadedLuaObject::luaInit(lua_State *L, void *ptr, const char *type_name) throw() {
   worker_ = Worker::getWorker(L);
   // ... <self> or new table
-  setupSuper(L, ptr); // creates self if there is no table (without a 'super' field)
+  // creates self if there is no table (without a 'super' field)
+  setupSuper(L, ptr);
   // ... <self>.super = userdata
   // ... <self> <udata>
   setupMetatable(L, type_name);
@@ -65,7 +67,7 @@ void LuaObject::setupSuper(lua_State *L, void *ptr) throw() {
     lua_newtable(L);
   }
   // ... <self>
-  userdata_ = (void**)lua_newuserdata(L, sizeof(LuaObject*));
+  userdata_ = (void**)lua_newuserdata(L, sizeof(void**));
   *userdata_ = ptr;
   // ... <self> <udata>
   lua_pushlstring(L, "super", 5);

@@ -24,6 +24,6 @@ target_link_libraries(luaexec lua)
 # name the executable lua just like the library
 set_target_properties(luaexec PROPERTIES OUTPUT_NAME lua)
 
-# create the luac thing (I have no clue) and link it
+# create luac link it
 add_executable(luac EXCLUDE_FROM_ALL luac.c print.c)
 target_link_libraries (luac lua readline)

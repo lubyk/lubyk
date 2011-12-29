@@ -3,7 +3,7 @@
   lk.Timer
   --------
 
-  ...
+  The timer calls the 'tick' method at regular intervals.
 
 --]]------------------------------------------------------
 require 'lubyk'
@@ -53,7 +53,7 @@ end
 function should.setCallback()
   local counter = 0
   local timer = lk.Timer(10000)
-  function timer:timeout()
+  function timer:tick()
     counter = counter + 1
     -- continue until 'timer' is gc or stopped.
   end

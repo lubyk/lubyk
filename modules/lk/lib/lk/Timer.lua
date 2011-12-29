@@ -22,13 +22,13 @@ setmetatable(lib, {
     }
     self.cb = function() self:run() end
     if func then
-      self.timeout = func
+      self.tick = func
     end
     return setmetatable(self, lib)
   end
 })
 
-function lib:timeout() end
+function lib:tick() end
 
 function lib:start(trigger)
   if trigger == false then
@@ -46,7 +46,7 @@ end
 function lib:run()
   if self.interval > 0 then
     while self.thread do
-      local interval = self:timeout()
+      local interval = self:tick()
       if interval then
         self:setInterval(interval)
         break

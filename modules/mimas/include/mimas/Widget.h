@@ -94,6 +94,21 @@ public:
                           int options,
                           lua_State *L);
 protected:
+  virtual void closeEvent(QCloseEvent *event) {
+    lua_State *L = lua_;
+    if (!pushLuaCallback("closed")) return;
+    // <func> <self>
+    int status = lua_pcall(L, 1, 1, 0);
+    if (status) {
+      fprintf(stderr, "Error in 'closed' callback: %s\n", lua_tostring(L, -1));
+    }
+    if (lua_isfalse(L, -1)) {
+      // Do not close
+      event->ignore();
+    }
+    lua_pop(L, 1);
+  }
+
   virtual void mouseMoveEvent(QMouseEvent *event);
 
   virtual void mousePressEvent(QMouseEvent *event) {
@@ -118,7 +133,6 @@ protected:
     lua_pushnumber(L, event->pos().x());
     lua_pushnumber(L, event->pos().y());
     // <func> <self> <x> <y>
-    luaDump(L, "moved");
     int status = lua_pcall(L, 3, 0, 0);
 
     if (status) {

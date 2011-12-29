@@ -66,8 +66,21 @@ function lib:addLinkView(view)
 end
 
 --=============================================== Menu setup
-function private.setupMenus(self)
+function private:setupMenus()
   self.menu_bar = mimas.MenuBar(self)
+  local file = self.menu_bar:addMenu('File')
+  file:addAction('New...', 'Ctrl+N', function()
+    -- Choose folder & name
+    private.newProjectAction(self)
+  end)
+  file:addAction('Open...', 'Ctrl+O', function()
+    -- Choose folder & name
+    private.openProjectAction(self)
+  end)
+  local pref = file:addAction('Preferences...', '', function()
+    -- Show pref dialog
+  end)
+  pref:setMenuRole(mimas.PreferencesRole)         
   local special = self.menu_bar:addMenu('Special')
   special:addAction('Stop', 'Ctrl+K', function()
     for k, process in pairs(self.zone.process_watch.processes) do
@@ -79,3 +92,81 @@ function private.setupMenus(self)
   end)
   self:setMenuBar(self.menu_bar)
 end  
+
+function private:newProjectAction()
+  self.doit = lk.Thread(function()
+  self.dlg = mimas.SimpleDialog {
+    'Who are you ?',
+    {'vbox',
+      {'hbox', 'First name', {'input', 'first_name', 'Gaspard'}},
+      {'hbox', 'Last name',  {'input', 'last_name',  'Bucher'}},
+      {'hbox', 'In lubyk',   {'input', 'dir', lfs.currentdir(), folder=true}},
+    },
+    {'hbox',
+      {'btn', 'Cancel'},
+      {'btn', 'OK', default = true},
+    },
+  }
+  --self.dlg = mimas.SimpleDialog {
+  --  'Create a new lubyk project.',
+  --  {'vbox', box = true,
+  --    'Project name',
+  --    {'input', 'name'},
+  --    'Create project in directory',
+  --    {'input', 'dir', folder=true},
+  --  },
+  --  {'hbox', {},
+  --    {'btn', 'cancel'},
+  --    {'btn', 'OK', default=true},
+  --  },
+  --}
+  function self.dlg:btn(name)
+    if name == 'OK' then
+      -- Create project
+    end
+    self.dlg:hide()
+    self.dlg = nil
+    self.doit = nil
+  end
+  self.dlg:resize(400,200)
+  self.dlg:show()
+end)
+end
+
+-- function private:openNewDialog()
+--   self.dlg = editor.SimpleDialog {
+--     message = string.format('Please enter project path on "%s"', self.host_name),
+--     line    = 'Zone',
+--     line_value = 'default', -- FIXME: use last value (create editor.Settings)
+--     line2   = 'Project path',
+--     line2_value = '',       -- FIXME: use last value (create editor.Settings)
+--     cancel  = 'Back',
+--     ok      = 'Start',
+--   }
+-- 
+--   function self.dlg.cancel(dlg)
+--     -- Abort choosing path
+--     dlg:close()
+--     self.host_name = nil
+--     makeHostChooser(self)
+--   end
+-- 
+--   function self.dlg.ok(dlg)
+--     -- Start morph server on the host with the given path.
+--     self.zone = dlg:line()
+--     self.project_path = dlg:line2()
+--     dlg:close()
+--     self.delegate:startZone(self.zone, self.host_name, self.project_path)
+--   end
+-- 
+--   self.lay:addWidget(self.dlg)
+--   if is_local then
+--     function self.dlg.widgets.line2.click()
+--       self.dlg:openProjectDialog()
+--     end
+-- 
+--     -- open file dialog
+--     self.dlg:openProjectDialog()
+--   end        
+-- end
+

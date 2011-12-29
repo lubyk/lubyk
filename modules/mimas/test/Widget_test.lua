@@ -9,6 +9,7 @@
 
 --]]------------------------------------------------------
 require 'lubyk'
+Lubyk.mimas_quit_on_close = false
 
 local should   = test.Suite('mimas.Widget')
 local withUser = should:testWithUser()
@@ -136,12 +137,13 @@ function withUser.should.respondToClick(t)
   t.win:move(100, 300)
   t.win:resize(400, 400)
   t.win:show()
-  t:timeout(1000, function(done)
+  t:timeout(2000, function(done)
     return done
   end)
   t.win:close()
 end
 
+--[[
 function withUser.should.openFileDialog(t)
   local path = lk.file()
   local basedir, filename = lk.directory(path)
@@ -158,6 +160,24 @@ function withUser.should.getExistingDirectory(t)
   t.win:show()
   assertMatch(path..'$', t.win:getExistingDirectory(string.format('Select "%s"', dirname), basedir))
   t.win:close()
+end
+--]]
+
+function withUser.should.callbackOnClose(t)
+  t.win = mimas.Window()
+  t.lay = mimas.VBoxLayout(t.win)
+  t.lbl = mimas.Label('Close window.')
+  t.lay:addWidget(t.lbl)
+  function t.win:closed()
+    t.continue = true
+  end
+  t.win:resize(100,100)
+  t.win:move(10,10)
+  t.win:show()
+  t:timeout(function(done)
+    return done or t.continue
+  end)
+  assertTrue(t.continue)
 end
 
 test.all()

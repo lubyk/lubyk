@@ -59,24 +59,50 @@ local function makeWidget(main, parent, def)
       end
     end
   elseif t == 'input' then
-    elem = mimas.LineEdit(def[3])
-    main.widgets[def[2]] = elem
-    main.form[def[2]] = def[3]
-    function elem:editingFinished(text)
-      main.form[def[2]] = text
-    end
-    function elem:keyboard(key, on)
-      if on and (key == mimas.Key_Enter or key == mimas.Key_Return) then
-        local default_btn = main.widgets.default_btn
-        if default_btn then
-          self:editingFinished(self:text())
-          default_btn:click(0,0,mimas.MousePress)
+    if def.folder or def.file then
+      makeWidget(main, parent, {'hbox',
+        {'input', def[2], def[3]},
+        {'btn', '...', def[2]..'btn'},
+      })
+      local btn = main.widgets[def[2]..'btn']
+      function btn:click(x, y, op)
+        if op == mimas.MousePress then
+          local path = main.form[def[2]]
+          if def.folder then
+            path = main:getExistingDirectory(def.message or 'Select directory', path)
+          else
+            local base
+            if path then
+              base = lk.directory(path)
+            end
+            path = main:getOpenFileName(def.message or 'Select lua script', base)
+          end
+          if path then
+            main.form[def[2]] = path
+            main.widgets[def[2]]:setText(path)
+          end
+        end
+      end
+    else
+      elem = mimas.LineEdit(def[3])
+      main.widgets[def[2]] = elem
+      main.form[def[2]] = def[3]
+      function elem:editingFinished(text)
+        main.form[def[2]] = text
+      end
+      function elem:keyboard(key, on)
+        if on and (key == mimas.Key_Enter or key == mimas.Key_Return) then
+          local default_btn = main.widgets.default_btn
+          if default_btn then
+            self:editingFinished(self:text())
+            default_btn:click(0,0,mimas.MousePress)
+          else
+            -- pass to LineEdit
+            return false
+          end
         else
-          -- pass to LineEdit
           return false
         end
-      else
-        return false
       end
     end
   elseif t == 'btn' then
@@ -104,30 +130,6 @@ local function makeWidget(main, parent, def)
       .list {background:#333; border:1px solid #666}
       .list::item { border-bottom:1px solid #666; color:white; background:#6E4E24}
     ]]
-  elseif t == 'folder' or t == 'file' then
-    makeWidget(main, parent, {'hbox',
-      {'input', def[2], def[3]},
-      {'btn', '...', def[2]..'btn'},
-    })
-    local btn = main.widgets[def[2]..'btn']
-    function btn:click(x, y, op)
-      if op == mimas.MousePress then
-        local path = main.form[def[2]]
-        if t == 'folder' then
-          path = main:getExistingDirectory(def.message or 'Select directory', path)
-        else
-          local base
-          if path then
-            base = lk.directory(path)
-          end
-          path = main:getOpenFileName(def.message or 'Select lua script', base)
-        end
-        if path then
-          main.form[def[2]] = path
-          main.widgets[def[2]]:setText(path)
-        end
-      end
-    end
   elseif t == nil then
     parent:addStretch()
   end

@@ -52,6 +52,7 @@ function lib.all()
       lib.reportSuite(suite)
     end
     lib.report()
+    sched:quit()
   end)
 end
 

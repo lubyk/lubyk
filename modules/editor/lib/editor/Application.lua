@@ -85,12 +85,19 @@ function lib:hostsDataSource()
 end
 
 function lib:selectZone(zone_name)
-  local zone = editor.Zone(self.process_watch)
-  self.zones[zone_name] = zone
-  if self.splash_view then
-    self.splash_view:close()
-    self.splash_view = nil
+  if not self.zones[zone_name] then
+    local zone = editor.Zone(self.process_watch, zone_name)
+    self.zones[zone_name] = zone
+    if self.splash_view then
+      self.splash_view:close()
+      self.splash_view = nil
+    end
   end
+end
+
+function lib:removeZone(zone_name)
+  -- Window was closed.
+  self.zones[zone_name] = nil
 end
 
 function lib:startZone(path)
@@ -109,6 +116,8 @@ end
 --=============================================== Receive an openFile event
 
 function lib:openFile(path)
+  -- We receive spurious openFile events for the arguments passed to 
+  -- Resources/app.lua. Check for correct file type.
   if string.match(path, '.lkp$') then
     if self.morph_pid then
       -- kill it

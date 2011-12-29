@@ -16,7 +16,8 @@ local withUser = should:testWithUser()
 function withUser.should.displayGlWindow(t)
   -- we use the test env to protect from gc
   t.win = mimas.GLWindow()
-  t.win:move(10,10)
+  t.win:move(300,300)
+  t.win:resize(400,400)
   function t.win:initializeGL()
     gl.Enable("POINT_SMOOTH")
     gl.Enable("SMOOTH")
@@ -117,7 +118,7 @@ function withUser.should.displayGlWindow(t)
 
   t.win:resize(300,300)
   t.win:show()
-  t:timeout(14000, function(done)
+  t:timeout(34000, function(done)
     return done or t.continue
   end)
   t.win:close()

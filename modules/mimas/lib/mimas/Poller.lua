@@ -31,6 +31,9 @@ setmetatable(lib, {
       assert(sched.poller == self)
       -- run scheduler (poll operation will yield)
       sched:loop()
+
+      -- We need this to quit
+      --app:quit()
     end)
 
     -- This will start the coroutine
@@ -86,7 +89,7 @@ function private:resume(idx)
   local ok, timeout = coroutine.resume(co, true)
   if not ok then
     -- error
-    print('ERROR', timeout, debug.traceback(t.co))
+    print('ERROR', timeout, debug.traceback(co))
     app:quit()
   elseif coroutine.status(co) == 'dead' then
     self.co = nil
@@ -137,10 +140,9 @@ end
 --- Remove a filedescriptor of zmq.Socket from the list of poll items.
 -- The item is identified by its id.
 function lib:remove(notifier)
-  if not notifier.current:deleted() then
-    notifier.current:setEnabled(false)
+  if not notifier:deleted() then
+    notifier:setEnabled(false)
   end
-  -- we let it be removed by garbage collector.
 end
 
 --- Poll for new events with a given timeout in ms.

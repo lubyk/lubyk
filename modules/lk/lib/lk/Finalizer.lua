@@ -8,7 +8,7 @@
   you will get burnt (= only use it if you have no other
   way of doing what you need to do). The main advice is
   "only call and use objects that would not die with the
-  finalizer".
+  finalizer" and "never call C or you will crash".
 
   Usage: lk.Finalizer(func)
 

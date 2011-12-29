@@ -12,7 +12,7 @@ using namespace lk;
 /* ============================ Constructors     ====================== */
 
 /** lk::Finalizer::Finalizer()
- * include/lk/Finalizer.h:44
+ * include/lk/Finalizer.h:45
  */
 static int Finalizer_Finalizer(lua_State *L) {
   try {
@@ -36,7 +36,7 @@ static int Finalizer_destructor(lua_State *L) {
   
   // custom destructor
   Finalizer *self = *userdata;
-  if (self) self->finalize(L);
+  if (self) self->finalize();
   
   *userdata = NULL;
   return 0;

@@ -69,6 +69,28 @@ public:
       printf("Error in callback function: %s\n", lua_tostring(lua_, -1));
     }
   }
+
+  /** Return userdata type and pointer value.
+   */
+  static LuaStackSize userdata(lua_State *L) {
+    void *p = lua_touserdata(L, 1);
+    if (p != NULL) {
+      void *ptr = *((void**)(p));
+      // <ud>
+      if (lua_getmetatable(L, -1)) {
+        // <ud> <mt>
+        lua_pushstring(L, "type");
+        // <ud> <mt> "type"
+        lua_gettable(L, -2);
+        // <ud> <mt> "type"
+        // <ud> <mt> "libname.classname"
+        lua_pushfstring(L, "%p", ptr);
+        // <ud> <mt> "libname.classname" <ptr value>
+        return 2;
+      }
+    }
+    return 0;
+  }
 };
 
 } // lk
