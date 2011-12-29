@@ -376,7 +376,8 @@ end
 -- make it accessible from 'self'.
 function lib:spawn(name)
   -- spawn Process
-  local pid = worker:spawn([[
+  --local pid = worker:spawn([[
+  print([[
   require 'lubyk'
   process = lk.Process(%s)
   run()

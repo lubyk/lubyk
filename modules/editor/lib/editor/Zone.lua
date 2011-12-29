@@ -194,7 +194,6 @@ function lib:processConnected(remote_process)
     self.morph.dav_url = string.format('http://%s:8103', remote_process.ip)
     -- We could use option -S == do not prompt when server goes offline
     local cmd = string.format('mount_webdav -S %s %s', self.morph.dav_url, self:workPath())
-    print(cmd)
     worker:execute(cmd)
   end
 end

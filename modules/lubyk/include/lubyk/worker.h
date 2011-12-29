@@ -55,8 +55,6 @@ namespace lubyk {
  */
 class Worker
 {
-  class Implementation;
-  Implementation *impl_;
 public:
   /** Time reference. All times are in milliseconds (as double) from this reference.
    * 0.0 = The worker's birthdate !
@@ -87,6 +85,7 @@ public:
   void execute(const char *cmd) {
     lubyk::Thread *thread = new lubyk::Thread();
     thread->startThread<Worker, &Worker::doExecute>(this, (void*)cmd);
+    thread->join();
   }
 
   /** Wait for another process to finish (BLOCKING).

@@ -209,6 +209,7 @@ function lib:remove(thread)
       table.insert(self.garbage, thread)
     end
   end
+  --self:removeFd(thread)
   thread.t.t = nil
 end
 

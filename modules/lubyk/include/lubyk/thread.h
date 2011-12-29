@@ -42,6 +42,7 @@
 #include "lubyk/mutex.h"
 #include "lubyk/condition.h"
 
+//#error "SHOULD NOT BE NEEDED"
 namespace lubyk {
 
 class Thread : public Mutex {
@@ -147,8 +148,8 @@ class Thread : public Mutex {
       // pthread_kill(thread_id_, SIGTERM);
       pthread_cancel(thread_id_);
       pthread_join(thread_id_, NULL);
-      thread_id_ = NULL;
     }
+    thread_id_ = NULL;
   }
 
   /** Send a signal to the running thread.
@@ -159,8 +160,7 @@ class Thread : public Mutex {
   }
 
   void registerSignal(int sig) {
-    // we cannot use the assertion because thread_id_ might not be set yet (race condition)
-    // assert(pthread_equal(thread_id_, pthread_self()));
+    assert(pthread_equal(thread_id_, pthread_self()));
     signal(sig, terminate);
   }
 
@@ -233,8 +233,6 @@ class Thread : public Mutex {
      // begin of new thread
     setThreadThis(thread);
 
-    thread->registerSignal(SIGTERM); // register a SIGTERM handler
-    thread->registerSignal(SIGINT);
     pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
     // removing comment below = force cancelation to occur NOW, whatever the program is doing.
     // pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
@@ -254,8 +252,6 @@ class Thread : public Mutex {
      // begin of new thread
     setThreadThis(thread);
 
-    thread->registerSignal(SIGTERM); // register a SIGTERM handler
-    thread->registerSignal(SIGINT);
     pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
     //pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
 
@@ -274,9 +270,6 @@ class Thread : public Mutex {
     Thread * thread = (Thread*)thread_ptr;
      // begin of new thread
     setThreadThis(thread);
-
-    thread->registerSignal(SIGTERM); // register a SIGTERM handler
-    thread->registerSignal(SIGINT);
 
     T *owner = (T*)thread->owner_;
     thread->should_run_ = true;

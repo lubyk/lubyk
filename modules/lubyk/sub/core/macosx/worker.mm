@@ -35,41 +35,9 @@ using namespace lubyk;
 
 #include <mach-o/dyld.h> // _NSGetExecutablePath
 
-/** Could be used instead of mimas Application when we do not have/need a GUI.
- *  Currently not enabled.
- */
-class Worker::Implementation : public lubyk::Thread {
-public:
-  Implementation() {
-    // create a thread that will run NSApp
-    startThread<Implementation, &Implementation::run>(this, NULL);
-  }
-
-  ~Implementation() {
-    CFRunLoopStop(CFRunLoopGetCurrent());
-    //[[NSRunLoop currentRunLoop] halt];
-  }
-
-  void run(Thread *thread) {
-    //  release calling thread semaphore
-    threadReady();
-    ScopedPool pool;
-    printf("Run Loop\n");
-    [NSApplication sharedApplication];
-    [NSApp run];
-    //[[NSRunLoop currentRunLoop] configureAsServer];
-    //[[NSRunLoop currentRunLoop] run];
-  }
-};                            
-
 Worker::Worker()
     : zmq_context_(NULL)
     , zmq_context_refcount_(0) {
-  //impl_ = new Worker::Implementation;
-  // for(int i=0; i<3; ++i) {
-  //   FD_ZERO(&fd_[i]);
-  //   FD_ZERO(&res_fd_[i]);
-  // }
 }
 
 Worker *Worker::getWorker(lua_State *L) {
