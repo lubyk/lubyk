@@ -77,15 +77,21 @@ static int VBoxLayout__tostring(lua_State *L) {
 /* ============================ Member Methods   ====================== */
 
 
-/** void mimas::VBoxLayout::addLayout(QLayout *layout)
- * include/mimas/VBoxLayout.h:64
+/** void mimas::VBoxLayout::addLayout(QLayout *layout, int stretch=0)
+ * include/mimas/VBoxLayout.h:68
  */
 static int VBoxLayout_addLayout(lua_State *L) {
   try {
     VBoxLayout *self = *((VBoxLayout**)dubL_checksdata(L, 1, "mimas.VBoxLayout"));
     if (!self) throw dub::Exception("Using deleted mimas.VBoxLayout in addLayout");
+    int top__ = lua_gettop(L);
     QLayout *layout = *((QLayout **)dubL_checksdata(L, 2, "mimas.QLayout"));
-    self->addLayout(layout);
+    if (top__ < 3) {
+      self->addLayout(layout);
+    } else {
+      int stretch = dubL_checkint(L, 3);
+      self->addLayout(layout, stretch);
+    }
     return 0;
   } catch (std::exception &e) {
     lua_pushfstring(L, "addLayout: %s", e.what());
@@ -98,7 +104,7 @@ static int VBoxLayout_addLayout(lua_State *L) {
 
 
 /** void mimas::VBoxLayout::addSpacing(int size)
- * include/mimas/VBoxLayout.h:76
+ * include/mimas/VBoxLayout.h:84
  */
 static int VBoxLayout_addSpacing(lua_State *L) {
   try {
@@ -118,7 +124,7 @@ static int VBoxLayout_addSpacing(lua_State *L) {
 
 
 /** void mimas::VBoxLayout::addStretch(int stretch=0)
- * include/mimas/VBoxLayout.h:70
+ * include/mimas/VBoxLayout.h:78
  */
 static int VBoxLayout_addStretch(lua_State *L) {
   try {
@@ -173,8 +179,67 @@ static int VBoxLayout_addWidget(lua_State *L) {
 
 
 
+/** void mimas::VBoxLayout::insertLayout(int pos, QLayout *layout, int stretch=0)
+ * include/mimas/VBoxLayout.h:72
+ */
+static int VBoxLayout_insertLayout(lua_State *L) {
+  try {
+    VBoxLayout *self = *((VBoxLayout**)dubL_checksdata(L, 1, "mimas.VBoxLayout"));
+    if (!self) throw dub::Exception("Using deleted mimas.VBoxLayout in insertLayout");
+    int top__ = lua_gettop(L);
+    int pos = dubL_checkint(L, 2);
+    QLayout *layout = *((QLayout **)dubL_checksdata(L, 3, "mimas.QLayout"));
+    if (top__ < 4) {
+      self->insertLayout(pos, layout);
+    } else {
+      int stretch = dubL_checkint(L, 4);
+      self->insertLayout(pos, layout, stretch);
+    }
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "insertLayout: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "insertLayout: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** void mimas::VBoxLayout::insertWidget(int pos, QWidget *widget, int stretch=0, int alignment=0)
+ * include/mimas/VBoxLayout.h:64
+ */
+static int VBoxLayout_insertWidget(lua_State *L) {
+  try {
+    VBoxLayout *self = *((VBoxLayout**)dubL_checksdata(L, 1, "mimas.VBoxLayout"));
+    if (!self) throw dub::Exception("Using deleted mimas.VBoxLayout in insertWidget");
+    int top__ = lua_gettop(L);
+    int pos = dubL_checkint(L, 2);
+    QWidget *widget = *((QWidget **)dubL_checksdata(L, 3, "mimas.QWidget"));
+    if (top__ < 4) {
+      self->insertWidget(pos, widget);
+    } else {
+      int stretch = dubL_checkint(L, 4);
+      if (top__ < 5) {
+        self->insertWidget(pos, widget, stretch);
+      } else {
+        int alignment = dubL_checkint(L, 5);
+        self->insertWidget(pos, widget, stretch, alignment);
+      }
+    }
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "insertWidget: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "insertWidget: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
 /** QLayout* mimas::VBoxLayout::layout()
- * include/mimas/VBoxLayout.h:90
+ * include/mimas/VBoxLayout.h:98
  */
 static int VBoxLayout_layout(lua_State *L) {
   try {
@@ -194,7 +259,7 @@ static int VBoxLayout_layout(lua_State *L) {
 
 
 /** void mimas::VBoxLayout::setContentsMargins(int left, int top, int right, int bottom)
- * include/mimas/VBoxLayout.h:86
+ * include/mimas/VBoxLayout.h:94
  */
 static int VBoxLayout_setContentsMargins(lua_State *L) {
   try {
@@ -217,7 +282,7 @@ static int VBoxLayout_setContentsMargins(lua_State *L) {
 
 
 /** void mimas::VBoxLayout::setSpacing(int space)
- * include/mimas/VBoxLayout.h:82
+ * include/mimas/VBoxLayout.h:90
  */
 static int VBoxLayout_setSpacing(lua_State *L) {
   try {
@@ -245,6 +310,8 @@ static const struct luaL_Reg VBoxLayout_member_methods[] = {
   {"addSpacing"        , VBoxLayout_addSpacing},
   {"addStretch"        , VBoxLayout_addStretch},
   {"addWidget"         , VBoxLayout_addWidget},
+  {"insertLayout"      , VBoxLayout_insertLayout},
+  {"insertWidget"      , VBoxLayout_insertWidget},
   {"layout"            , VBoxLayout_layout},
   {"setContentsMargins", VBoxLayout_setContentsMargins},
   {"setSpacing"        , VBoxLayout_setSpacing},

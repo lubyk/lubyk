@@ -11,12 +11,17 @@ editor.ProcessList = lib
 
 -- constants
 local WIDTH       = 120
-local PADDING     = 10
+local PADDING_TOP = 0
+-- space between elements
+local PADDING_E   = 5
+local PADDING_L   = 3
 
-function lib:init()
-  self.list  = {}
-  self.width = WIDTH
+function lib:init(machine_view)
+  self.list    = {}
+  self.machine_view = machine_view
+  self.width   = WIDTH
   self:setSizePolicy(mimas.Fixed, mimas.Minimum)
+  self:addProcess {name = '+', hue = 0, add_btn = true, machine_view = machine_view}
 end
 
 function lib:addProcess(process)
@@ -25,7 +30,7 @@ function lib:addProcess(process)
   -- keep list sorted
   local add_pos = -1
   for i, elem in ipairs(self.list) do
-    if process_tab.name < elem.name then
+    if process_tab.name < elem.name or elem.add_btn then
       add_pos = i
       break
     end
@@ -53,26 +58,29 @@ function lib:removeProcess(process_name)
 end
 
 local function placeElements(self, w)
-  local y = PADDING
+  local y = PADDING_TOP
   for _, elem in ipairs(self.list) do
     elem:move(w - elem.width, y)
-    y = y + PADDING + elem.height
+    y = y + PADDING_E + elem.height
   end
 end
 
 function lib:resizeToFit()
-  local y = PADDING
-  local width = 0
+  local y = PADDING_TOP
+  local width = PADDING_L
   -- find biggest
   for _, elem in ipairs(self.list) do
     if elem.width > width then
-      width = elem.width
+      width = elem.width + PADDING_L
     end
-    y = y + PADDING + elem.height
+    y = y + PADDING_E + elem.height
   end
 
-  self:setSizeHint(width, y - PADDING)
-  self:resize(width, y - PADDING)
+  self:setSizeHint(width, y)
+  placeElements(self, width)
+  self:resize(width, y)
+  self.width  = width
+  self.height = y
 end
 
 function lib:resized(w, h)

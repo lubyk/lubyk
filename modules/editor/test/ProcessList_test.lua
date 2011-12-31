@@ -28,16 +28,14 @@ function should.drawProcessList(t)
   t.list:resize(100, 300)
   t.list:show()
 
-  t.thread = lk.Thread(function()
-    sleep(800)
-    -- new widgets must be created in the GUI thread
-    t.list:addProcess{name = 'Dune', hue = 0.2}
-    sleep(800)
-    t.list:removeProcess('Process One')
-    sleep(800)
-    t.list:close()
-    assertTrue(true)
-  end)
+  sleep(800)
+  -- new widgets must be created in the GUI thread
+  t.list:addProcess{name = 'Dune', hue = 0.2}
+  sleep(800)
+  t.list:removeProcess('Process One')
+  sleep(800)
+  t.list:close()
+  assertTrue(true)
 end
 
 function should.removeProcessTab(t)
@@ -49,4 +47,4 @@ function should.removeProcessTab(t)
   assertNil(t.list.list[3])
 end
 
-test.gui()
+test.all()

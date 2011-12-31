@@ -58,16 +58,30 @@ public:
   }
 
   void addWidget(QWidget *widget, int stretch = 0, int alignment = 0) {
-    QVBoxLayout::addWidget(widget, stretch, (Qt::Alignment)alignment);
+    QBoxLayout::addWidget(widget, stretch, (Qt::Alignment)alignment);
+  }
+  
+  void insertWidget(int pos, QWidget *widget, int stretch = 0, int alignment = 0) {
+    if (pos < 0) {
+      pos = count() + pos;
+    }
+    QBoxLayout::insertWidget(pos, widget, stretch, (Qt::Alignment)alignment);
   }
 
-  void addLayout(QLayout *layout) {
-    QVBoxLayout::addLayout(layout);
+  void addLayout(QLayout *layout, int stretch = 0) {
+    QBoxLayout::addLayout(layout);
+  }
+
+  void insertLayout(int pos, QLayout *layout, int stretch = 0) {
+    if (pos < 0) {
+      pos = count() + pos;
+    }
+    QBoxLayout::insertLayout(pos, layout, stretch);
   }
 
   /** Add a strechable item.
    */
-  void addStretch(int stretch = 0) {
+  void addStretch(int stretch = 1) {
     QVBoxLayout::addStretch(stretch);
   }
 

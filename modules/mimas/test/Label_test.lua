@@ -44,6 +44,12 @@ function should.acceptDestroyFromLua(t)
   end)
 end
 
+function should.setAlignement(t)
+  t.lbl = mimas.Label('foo')
+  assertPass(function()
+    t.lbl:setAlignement(mimas.AlignCenter)
+  end)
+end
 
 function should.styleLabels(t)
   t.win = mimas.Window()

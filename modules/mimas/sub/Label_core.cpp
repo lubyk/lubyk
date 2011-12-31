@@ -263,6 +263,26 @@ static int Label_resize(lua_State *L) {
 
 
 
+/** void mimas::Label::setAlignment(int align)
+ * include/mimas/Label.h:139
+ */
+static int Label_setAlignment(lua_State *L) {
+  try {
+    Label *self = *((Label**)dubL_checksdata(L, 1, "mimas.Label"));
+    if (!self) throw dub::Exception("Using deleted mimas.Label in setAlignment");
+    int align = dubL_checkint(L, 2);
+    self->setAlignment(align);
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "setAlignment: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "setAlignment: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
 /** void mimas::Label::setHue(float hue)
  * include/mimas/Label.h:123
  */
@@ -455,6 +475,7 @@ static const struct luaL_Reg Label_member_methods[] = {
   {"name"              , Label_name},
   {"object"            , Label_object},
   {"resize"            , Label_resize},
+  {"setAlignment"      , Label_setAlignment},
   {"setHue"            , Label_setHue},
   {"setName"           , Label_setName},
   {"setStyle"          , Label_setStyle},

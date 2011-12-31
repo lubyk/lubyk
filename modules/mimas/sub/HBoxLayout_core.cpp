@@ -78,15 +78,21 @@ static int HBoxLayout__tostring(lua_State *L) {
 /* ============================ Member Methods   ====================== */
 
 
-/** void mimas::HBoxLayout::addLayout(QLayout *layout)
- * include/mimas/HBoxLayout.h:65
+/** void mimas::HBoxLayout::addLayout(QLayout *layout, int stretch=0)
+ * include/mimas/HBoxLayout.h:69
  */
 static int HBoxLayout_addLayout(lua_State *L) {
   try {
     HBoxLayout *self = *((HBoxLayout**)dubL_checksdata(L, 1, "mimas.HBoxLayout"));
     if (!self) throw dub::Exception("Using deleted mimas.HBoxLayout in addLayout");
+    int top__ = lua_gettop(L);
     QLayout *layout = *((QLayout **)dubL_checksdata(L, 2, "mimas.QLayout"));
-    self->addLayout(layout);
+    if (top__ < 3) {
+      self->addLayout(layout);
+    } else {
+      int stretch = dubL_checkint(L, 3);
+      self->addLayout(layout, stretch);
+    }
     return 0;
   } catch (std::exception &e) {
     lua_pushfstring(L, "addLayout: %s", e.what());
@@ -99,7 +105,7 @@ static int HBoxLayout_addLayout(lua_State *L) {
 
 
 /** void mimas::HBoxLayout::addSpacing(int size)
- * include/mimas/HBoxLayout.h:77
+ * include/mimas/HBoxLayout.h:85
  */
 static int HBoxLayout_addSpacing(lua_State *L) {
   try {
@@ -119,7 +125,7 @@ static int HBoxLayout_addSpacing(lua_State *L) {
 
 
 /** void mimas::HBoxLayout::addStretch(int stretch=0)
- * include/mimas/HBoxLayout.h:71
+ * include/mimas/HBoxLayout.h:79
  */
 static int HBoxLayout_addStretch(lua_State *L) {
   try {
@@ -174,8 +180,67 @@ static int HBoxLayout_addWidget(lua_State *L) {
 
 
 
+/** void mimas::HBoxLayout::insertLayout(int pos, QLayout *layout, int stretch=0)
+ * include/mimas/HBoxLayout.h:73
+ */
+static int HBoxLayout_insertLayout(lua_State *L) {
+  try {
+    HBoxLayout *self = *((HBoxLayout**)dubL_checksdata(L, 1, "mimas.HBoxLayout"));
+    if (!self) throw dub::Exception("Using deleted mimas.HBoxLayout in insertLayout");
+    int top__ = lua_gettop(L);
+    int pos = dubL_checkint(L, 2);
+    QLayout *layout = *((QLayout **)dubL_checksdata(L, 3, "mimas.QLayout"));
+    if (top__ < 4) {
+      self->insertLayout(pos, layout);
+    } else {
+      int stretch = dubL_checkint(L, 4);
+      self->insertLayout(pos, layout, stretch);
+    }
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "insertLayout: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "insertLayout: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** void mimas::HBoxLayout::insertWidget(int pos, QWidget *widget, int stretch=0, int alignment=0)
+ * include/mimas/HBoxLayout.h:65
+ */
+static int HBoxLayout_insertWidget(lua_State *L) {
+  try {
+    HBoxLayout *self = *((HBoxLayout**)dubL_checksdata(L, 1, "mimas.HBoxLayout"));
+    if (!self) throw dub::Exception("Using deleted mimas.HBoxLayout in insertWidget");
+    int top__ = lua_gettop(L);
+    int pos = dubL_checkint(L, 2);
+    QWidget *widget = *((QWidget **)dubL_checksdata(L, 3, "mimas.QWidget"));
+    if (top__ < 4) {
+      self->insertWidget(pos, widget);
+    } else {
+      int stretch = dubL_checkint(L, 4);
+      if (top__ < 5) {
+        self->insertWidget(pos, widget, stretch);
+      } else {
+        int alignment = dubL_checkint(L, 5);
+        self->insertWidget(pos, widget, stretch, alignment);
+      }
+    }
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "insertWidget: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "insertWidget: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
 /** QLayout* mimas::HBoxLayout::layout()
- * include/mimas/HBoxLayout.h:91
+ * include/mimas/HBoxLayout.h:99
  */
 static int HBoxLayout_layout(lua_State *L) {
   try {
@@ -195,7 +260,7 @@ static int HBoxLayout_layout(lua_State *L) {
 
 
 /** void mimas::HBoxLayout::setContentsMargins(int left, int top, int right, int bottom)
- * include/mimas/HBoxLayout.h:87
+ * include/mimas/HBoxLayout.h:95
  */
 static int HBoxLayout_setContentsMargins(lua_State *L) {
   try {
@@ -218,7 +283,7 @@ static int HBoxLayout_setContentsMargins(lua_State *L) {
 
 
 /** void mimas::HBoxLayout::setSpacing(int space)
- * include/mimas/HBoxLayout.h:83
+ * include/mimas/HBoxLayout.h:91
  */
 static int HBoxLayout_setSpacing(lua_State *L) {
   try {
@@ -246,6 +311,8 @@ static const struct luaL_Reg HBoxLayout_member_methods[] = {
   {"addSpacing"        , HBoxLayout_addSpacing},
   {"addStretch"        , HBoxLayout_addStretch},
   {"addWidget"         , HBoxLayout_addWidget},
+  {"insertLayout"      , HBoxLayout_insertLayout},
+  {"insertWidget"      , HBoxLayout_insertWidget},
   {"layout"            , HBoxLayout_layout},
   {"setContentsMargins", HBoxLayout_setContentsMargins},
   {"setSpacing"        , HBoxLayout_setSpacing},

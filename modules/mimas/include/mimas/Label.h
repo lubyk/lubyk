@@ -136,6 +136,10 @@ public:
     QWidget::update();
   }
 
+  void setAlignment(int align) {
+    QLabel::setAlignment((Qt::Alignment)align);
+  }
+
 private:
   virtual void paintEvent(QPaintEvent *event);
 

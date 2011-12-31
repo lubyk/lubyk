@@ -56,7 +56,6 @@ static int SocketNotifier_deleted(lua_State *L) {
 /* ============================ tostring         ====================== */
 
 static int SocketNotifier__tostring(lua_State *L) {
-  printf("SocketNotifier__tostring %p\n", lua_touserdata(L, 1));
   SocketNotifier **userdata = (SocketNotifier**)dubL_checksdata_n(L, 1, "mimas.SocketNotifier");
   
   if (!*userdata) {
@@ -113,27 +112,20 @@ static int QObject_object(lua_State *L) {
 
 
 /** void mimas::SocketNotifier::setEnabled(bool enabled)
- * include/mimas/SocketNotifier.h:76
+ * include/mimas/SocketNotifier.h:74
  */
 static int SocketNotifier_setEnabled(lua_State *L) {
-  printf("SocketNotifier_setEnabled [1]\n");
   try {
     SocketNotifier *self = *((SocketNotifier**)dubL_checksdata(L, 1, "mimas.SocketNotifier"));
-    printf("SocketNotifier_setEnabled [2]\n");
     if (!self) throw dub::Exception("Using deleted mimas.SocketNotifier in setEnabled");
     bool enabled = lua_toboolean(L, 2);
-    printf("SocketNotifier_setEnabled [2.1]\n");
     self->setEnabled(enabled);
-    printf("SocketNotifier_setEnabled [2.2]\n");
     return 0;
   } catch (std::exception &e) {
-    printf("SocketNotifier_setEnabled [3]\n");
     lua_pushfstring(L, "setEnabled: %s", e.what());
   } catch (...) {
-    printf("SocketNotifier_setEnabled [4]\n");
     lua_pushfstring(L, "setEnabled: Unknown exception");
   }
-  printf("SocketNotifier_setEnabled [5]\n");
   return lua_error(L);
 }
 
@@ -160,7 +152,7 @@ static int QObject_setName(lua_State *L) {
 
 
 /** int mimas::SocketNotifier::socket() const 
- * include/mimas/SocketNotifier.h:69
+ * include/mimas/SocketNotifier.h:67
  */
 static int SocketNotifier_socket(lua_State *L) {
   try {
@@ -183,7 +175,6 @@ static int SocketNotifier_socket(lua_State *L) {
 
 /* ============================ Lua Registration ====================== */
 
-lua_pushstring(L, "type_")
 static const struct luaL_Reg SocketNotifier_member_methods[] = {
   {"name"              , QObject_name},
   {"object"            , QObject_object},

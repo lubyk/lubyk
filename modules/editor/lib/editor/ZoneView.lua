@@ -32,8 +32,8 @@ function lib:init(zone)
   self.layout:addWidget(self.patching_view)
   self.layout:setSpacing(PADDING)
   self.layout:setContentsMargins(0, 0, 0, 0)
-  self.process_list_view = editor.ProcessList()
-  self:addWidget(self.process_list_view)
+  self.machine_list_view = editor.MachineList('local')
+  self:addWidget(self.machine_list_view)
   self.width  = WIDTH
   self.height = HEIGHT
   self:resize(self.width, self.height)
@@ -49,7 +49,7 @@ end
 function lib:placeElements()
   local w, h = self.width, self.height
   self.layout_holder:resize(w, h)
-  self.process_list_view:move(w - self.process_list_view.width, 0)
+  self.machine_list_view:move(w - self.machine_list_view.width, 0)
   self:update()
 end
 
