@@ -34,47 +34,20 @@ function lib:addMachine(name, remote)
   machine:connect(remote)
   if not machine.view then
     machine.view = editor.MachineView(machine)
-    machine.view:resizeToFit()
-    self.vbox:insertWidget(-1, machine.view, 0, mimas.AlignRight)
+    self.vbox:insertWidget(-2, machine.view, 0, mimas.AlignRight)
   end
-  self:resizeToFit()
 end
 
 function lib:addProcess(process)
   -- TODO: find machine by ip
   machine = self.machine_by_ip['localhost']
   machine:addProcess(process)
-  self:resizeToFit()
 end
 
 function lib:removeProcess(process_name)
   -- TODO: find machine by ip
   machine = self.machine_by_ip['localhost']
   machine:removeProcess(process_name)
-  self:resizeToFit()
-end
-
-function lib:resizeToFit()
-  local y = PADDING
-  local width = 0
-  -- find biggest
-  for _, elem in pairs(self.machine_by_ip) do
-    if elem.view then
-      elem = elem.view
-      if elem.width > width then
-        width = elem.width
-      end
-      y = y + PADDING + elem.height
-    end
-  end
-
-  self:setSizeHint(width, y - PADDING)
-  self.width = width
-  self:resize(width, y - PADDING)
-end
-
-function lib:resized(w, h)
-  self.width  = w
 end
 
 -- function lib:paint(p, w, h)

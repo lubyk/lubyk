@@ -29,6 +29,7 @@ local EDIT_WIDTH = 90
 function lib:init(process)
   self.process = process
   self:setName(process.name)
+  self:setSizePolicy(mimas.Minimum, mimas.Fixed)
   if process.add_btn then
     private.makeAddBtn(self)
     self.pen   = mimas.Pen(hpen_width * 2, mimas.Color(0.3, 0.3, 0.8, 0.5), mimas.DotLine)
@@ -46,9 +47,9 @@ end
 function lib:setName(name)
   self.name  = name
   local w, h = self.super:textSize(name)
-  self.width  = w + 4 * text_padding -- 2 paddings on sides
-  self.height = h + 2 * text_padding
-  self:resize(self.width, self.height)
+  self.min_width  = w + 4 * text_padding -- 2 paddings on sides
+  self.min_height = h + 2 * text_padding
+  self:setSizeHint(self.min_width, self.min_height)
 end
 
 -- custom paint
@@ -75,13 +76,12 @@ function private:makeAddBtn()
   function self:click(x, y, op, btn, mod)
     if op == MouseRelease then
       -- Ask for name and create new process
-      self.old_width = self.width
       self.width = EDIT_WIDTH
-      self:resize(self.width, self.height)
-      self.process.machine_view:resizeAll()
+      self:setSizeHint(EDIT_WIDTH, self.min_height)
+      self:resize(self.min_width, self.min_height)
       self.edit = mimas.LineEdit()
       self:addWidget(self.edit)
-      self.edit:resize(self.width - 2 * edit_padding, self.height - 2 * edit_padding)
+      self.edit:resize(EDIT_WIDTH - 2 * edit_padding, self.min_height - 2 * edit_padding)
       self.edit:move(2*edit_padding, edit_padding)
       self.edit:setFocus()
       function self.edit.editingFinished(edit, name)
@@ -90,7 +90,8 @@ function private:makeAddBtn()
         -- Make sure it is not called a second time
         edit.editingFinished = nil
         self.width = self.old_width
-        self:resize(self.width, self.height)
+        self:setSizeHint(self.min_width, self.min_height)
+        self:resize(self.min_width, self.min_height)
         self.process.machine_view:resizeAll()
         self.process.machine_view:createProcess(name)
       end

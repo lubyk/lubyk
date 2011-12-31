@@ -15,19 +15,37 @@ local PADDING     = 10
 -- half pen width
 local HPEN_W      = 1
 
+-- Structure of boxes:
+--
+-- lay
+-- +----------------+
+-- |   title        |
+-- +----------------+
+-- | hbox           |
+-- | +---------+    |
+-- | |  vbox   |    |
+-- | +---------+    |
+-- +----------------+
+-- | stretch        |
+-- +----------------+
+--
 function lib:init(machine)
+  self.process_list = {}
   self.machine = machine
-  self:setSizePolicy(mimas.Fixed, mimas.Minimum)
-  self.vbox  = mimas.VBoxLayout(self)
-  self.vbox:setContentsMargins(0,0,0,0)
+  self.lay = mimas.VBoxLayout(self)
+  self.lay:setContentsMargins(0,0,0,0)
   self.title = mimas.Label()
   self.title:setStyle 'background:hsva(0,0,64); color:#fff; padding:5px'
-  self.title:setAlignment(mimas.AlignCenter)
-  self.vbox:addWidget(self.title)
-  self.process_list = editor.ProcessList(self)
-  self.vbox:addWidget(self.process_list)
-  self.vbox:addStretch()
+  --self.title:setStyle 'padding:5px'
+  self.title:setAlignment(mimas.AlignRight)
+  self.lay:addWidget(self.title)
+  self.hbox = mimas.HBoxLayout()
+  self.vbox = mimas.VBoxLayout()
+  self.vbox:setContentsMargins(5,0,0,5)
+  self.hbox:addWidget(self.vbox)
+  self.lay:addWidget(self.hbox)
   self:setName(machine.name)
+  self:addProcess {name = '+', hue = 0, add_btn = true, machine_view = machine_view}
 end
 
 function lib:createProcess(name)
@@ -41,39 +59,38 @@ function lib:setName(name)
 end
 
 function lib:addProcess(process)
-  self.process_list:addProcess(process)
-  self:resizeToFit()
-end
-
-function lib:resizeAll()
-  self.process_list:resizeToFit()
-  self:resizeToFit()
+  local process_tab = editor.ProcessTab(process)
+  process.tab = process_tab
+  -- keep list sorted
+  local add_pos = -1
+  for i, elem in ipairs(self.process_list) do
+    if process_tab.name < elem.name or elem.add_btn then
+      add_pos = i
+      break
+    end
+  end
+  if add_pos == -1 then
+    -- add at end
+    table.insert(self.process_list, process_tab)
+    self.vbox:insertWidget(-1, process_tab, 0, mimas.AlignRight)
+  else
+    table.insert(self.process_list, add_pos, process_tab)
+    self.vbox:insertWidget(add_pos-1, process_tab, 0, mimas.AlignRight)
+  end
 end
 
 function lib:removeProcess(process_name)
-  self.process_list:removeProcess(process_name)
-  self:resizeToFit()
-end
-
-function lib:resizeToFit()
-  local width  = self.process_list.width  + 2 * HPEN_W 
-  local height = self.process_list.height + 30
-  self:setSizeHint(width, height)
-  self.width  = width
-  self.height = height
-  self:resize(width, height)
-end
-
-function lib:resized(w, h)
-  if w > self.width then
-    -- place process_list
-    self.process_list:move(w - self.process_list.width - 2 * HPEN_W, self.process_list:y())
+  for i, v in ipairs(self.process_list) do
+    if v.name == process_name then
+      v.super:__gc() -- delete
+      table.remove(self.process_list, i)
+      break
+    end
   end
-  self.width = w
 end
 
 function lib:paint(p, w, h)
   p:setPen(2*HPEN_W, mimas.Color(0,0,64/256))
-  --p:fillRect(0, 0, w, h, mimas.colors.Green:colorWithAlpha(0.2))
-  p:drawRect(HPEN_W, HPEN_W, w - 2*HPEN_W, h-2*HPEN_W)
+  p:drawLine(HPEN_W, HPEN_W, HPEN_W, h-2*HPEN_W)
+  p:drawLine(0, h - HPEN_W, w, h-HPEN_W)
 end

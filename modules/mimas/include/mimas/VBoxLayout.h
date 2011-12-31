@@ -63,7 +63,8 @@ public:
   
   void insertWidget(int pos, QWidget *widget, int stretch = 0, int alignment = 0) {
     if (pos < 0) {
-      pos = count() + pos;
+      // -1 = add after last, -2 = add after element before last
+      pos = count() + 1 + pos;
     }
     QBoxLayout::insertWidget(pos, widget, stretch, (Qt::Alignment)alignment);
   }
@@ -74,7 +75,8 @@ public:
 
   void insertLayout(int pos, QLayout *layout, int stretch = 0) {
     if (pos < 0) {
-      pos = count() + pos;
+      // -1 = add after last, -2 = add after element before last
+      pos = count() + 1 + pos;
     }
     QBoxLayout::insertLayout(pos, layout, stretch);
   }

@@ -88,6 +88,3 @@ function lib:resized(w, h)
   placeElements(self, w)
 end
 
--- function lib:paint(p, w, h)
---   p:fillRect(0, 0, w, h, mimas.colors.Green:colorWithAlpha(0.2))
--- end
