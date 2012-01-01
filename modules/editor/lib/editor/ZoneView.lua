@@ -29,11 +29,11 @@ function lib:init(zone)
   self.library_view = editor.LibraryView(zone.library)
   self.layout:addWidget(self.library_view)
   self.patching_view = editor.PatchingView()
-  self.layout:addWidget(self.patching_view)
+  self.layout:addWidget(self.patching_view, 1)
   self.layout:setSpacing(PADDING)
   self.layout:setContentsMargins(0, 0, 0, 0)
-  self.machine_list_view = editor.MachineList('local')
-  self:addWidget(self.machine_list_view)
+  self.machine_list_view = editor.MachineList()
+  self.layout:addWidget(self.machine_list_view, 0, mimas.AlignRight)
   self.width  = WIDTH
   self.height = HEIGHT
   self:resize(self.width, self.height)
@@ -43,14 +43,7 @@ end
 function lib:resized(w, h)
   self.width  = w
   self.height = h
-  self:placeElements()
-end
-
-function lib:placeElements()
-  local w, h = self.width, self.height
   self.layout_holder:resize(w, h)
-  self.machine_list_view:move(w - self.machine_list_view.width, 0)
-  self:update()
 end
 
 function lib:addProcessView(view)

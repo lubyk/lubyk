@@ -34,7 +34,7 @@ function lib:addMachine(name, remote)
   machine:connect(remote)
   if not machine.view then
     machine.view = editor.MachineView(machine)
-    self.vbox:insertWidget(-2, machine.view, 0, mimas.AlignRight)
+    self.vbox:insertWidget(-2, machine.view)
   end
 end
 

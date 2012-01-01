@@ -34,18 +34,16 @@ function lib:init(machine)
   self.machine = machine
   self.lay = mimas.VBoxLayout(self)
   self.lay:setContentsMargins(0,0,0,0)
-  self.title = mimas.Label()
-  self.title:setStyle 'background:hsva(0,0,64); color:#fff; padding:5px'
-  --self.title:setStyle 'padding:5px'
-  self.title:setAlignment(mimas.AlignRight)
+  self.title = mimas.Widget()
+  self.title:setSizePolicy(mimas.Minimum, mimas.Fixed)
   self.lay:addWidget(self.title)
   self.hbox = mimas.HBoxLayout()
   self.vbox = mimas.VBoxLayout()
-  self.vbox:setContentsMargins(5,0,0,5)
+  self.vbox:setContentsMargins(10,0,0,5)
   self.hbox:addWidget(self.vbox)
   self.lay:addWidget(self.hbox)
-  self:setName(machine.name)
   self:addProcess {name = '+', hue = 0, add_btn = true, machine_view = machine_view}
+  self:setName(machine.name)
 end
 
 function lib:createProcess(name)
@@ -54,8 +52,13 @@ function lib:createProcess(name)
 end
 
 function lib:setName(name)
-  self.name = name
-  self.title:setText(name)
+  self.name  = name
+  self.lbl_w, self.lbl_h = self.super:textSize(name)
+  local w = self.lbl_w + 30
+  local h = self.lbl_h + 15
+  self.title:setSizeHint(w, h)
+  self.title:resize(w, h)
+  self:update()
 end
 
 function lib:addProcess(process)
@@ -89,8 +92,12 @@ function lib:removeProcess(process_name)
   end
 end
 
+-- custom paint
 function lib:paint(p, w, h)
-  p:setPen(2*HPEN_W, mimas.Color(0,0,64/256))
-  p:drawLine(HPEN_W, HPEN_W, HPEN_W, h-2*HPEN_W)
-  p:drawLine(0, h - HPEN_W, w, h-HPEN_W)
+  local pen_color = mimas.Color(0, 0, 0.25, 0.5)
+  local lbl_back  = mimas.Brush(0, 0, 0.25, 0.5)
+  local back      = mimas.Brush() --0, 0, 0.2, 0.5)
+
+  -- Add 40 to go beyond border
+  editor.paintWithRoundedTitle(p, w + 40, h, self.name, self.lbl_w, self.lbl_h, pen_color, mimas.Color(0, 0, 0.8), lbl_back, back)
 end

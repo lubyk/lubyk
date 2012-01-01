@@ -10,12 +10,6 @@
 local lib = lk.SubClass(mimas, 'Widget')
 editor.ProcessView = lib
 
--- constants
-local BOX_PADDING = 1
-local HPEN_WIDTH = 1 -- half pen width
-local BP = HPEN_WIDTH + BOX_PADDING -- full box padding
-local ARC_RADIUS = 8
-local TEXT_PADDING = 5
 local START_DRAG_DIST = 4
 local DEFAULT_X = 100
 local DEFAULT_Y = 100
@@ -23,6 +17,11 @@ local DEFAULT_W = 400
 local DEFAULT_H = 400
 local DRAG_CORNER = 20
 
+-- constants
+local BOX_PADDING = 1
+local HPEN_WIDTH = 1 -- half pen width
+local BP = HPEN_WIDTH + BOX_PADDING -- full box padding
+local TEXT_PADDING = 5
 local PAD  = BP + HPEN_WIDTH -- padding for inner shape (top/left)
 local PAD2 = BP + 2*HPEN_WIDTH -- do not overlap with background
 
@@ -37,9 +36,7 @@ end
 
 function lib:setName(name)
   self.name  = name
-  local w, h = self.super:textSize(name)
-  self.lbl_w = w + 4 * TEXT_PADDING -- 2 paddings on sides
-  self.lbl_h = h + 2 * TEXT_PADDING
+  self.lbl_w, self.lbl_h = self.super:textSize(name)
   self:update()
 end
 
@@ -58,54 +55,21 @@ end
 
 -- custom paint
 function lib:paint(p, w, h)
-  local pen   = mimas.Pen(HPEN_WIDTH * 2, mimas.Color(self.process.hue, 0.3, 0.8, 0.5))
-  local brush = mimas.Brush(self.process.hue, 0.5, 0.5, 0.5)
+  local pen_color = mimas.Color(self.process.hue, 0.3, 0.8, 0.5)
+  local lbl_back  = mimas.Brush(self.process.hue, 0.5, 0.5, 0.5)
+  local back
 
-  -- label width/height
-  local lw = self.lbl_w
-  local lh = self.lbl_h
-  local path = mimas.Path()
-
-  -- draw rounded surface
   if self.is_ghost then
-    p:setBrush(self.process.hue, 0.2, 0.2, 0.3)
-    pen = mimas.Pen(HPEN_WIDTH * 2, mimas.Color(self.process.hue, 0.3, 0.8, 0.2))
+    -- GHOST
+    back = mimas.Brush(self.process.hue, 0.2, 0.2, 0.3)
+    pen_color = mimas.Color(self.process.hue, 0.3, 0.8, 0.2)
   elseif self == self.delegate.process_view_under then
     -- under drag operation
-    p:setBrush(self.process.hue, 0.3, 0.3, 0.5)
+    back = mimas.Brush(self.process.hue, 0.3, 0.3, 0.5)
   else
-    p:setBrush(self.process.hue, 0.2, 0.2, 0.5)
+    back = mimas.Brush(self.process.hue, 0.2, 0.2, 0.5)
   end
-  p:setPen(pen)
-  p:drawRoundedRect(BP, BP, w - 2 * BP, h - 2 * BP, ARC_RADIUS / 2)
-
-  -- draw label background
-  p:setPen(mimas.Pen()) -- no pen
-  p:setBrush(brush)
-
-  path:moveTo(lw+PAD, PAD)
-  path:lineTo(PAD + ARC_RADIUS, PAD)
-  path:cubicTo(PAD-1, PAD-1, PAD-1, PAD-1, PAD, PAD + ARC_RADIUS)
-  path:lineTo(PAD, lh + PAD)
-  path:lineTo(lw - ARC_RADIUS + PAD, lh + PAD)
-  path:cubicTo(lw+PAD+1, lh+PAD+1, lw+PAD+1, lh+PAD+1, lw+PAD, lh+PAD-ARC_RADIUS)
-  path:lineTo(lw+PAD, PAD)
-  p:drawPath(path)
-
-  -- draw label border (only bottom and right)
-  p:setBrush(mimas.Brush())
-  p:setPen(pen)
-
-  path = mimas.Path()
-  path:moveTo(PAD2, lh + PAD2)
-  path:lineTo(lw - ARC_RADIUS + PAD2, lh + PAD2)
-  path:cubicTo(lw+PAD2, lh+PAD2, lw+PAD2, lh+PAD2, lw+PAD2, lh+PAD2-ARC_RADIUS)
-  path:lineTo(lw+PAD2, PAD2)
-  p:drawPath(path)
-
-  -- draw label text
-  p:setPen(mimas.Pen(1, mimas.Color(0, 0, 1)))
-  p:drawText(PAD+2*TEXT_PADDING, PAD+TEXT_PADDING, lw - 4*TEXT_PADDING, lh - 2*TEXT_PADDING, mimas.AlignRight + mimas.AlignVCenter, self.name)
+  editor.paintWithRoundedTitle(p, w, h, self.name, self.lbl_w, self.lbl_h, pen_color, mimas.Color(0, 0, 1), lbl_back, back)
 end
 
 function lib:delete()
@@ -153,7 +117,9 @@ function lib:click(x, y, type, btn, mod)
   local process = self.process
   if type == MousePress then
     -- only drag when click is in the title
-    if x < self.lbl_w + PAD and y < self.lbl_h + PAD then
+    local lw = self.lbl_w + 4 * TEXT_PADDING -- 2 paddings on sides
+    local lh = self.lbl_h + 2 * TEXT_PADDING
+    if x < lw + PAD and y < lh + PAD then
       -- store position but only start drag when moved START_DRAG_DIST away
       self.click_position = {x = x, y = y}
       self.current_pos    = {x = process.x, y = process.y}
@@ -165,7 +131,7 @@ function lib:click(x, y, type, btn, mod)
       clickOnLink(self, x, y, type, btn, mod)
     end
   elseif type == DoubleClick then
-    if x < self.lbl_w + PAD and y < self.lbl_h + PAD then
+    if x < lw + PAD and y < lh + PAD then
       -- close ?
     elseif not clickOnLink(self, x, y, type, btn, mod) then
       -- create new empty node

@@ -179,10 +179,9 @@ function lib:processConnected(remote_process)
     process:connect(remote_process, self)
 
     --- Update views
-    if self.process_list_view then
+    if self.machine_list_view then
       -- FIXME: use updateView()
-      self.process_list_view:addProcess(process)
-      self.main_view:placeElements()
+      self.machine_list_view:addProcess(process)
     end
     self:toggleView(process)
   else
@@ -208,11 +207,10 @@ function lib:processDisconnected(process)
       --- Update views
       if process.name then
         -- not morph
-        if self.process_list_view then
-          self.process_list_view:removeProcess(process.name)
+        if self.machine_list_view then
+          self.machine_list_view:removeProcess(process.name)
           process:deleteView()
         end
-        self.main_view:placeElements()
         self.found_processes[name] = nil
         -- this could run anywhere but it has to run after the process is removed
         -- from process_list
@@ -250,7 +248,7 @@ function private.setupView(self)
     -- when window is closed, we remove this zone
     app:removeZone(self.name)
   end
-  self.process_list_view = view.process_list_view
+  self.machine_list_view = view.machine_list_view
   view:show()
 end
 
