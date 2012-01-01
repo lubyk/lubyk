@@ -32,19 +32,6 @@ function mt:addLayout(other)
   addLayout(self, other:layout())
 end
 
--- default keyboard action
--- TODO: add CMD+W
-function mt:keyboard(key, on)
-  if on then
-    if key == mimas.ESC then
-      -- ESC
-      self:close()
-    elseif key == mimas.Space then
-      self:swapFullScreen()
-    end
-  end
-end
-
 local close  = mt.close
 function mt:close()
   if self:deleted() then

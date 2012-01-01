@@ -18,12 +18,19 @@ end
 
 function should.drawMachineList(t)
   t.win = mimas.Window()
-  t.lay = mimas.HBoxLayout(t.win)
+  -- holds layout so that we can add drag elements on top
+  -- of layout
+  t.top = mimas.Widget()
+  t.win:addWidget(t.top)
+  t.top:move(0,0)
+  t.lay = mimas.HBoxLayout(t.top)
   t.lay:addStretch()
   t.lay:setContentsMargins(0,0,0,0)
   t.win:move(10,10)
   t.win:resize(500,500)
-  t.list = editor.MachineList()
+  t.top:resize(500,500)
+  t.win.patching_view = t.win
+  t.list = editor.MachineList({main_view = t.win})
   t.lay:addWidget(t.list, 0, mimas.AlignRight)
   addTabs(t.list)
   t.win:show()

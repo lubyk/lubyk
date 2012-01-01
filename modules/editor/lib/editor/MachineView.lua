@@ -32,6 +32,7 @@ local HPEN_W      = 1
 function lib:init(machine)
   self.process_list = {}
   self.machine = machine
+  self.zone    = machine.zone
   self.lay = mimas.VBoxLayout(self)
   self.lay:setContentsMargins(0,0,0,0)
   self.title = mimas.Widget()
@@ -42,13 +43,8 @@ function lib:init(machine)
   self.vbox:setContentsMargins(10,0,0,5)
   self.hbox:addWidget(self.vbox)
   self.lay:addWidget(self.hbox)
-  self:addProcess {name = '+', hue = 0, add_btn = true, machine_view = machine_view}
+  self:addProcess {name = '+', hue = 0, add_btn = true, machine = machine}
   self:setName(machine.name)
-end
-
-function lib:createProcess(name)
-  -- show dialog for name and tell machine to create
-  -- a new process
 end
 
 function lib:setName(name)

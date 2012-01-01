@@ -17,14 +17,13 @@ editor.ProcessTab = lib
 
 -- constants
 local private = {}
-local MouseRelease = mimas.MouseRelease
 local box_padding = 1
 local edit_padding = 3
 local hpen_width = 1 -- half pen width
 local bp = hpen_width + box_padding -- full box padding
 local arc_radius = 8
 local text_padding = 5
-local EDIT_WIDTH = 90
+local EDIT_WIDTH = 80
 
 function lib:init(process)
   self.process = process
@@ -61,6 +60,7 @@ function lib:paint(p, w, h)
   p:drawText(2 * text_padding, text_padding, w - 4*text_padding, h - 2*text_padding, mimas.AlignRight + mimas.AlignVCenter, self.name)
 end
 
+local MousePress, MouseRelease = mimas.MousePress, mimas.MouseRelease
 
 function lib:click(x, y, op, btn, mod)
   if op == MouseRelease then
@@ -70,31 +70,82 @@ function lib:click(x, y, op, btn, mod)
 end
 
 --=============================================== PRIVATE
+local addbtn = {addbtn = true}
+addbtn.__index = addbtn
+setmetatable(addbtn, lib)
+
+local START_DRAG_DIST = 4
 
 function private:makeAddBtn()
-  self.add_btn = true
-  function self:click(x, y, op, btn, mod)
-    if op == MouseRelease then
+  self.machine = self.process.machine
+  self.zone    = self.machine.zone
+  setmetatable(self, addbtn)
+end
+
+function addbtn:click(x, y, op, btn, mod)
+  if op == MousePress then
+    self.click_position = {x=x,y=y}
+    local gx, gy = self:globalPosition()
+    self.base_pos = {gx = gx, gy = gy}
+  elseif op == MouseRelease then
+    if self.dragging then
+      -- drop
+      self.dragging = false
+      local gx, gy = self.ghost:globalPosition()
+      local px, py = self.zone.main_view.patching_view:globalPosition()
+      self.ghost.def = {gx - px, gy - py}
       -- Ask for name and create new process
-      self.width = EDIT_WIDTH
-      self:setSizeHint(EDIT_WIDTH, self.min_height)
-      self:resize(self.min_width, self.min_height)
+      self.ghost.lbl_w = EDIT_WIDTH - 10
+      self.ghost:update()
       self.edit = mimas.LineEdit()
-      self:addWidget(self.edit)
-      self.edit:resize(EDIT_WIDTH - 2 * edit_padding, self.min_height - 2 * edit_padding)
+      self.ghost:addWidget(self.edit)
+      self.edit:resize(EDIT_WIDTH, self.min_height - edit_padding)
       self.edit:move(2*edit_padding, edit_padding)
       self.edit:setFocus()
       function self.edit.editingFinished(edit, name)
+        self.ghost:setName(name)
+        self.ghost.def.name = name
+        self.edit:hide()
         self.edit = nil
-        edit:hide()
         -- Make sure it is not called a second time
         edit.editingFinished = nil
-        self.width = self.old_width
-        self:setSizeHint(self.min_width, self.min_height)
-        self:resize(self.min_width, self.min_height)
-        self.process.machine_view:resizeAll()
-        self.process.machine_view:createProcess(name)
+        self.machine:createProcess(self.ghost.def)
+        -- TODO: keep ghost visible for some time and blink until it becomes real
+        self.ghost = nil
       end
     end
   end
 end
+
+local function manhattanDist(a, b)
+  return math.abs(b.x - a.x) + math.abs(b.y - a.y)
+end
+
+function addbtn:mouse(x, y)
+  local zone = self.zone
+  local main_view = zone.main_view
+  if self.click_position and not self.dragging and manhattanDist(self.click_position, {x=x,y=y}) > START_DRAG_DIST then
+    -- start drag operation: self becomes ghost
+    self.dragging = true
+    self.ghost = editor.ProcessView { name = '', hue = math.random(), nodes = {}, pending_inlets = {}, delegate = zone }
+    self.ghost.is_ghost = true
+    self.ghost:resize(EDIT_WIDTH + 20,100)
+    main_view:addWidget(self.ghost)
+  end
+
+  if self.dragging then
+    -- dragging
+    local gx = self.base_pos.gx + x - self.click_position.x
+    local gy = self.base_pos.gy + y - self.click_position.y
+    self.ghost:globalMove(gx, gy)
+  end
+end
+
+
+
+
+
+
+
+
+

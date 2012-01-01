@@ -8,6 +8,8 @@
 --]]------------------------------------------------------
 editor = Autoload('editor')
 
+math.randomseed(os.time())
+math.random()
 --=================================================== UTILITIES
 
 -- constants

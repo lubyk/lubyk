@@ -16,9 +16,10 @@ editor.Machine = lib
 
 setmetatable(lib, {
   -- new method
- __call = function(lib, name, remote)
+ __call = function(lib, name, zone, remote)
   local self = {
     name = name,
+    zone = zone,
   }
 
   setmetatable(self, lib)
@@ -30,6 +31,11 @@ end})
 
 function lib:connect(remote)
   self.remote = remote
+end
+
+function lib:createProcess(def)
+  -- show dialog for name and tell machine to create
+  -- a new process
 end
 
 function lib:addProcess(process)

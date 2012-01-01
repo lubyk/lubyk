@@ -32,7 +32,7 @@ function lib:init(zone)
   self.layout:addWidget(self.patching_view, 1)
   self.layout:setSpacing(PADDING)
   self.layout:setContentsMargins(0, 0, 0, 0)
-  self.machine_list_view = editor.MachineList()
+  self.machine_list_view = editor.MachineList(self.zone)
   self.layout:addWidget(self.machine_list_view, 0, mimas.AlignRight)
   self.width  = WIDTH
   self.height = HEIGHT

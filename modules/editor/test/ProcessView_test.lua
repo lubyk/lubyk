@@ -147,4 +147,4 @@ function should.syncFromRemote(t)
   t.watch    = lk.ProcessWatch():addDelegate(t.delegate)
 end
 
-test.gui()
+test.all()

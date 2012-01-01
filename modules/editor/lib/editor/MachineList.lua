@@ -13,8 +13,9 @@ editor.MachineList = lib
 local WIDTH       = 120
 local PADDING     = 10
 
-function lib:init()
-  self.vbox  = mimas.VBoxLayout(self)
+function lib:init(zone)
+  self.zone = zone
+  self.vbox = mimas.VBoxLayout(self)
   self.vbox:setContentsMargins(0,0,0,0)
   self.vbox:setSpacing(10)
   self.vbox:addStretch()
@@ -26,7 +27,7 @@ function lib:addMachine(name, remote)
   -- Do we have a machine for this ip ?
   local machine = self.machine_by_ip[remote.ip]
   if not machine then
-    machine = editor.Machine(name)
+    machine = editor.Machine(name, self.zone)
     self.machine_by_ip[remote.ip] = machine
   elseif machine.name ~= name then
     machine:setName(name)
