@@ -129,6 +129,10 @@ function private:start(process_watch)
     callback = function(...)
       return self:callback(...)
     end,
+    registration_callback = function(service)
+      return private.registrationCallback(self, service)
+    end,
+    type = 'lk.Morph',
   }
   -- TODO: make sure we are the only morph server in this zone (registration
   -- name is not 'zone:-1'...
@@ -394,6 +398,13 @@ function lib:spawn(name)
   run()
   ]], name)
   -- the process will find the morph's ip/port by it's own service discovery
+end
+
+function private:registrationCallback(service)
+  if (Lubyk.zone .. ':') ~= service.name then
+    -- We do not want to have two morph servers on the same zone.
+    sched:quit()
+  end
 end
 
 -- We need this for testing

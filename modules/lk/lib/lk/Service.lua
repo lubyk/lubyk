@@ -62,7 +62,7 @@ setmetatable(lib, {
   self.info.pull = self.pull:port()
 
   --======================================= announce REP server
-  self.registration = mdns.Registration(service_type, name, self.rep:port(), self.info)
+  self.registration = mdns.Registration(service_type, name, self.rep:port(), self.info, opts.registration_callback)
   -- TODO: act on name change ....
 
   setmetatable(self, lib)

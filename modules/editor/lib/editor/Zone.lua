@@ -162,7 +162,22 @@ end
 --=============================================== lk.ProcessWatch delegate
 function lib:processConnected(remote_process)
   local name = remote_process.name
-  if name ~= '' then
+  if name == '' then
+    -- found morph server
+    -- TODO: create editor.Morph to proxy calls to morph server
+    self.morph = remote_process
+    -- TODO: create editor.MorphView to show morph server
+    -- mount morph DAV server
+    self.morph.dav_url = string.format('http://%s:8103', remote_process.ip)
+    -- We could use option -S == do not prompt when server goes offline
+    local cmd = string.format('mount_webdav -S %s %s', self.morph.dav_url, self:workPath())
+    self.mount_fd = worker:execute(cmd)
+  elseif string.match(name, '^@(.+)$') then
+    -- machine (stem cell)
+    if self.machine_list_view then
+      self.machine_list_view:setStem(remote_process.ip, remote_process)
+    end
+  else
     -- process
     local process = self.pending_processes[name]
 
@@ -180,26 +195,25 @@ function lib:processConnected(remote_process)
 
     --- Update views
     if self.machine_list_view then
-      -- FIXME: use updateView()
-      self.machine_list_view:addProcess(process)
+      self.machine_list_view:addProcess(process, remote_process)
     end
     self:toggleView(process)
-  else
-    -- found morph server
-    -- TODO: create editor.Morph to proxy calls to morph server
-    self.morph = remote_process
-    -- TODO: create editor.MorphView to show morph server
-    -- mount morph DAV server
-    self.morph.dav_url = string.format('http://%s:8103', remote_process.ip)
-    -- We could use option -S == do not prompt when server goes offline
-    local cmd = string.format('mount_webdav -S %s %s', self.morph.dav_url, self:workPath())
-    worker:execute(cmd)
   end
 end
 
-function lib:processDisconnected(process)
-  local name = process.name
-  if name ~= '' then
+function lib:processDisconnected(remote_process)
+  local name = remote_process.name
+  if name == '' then
+    -- morph server going offline
+    -- TODO: disconnect morph
+    self.morph = nil
+    self.morph_view = nil
+  elseif string.match(name, '^@(.+)$') then
+    -- machine (stem cell)
+    if self.machine_list_view then
+      self.machine_list_view:setStem(remote_process.ip, nil)
+    end
+  else
     -- process
     local process = self.found_processes[name]
     if process then
@@ -208,7 +222,7 @@ function lib:processDisconnected(process)
       if process.name then
         -- not morph
         if self.machine_list_view then
-          self.machine_list_view:removeProcess(process.name)
+          self.machine_list_view:removeProcess(remote_process)
           process:deleteView()
         end
         self.found_processes[name] = nil
@@ -220,12 +234,15 @@ function lib:processDisconnected(process)
         end
       end
     end
-  else
-    -- morph server going offline
-    -- TODO: disconnect morph
-    self.morph = nil
-    self.morph_view = nil
   end
+end
+
+function lib:startStemCell()
+  worker:spawn([[
+  require 'lubyk'
+  stem = lk.StemCell()
+  run()
+  ]])
 end
 
 --=============================================== PRIVATE

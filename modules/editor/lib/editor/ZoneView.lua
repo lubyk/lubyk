@@ -83,6 +83,9 @@ function private:setupMenus()
       end
     end
   end)
+  special:addAction('Start Stem Cell', 'Ctrl+L', function()
+    self.zone:startStemCell()
+  end)
   self:setMenuBar(self.menu_bar)
 end  
 

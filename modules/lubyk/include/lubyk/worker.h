@@ -80,14 +80,6 @@ public:
    */
   LuaStackSize spawn(const char *script, lua_State *L);
 
-  /** Execute a system command in a new thread
-   */
-  void execute(const char *cmd) {
-    lubyk::Thread *thread = new lubyk::Thread();
-    thread->startThread<Worker, &Worker::doExecute>(this, (void*)cmd);
-    thread->join();
-  }
-
   /** Wait for another process to finish (BLOCKING).
    */
   int waitpid(int pid);

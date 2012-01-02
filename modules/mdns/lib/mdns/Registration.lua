@@ -58,14 +58,14 @@ function mdns.Registration(service_type, name, port, txt, func)
       txt = nil
     end
   end
-  func = func or dummy
+  self.callback = func or dummy
   txt = buildTXT(txt)
   local self = constr(service_type, name, port, txt)
   self.txt = txt
   self.thread = lk.Thread(function()
     while true do
       sched:waitRead(self:fd())
-      func(self:getService())
+      self.callback(self:getService())
     end
   end)
   return self

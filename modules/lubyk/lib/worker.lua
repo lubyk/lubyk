@@ -31,3 +31,6 @@ function mt:spawn(code, args)
   return spawn(self, string.format(code, args))
 end
 
+function mt:execute(code)
+  return io.popen(code)
+end

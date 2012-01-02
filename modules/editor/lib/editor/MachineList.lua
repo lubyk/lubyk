@@ -8,6 +8,7 @@
 --]]------------------------------------------------------
 local lib = lk.SubClass(mimas, 'Widget')
 editor.MachineList = lib
+local private = {}
 
 -- constants
 local WIDTH       = 120
@@ -20,37 +21,47 @@ function lib:init(zone)
   self.vbox:setSpacing(10)
   self.vbox:addStretch()
   self.machine_by_ip = {}
-  self:addMachine('local', {ip = 'localhost'})
 end
 
-function lib:addMachine(name, remote)
-  -- Do we have a machine for this ip ?
-  local machine = self.machine_by_ip[remote.ip]
-  if not machine then
-    machine = editor.Machine(name, self.zone)
-    self.machine_by_ip[remote.ip] = machine
-  elseif machine.name ~= name then
-    machine:setName(name)
-  end
-  machine:connect(remote)
-  if not machine.view then
-    machine.view = editor.MachineView(machine)
-    self.vbox:insertWidget(-2, machine.view)
+function lib:setStem(ip, service)
+  local machine = private.getMachine(self, ip)
+  machine:setStem(service)
+  if not service and machine:empty() then
+    -- empty machine, no stem cell
+    self.machine_by_ip[ip] = nil
+    if machine.view then
+      machine.view:__gc()
+    end
   end
 end
 
-function lib:addProcess(process)
-  -- TODO: find machine by ip
-  machine = self.machine_by_ip['localhost']
+function lib:addProcess(process, service)
+  local machine = private.getMachine(self, service.ip)
   machine:addProcess(process)
 end
 
-function lib:removeProcess(process_name)
-  -- TODO: find machine by ip
-  machine = self.machine_by_ip['localhost']
-  machine:removeProcess(process_name)
+function lib:removeProcess(service)
+  local machine = self.machine_by_ip[service.ip]
+  if machine then
+    machine:removeProcess(service.name)
+    if machine:empty() then
+      -- empty machine, no stem cell
+      self.machine_by_ip[service.ip] = nil
+      if machine.view then
+        machine.view:__gc()
+      end
+    end
+  end
 end
 
--- function lib:paint(p, w, h)
---   p:fillRect(0, 0, w, h, mimas.colors.Green:colorWithAlpha(0.2))
--- end
+function private:getMachine(ip)
+  local machine = self.machine_by_ip[ip]
+  if not machine then
+    machine = editor.Machine(ip, self.zone)
+    self.machine_by_ip[ip] = machine
+
+    machine.view = editor.MachineView(machine)
+    self.vbox:insertWidget(-2, machine.view)
+  end
+  return machine
+end

@@ -50,6 +50,8 @@ lubyk.info_url        = '/lk/info'
 lubyk.dump_url        = '/lk/dump'
 -- (Partial) update of a patch
 lubyk.update_url      = '/lk/update'
+-- Execute method (actions depend on the specific service)
+lubyk.execute_url     = '/lk/do' -- action, params
 -- Quit process
 lubyk.quit_url        = '/lk/quit'
 

@@ -43,7 +43,6 @@ function lib:init(machine)
   self.vbox:setContentsMargins(10,0,0,5)
   self.hbox:addWidget(self.vbox)
   self.lay:addWidget(self.hbox)
-  self:addProcess {name = '+', hue = 0, add_btn = true, machine = machine}
   self:setName(machine.name)
 end
 
