@@ -91,8 +91,8 @@ end
 function lib:set(definition)
   if self.view then
     doSet(self, definition)
-    self:updateView()
     self.view:processChanged()
+    self:updateView()
   else
     doSet(self, definition)
   end
@@ -110,9 +110,6 @@ end
 function lib:redrawViews()
   for _,node in pairs(self.nodes) do
     node:updateView()
-  end
-
-  for _,node in pairs(self.nodes) do
     for _,outlet in ipairs(node.outlets) do
       for _,link in pairs(outlet.links) do
         link:updateView()

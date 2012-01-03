@@ -160,3 +160,8 @@ function lib:disconnectProcess(process)
     createLink(self, target_url)
   end
 end
+
+function lib:url()
+  local url = self.node:url() .. '/out/' .. self.name
+  return url
+end
