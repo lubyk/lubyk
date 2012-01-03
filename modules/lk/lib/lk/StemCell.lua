@@ -19,7 +19,7 @@ setmetatable(lib, {
  __call = function(lib)
   local self = {
     -- Machine name
-    name = Lubyk.machine_name or private.getMachineName() or 'no-name',
+    name = Lubyk.host,
   }
   setmetatable(self, lib)
 
@@ -112,9 +112,3 @@ function private:spawn(name)
   -- the process will find the morph's ip/port by it's own service discovery
 end
 
-function private.getMachineName()
-  local file = worker:execute('hostname')
-  local name = file:read()
-  local short_name = string.match(name, '^([^-.]+)')
-  return short_name or name
-end

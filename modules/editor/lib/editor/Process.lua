@@ -61,6 +61,14 @@ local function doSet(self, definition)
       end
     elseif k == 'nodes' then
       setNodes(self, v)
+    elseif k == 'hue' then
+      self[k] = v
+      if self.tab then
+        self.tab:setHue(v)
+      end
+      if self.view then
+        self.view:setHue(v)
+      end
     else
       self[k] = v
     end
@@ -169,13 +177,11 @@ function lib:pendingInlet(inlet_url)
 end
 
 --- Display ProcessView in the PatchingView.
--- Should be called from withing GUI thread.
 function lib:toggleView()
   self.delegate:toggleView(self)
 end
 
 function lib:deleteView()
-  -- TODO: why don't we use Qt signals and slots ?
   for k, node in pairs(self.nodes) do
     node:deleteView()
   end

@@ -30,6 +30,7 @@ function lib:init(process)
   process.view  = self
   self.process  = process
   self.delegate = process.delegate
+  self:setHue(process.hue or 0.3)
   self.nodes    = {}
   self:setName(process.name)
 end
@@ -53,23 +54,35 @@ function lib:processChanged()
   self:update()
 end
 
+function lib:animate(t)
+  -- blink while waiting for creation
+  local sat = (0.75 + 0.15 * math.cos(t * 2 * math.pi / 2000)) % 1.0
+  self.lbl_back  = mimas.Brush(self.process.hue, sat, sat, 0.5)
+  self:update()
+end
+
+function lib:setHue(hue)
+  self.pen_color = mimas.Color(self.process.hue, 0.3, 0.8, 0.5)
+  self.lbl_back  = mimas.Brush(self.process.hue, 0.5, 0.5, 0.5)
+  self.back      = mimas.Brush(self.process.hue, 0.2, 0.2, 0.5)
+
+  self:update()
+end
+
 -- custom paint
 function lib:paint(p, w, h)
-  local pen_color = mimas.Color(self.process.hue, 0.3, 0.8, 0.5)
-  local lbl_back  = mimas.Brush(self.process.hue, 0.5, 0.5, 0.5)
-  local back
-
+  local back = self.back
+  local pen_color = self.pen_color
   if self.is_ghost then
     -- GHOST
     back = mimas.Brush(self.process.hue, 0.2, 0.2, 0.3)
     pen_color = mimas.Color(self.process.hue, 0.3, 0.8, 0.2)
-  elseif self == self.delegate.process_view_under then
+  end
+  if self == self.delegate.process_view_under then
     -- under drag operation
     back = mimas.Brush(self.process.hue, 0.3, 0.3, 0.5)
-  else
-    back = mimas.Brush(self.process.hue, 0.2, 0.2, 0.5)
   end
-  editor.paintWithRoundedTitle(p, w, h, self.name, self.lbl_w, self.lbl_h, pen_color, mimas.Color(0, 0, 1), lbl_back, back)
+  editor.paintWithRoundedTitle(p, w, h, self.name, self.lbl_w, self.lbl_h, pen_color, mimas.Color(0, 0, 1), self.lbl_back, back)
 end
 
 function lib:delete()
@@ -80,8 +93,8 @@ local MousePress,       MouseRelease,       DoubleClick =
       mimas.MousePress, mimas.MouseRelease, mimas.DoubleClick
 
 function lib:resized(w, h)
-  self.width  = w
-  self.height = h
+  self.w = w
+  self.h = h
 end
 
 -- loop in all links to find click
@@ -98,8 +111,8 @@ local function clickOnLink(self, x, y, type, btn, mod)
           local lx, ly = link_view:globalPosition()
           -- position in link_view
           local rx, ry = gx - lx, gy - ly
-          if rx >= 0 and rx <= link_view.width and
-            ry >= 0 and ry <= link_view.height then
+          if rx >= 0 and rx <= link_view.w and
+            ry >= 0 and ry <= link_view.h then
 
             if link_view.outline:contains(rx, ry) then
               link_view:click(rx, ry, type, btn, mod)
@@ -115,15 +128,15 @@ end
 
 function lib:click(x, y, type, btn, mod)
   local process = self.process
+  local lw = self.lbl_w + 4 * TEXT_PADDING -- 2 paddings on sides
+  local lh = self.lbl_h + 2 * TEXT_PADDING
   if type == MousePress then
     -- only drag when click is in the title
-    local lw = self.lbl_w + 4 * TEXT_PADDING -- 2 paddings on sides
-    local lh = self.lbl_h + 2 * TEXT_PADDING
     if x < lw + PAD and y < lh + PAD then
       -- store position but only start drag when moved START_DRAG_DIST away
       self.click_position = {x = x, y = y}
       self.current_pos    = {x = process.x, y = process.y}
-    elseif x > self.width - DRAG_CORNER and y > self.height - DRAG_CORNER then
+    elseif x > self.w - DRAG_CORNER and y > self.h - DRAG_CORNER then
       -- resize
       self.resize_position = {x = x, y = y}
     else
@@ -159,8 +172,8 @@ function lib:click(x, y, type, btn, mod)
       -- resizing
       process.resizing = false
       process:change {
-        w = self.width,
-        h = self.height,
+        w = self.w,
+        h = self.h,
       }
     elseif process.dragging then
       -- drop
@@ -208,8 +221,8 @@ function lib:mouse(x, y)
       self.process:redrawViews()
     elseif self.resize_position then
       -- resizing
-      local w = self.width  + x - self.resize_position.x
-      local h = self.height + y - self.resize_position.y
+      local w = self.w + x - self.resize_position.x
+      local h = self.h + y - self.resize_position.y
       self.resize_position.x = x
       self.resize_position.y = y
       self:resize(w, h)

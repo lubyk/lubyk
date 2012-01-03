@@ -111,6 +111,6 @@ function lib:click(x, y, type)
 end
 
 function lib:resized(w, h)
-  self.width  = w
-  self.height = h
+  self.w = w
+  self.h = h
 end

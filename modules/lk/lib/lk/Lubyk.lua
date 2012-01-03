@@ -27,3 +27,13 @@ Lubyk.library_sources = {}
 Lubyk.dav_port = 8103 -- BLOK
 -- This is set to false by lk.Patch so that lk.Process do not quit on closing windows.
 Lubyk.mimas_quit_on_close = true
+
+-- Default host name
+local function getMachineName()
+  local file = io.popen('hostname')
+  local name = file:read()
+  local short_name = string.match(name, '^([^-.]+)')
+  return short_name or name
+end
+Lubyk.host = getMachineName()
+

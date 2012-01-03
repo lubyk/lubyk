@@ -84,6 +84,8 @@ function lib:callback(url, ...)
     return self:get(...)
   elseif url == lubyk.quit_url then
     self:quit()
+  elseif url == lubyk.execute_url then
+    private.execute(self, ...)
   else
     -- ignore
     print('Bad message to lk.Morph', url)
@@ -184,6 +186,17 @@ function private.set:processes(processes)
       process_info = {}
     end
     private.process.add(self, name, process_info, true)
+  end
+end
+
+function private:createProcess(definition)
+  local processes = self.processes
+  local name = definition.name
+  if processes[name] then
+    -- ERROR
+    printf("Cannot create existing process '%s'.", definition.name)
+  else
+    private.process.add(self, name, definition)
   end
 end
 
@@ -366,18 +379,23 @@ function private.process.add(self, name, info, reading_lkp)
   process.patch = private.findOrMakeResource(self, process.dir.url .. '/_patch.yml')
 
   private.process.readFile(self, process)
-  private.process.start(self, process)
   if not reading_lkp then
     -- This is a new process
+    lk.deepMerge(process, 'cache', info)
+    -- Host is not stored inside the patch
+    process.cache.host = nil
     private.writeFile(self)
     private.process.writeFile(process)
   end
+  private.process.start(self, process)
 end
 
 function private.process:start(process)
   assert(not process.online)
   -- Read mapping (process_name --> hostname)...
   if process.host == Lubyk.host or process.host == 'localhost' then
+    -- TODO: morph should not spawn. Only use stem cells (not the same user
+    -- and read/write access).
     -- Spawn new process
     self:spawn(process.name)
   else
@@ -404,6 +422,14 @@ function private:registrationCallback(service)
   if (Lubyk.zone .. ':') ~= service.name then
     -- We do not want to have two morph servers on the same zone.
     sched:quit()
+  end
+end
+
+function private:execute(action, ...)
+  if action == 'createProcess' then
+    private.createProcess(self, ...)
+  else
+    printf("Cannot execute unknown action '%s'.", action)
   end
 end
 

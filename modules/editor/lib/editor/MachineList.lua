@@ -8,7 +8,6 @@
 --]]------------------------------------------------------
 local lib = lk.SubClass(mimas, 'Widget')
 editor.MachineList = lib
-local private = {}
 
 -- constants
 local WIDTH       = 120
@@ -23,20 +22,8 @@ function lib:init(zone)
   self.machine_by_ip = {}
 end
 
-function lib:setStem(ip, service)
-  local machine = private.getMachine(self, ip)
-  machine:setStem(service)
-  if not service and machine:empty() then
-    -- empty machine, no stem cell
-    self.machine_by_ip[ip] = nil
-    if machine.view then
-      machine.view:__gc()
-    end
-  end
-end
-
-function lib:addProcess(process, service)
-  local machine = private.getMachine(self, service.ip)
+function lib:addProcess(service)
+  local machine = self:getMachine(service.ip)
   machine:addProcess(process)
 end
 
@@ -54,7 +41,7 @@ function lib:removeProcess(service)
   end
 end
 
-function private:getMachine(ip)
+function lib:getMachine(ip)
   local machine = self.machine_by_ip[ip]
   if not machine then
     machine = editor.Machine(ip, self.zone)

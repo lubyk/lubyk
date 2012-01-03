@@ -56,30 +56,41 @@ function lib:setName(name)
   self:update()
 end
 
-function lib:addProcess(process)
-  local process_tab = editor.ProcessTab(process)
-  process.tab = process_tab
+function lib:addProcess(service)
+  local name = service.name
+  local view
+  if name == '' then
+    -- morph
+    view = editor.MorphTab(service)
+  elseif service.stem_name then
+    -- stem cell
+    view = editor.StemTab(service)
+  else
+    -- process
+    view = editor.ProcessTab(service)
+  end
+
   -- keep list sorted
   local add_pos = -1
   for i, elem in ipairs(self.process_list) do
-    if process_tab.name < elem.name or elem.add_btn then
+    if view.name < elem.name then
       add_pos = i
       break
     end
   end
   if add_pos == -1 then
     -- add at end
-    table.insert(self.process_list, process_tab)
-    self.vbox:insertWidget(-1, process_tab, 0, mimas.AlignRight)
+    table.insert(self.process_list, view)
+    self.vbox:insertWidget(-1, view, 0, mimas.AlignRight)
   else
-    table.insert(self.process_list, add_pos, process_tab)
-    self.vbox:insertWidget(add_pos-1, process_tab, 0, mimas.AlignRight)
+    table.insert(self.process_list, add_pos, view)
+    self.vbox:insertWidget(add_pos-1, view, 0, mimas.AlignRight)
   end
 end
 
-function lib:removeProcess(process_name)
+function lib:removeProcess(service_name)
   for i, v in ipairs(self.process_list) do
-    if v.name == process_name then
+    if v.service_name == service_name then
       v.super:__gc() -- delete
       table.remove(self.process_list, i)
       break

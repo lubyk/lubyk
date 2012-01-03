@@ -27,6 +27,8 @@ setmetatable(lib, {
     -- Manage processes found
     pending_processes   = {},
     found_processes     = {},
+    -- On add process callbacks
+    on_add_process      = {},
   }
   setmetatable(self, lib)
 
@@ -120,8 +122,8 @@ function lib:processViewAtGlobal(gx, gy)
     local view = process.view
     if view then
       local vx, vy = view:globalPosition()
-      if gx > vx and gx < vx + view.width and
-         gy > vy and gy < vy + view.height then
+      if gx > vx and gx < vx + view.w and
+         gy > vy and gy < vy + view.h then
         return view
       end
     end
@@ -162,6 +164,8 @@ end
 --=============================================== lk.ProcessWatch delegate
 function lib:processConnected(remote_process)
   local name = remote_process.name
+  local machine = self.machine_list_view:getMachine(remote_process.ip)
+  local stem_name = string.match(name, '^@(.+)$')
   if name == '' then
     -- found morph server
     -- TODO: create editor.Morph to proxy calls to morph server
@@ -172,11 +176,10 @@ function lib:processConnected(remote_process)
     -- We could use option -S == do not prompt when server goes offline
     local cmd = string.format('mount_webdav -S %s %s', self.morph.dav_url, self:workPath())
     self.mount_fd = worker:execute(cmd)
-  elseif string.match(name, '^@(.+)$') then
+  elseif stem_name then
     -- machine (stem cell)
-    if self.machine_list_view then
-      self.machine_list_view:setStem(remote_process.ip, remote_process)
-    end
+    remote_process.stem_name = stem_name
+    remote_process.machine   = machine
   else
     -- process
     local process = self.pending_processes[name]
@@ -193,12 +196,22 @@ function lib:processConnected(remote_process)
     self.found_processes[process.name] = process
     process:connect(remote_process, self)
 
-    --- Update views
-    if self.machine_list_view then
-      self.machine_list_view:addProcess(process, remote_process)
-    end
+    -- editor.Process needed by ProcessTab
+    remote_process.process = process
     self:toggleView(process)
   end
+  machine:addProcess(remote_process)
+  for i, clbk in ipairs(self.on_add_process) do
+    if clbk.name == remote_process.name then
+      clbk.clbk()
+      table.remove(self.on_add_process, i)
+    end
+  end
+  self.main_view:update()
+end
+
+function lib:onAddProcess(name, clbk)
+  table.insert(self.on_add_process, {name = name, clbk = clbk})
 end
 
 function lib:processDisconnected(remote_process)
@@ -210,9 +223,6 @@ function lib:processDisconnected(remote_process)
     self.morph_view = nil
   elseif string.match(name, '^@(.+)$') then
     -- machine (stem cell)
-    if self.machine_list_view then
-      self.machine_list_view:setStem(remote_process.ip, nil)
-    end
   else
     -- process
     local process = self.found_processes[name]
@@ -221,10 +231,7 @@ function lib:processDisconnected(remote_process)
       --- Update views
       if process.name then
         -- not morph
-        if self.machine_list_view then
-          self.machine_list_view:removeProcess(remote_process)
-          process:deleteView()
-        end
+        process:deleteView()
         self.found_processes[name] = nil
         -- this could run anywhere but it has to run after the process is removed
         -- from process_list
@@ -235,6 +242,10 @@ function lib:processDisconnected(remote_process)
       end
     end
   end
+  if self.machine_list_view then
+    self.machine_list_view:removeProcess(remote_process)
+  end
+  self.main_view:update()
 end
 
 function lib:startStemCell()

@@ -36,16 +36,7 @@ end
 function lib:setStem(remote)
   self.stem = remote
   if self.view then
-    if remote then
-      -- add [+] btn
-      self.view:addProcess {name = '+', hue = 0, add_btn = true, machine = self}
-      local stem_name = string.match(remote.name, '^@(.*)$')
-      self.name = stem_name
-      self.view:setName(stem_name)
-    else
-      -- remove [+] btn
-      self.view:removeProcess('+')
-    end
+    self.view:setName(remote.stem_name)
   end
 end
 
@@ -55,13 +46,17 @@ function lib:createProcess(def)
   -- a new process
   if stem then
     -- FIXME: First write def to morph
-    stem.push:send(lubyk.execute_url, 'spawn', def.name)
+    local morph = self.zone.morph
+    if morph then
+      def.host = stem.stem_name
+      morph.push:send(lubyk.execute_url, 'createProcess', def)
+    end
   end
 end
 
-function lib:addProcess(process)
+function lib:addProcess(service)
   if self.view then
-    self.view:addProcess(process)
+    self.view:addProcess(service)
   end
 end
 
