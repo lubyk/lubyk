@@ -179,8 +179,12 @@ function lib:scheduleAt(at, thread)
   thread.at = at
   -- sorted insert (next event first)
   local prev = self
+  local ne = prev.at_next
+  local previous_at
+  if ne then
+    previous_at = ne.at
+  end
   while true do
-    local ne = prev.at_next
     if not ne then
       prev.at_next = thread
       thread.at_next = nil
@@ -192,6 +196,12 @@ function lib:scheduleAt(at, thread)
     else
       prev = ne
     end
+    ne = prev.at_next
+  end
+  if self.mimas and self.at_next.at ~= previous_at then
+    -- We need to reschedule becase this method can be called from a GUI
+    -- callback and we won't get back to the loop to do this.
+    self.poller:resumeAt(self.at_next.at)
   end
 end
 

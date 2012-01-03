@@ -101,6 +101,14 @@ function private:resume(idx)
   end
 end
 
+function lib:resumeAt(at)
+  local timeout = worker:now() - at
+  if timeout < 0 or at == 0 then
+    timeout = 0
+  end
+  self.timer:start(timeout)
+end
+
 --- Adds a filedescriptor or zmq.Socket to the poll items.
 -- @return a unique id for this element.
 function lib:add(fd, event)
