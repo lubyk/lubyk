@@ -10,7 +10,6 @@ nodes:
     hue: 0.3
     links:
       output:
-        /b/p/in/print: true
         /b/play/in/trigger: true
   play:
     y: 97
@@ -19,11 +18,6 @@ nodes:
     hue: 0.3
     params:
       channel: 2
-  p:
-    hue: 0.3
-    x: 96
-    name: p
-    y: 111
 h: 150
 w: 150
 hue: 0.3
