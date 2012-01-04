@@ -56,7 +56,7 @@ end
 
 function lib:animate(t)
   -- blink while waiting for creation
-  local sat = (0.75 + 0.15 * math.cos(t * 2 * math.pi / 2000)) % 1.0
+  local sat = (0.75 + 0.2 * math.cos(t * math.pi / 750)) % 1.0
   self.lbl_back  = mimas.Brush(self.process.hue, sat, sat, 0.5)
   self:update()
 end

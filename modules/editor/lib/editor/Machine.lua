@@ -16,10 +16,11 @@ editor.Machine = lib
 
 setmetatable(lib, {
   -- new method
- __call = function(lib, name, zone, remote)
+ __call = function(lib, name, machine_list, remote)
   local self = {
-    name = name,
-    zone = zone,
+    name         = name,
+    machine_list = machine_list,
+    zone         = machine_list.zone,
   }
 
   setmetatable(self, lib)
@@ -34,9 +35,16 @@ function lib:connect(remote)
 end
 
 function lib:setStem(remote)
+  local stem_name = remote.stem_name
   self.stem = remote
+  self.name = stem_name
+  local machine_by_name = self.machine_list.machines[stem_name]
+  if machine_by_name ~= self then
+    -- FIXME: merge processes and remove view
+  end
+  self.machine_list.machines[stem_name] = self
   if self.view then
-    self.view:setName(remote.stem_name)
+    self.view:setName(stem_name)
   end
 end
 
@@ -67,5 +75,5 @@ function lib:removeProcess(process_name)
 end
 
 function lib:empty()
-  return (not self.stem) and (self.view and #self.view.process_list == 0)
+  return self.view and #self.view.process_list == 0
 end

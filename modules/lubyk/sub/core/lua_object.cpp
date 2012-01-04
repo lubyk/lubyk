@@ -50,8 +50,7 @@ int LuaObject::luaInit(lua_State *L, void *ptr, const char *type_name) throw() {
 
 int ThreadedLuaObject::luaInit(lua_State *L, void *ptr, const char *type_name) throw() {
   worker_ = Worker::getWorker(L);
-  // ... <self> or new table
-  // creates self if there is no table (without a 'super' field)
+  // create self
   setupSuper(L, ptr);
   // ... <self>.super = userdata
   // ... <self> <udata>
@@ -63,9 +62,7 @@ int ThreadedLuaObject::luaInit(lua_State *L, void *ptr, const char *type_name) t
 }
 
 void LuaObject::setupSuper(lua_State *L, void *ptr) throw() {
-  if (!lua_istable(L, -1)) {
-    lua_newtable(L);
-  }
+  lua_newtable(L);
   // ... <self>
   userdata_ = (void**)lua_newuserdata(L, sizeof(void**));
   *userdata_ = ptr;

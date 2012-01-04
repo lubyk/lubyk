@@ -38,7 +38,7 @@ setmetatable(lib, {
 
   --======================================= REP server (sync)
   -- FIXME: REMOVE (risk of hanging)
-  self.rep = zmq.SimpleRep(function(...)
+  function self.do_callback(...)
     local url = ...
     if url == lubyk.info_url then
       -- get other ports from service
@@ -51,12 +51,16 @@ setmetatable(lib, {
       -- for reply and pull...
       return self.callback(...)
     end
+  end
+
+  self.rep = zmq.SimpleRep(function(...)
+    return self.do_callback(...)
   end)
 
   --======================================= PULL server (async)
   self.pull = zmq.SimplePull(function(...)
     -- handle requests here
-    self.callback(...)
+    self.do_callback(...)
   end)
 
   self.info.pull = self.pull:port()

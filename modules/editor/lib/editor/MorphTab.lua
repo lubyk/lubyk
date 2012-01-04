@@ -16,10 +16,10 @@ editor.MorphTab = lib
 -- CONSTANTS
 local HPEN_WIDTH = 1
 
-function lib:init(service)
-  self.service = service
-  self.service_name = service.name
-  self:setName('~')
+function lib:init(morph)
+  self.morph = service
+  self.name  = morph.name
+  self:setTitle(morph.title)
 
   self.pen   = mimas.Pen(HPEN_WIDTH * 2, mimas.Color(0, 0, 0.8, 0.5))
   self.brush = mimas.Brush(mimas.Color(0, 0, 0.3, 0.5))

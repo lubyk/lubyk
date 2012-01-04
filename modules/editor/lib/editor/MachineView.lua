@@ -90,7 +90,7 @@ end
 
 function lib:removeProcess(service_name)
   for i, v in ipairs(self.process_list) do
-    if v.service_name == service_name then
+    if v.name == service_name then
       v.super:__gc() -- delete
       table.remove(self.process_list, i)
       break

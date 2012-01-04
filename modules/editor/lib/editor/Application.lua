@@ -1,4 +1,5 @@
 --[[------------------------------------------------------
+--
 
   editor.Application
   ------------------
@@ -51,23 +52,24 @@ function lib:init()
 end
 
 --=============================================== ProcessWatch delegate
-function lib:processConnected(process)
+function lib:processConnected(service)
   local service_name = process.name
   if service_name == '' then
     -- morph
     -- found new zone
-    -- private.connectMorph(self, process)
+    self.morph = service
   else
     -- process
     -- we are not interested in processes in Main
   end
 end
 
-function lib:removeService(process)
-  local service_name = process.name
+function lib:removeService(service)
+  local service_name = service.name
   if service_name == '' then
     -- morph
-    -- private.disconnectMorph(self, process)
+    self.morph = nil
+    private.disconnectMorph(self, process)
   else
     -- process
     -- we are not interested in processes in Main
@@ -100,14 +102,13 @@ function lib:removeZone(zone_name)
   self.zones[zone_name] = nil
 end
 
-function lib:startZone(path)
+function lib:startZone(opts)
   -- Spawn Morph server
-  self.morph_pid = worker:spawn([[
+  worker:spawn([[
   require 'lubyk'
-  print("Starting DAV Morph server...")
   morph = lk.DavMorph(%s)
   run()
-  ]], path)
+  ]], opts)
 
   -- Maybe we should make sure it started ok before selecting the zone.
   self:selectZone(Lubyk.zone)
@@ -119,14 +120,12 @@ function lib:openFile(path)
   -- We receive spurious openFile events for the arguments passed to 
   -- Resources/app.lua. Check for correct file type.
   if string.match(path, '.lkp$') then
-    if self.morph_pid then
+    if self.morph then
       -- kill it
-      self.morph.req(lubyk.quit_url)
-      worker:waitpid(self.morph_pid)
-      self.morph_pid = nil
+      self.morph.push:send(lubyk.quit_url)
       self.morph     = nil
     end
-    self:startZone(path)
+    self:startZone {path = path, start_stem = true}
   end
 end
 

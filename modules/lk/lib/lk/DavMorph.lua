@@ -11,7 +11,7 @@
 
 local private = {}
 
-function lk.DavMorph(filepath)
+function lk.DavMorph(opts)
   local self = lk.Morph()
   self.openFile = private.openFile
   self.delete   = private.delete
@@ -19,9 +19,7 @@ function lk.DavMorph(filepath)
   self.join = function(self)
     self.dav_thread:join()
   end
-  if filepath then
-    self:openFile(filepath)
-  end
+  self:start(opts)
   return self
 end
 

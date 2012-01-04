@@ -25,7 +25,7 @@ local private = {}
 
 setmetatable(lib, {
   -- new method
- __call = function(lib, filepath)
+ __call = function(lib, opts)
   local self = {
     -- Version of lubyk used to create project
     lubyk     = {version = Lubyk.version},
@@ -35,12 +35,21 @@ setmetatable(lib, {
   }
   setmetatable(self, lib)
 
-  private.start(self)
-  if filepath then
-    self:openFile(filepath)
+  if opts then
+    self:start(opts)
   end
   return self
 end})
+
+function lib:start(opts)
+  private.start(self)
+  if opts.path then
+    self:openFile(opts.path)
+  end
+  if opts.start_stem then
+    private.startStemCell(self)
+  end
+end
 
 function lib:openFile(filepath)
   self:close()
@@ -75,7 +84,9 @@ end
 --- Answering requests to Morph.
 function lib:callback(url, ...)
   if url == lubyk.dump_url then
-    return private.dumpAll(self)
+    local dump = private.dumpAll(self)
+    printf("DUMP MORPH: %s\n======", yaml.dump(dump))
+    return dump
   elseif url == lubyk.update_url then
     local data = ...
     -- async call, no return value
@@ -136,8 +147,6 @@ function private:start(process_watch)
     end,
     type = 'lk.Morph',
   }
-  -- TODO: make sure we are the only morph server in this zone (registration
-  -- name is not 'zone:-1'...
   self.service = lk.Service(Lubyk.zone .. ':', srv_opts)
 end
 
@@ -181,11 +190,17 @@ function private.dump:lubyk(dump)
 end
 
 function private.set:processes(processes)
-  for name, process_info in pairs(processes or {}) do
-    if process_info == '' then
-      process_info = {}
+  printf("Set processes: %s", yaml.dump(processes))
+  for name, info in pairs(processes or {}) do
+    if type(info) == 'table' then
+      -- ok
+    elseif info == '' then
+      info = {host = 'localhost'}
+    else
+      info = {host = info}
     end
-    private.process.add(self, name, process_info, true)
+    printf("ADD WITH INFO: %s", yaml.dump(info))
+    private.process.add(self, name, info, true)
   end
 end
 
@@ -197,6 +212,17 @@ function private:createProcess(definition)
     printf("Cannot create existing process '%s'.", definition.name)
   else
     private.process.add(self, name, definition)
+  end
+end
+
+function private:removeProcess(name)
+  local processes = self.processes
+  local name = definition.name
+  if processes[name] then
+    -- TODO
+  else
+    -- ERROR
+    printf("Cannot create existing process '%s'.", definition.name)
   end
 end
 
@@ -421,6 +447,7 @@ end
 function private:registrationCallback(service)
   if (Lubyk.zone .. ':') ~= service.name then
     -- We do not want to have two morph servers on the same zone.
+    printf("Another morph service is running in zone '%s'. Quit.", Lubyk.zone)
     sched:quit()
   end
 end
@@ -431,6 +458,14 @@ function private:execute(action, ...)
   else
     printf("Cannot execute unknown action '%s'.", action)
   end
+end
+
+function private:startStemCell()
+  worker:spawn([[
+  require 'lubyk'
+  stem = lk.StemCell()
+  run()
+  ]])
 end
 
 -- We need this for testing

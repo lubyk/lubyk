@@ -87,7 +87,7 @@ end
 function private:registrationCallback(service)
   if (Lubyk.zone .. ':@' .. self.name) ~= service.name then
     -- We do not want to have two stem cells with the same name running
-    printf("There is already a stem cell with name '%s' in zone '%s'.", self.name, Lubyk.zone)
+    printf("Another stem cell with name '%s' exists in zone '%s'. Quit.", self.name, Lubyk.zone)
     sched:quit()
   end
 end

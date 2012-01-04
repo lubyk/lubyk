@@ -180,4 +180,26 @@ function withUser.should.callbackOnClose(t)
   assertTrue(t.continue)
 end
 
+function withUser.should.showContextualMenu(t)
+  t.win = mimas.Window()
+  t.lay = mimas.VBoxLayout(t.win)
+  t.lbl = mimas.Label('Ctrl-click for contextual menu.')
+  t.lay:addWidget(t.lbl)
+  function t.win:contextMenu(menu)
+    menu:addAction('Select me', '', function()
+      t.continue = true
+    end)
+    menu:addAction('Ignore me', '', function()
+    end)
+  end
+  t.win:resize(100,100)
+  t.win:move(10,10)
+  t.win:show()
+  t:timeout(function(done)
+    return done or t.continue
+  end)
+  t.win:close()
+  assertTrue(t.continue)
+end
+
 test.all()

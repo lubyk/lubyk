@@ -19,7 +19,7 @@ function lib:init(zone)
   self.vbox:setContentsMargins(0,0,0,0)
   self.vbox:setSpacing(10)
   self.vbox:addStretch()
-  self.machine_by_ip = {}
+  self.machines = {}
 end
 
 function lib:addProcess(service)
@@ -28,12 +28,12 @@ function lib:addProcess(service)
 end
 
 function lib:removeProcess(service)
-  local machine = self.machine_by_ip[service.ip]
+  local machine = self.machines[service.ip]
   if machine then
     machine:removeProcess(service.name)
     if machine:empty() then
       -- empty machine, no stem cell
-      self.machine_by_ip[service.ip] = nil
+      self.machines[service.ip] = nil
       if machine.view then
         machine.view:__gc()
       end
@@ -41,12 +41,12 @@ function lib:removeProcess(service)
   end
 end
 
-function lib:getMachine(ip)
-  local machine = self.machine_by_ip[ip]
+function lib:getMachine(name_or_ip)
+  local machine = self.machines[name_or_ip]
   if not machine then
-    machine = editor.Machine(ip, self.zone)
-    self.machine_by_ip[ip] = machine
-
+    -- Create machine
+    machine = editor.Machine(name_or_ip, self)
+    self.machines[name_or_ip] = machine
     machine.view = editor.MachineView(machine)
     self.vbox:insertWidget(-2, machine.view)
   end

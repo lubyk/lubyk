@@ -18,22 +18,22 @@ local START_DRAG_DIST = 4
 local PEN_WIDTH       = 2
 local EDIT_WIDTH = 80
 local EDIT_PADDING = 3
-local MAX_WAIT_MS = 16000
+local MAX_WAIT_MS = 8000
 
-function lib:init(service)
-  self.service = service
-  self.service_name = service.name
-  self:setName('+')
-  self.machine = service.machine
-  self.machine:setStem(service)
+function lib:init(stem)
+  self.stem = stem
+  self.name = stem.name
+  self:setTitle(stem.title)
+  self.machine = stem.machine
+  self.machine:setStem(stem)
   self.zone    = self.machine.zone
 
   self.pen   = mimas.Pen(PEN_WIDTH, mimas.Color(0.3, 0.3, 0.8, 0.5), mimas.DotLine)
   self.brush = mimas.Brush(mimas.Color(0.3, 0.3, 0.3, 0.5))
 end
 
-lib.setName = editor.ProcessTab.setName
-lib.paint   = editor.ProcessTab.paint
+lib.setTitle = editor.ProcessTab.setTitle
+lib.paint    = editor.ProcessTab.paint
 
 function lib:click(x, y, op, btn, mod)
   if op == MousePress then
@@ -62,34 +62,45 @@ function lib:click(x, y, op, btn, mod)
       self.edit:move(2*EDIT_PADDING, EDIT_PADDING)
       self.edit:setFocus()
       function self.edit.editingFinished(edit, name)
-        self.ghost:setName(name)
-        self.ghost.def.name = name
-        -- Make sure it is not called a second time
-        self.edit.editingFinished = nil
-        self.edit:hide()
-        self.edit = nil
-        -- TODO: keep ghost visible for some time and blink until it becomes real
-        local ghost = self.ghost
-        ghost.thread = lk.Thread(function()
-          local start_time = worker:now()
-          local t = 0
-          local i = 0
-          while t <= MAX_WAIT_MS do
-            i = i + 1
-            sleep(50)
-            t = worker:now() - start_time
-            ghost:animate(t)
-          end
-          ghost.thread = nil
-          ghost:hide()
+        if name == '' then
+          -- Also detect 'ESC' key
+          self.ghost:hide()
           self.ghost = nil
-        end)
-        self.zone:onAddProcess(name, function()
-          ghost.thread = nil
-          ghost:hide()
-          self.ghost = nil
-        end)
-        self.machine:createProcess(self.ghost.def)
+        else
+          self.ghost:setName(name)
+          self.ghost.def.name = name
+          -- Make sure it is not called a second time
+          self.edit.editingFinished = nil
+          self.edit:hide()
+          self.edit = nil
+
+          -- Blink while waiting
+          local ghost = self.ghost
+          ghost.thread = lk.Thread(function()
+            local start_time = worker:now()
+            local t = 0
+            local i = 0
+            while t <= MAX_WAIT_MS do
+              i = i + 1
+              sleep(50)
+              t = worker:now() - start_time
+              ghost:animate(t)
+            end
+            ghost.thread = nil
+            ghost:hide()
+            self.ghost = nil
+          end)
+
+          -- Remove ghost on process connection
+          self.zone:onAddProcess(name, function()
+            ghost.thread = nil
+            ghost:hide()
+            self.ghost = nil
+          end)
+
+          -- Ask machine to create process
+          self.machine:createProcess(self.ghost.def)
+        end
       end
     end
   end

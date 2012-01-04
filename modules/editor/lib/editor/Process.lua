@@ -86,6 +86,13 @@ function lib:change(definition)
   self.push:send(lubyk.update_url, definition)
 end
 
+--- Remove (delete) process from patch.
+function lib:remove()
+  -- FIXME: INFORM MORPH INSTEAD
+  self.push:send(lubyk.quit_url)
+  self.removed = true
+end
+
 -- If self.view is nil, only set the data without
 -- creating/changing views.
 function lib:set(definition)
@@ -228,6 +235,14 @@ function lib:connect(remote_process, delegate)
   self.sub:connect(remote_process.sub_url)
 
   self:sync()
+
+  self.online = true
+  if self.tab then
+    self.tab:setHue(self.hue)
+  end
+  -- editor.Process needed by ProcessTab
+  remote_process.process = self
+  delegate:toggleView(self)
 end
 
 function lib:connected()
@@ -247,6 +262,10 @@ end
 function lib:disconnect()
   -- disconnect self.sub ?
   self.sub = nil
+  self.online = false
+  if self.tab then
+    self.tab:setHue(self.hue)
+  end
 end
 
 function lib:url()

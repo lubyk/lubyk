@@ -32,8 +32,8 @@ function lib:init(zone)
   self.layout:addWidget(self.patching_view, 1)
   self.layout:setSpacing(PADDING)
   self.layout:setContentsMargins(0, 0, 0, 0)
-  self.machine_list_view = editor.MachineList(self.zone)
-  self.layout:addWidget(self.machine_list_view, 0, mimas.AlignRight)
+  self.machine_list = editor.MachineList(self.zone)
+  self.layout:addWidget(self.machine_list, 0, mimas.AlignRight)
   self.width  = WIDTH
   self.height = HEIGHT
   self:resize(self.width, self.height)
@@ -78,8 +78,7 @@ function private:setupMenus()
   special:addAction('Stop', 'Ctrl+K', function()
     for k, process in pairs(self.zone.process_watch.processes) do
       if process.online then
-        -- FIXME: we should push
-        process.req:send(lubyk.quit_url)
+        process.push:send(lubyk.quit_url)
       end
     end
   end)

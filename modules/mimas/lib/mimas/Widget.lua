@@ -9,6 +9,9 @@
 mimas.Widget  = mimas_core.Widget
 local mt      = mimas_core.Widget_
 mimas.Widget_ = mt
+-- We use this from C++. Make sure it is loaded to use the
+-- Lua changes before being used.
+require 'mimas.Menu'
 
 local constr  = mimas.Widget
 function mimas.Widget(...)

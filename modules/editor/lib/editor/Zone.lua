@@ -150,64 +150,57 @@ function lib:closestSlotView(gx, gy, for_type, skip_node)
 end
 
 --=============================================== editor.Process delegate
-function lib:findProcess(process_name)
-  local process = self.found_processes[process_name] or
-                  self.pending_processes[process_name]
+function lib:findProcess(name, host)
+  local process = self.found_processes[name]
   if not process then
-    -- pending
-    process = editor.Process(process_name)
-    self.pending_processes[process_name] = process
+    -- create
+    local machine
+    local stem_name = string.match(name, '^@(.+)$')
+    if host then
+      machine = self.machine_list:getMachine(host)
+    else
+      -- pending process without host nor ip
+      machine = self.machine_list:getMachine(stem_name or '???')
+    end
+
+    if stem_name then
+      -- machine (stem cell)
+      process = editor.StemCell {
+        name      = name,
+        stem_name = stem_name,
+        machine   = machine,
+      }
+    else
+      -- process
+      process = editor.Process(name)
+      process.machine = machine
+    end
+
+    self.found_processes[name] = process
+
+    machine:addProcess(process)
+    for i, clbk in ipairs(self.on_add_process) do
+      if clbk.name == name then
+        clbk.clbk()
+        table.remove(self.on_add_process, i)
+      end
+    end
+    self.main_view:update()
   end
+
   return process
 end
 
 --=============================================== lk.ProcessWatch delegate
 function lib:processConnected(remote_process)
   local name = remote_process.name
-  local machine = self.machine_list_view:getMachine(remote_process.ip)
-  local stem_name = string.match(name, '^@(.+)$')
   if name == '' then
     -- found morph server
-    -- TODO: create editor.Morph to proxy calls to morph server
-    self.morph = remote_process
-    -- TODO: create editor.MorphView to show morph server
-    -- mount morph DAV server
-    self.morph.dav_url = string.format('http://%s:8103', remote_process.ip)
-    -- We could use option -S == do not prompt when server goes offline
-    local cmd = string.format('mount_webdav -S %s %s', self.morph.dav_url, self:workPath())
-    self.mount_fd = worker:execute(cmd)
-  elseif stem_name then
-    -- machine (stem cell)
-    remote_process.stem_name = stem_name
-    remote_process.machine   = machine
+    self.morph = editor.Morph(remote_process, self)
   else
-    -- process
-    local process = self.pending_processes[name]
-
-    if process then
-      -- pending process will be connected
-      self.pending_processes[name] = nil
-    else
-      -- create new
-      process = editor.Process(name)
-    end
-    -- We do this before connecting so that node creation
-    -- does not create a pending process.
-    self.found_processes[process.name] = process
+    local process = self:findProcess(name, remote_process.ip)
     process:connect(remote_process, self)
-
-    -- editor.Process needed by ProcessTab
-    remote_process.process = process
-    self:toggleView(process)
   end
-  machine:addProcess(remote_process)
-  for i, clbk in ipairs(self.on_add_process) do
-    if clbk.name == remote_process.name then
-      clbk.clbk()
-      table.remove(self.on_add_process, i)
-    end
-  end
-  self.main_view:update()
 end
 
 function lib:onAddProcess(name, clbk)
@@ -216,11 +209,19 @@ end
 
 function lib:processDisconnected(remote_process)
   local name = remote_process.name
+  local remove_tab = true
   if name == '' then
     -- morph server going offline
-    -- TODO: disconnect morph
+    self.morph:disconnect()
     self.morph = nil
-    self.morph_view = nil
+    -- Remove all pending process tabs
+    for name, process in pairs(self.found_processes) do
+      if not process.online then
+        -- Remove
+        process.removed = true
+        self:processDisconnected{name=name, ip = process.machine.name}
+      end
+    end
   elseif string.match(name, '^@(.+)$') then
     -- machine (stem cell)
   else
@@ -229,22 +230,22 @@ function lib:processDisconnected(remote_process)
     if process then
       process:disconnect()
       --- Update views
-      if process.name then
-        -- not morph
-        process:deleteView()
-        self.found_processes[name] = nil
-        -- this could run anywhere but it has to run after the process is removed
-        -- from process_list
-        for _, p in pairs(self.found_processes) do
-          -- transform outgoing links to the dying process to pending links.
+      process:deleteView()
+      -- this could run anywhere but it has to run after the process is removed
+      -- from process_list
+      for _, p in pairs(self.found_processes) do
+        -- transform outgoing links to the dying process to pending links.
+        if p.disconnectProcess then
           p:disconnectProcess(process)
         end
       end
+      remove_tab = process.removed
     end
   end
-  if self.machine_list_view then
-    self.machine_list_view:removeProcess(remote_process)
+  if remove_tab and self.machine_list then
+    self.machine_list:removeProcess(remote_process)
   end
+  -- Is this needed ?
   self.main_view:update()
 end
 
@@ -276,7 +277,6 @@ function private.setupView(self)
     -- when window is closed, we remove this zone
     app:removeZone(self.name)
   end
-  self.machine_list_view = view.machine_list_view
+  self.machine_list = view.machine_list
   view:show()
 end
-

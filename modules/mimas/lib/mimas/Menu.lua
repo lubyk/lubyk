@@ -9,7 +9,7 @@
 --]]------------------------------------------------------
 local constr  = mimas_core.Menu
 local mt      = mimas_core.Menu_
-mimas.Menu_ = mt
+mimas.Menu_   = mt
 mimas.Menu    = constr
 
 local addAction = mt.addAction
