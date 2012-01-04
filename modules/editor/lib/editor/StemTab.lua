@@ -56,22 +56,38 @@ function lib:click(x, y, op, btn, mod)
       -- Ask for name and create new process
       self.ghost.lbl_w = EDIT_WIDTH - 10
       self.ghost:update()
-      self.edit = mimas.LineEdit()
-      self.ghost:addWidget(self.edit)
-      self.edit:resize(EDIT_WIDTH, self.min_height - EDIT_PADDING)
-      self.edit:move(2*EDIT_PADDING, EDIT_PADDING)
-      self.edit:setFocus()
-      function self.edit.editingFinished(edit, name)
-        if name == '' then
-          -- Also detect 'ESC' key
+      local edit = mimas.LineEdit()
+      self.edit  = edit
+      function edit.keyboard(edit, key, on)
+        if on and key == mimas.Key_Escape then
+          -- abort
+          edit.editingFinished = nil
+          self.edit:hide()
           self.ghost:hide()
+          self.ghost = nil
+          return
+        end
+        -- continue processing keyboard
+        return false
+      end
+
+      self.ghost:addWidget(edit)
+      edit:resize(EDIT_WIDTH, self.min_height - EDIT_PADDING)
+      edit:move(2*EDIT_PADDING, EDIT_PADDING)
+      edit:setFocus()
+
+      function edit.editingFinished(edit, name)
+        if name == '' then
+          if self.ghost then
+            self.ghost:hide()
+          end
           self.ghost = nil
         else
           self.ghost:setName(name)
           self.ghost.def.name = name
           -- Make sure it is not called a second time
-          self.edit.editingFinished = nil
-          self.edit:hide()
+          edit.editingFinished = nil
+          edit:hide()
           self.edit = nil
 
           -- Blink while waiting

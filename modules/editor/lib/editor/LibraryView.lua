@@ -44,26 +44,28 @@ local function clickInList(self, node_def, x, y, type, btn, mod)
   elseif type == MouseRelease then
     if self.dragging then
       -- drop
-      self.ghost:openEditor(function()
-        local node_def = self.click_position.node_def
-        node_def.name = self.ghost.name
-        node_def.code = self.ghost.code or node_def.code
-        local process_view = self.delegate.process_view_under
-        if process_view then
-          local process = process_view.process
-          -- create node
-          -- target:change {}
-          local vx, vy = process_view:globalPosition()
-          local x = self.ghost.gx - vx
-          local y = self.ghost.gy - vy
-          process:newNode {
-            x = self.ghost.gx - vx,
-            y = self.ghost.gy - vy,
-            code = node_def.code,
-            name = node_def.name,
-            hue  = process.hue,
-          }
-          process_view:update()
+      self.ghost:openEditor(function(abort)
+        if not abort then
+          local node_def = self.click_position.node_def
+          node_def.name = self.ghost.name
+          node_def.code = self.ghost.code or node_def.code
+          local process_view = self.delegate.process_view_under
+          if process_view then
+            local process = process_view.process
+            -- create node
+            -- target:change {}
+            local vx, vy = process_view:globalPosition()
+            local x = self.ghost.gx - vx
+            local y = self.ghost.gy - vy
+            process:newNode {
+              x = self.ghost.gx - vx,
+              y = self.ghost.gy - vy,
+              code = node_def.code,
+              name = node_def.name,
+              hue  = process.hue,
+            }
+            process_view:update()
+          end
         end
 
         -- clear

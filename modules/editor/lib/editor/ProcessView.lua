@@ -174,12 +174,14 @@ function lib:click(x, y, type, btn, mod)
       ghost.gx = vx + node_def.x
       ghost.gy = vy + node_def.y
       ghost:globalMove(ghost.gx, ghost.gy)
-      ghost:openEditor(function()
-        node_def.name = ghost.name
-        node_def.code = ghost.code
-        -- create node
-        self.process:newNode(node_def)
-        self:update()
+      ghost:openEditor(function(abort)
+        if not abort then
+          node_def.name = ghost.name
+          node_def.code = ghost.code
+          -- create node
+          self.process:newNode(node_def)
+          self:update()
+        end
 
         -- clear
         ghost:delete()

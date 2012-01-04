@@ -96,7 +96,6 @@ end
 function lib:callback(url, ...)
   if url == lubyk.dump_url then
     local dump = private.dumpAll(self)
-    printf("DUMP MORPH: %s\n======", yaml.dump(dump))
     return dump
   elseif url == lubyk.update_url then
     local data = ...

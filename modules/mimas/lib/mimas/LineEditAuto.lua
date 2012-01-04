@@ -162,6 +162,14 @@ function lib:keyboard(key, on)
     end
     -- do not continue processing
     return
+
+  elseif on and key == mimas.Key_Escape then
+    -- abort
+    self:autoFinished()
+    if self.editingFinished then
+      self:editingFinished(nil)
+    end
+    return
   end
   -- normal op
   return false

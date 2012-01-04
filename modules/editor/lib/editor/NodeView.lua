@@ -80,7 +80,7 @@ end
 --============================================= PUBLIC
 function lib:init(node, parent_view)
   self.node = node
-  self.delegate = node.delegate
+  self.zone = node.zone
   self:setName(node.name)
   if parent_view then
     -- If we do not cache these, they endup wrong (resized callback?)
@@ -174,7 +174,7 @@ local MousePress,       MouseRelease,       DoubleClick =
 local function makeGhost(self)
   local node = self.node
   -- create a ghost
-  local ghost = editor.NodeView(node, self.delegate.main_view)
+  local ghost = editor.NodeView(node, self.zone.main_view)
   ghost.is_ghost = true
   node.ghost = ghost
   node.dragging = true
@@ -190,13 +190,13 @@ function lib:click(x, y, type, btn, mod)
   elseif type == DoubleClick then
     -- open external editor
     node:edit()
-    self.delegate:selectNodeView(self)
+    self.zone:selectNodeView(self)
   elseif type == MouseRelease then
     if node.dragging then
-      local delegate = self.node.process.delegate
+      local zone = self.node.process.zone
       -- drop
       -- detect drop zone
-      local process = (delegate.process_view_under or self.node.process.view).process
+      local process = (zone.process_view_under or self.node.process.view).process
       local gx,  gy  = node.ghost:globalPosition()
       local gpx, gpy = process.view:globalPosition()
       local node_x = gx - gpx
@@ -258,7 +258,7 @@ function lib:click(x, y, type, btn, mod)
         }
       end
     else
-      self.delegate:selectNodeView(self, mod == mimas.ShiftModifier)
+      self.zone:selectNodeView(self, mod == mimas.ShiftModifier)
     end
   end
 end
@@ -275,18 +275,18 @@ function lib:mouse(x, y)
   end
 
   if node.ghost then
-    local delegate = self.node.process.delegate
+    local zone = self.node.process.zone
     local ghost = node.ghost
     local gpx, gpy = self.node.process.view:globalPosition()
     local gx = gpx + node.x + x - self.click_position.x
     local gy = gpy + node.y + y - self.click_position.y
     ghost:globalMove(gx, gy)
 
-    local old_process_view_under = delegate.process_view_under
-    delegate.process_view_under = delegate:processViewAtGlobal(gx + self.click_position.x, gy + self.click_position.y)
+    local old_process_view_under = zone.process_view_under
+    zone.process_view_under = zone:processViewAtGlobal(gx + self.click_position.x, gy + self.click_position.y)
 
-    if delegate.process_view_under then
-      delegate.process_view_under:update()
+    if zone.process_view_under then
+      zone.process_view_under:update()
     end
     if old_process_view_under then
       old_process_view_under:update()
@@ -303,7 +303,7 @@ function lib:delete()
   end
   if self.selected then
     -- remove ghost from selection my selecting only self
-    self.delegate:selectNodeView(self)
+    self.zone:selectNodeView(self)
   end
   self.super:__gc()
 end

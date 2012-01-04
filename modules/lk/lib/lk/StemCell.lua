@@ -65,7 +65,7 @@ function lib:callback(url, ...)
     sched:quit()
   else
     -- ignore
-    print('Bad message to lk.Morph', url)
+    printf("Bad message '%s' to lk.Morph", url)
   end
 end
 
@@ -97,7 +97,7 @@ function private:execute(action, ...)
     -- start a new process
     private.spawn(self, ...)
   else
-    print('Unknown action', action)
+    printf("Unknown action '%s'.", action)
   end
 end
 

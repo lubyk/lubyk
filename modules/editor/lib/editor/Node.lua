@@ -285,6 +285,11 @@ function lib.makeGhost(node_def, zone)
     edit:globalMove(self:globalPosition())
     edit:setFocus()
     function edit.editingFinished(edit, text)
+      if not text or text == '' then
+        -- abort
+        finish_func(true)
+        return
+      end
       local name, proto = string.match(text, '^(.*)= *(.*)$')
       if name then
         self.name  = name
