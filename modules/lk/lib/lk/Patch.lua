@@ -35,7 +35,7 @@ end
 
 setmetatable(lib, {
   -- new method
- __call = function(lib, name, is_process)
+ __call = function(lib, name)
   local self  = {
     name              = name,
     nodes             = {},
@@ -43,19 +43,6 @@ setmetatable(lib, {
   }
   sched.patch = name
   setmetatable(self, lib)
-
-  if is_process then
-    -- When we load from morph, we must set file loader to be the
-    -- remote morph server. (find code)
-    self.is_process = true
-
-    -- Create processes watch before loading code (to resolve remote
-    -- processes).
-    --
-    --- Watch for other processes on the network and create
-    -- lk.RemoteProcess proxies when needed.
-    self.process_watch = lk.ProcessWatch():addDelegate(self)
-  end
 
   return self
 end})
@@ -83,6 +70,19 @@ local function setNodes(self, nodes_definition)
       node:set(def)
     end
   end
+end
+
+function lib:start()
+  -- When we load from morph, we must set file loader to be the
+  -- remote morph server. (find code)
+  self.is_process = true
+
+  -- Create processes watch before loading code (to resolve remote
+  -- processes).
+  --
+  --- Watch for other processes on the network and create
+  -- lk.RemoteProcess proxies when needed.
+  self.process_watch = lk.ProcessWatch():addDelegate(self)
 end
 
 function lib:set(definitions)

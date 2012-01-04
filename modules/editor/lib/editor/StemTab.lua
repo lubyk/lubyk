@@ -76,23 +76,13 @@ function lib:click(x, y, op, btn, mod)
 
           -- Blink while waiting
           local ghost = self.ghost
-          ghost.thread = lk.Thread(function()
-            local start_time = worker:now()
-            local t = 0
-            local i = 0
-            while t <= MAX_WAIT_MS do
-              i = i + 1
-              sleep(50)
-              t = worker:now() - start_time
-              ghost:animate(t)
-            end
-            ghost.thread = nil
+          ghost:animate(MAX_WAIT_MS, function()
             ghost:hide()
             self.ghost = nil
           end)
 
           -- Remove ghost on process connection
-          self.zone:onAddProcess(name, function()
+          self.zone:onProcessConnected(name, function()
             ghost.thread = nil
             ghost:hide()
             self.ghost = nil

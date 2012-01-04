@@ -28,10 +28,12 @@ setmetatable(lib, {
  __call = function(lib, opts)
   local self = {
     -- Version of lubyk used to create project
-    lubyk     = {version = Lubyk.version},
+    lubyk      = {version = Lubyk.version},
     -- Holds the list of all the processes that need to be running
     -- for the project to work (not just the ones actually running).
-    processes = {},
+    processes  = {},
+    -- Found stem cells (used to create new processes)
+    stem_cells = {},
   }
   setmetatable(self, lib)
 
@@ -42,13 +44,22 @@ setmetatable(lib, {
 end})
 
 function lib:start(opts)
-  private.start(self)
-  if opts.path then
-    self:openFile(opts.path)
-  end
-  if opts.start_stem then
-    private.startStemCell(self)
-  end
+  local srv_opts = {
+    callback = function(...)
+      return self:callback(...)
+    end,
+    registration_callback = function(service)
+      if (Lubyk.zone .. ':') ~= service.name then
+        -- We do not want to have two morph servers on the same zone.
+        printf("Another morph service is running in zone '%s'. Quit.", Lubyk.zone)
+        sched:quit()
+      else
+        private.start(self, opts)
+      end
+    end,
+    type = 'lk.Morph',
+  }
+  self.service = lk.Service(Lubyk.zone .. ':', srv_opts)
 end
 
 function lib:openFile(filepath)
@@ -117,13 +128,32 @@ function lib:processConnected(remote_process)
   if process then
     -- we are interested in this process
     private.process.connect(self, process, remote_process)
+  else
+    -- Is this a stem cell ?
+    local stem_name = string.match(remote_process.name, '^@(.*)$')
+    if stem_name then
+      -- stem cell
+      self.stem_cells[stem_name] = remote_process
+      -- start pending processes
+      for name, process in pairs(self.processes) do
+        if not process.online and process.host == stem_name then
+          -- START
+          private.process.start(self, process)
+        end
+      end
+    else
+      -- FIXME: invalid process... Kill ?
+    end
   end
 end
 
-function lib:processDisconnected(process)
-  local process = self.processes[process.name]
+function lib:processDisconnected(service)
+  local name    = service.name
+  local process = self.processes[name]
   if process then
     private.process.disconnect(self, process)
+  elseif self.stem_cells[name] then
+    self.stem_cells[name] = nil
   end
 end
 
@@ -135,19 +165,15 @@ private.process = {}
 private.node = {}
 
 --- Start service and launch processes.
-function private:start(process_watch)
-  process_watch = process_watch or lk.ProcessWatch()
-  self.process_watch = process_watch:addDelegate(self)
-  local srv_opts = {
-    callback = function(...)
-      return self:callback(...)
-    end,
-    registration_callback = function(service)
-      return private.registrationCallback(self, service)
-    end,
-    type = 'lk.Morph',
-  }
-  self.service = lk.Service(Lubyk.zone .. ':', srv_opts)
+function private:start(opts)
+  self.process_watch = opts.process_watch or lk.ProcessWatch()
+  self.process_watch:addDelegate(self)
+  if opts.path then
+    self:openFile(opts.path)
+  end
+  if opts.start_stem then
+    private.startStemCell(self)
+  end
 end
 
 
@@ -190,16 +216,15 @@ function private.dump:lubyk(dump)
 end
 
 function private.set:processes(processes)
-  printf("Set processes: %s", yaml.dump(processes))
   for name, info in pairs(processes or {}) do
     if type(info) == 'table' then
       -- ok
     elseif info == '' then
-      info = {host = 'localhost'}
+      -- localhost
+      info = {host = Lubyk.host}
     else
       info = {host = info}
     end
-    printf("ADD WITH INFO: %s", yaml.dump(info))
     private.process.add(self, name, info, true)
   end
 end
@@ -216,10 +241,14 @@ function private:createProcess(definition)
 end
 
 function private:removeProcess(name)
-  local processes = self.processes
-  local name = definition.name
-  if processes[name] then
-    -- TODO
+  local process = self.processes[name]
+  if process then
+    if process.online then
+      process.push:send(lubyk.quit_url)
+      self.processes[name] = nil
+      private.writeFile(self)
+      process.dir:delete()
+    end
   else
     -- ERROR
     printf("Cannot create existing process '%s'.", definition.name)
@@ -231,7 +260,7 @@ function private.dump:processes(dump)
   dump.processes = processes
   for name, process in pairs(self.processes) do
     local p, empty = {}, true
-    if process.host ~= 'localhost' then
+    if process.host ~= Lubyk.host then
       p.host = process.host
       empty = false
     end
@@ -399,7 +428,7 @@ end
 function private.process.add(self, name, info, reading_lkp)
   local process = self.process_watch:process(name)
   self.processes[name] = process
-  process.host = info.host or 'localhost'
+  process.host = info.host
   -- set resource
   process.dir = private.findOrMakeResource(self, '/' .. (info.dir or name), true)
   process.patch = private.findOrMakeResource(self, process.dir.url .. '/_patch.yml')
@@ -417,44 +446,20 @@ function private.process.add(self, name, info, reading_lkp)
 end
 
 function private.process:start(process)
+  local stem = self.stem_cells[process.host]
+  if not stem then
+    -- will start as soon as the stem cell appears on the network
+    return
+  end
   assert(not process.online)
-  -- Read mapping (process_name --> hostname)...
-  if process.host == Lubyk.host or process.host == 'localhost' then
-    -- TODO: morph should not spawn. Only use stem cells (not the same user
-    -- and read/write access).
-    -- Spawn new process
-    self:spawn(process.name)
-  else
-    -- TODO: find/wait for remote host
-    -- local stem = self.process_watch:stem(process.host)
-    -- stem:spawn(process.name) [ will be done on connect ]
-  end
-end
-
--- Spawn a new process that will callback to get data (yml definition, assets).
--- This is private but we need to modify it during testing so we
--- make it accessible from 'self'.
-function lib:spawn(name)
-  -- spawn Process
-  local pid = worker:spawn([[
-  require 'lubyk'
-  process = lk.Process(%s)
-  run()
-  ]], name)
-  -- the process will find the morph's ip/port by it's own service discovery
-end
-
-function private:registrationCallback(service)
-  if (Lubyk.zone .. ':') ~= service.name then
-    -- We do not want to have two morph servers on the same zone.
-    printf("Another morph service is running in zone '%s'. Quit.", Lubyk.zone)
-    sched:quit()
-  end
+  stem.push:send(lubyk.execute_url, 'spawn', process.name)
 end
 
 function private:execute(action, ...)
   if action == 'createProcess' then
     private.createProcess(self, ...)
+  elseif action == 'removeProcess' then
+    private.removeProcess(self, ...)
   else
     printf("Cannot execute unknown action '%s'.", action)
   end

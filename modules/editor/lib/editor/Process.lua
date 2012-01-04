@@ -88,9 +88,26 @@ end
 
 --- Remove (delete) process from patch.
 function lib:remove()
-  -- FIXME: INFORM MORPH INSTEAD
-  self.push:send(lubyk.quit_url)
+  local view = self.view
+  if view then
+    view:animate(8000)
+
+    -- Remove ghost on process connection
+    self.zone:onProcessDisconnected(name, function()
+      if view.thread then
+        view.thread:kill()
+      end
+      view.thread = nil
+    end)
+  end
+
+  local morph = self.zone.morph
   self.removed = true
+  if morph then
+    morph.push:send(lubyk.execute_url, 'removeProcess', self.name)
+  else
+    self.push:send(lubyk.quit_url)
+  end
 end
 
 -- If self.view is nil, only set the data without
@@ -135,9 +152,9 @@ lib.findByPath = lk.Patch.findByPath
 function lib:findProcess(process_name)
   if process_name == self.name then
     return self
-  elseif self.delegate then
+  elseif self.zone then
     -- ask editor.Zone for process
-    return self.delegate:findProcess(process_name)
+    return self.zone:findProcess(process_name)
   else
     -- TODO: better error handling
     print(string.format("Cannot find process '%s' (no lk.ProcessWatch).", process_name))
@@ -182,7 +199,7 @@ end
 
 --- Display ProcessView in the PatchingView.
 function lib:toggleView()
-  self.delegate:toggleView(self)
+  self.zone:toggleView(self)
 end
 
 function lib:deleteView()
@@ -218,12 +235,11 @@ end
   self:change {nodes = {[definition.name or 'new node'] = definition}}
 end
 
--- Process is coming online (delegate = editor.Zone).
-function lib:connect(remote_process, delegate)
-  -- The delegate is used by views.
-  self.delegate       = delegate
-  self.push           = remote_process.push
-  self.req            = remote_process.req
+-- Process is coming online.
+function lib:connect(remote_process, zone)
+  self.zone = zone
+  self.push = remote_process.push
+  self.req  = remote_process.req
 
   self.hue = remote_process.info.hue or 0.5
 
@@ -242,7 +258,7 @@ function lib:connect(remote_process, delegate)
   end
   -- editor.Process needed by ProcessTab
   remote_process.process = self
-  delegate:toggleView(self)
+  zone:toggleView(self)
 end
 
 function lib:connected()

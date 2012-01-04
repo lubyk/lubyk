@@ -16,12 +16,20 @@ lk.Process  = lib
 setmetatable(lib, {
   -- new method
  __call = function(lib, name)
-  local self = lk.Patch(name, true)
+  local self = lk.Patch(name)
   local opts = {
     callback = function(...)
       return self:callback(...)
     end,
 
+    registration_callback = function(service)
+      if Lubyk.zone .. ':' .. name ~= service.name then
+        printf("Existing process '%s'. Quit.", name)
+        sched:quit()
+      else
+        self:start()
+      end
+    end,
   }
 
   self.service = lk.Service(Lubyk.zone .. ':' .. self.name, opts)

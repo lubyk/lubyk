@@ -109,8 +109,6 @@ protected:
     lua_pop(L, 1);
   }
 
-  virtual void contextMenuEvent(QContextMenuEvent *event);
-
   virtual void mouseMoveEvent(QMouseEvent *event);
 
   virtual void mousePressEvent(QMouseEvent *event) {

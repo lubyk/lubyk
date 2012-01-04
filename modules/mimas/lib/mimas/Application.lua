@@ -27,11 +27,17 @@ function mimas.Application(type)
       alternate-background-color:rgb(52, 52, 52);
       border:0;
     }
-    .list {
+    .list, .menu {
       background:rgb(38, 38, 38);
       color: rgb(180,180,180);
       border:0;
       padding:0;
+    }
+    .menu {
+      font-size:13px;
+    }
+    .menu::item:selected {
+      background: rgb(55,55,55);
     }
     .list::item {
       padding:2px;

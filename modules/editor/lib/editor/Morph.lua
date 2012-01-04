@@ -13,27 +13,27 @@ editor.Morph   = lib
 
 setmetatable(lib, {
   -- new method
- __call = function(lib, service, zone)
+ __call = function(lib, zone)
   local self = {
     name    = '',
     title   = '~',
-    ip      = service.ip,
-    req     = service.req,
     zone    = zone,
-    machine = zone.machine_list:getMachine(service.ip),
-    push    = service.push,
   }
 
   setmetatable(self, lib)
-  self:mountDav()
-  self:sync()
   return self
 end})
 
 
-function lib:connect(remote)
+function lib:connect(service)
+  self.ip      = service.ip
+  self.req     = service.req
+  self.push    = service.push
+  self.machine = self.zone.machine_list:getMachine(service.ip)
   -- noop
   self.online = true
+  self:mountDav()
+  self:sync()
 end
 
 function lib:disconnect(remote)
@@ -68,7 +68,8 @@ function lib:sync()
         host = self.machine.name
       end
       -- Declare
-      self.zone:findProcess(name, host)
+      local process = self.zone:findProcess(name, host)
+      process.keep_alive = true
     end
   end
 end

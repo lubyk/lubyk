@@ -11,6 +11,7 @@
 require 'lubyk'
 
 local should = test.Suite('mimas.Label')
+local withUser = should:testWithUser()
 
 function should.acceptDestroyFromGui()
   local win = mimas.Window()
@@ -44,10 +45,10 @@ function should.acceptDestroyFromLua(t)
   end)
 end
 
-function should.setAlignement(t)
+function should.setAlignment(t)
   t.lbl = mimas.Label('foo')
   assertPass(function()
-    t.lbl:setAlignement(mimas.AlignCenter)
+    t.lbl:setAlignment(mimas.AlignCenter)
   end)
 end
 
@@ -94,6 +95,26 @@ function should.styleLabels(t)
     sleep(2000)
     t.win:close()
   end)
+end
+
+function withUser.should.displayUTF8(t)
+  t.win = mimas.Window()
+  t.win:move(10,10)
+  t.win:resize(100,100)
+  t.lay = mimas.VBoxLayout(t.win)
+  t.btn = mimas.Button('Push if OK')
+  function t.btn:click()
+    t.continue = true
+  end
+  t.lbl = mimas.Label("Phryné devant l'aréopage")
+  t.lay:addWidget(t.lbl)
+  t.lay:addWidget(t.btn)
+  t.win:show()
+  t:timeout(function()
+    return t.continue
+  end)
+  assertTrue(t.continue)
+  t.win:close()
 end
 
 test.all()

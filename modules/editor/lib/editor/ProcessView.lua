@@ -29,7 +29,7 @@ local PAD2 = BP + 2*HPEN_WIDTH -- do not overlap with background
 function lib:init(process)
   process.view  = self
   self.process  = process
-  self.delegate = process.delegate
+  self.zone     = process.zone
   self:setHue(process.hue or 0.3)
   self.nodes    = {}
   self:setName(process.name)
@@ -54,11 +54,30 @@ function lib:processChanged()
   self:update()
 end
 
-function lib:animate(t)
-  -- blink while waiting for creation
-  local sat = (0.75 + 0.2 * math.cos(t * math.pi / 750)) % 1.0
-  self.lbl_back  = mimas.Brush(self.process.hue, sat, sat, 0.5)
-  self:update()
+function lib:animate(max_wait, timeout_clbk)
+  if self.thread then
+    self.thread:kill()
+  end
+  self.thread = lk.Thread(function()
+    local start_time = worker:now()
+    local t = 0
+    local i = 0
+    while t <= max_wait do
+      i = i + 1
+      sleep(50)
+      t = worker:now() - start_time
+      -- blink while waiting for creation
+      local sat = (0.75 + 0.2 * math.cos(t * math.pi / 750)) % 1.0
+      self.lbl_back  = mimas.Brush(self.process.hue, sat, sat, 0.5)
+      if not self:deleted() then
+        self:update()
+      end
+    end
+    if timeout_clbk then
+      timeout_clbk()
+    end
+    self.thread = nil
+  end)
 end
 
 function lib:setHue(hue)
@@ -78,7 +97,7 @@ function lib:paint(p, w, h)
     back = mimas.Brush(self.process.hue, 0.2, 0.2, 0.3)
     pen_color = mimas.Color(self.process.hue, 0.3, 0.8, 0.2)
   end
-  if self == self.delegate.process_view_under then
+  if self.online and self == self.zone.process_view_under then
     -- under drag operation
     back = mimas.Brush(self.process.hue, 0.3, 0.3, 0.5)
   end
@@ -150,7 +169,7 @@ function lib:click(x, y, type, btn, mod)
       -- create new empty node
       local vx, vy = self:globalPosition()
       local node_def = { x = x - 15, y = y - 12, name = '', hue = self.process.hue}
-      self.ghost_node = editor.Node.makeGhost(node_def, self.delegate)
+      self.ghost_node = editor.Node.makeGhost(node_def, self.zone)
       local ghost = self.ghost_node
       ghost.gx = vx + node_def.x
       ghost.gy = vy + node_def.y
@@ -184,8 +203,8 @@ function lib:click(x, y, type, btn, mod)
       }
     elseif not clickOnLink(self, x, y, type, btn, mod) then
       -- deselect all
-      self.delegate:selectNodeView(nil)
-      self.delegate:selectLinkView(nil)
+      self.zone:selectNodeView(nil)
+      self.zone:selectLinkView(nil)
     end
   end
 end

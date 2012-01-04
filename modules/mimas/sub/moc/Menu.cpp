@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'Menu.h'
 **
-** Created: Thu Oct 20 12:12:47 2011
+** Created: Wed Jan 4 16:47:04 2012
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.2)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -24,17 +24,20 @@ static const uint qt_meta_data_mimas__Menu[] = {
        0,       // classname
        0,    0, // classinfo
        0,    0, // methods
-       0,    0, // properties
+       1,   14, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
        0,       // signalCount
 
+ // properties: name, type, flags
+      20,   12, 0x0a095001,
+
        0        // eod
 };
 
 static const char qt_meta_stringdata_mimas__Menu[] = {
-    "mimas::Menu\0"
+    "mimas::Menu\0QString\0class\0"
 };
 
 const QMetaObject mimas::Menu::staticMetaObject = {
@@ -66,6 +69,30 @@ int mimas::Menu::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     _id = QMenu::qt_metacall(_c, _id, _a);
     if (_id < 0)
         return _id;
+    
+#ifndef QT_NO_PROPERTIES
+     if (_c == QMetaObject::ReadProperty) {
+        void *_v = _a[0];
+        switch (_id) {
+        case 0: *reinterpret_cast< QString*>(_v) = cssClass(); break;
+        }
+        _id -= 1;
+    } else if (_c == QMetaObject::WriteProperty) {
+        _id -= 1;
+    } else if (_c == QMetaObject::ResetProperty) {
+        _id -= 1;
+    } else if (_c == QMetaObject::QueryPropertyDesignable) {
+        _id -= 1;
+    } else if (_c == QMetaObject::QueryPropertyScriptable) {
+        _id -= 1;
+    } else if (_c == QMetaObject::QueryPropertyStored) {
+        _id -= 1;
+    } else if (_c == QMetaObject::QueryPropertyEditable) {
+        _id -= 1;
+    } else if (_c == QMetaObject::QueryPropertyUser) {
+        _id -= 1;
+    }
+#endif // QT_NO_PROPERTIES
     return _id;
 }
 QT_END_MOC_NAMESPACE

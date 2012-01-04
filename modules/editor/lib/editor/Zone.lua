@@ -18,17 +18,19 @@ setmetatable(lib, {
   -- new method
  __call = function(lib, process_watch, name)
   local self = {
-    name                = name,
-    selected_node_views = {},
+    name                    = name,
+    selected_node_views     = {},
     -- files edited in external editor
     -- OBSOLETE since WebDAV: remove
-    observed_files      = {},
-    file_observer       = mimas.FileObserver(),
+    observed_files          = {},
+    file_observer           = mimas.FileObserver(),
     -- Manage processes found
-    pending_processes   = {},
-    found_processes     = {},
-    -- On add process callbacks
-    on_add_process      = {},
+    pending_processes       = {},
+    found_processes         = {},
+    -- Callbacks to trigger when a given process comes online
+    on_process_connected    = {},
+    -- Callbacks to trigger when a given process goes offline
+    on_process_disconnected = {},
   }
   setmetatable(self, lib)
 
@@ -163,7 +165,11 @@ function lib:findProcess(name, host)
       machine = self.machine_list:getMachine(stem_name or '???')
     end
 
-    if stem_name then
+    if name == '' then
+      -- found morph server
+      process = editor.Morph(self)
+      self.morph = process
+    elseif stem_name then
       -- machine (stem cell)
       process = editor.StemCell {
         name      = name,
@@ -179,12 +185,6 @@ function lib:findProcess(name, host)
     self.found_processes[name] = process
 
     machine:addProcess(process)
-    for i, clbk in ipairs(self.on_add_process) do
-      if clbk.name == name then
-        clbk.clbk()
-        table.remove(self.on_add_process, i)
-      end
-    end
     self.main_view:update()
   end
 
@@ -194,41 +194,51 @@ end
 --=============================================== lk.ProcessWatch delegate
 function lib:processConnected(remote_process)
   local name = remote_process.name
-  if name == '' then
-    -- found morph server
-    self.morph = editor.Morph(remote_process, self)
-  else
-    local process = self:findProcess(name, remote_process.ip)
-    process:connect(remote_process, self)
+  local process = self:findProcess(name, remote_process.ip)
+  process:connect(remote_process, self)
+
+  -- Trigger connection callbacks
+  for i, clbk in ipairs(self.on_process_connected) do
+    if clbk.name == name then
+      clbk.clbk()
+      table.remove(self.on_process_connected, i)
+    end
   end
 end
 
-function lib:onAddProcess(name, clbk)
-  table.insert(self.on_add_process, {name = name, clbk = clbk})
+function lib:onProcessConnected(name, clbk)
+  table.insert(self.on_process_connected, {name = name, clbk = clbk})
+end
+
+function lib:onProcessDisconnected(name, clbk)
+  table.insert(self.on_process_disconnected, {name = name, clbk = clbk})
 end
 
 function lib:processDisconnected(remote_process)
   local name = remote_process.name
-  local remove_tab = true
+  local clear_process = true
+  local process = self.found_processes[name]
+  if process then
+    process:disconnect()
+  end
+
+  --- Handle special cases
   if name == '' then
-    -- morph server going offline
-    self.morph:disconnect()
+    -- Morph server going offline
+    self.found_processes[name] = nil
     self.morph = nil
     -- Remove all pending process tabs
     for name, process in pairs(self.found_processes) do
+      process.keep_alive = false
       if not process.online then
-        -- Remove
-        process.removed = true
-        self:processDisconnected{name=name, ip = process.machine.name}
+        self:processDisconnected {name = process.name, ip = process.machine.name}
       end
     end
   elseif string.match(name, '^@(.+)$') then
     -- machine (stem cell)
   else
     -- process
-    local process = self.found_processes[name]
     if process then
-      process:disconnect()
       --- Update views
       process:deleteView()
       -- this could run anywhere but it has to run after the process is removed
@@ -239,11 +249,22 @@ function lib:processDisconnected(remote_process)
           p:disconnectProcess(process)
         end
       end
-      remove_tab = process.removed
+      clear_process = not process.keep_alive
     end
   end
-  if remove_tab and self.machine_list then
-    self.machine_list:removeProcess(remote_process)
+  if clear_process then
+    self.found_processes[name] = nil
+    if self.machine_list then
+      self.machine_list:removeProcess(remote_process)
+    end
+  end
+
+  -- Trigger disconnection callbacks
+  for i, clbk in ipairs(self.on_process_disconnected) do
+    if clbk.name == name then
+      clbk.clbk()
+      table.remove(self.on_process_disconnected, i)
+    end
   end
   -- Is this needed ?
   self.main_view:update()

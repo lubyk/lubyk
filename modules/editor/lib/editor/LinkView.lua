@@ -24,7 +24,7 @@ function lib:init(source, target)
   self.target = target
   self.outlet = source.slot
   self.inlet  = target.slot
-  self.delegate = source.slot.node.delegate
+  self.zone = source.slot.node.zone
   -- cache
   self.pen = mimas.Pen(2 * HPEN_WIDTH, self.outlet.node.color)
 
@@ -72,7 +72,7 @@ end
 -- custom paint
 function lib:paint(p, w, h)
   local color = self.outlet.node.color
-  if self.delegate.selected_link_view == self then
+  if self.zone.selected_link_view == self then
     color = mimas.colors.White
   elseif self.source.is_ghost or self.target.is_ghost then
     color = color:colorWithAlpha(GHOST_ALPHA)
@@ -102,7 +102,7 @@ function lib:click(x, y, type)
         }
       }
     else
-      self.delegate:selectLinkView(self)
+      self.zone:selectLinkView(self)
     end
   else
     -- pass up

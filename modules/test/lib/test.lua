@@ -14,7 +14,7 @@ function lib:timeout(timeout, func)
     timeout = self.TIMEOUT
   end
   local now = worker:now()
-  while not func(worker:now() >= now + timeout) do
+  while not func() and worker:now() < now + timeout do
     sleep(300)
   end
 end

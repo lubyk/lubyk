@@ -29,7 +29,6 @@
 
 #include "mimas/Widget.h"
 #include "mimas/Painter.h"
-#include "mimas/Menu.h"
 
 #include <QtGui/QFileDialog>
 
@@ -76,35 +75,6 @@ void Widget::resizeEvent(QResizeEvent *event) {
   if (status) {
     fprintf(stderr, "Error in 'resized' callback: %s\n", lua_tostring(L, -1));
   }
-}
-
-void Widget::contextMenuEvent(QContextMenuEvent *event) {
-  lua_State *L = lua_;
-  if (!pushLuaCallback("contextMenu")) return;
-  // <func> <self>
-  Menu *menu = new Menu("contextual menu");
-  menu->luaInit(L, menu, "mimas.Menu");
-  // <func> <self> <menu>
-  // avoid Lua gc
-  lua_pushstring(L, "context_menu");
-  // <func> <self> <menu> "context_menu"
-  lua_pushvalue(L, -2);
-  // <func> <self> <menu> "context_menu" <menu>
-  lua_settable(L, -4); // self.context_menu = <menu>
-
-  // <func> <self> <menu>
-  int status = lua_pcall(L, 2, 1, 0);
-  if (status) {
-    fprintf(stderr, "Error in 'contextMenu' callback: %s\n", lua_tostring(L, -1));
-  }
-  if (lua_isfalse(L, -1)) {
-    // Do not show menu
-    event->ignore();
-  } else {
-    menu->exec(event->globalPos());
-  }
-  delete menu;
-  lua_pop(L, 1);
 }
 
 void Widget::mouseMoveEvent(QMouseEvent *event) {

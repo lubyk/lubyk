@@ -36,7 +36,7 @@ function lib:updateView()
     -- Create link view
     self.view = editor.LinkView(self.source.view, self.target.view)
     if self:isCrossProcess() then
-      self.source.node.process.delegate.main_view:addLinkView(self.view)
+      self.source.node.process.zone.main_view:addLinkView(self.view)
     else
       self.source.node.process.view:addWidget(self.view)
     end
@@ -55,7 +55,7 @@ function lib:updateView()
       self.ghost = editor.LinkView(self.source.ghost, self.target.view)
     end
     if self.ghost then
-      self.source.node.process.delegate.main_view:addLinkView(self.ghost)
+      self.source.node.process.zone.main_view:addLinkView(self.ghost)
     end
   elseif not self.source.ghost and not self.target.ghost then
     -- remove our ghost link
@@ -90,9 +90,9 @@ end
 
 function lib:deleteView()
   if self.view then
-    local delegate = self.source.node.delegate
-    if delegate.selected_link_view == self.view then
-      delegate.selected_link_view = nil
+    local zone = self.source.node.zone
+    if zone.selected_link_view == self.view then
+      zone.selected_link_view = nil
     end
     self.view:delete()
     self.view = nil

@@ -48,14 +48,19 @@ namespace mimas {
  */
 class Menu : public QMenu, public ThreadedLuaObject {
   Q_OBJECT
+  Q_PROPERTY(QString class READ cssClass)
 public:
-  Menu(const char *name)
+  Menu(const char *name = "")
       : QMenu(QString(name)) {
     MIMAS_DEBUG_CC
   }
 
   ~Menu() {
     MIMAS_DEBUG_GC
+  }
+
+  void popup(int gx, int gy) {
+    QMenu::popup(QPoint(gx,gy));
   }
 
   QString cssClass() const {

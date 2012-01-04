@@ -37,7 +37,7 @@ setmetatable(lib, {
     sorted_outlets = {},
     process        = process,
     parent         = process,
-    delegate       = process.delegate,
+    zone           = process.zone,
   }
 
   -- List of inlet prototypes (already linked) to use
@@ -213,11 +213,11 @@ function lib:edit()
     lk.writeall(filepath, self.code)
     self.need_code_write = false
   end
-  self.delegate:editFile(filepath, self)
+  self.zone:editFile(filepath, self)
 end
 
 function lib:filepath()
-  return self.delegate:workPath() .. '/' .. self.process.name .. '/' .. self.name .. '.lua'
+  return self.zone:workPath() .. '/' .. self.process.name .. '/' .. self.name .. '.lua'
 end
 
 function lib:fileChanged(path)
@@ -258,7 +258,7 @@ end
 -- ========== HELPERS
 
 -- Create a ghost node (before it is droped or name is set)
-function lib.makeGhost(node_def, delegate)
+function lib.makeGhost(node_def, zone)
   -- mock a node for NodeView
   local node = {
     name           = node_def.name,
@@ -266,10 +266,10 @@ function lib.makeGhost(node_def, delegate)
     y              = 0,
     sorted_inlets  = {},
     sorted_outlets = {},
-    delegate       = delegate,
+    zone       = zone,
   }
   editor.Node.setHue(node, node_def.hue or 0.2)
-  local ghost = editor.NodeView(node, delegate.main_view)
+  local ghost = editor.NodeView(node, zone.main_view)
   ghost.is_ghost = true
   ghost:updateView()
 
@@ -277,10 +277,10 @@ function lib.makeGhost(node_def, delegate)
   -- or when it appears after double-click
   function ghost:openEditor(finish_func)
     -- add a LineEdit on top of self
-    local edit = editor.NodeLineEdit(delegate.main_view, node.name, delegate.library)
+    local edit = editor.NodeLineEdit(zone.main_view, node.name, zone.library)
     self.edit = edit
     edit:selectAll()
-    delegate.main_view:addWidget(edit)
+    zone.main_view:addWidget(edit)
     edit:resize(math.max(self.width, MINW), self.height)
     edit:globalMove(self:globalPosition())
     edit:setFocus()
@@ -288,7 +288,7 @@ function lib.makeGhost(node_def, delegate)
       local name, proto = string.match(text, '^(.*)= *(.*)$')
       if name then
         self.name  = name
-        local code = self.delegate.library:code(proto)
+        local code = self.zone.library:code(proto)
         if code then
           self.code = code
         else

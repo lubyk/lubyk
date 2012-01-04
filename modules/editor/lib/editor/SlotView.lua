@@ -32,7 +32,7 @@ function lib:init(slot)
   self.type = slot.type
   self.slot = slot
   self.node = slot.node
-  self.delegate = slot.node.delegate
+  self.zone = slot.node.zone
   self:resize(SLOTW, SLOTH)
 end
 
@@ -43,7 +43,7 @@ function lib:paint(p, w, h)
   -- draw inlets
   local color
 
-  if self.delegate.closest_slot_view == self then
+  if self.zone.closest_slot_view == self then
     color = self.node.color:colorWithValue(1)
   else
     color = self.node.color:colorWithValue(0.5)
@@ -61,12 +61,12 @@ function lib:click(x, y, type, btn, mod)
     self.click_position = {x = x, y = y}
   elseif type == MouseRelease then
     if slot.dragging then
-      local other_view = self.delegate.closest_slot_view
+      local other_view = self.zone.closest_slot_view
       -- create link
       slot.dragging = false
       if other_view then
         local other_slot = other_view.slot
-        self.delegate.closest_slot_view = nil
+        self.zone.closest_slot_view = nil
         other_view:update()
         if slot.type == 'editor.Inlet' then
           slot, other_slot = other_slot, slot
@@ -106,7 +106,7 @@ local function makeGhostLink(self)
 
   -- We add the slot in the main view in case it is used for
   -- inter-process linking.
-  slot.node.process.delegate.main_view:addLinkView(self.ghost.link_view)
+  slot.node.process.zone.main_view:addLinkView(self.ghost.link_view)
   self.ghost.link_view:lower()
 end
 
@@ -122,10 +122,10 @@ function lib:mouse(x, y)
     local gx, gy = self:globalPosition()
     gx = gx + x
     gy = gy + y
-    local view, d = self.node.process.delegate:closestSlotView(gx, gy, self.type, slot.node)
-    local old_closest = self.delegate.closest_slot_view
+    local view, d = self.node.process.zone:closestSlotView(gx, gy, self.type, slot.node)
+    local old_closest = self.zone.closest_slot_view
     if d < LINK_DISTANCE then
-      self.delegate.closest_slot_view = view
+      self.zone.closest_slot_view = view
       if old_closest ~= view then
         if old_closest then
           old_closest:update()
@@ -133,7 +133,7 @@ function lib:mouse(x, y)
         view:update()
       end
     elseif old_closest then
-      self.delegate.closest_slot_view = nil
+      self.zone.closest_slot_view = nil
       old_closest:update()
     end
 

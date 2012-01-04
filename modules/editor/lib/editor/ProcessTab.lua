@@ -52,10 +52,42 @@ function lib:setTitle(name)
   self:setSizePolicy(mimas.Minimum, mimas.Fixed)
 end
 
-function lib:contextMenu(menu)
+-- custom paint
+function lib:paint(p, w, h)
+  p:setBrush(self.brush)
+  p:setPen(self.pen)
+  p:drawRoundedRect(bp, bp, w + arc_radius + bp, h - 2 * bp, arc_radius)
+  p:setPen(mimas.Pen(1, mimas.Color(0, 0, 1)))
+  p:drawText(2 * text_padding, text_padding, w - 4*text_padding, h - 2*text_padding, mimas.AlignRight + mimas.AlignVCenter, self.title)
+end
+
+local MousePress, MouseRelease = mimas.MousePress, mimas.MouseRelease
+
+function lib:click(x, y, op, btn, mod)
+  if not self.process.online then
+    return
+  end
+  --if op == MouseRelease then
+  --  -- open process in PatchingView
+  --  self.process:toggleView()
+  --end
+  if op == MousePress then
+    local sx, sy = self:globalPosition()
+    private.showContextMenu(self, sx + x, sy + y)
+  end
+end
+
+function private:showContextMenu(gx, gy)
   if not self.process.online then
     return false
   end
+
+  local menu = mimas.Menu('')
+  if self.menu and not menu:deleted() then
+    self.menu:hide()
+  end
+  self.menu = menu
+
   local show_hide
   if self.process.view then
     show_hide = 'Hide'
@@ -74,25 +106,5 @@ function lib:contextMenu(menu)
   menu:addAction('Remove', '', function()
     self.process:remove()
   end)
-end
-
--- custom paint
-function lib:paint(p, w, h)
-  p:setBrush(self.brush)
-  p:setPen(self.pen)
-  p:drawRoundedRect(bp, bp, w + arc_radius + bp, h - 2 * bp, arc_radius)
-  p:setPen(mimas.Pen(1, mimas.Color(0, 0, 1)))
-  p:drawText(2 * text_padding, text_padding, w - 4*text_padding, h - 2*text_padding, mimas.AlignRight + mimas.AlignVCenter, self.title)
-end
-
-local MousePress, MouseRelease = mimas.MousePress, mimas.MouseRelease
-
-function lib:click(x, y, op, btn, mod)
-  if not self.process.online then
-    return
-  end
-  if op == MouseRelease then
-    -- open process in PatchingView
-    self.process:toggleView()
-  end
+  menu:popup(gx - 5, gy - 5)
 end

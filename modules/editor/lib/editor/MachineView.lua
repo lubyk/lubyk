@@ -59,6 +59,7 @@ end
 function lib:addProcess(service)
   local name = service.name
   local view
+  printf("addProcess '%s'", name)
   if name == '' then
     -- morph
     view = editor.MorphTab(service)

@@ -11,13 +11,19 @@ using namespace mimas;
 
 /* ============================ Constructors     ====================== */
 
-/** mimas::Menu::Menu(const char *name)
- * include/mimas/Menu.h:53
+/** mimas::Menu::Menu(const char *name="")
+ * include/mimas/Menu.h:54
  */
 static int Menu_Menu(lua_State *L) {
   try {
-    const char *name = dubL_checkstring(L, 1);
-    Menu * retval__ = new Menu(name);
+    int top__ = lua_gettop(L);
+    Menu * retval__;
+    if (top__ < 1) {
+      retval__ = new Menu();
+    } else {
+      const char *name = dubL_checkstring(L, 1);
+      retval__ = new Menu(name);
+    }
     return retval__->luaInit(L, retval__, "mimas.Menu");
   } catch (std::exception &e) {
     lua_pushfstring(L, "Menu: %s", e.what());
@@ -201,7 +207,7 @@ static int QWidget_close(lua_State *L) {
 
 
 /** QString mimas::Menu::cssClass() const 
- * include/mimas/Menu.h:61
+ * include/mimas/Menu.h:66
  */
 static int Menu_cssClass(lua_State *L) {
   try {
@@ -418,6 +424,27 @@ static int QObject_object(lua_State *L) {
     lua_pushfstring(L, "object: %s", e.what());
   } catch (...) {
     lua_pushfstring(L, "object: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** void mimas::Menu::popup(int gx, int gy)
+ * include/mimas/Menu.h:62
+ */
+static int Menu_popup(lua_State *L) {
+  try {
+    Menu *self = *((Menu**)dubL_checksdata(L, 1, "mimas.Menu"));
+    if (!self) throw dub::Exception("Using deleted mimas.Menu in popup");
+    int gx = dubL_checkint(L, 2);
+    int gy = dubL_checkint(L, 3);
+    self->popup(gx, gy);
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "popup: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "popup: Unknown exception");
   }
   return lua_error(L);
 }
@@ -884,6 +911,7 @@ static const struct luaL_Reg Menu_member_methods[] = {
   {"move"              , QWidget_move},
   {"name"              , QObject_name},
   {"object"            , QObject_object},
+  {"popup"             , Menu_popup},
   {"position"          , QWidget_position},
   {"raise"             , QWidget_raise},
   {"resize"            , QWidget_resize},
