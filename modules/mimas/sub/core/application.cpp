@@ -2,6 +2,7 @@
 #include <csignal>
 
 #include <QtGui/QFileDialog>
+#include <QtCore/QTextCodec>
 
 static char arg0[] = "Lubyk";
 static char arg1[] = "-style";
@@ -16,6 +17,7 @@ pthread_key_t Application::sAppKey = NULL;
 Application::Application()
    : QApplication(app_argc, app_argv) {
   // create a key to find 'app' object in current thread
+  QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
   if (!sAppKey) pthread_key_create(&sAppKey, NULL);
   MIMAS_DEBUG_CC
 }
