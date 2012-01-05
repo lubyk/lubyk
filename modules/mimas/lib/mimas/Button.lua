@@ -10,6 +10,7 @@ local constr  = mimas_core.Button
 local mt      = mimas_core.Button_
 mimas.Button_ = mt
 
+local MousePress = mimas.MousePress
 function mimas.Button(title, parent, func)
   local self
   if not func then

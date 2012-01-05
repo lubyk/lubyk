@@ -56,8 +56,8 @@ function should.centerWidget(t)
     t.continue = true
   end
 
-  t:timeout(500, function(done)
-    return done or t.continue
+  t:timeout(500, function()
+    return t.continue
   end)
   t.win:close()
 end
@@ -78,8 +78,8 @@ function should.addWidgetsToWindow(t)
     t.continue = true
   end
 
-  t:timeout(500, function(done)
-    return done or t.continue
+  t:timeout(500, function()
+    return t.continue
   end)
   t.win:close()
 end
@@ -137,8 +137,8 @@ function withUser.should.respondToClick(t)
   t.win:move(100, 300)
   t.win:resize(400, 400)
   t.win:show()
-  t:timeout(2000, function(done)
-    return done
+  t:timeout(2000, function()
+    return false
   end)
   t.win:close()
 end
@@ -174,8 +174,8 @@ function withUser.should.callbackOnClose(t)
   t.win:resize(100,100)
   t.win:move(10,10)
   t.win:show()
-  t:timeout(function(done)
-    return done or t.continue
+  t:timeout(function()
+    return t.continue
   end)
   assertTrue(t.continue)
 end
@@ -185,18 +185,72 @@ function withUser.should.showContextualMenu(t)
   t.lay = mimas.VBoxLayout(t.win)
   t.lbl = mimas.Label('Ctrl-click for contextual menu.')
   t.lay:addWidget(t.lbl)
-  function t.win:contextMenu(menu)
-    menu:addAction('Select me', '', function()
-      t.continue = true
-    end)
-    menu:addAction('Ignore me', '', function()
-    end)
+  function t.win:click(x, y, typ, btn)
+    if btn == mimas.RightButton then
+      t.menu = mimas.Menu()
+      t.menu:addAction('Select me', '', function()
+        t.continue = true
+      end)
+      t.menu:addAction('Ignore me', '', function()
+      end)
+      local gx, gy = self:globalPosition()
+      t.menu:popup(gx + x, gy + y)
+    end
   end
   t.win:resize(100,100)
   t.win:move(10,10)
   t.win:show()
-  t:timeout(function(done)
-    return done or t.continue
+  t:timeout(function()
+    return t.continue
+  end)
+  t.win:close()
+  assertTrue(t.continue)
+end
+
+function withUser.should.passClick(t)
+  t.win = mimas.Window()
+  t.btn = mimas.Button('click me', function()
+    t.continue = true
+  end)
+  t.win:addWidget(t.btn)
+  t.btn:move(50, 50)
+  t.top = mimas.Widget()
+  t.win:addWidget(t.top)
+  t.top:move(60, 50)
+  function t.top:paint(p, w, h)
+    p:fillRect(0, 0, w, h, mimas.Color(0.3,1,1,0.3))
+  end
+  t.top:resize(40, 200)
+  function t.top:click()
+    t.btn:setText('passing through')
+    return true --false
+  end
+  t.win:resize(200,300)
+  t.win:move(10,10)
+  t.win:show()
+  t:timeout(function()
+    return t.continue
+  end)
+  t.win:close()
+  assertTrue(t.continue)
+end
+
+function withUser.should.captureKeyboard(t)
+  t.win = mimas.Window()
+  t.lay = mimas.VBoxLayout(t.win)
+  t.lbl = mimas.Label('Pres key "d".')
+  t.lay:addWidget(t.lbl)
+  function t.win:keyboard(key, on, chr, mod)
+    t.lbl:setText(string.format('key=%i, on=%s, chr=%s, mod=%i', key, (on and 'on') or 'off', chr, mod))
+    if chr == 'd' then
+      t.continue = true
+    end
+  end
+  t.win:resize(400,100)
+  t.win:move(10,10)
+  t.win:show()
+  t:timeout(function()
+    return t.continue
   end)
   t.win:close()
   assertTrue(t.continue)

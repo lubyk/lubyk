@@ -57,7 +57,7 @@ function withUser.should.callback(t)
 
   function t.lb:editingFinished(text)
     self:autoFinished()
-    assertEqual('m=lubyk.Value', text)
+    assertEqual('m=lubyk.Metro', text)
     t.continue = true
   end
   -- ====================================================

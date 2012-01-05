@@ -36,8 +36,8 @@ function withUser.should.connectToCallback(t)
   --   -- What exactly are we expecting
   --   expected = function() return t.continue end
   -- }
-  t:timeout(function(done)
-    return done or t.continue
+  t:timeout(function()
+    return t.continue
   end)
   t.win:close()
   assertTrue(t.continue)
@@ -48,7 +48,7 @@ function withUser.should.createWithFunction(t)
   t.win:move(200, 200)
   t.win:resize(200,200)
   t.lay = mimas.HBoxLayout(t.win)
-  local btn = mimas.Button("click me", function()
+  local btn = mimas.Button("click me too", function()
     t.continue = true
   end)
   collectgarbage('collect')
@@ -56,8 +56,8 @@ function withUser.should.createWithFunction(t)
   -- the button's env
   t.lay:addWidget(btn)
   t.win:show()
-  t:timeout(function(done)
-    return done or t.continue
+  t:timeout(function()
+    return t.continue
   end)
   t.win:close()
   assertTrue(t.continue)

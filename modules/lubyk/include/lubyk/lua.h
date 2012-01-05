@@ -48,5 +48,6 @@ extern "C" {
 
 // We often check for 'false' return value, this helps
 #define lua_isfalse(L,i) (lua_isboolean(L,i) && !lua_toboolean(L,i))
+#define lua_istrue(L,i)  (lua_isboolean(L,i) && lua_toboolean(L,i))
 
 #endif // CORE_INCLUDE_CORE_LUA_H_

@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'Button.h'
 **
-** Created: Thu Oct 20 12:12:47 2011
+** Created: Thu Jan 5 18:47:26 2012
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.2)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,22 +23,26 @@ static const uint qt_meta_data_mimas__Button[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-       0,    0, // methods
-       2,   14, // properties
+       1,   14, // methods
+       2,   19, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
        0,       // signalCount
 
+ // slots: signature, parameters, type, tag, flags
+      15,   14,   14,   14, 0x08,
+
  // properties: name, type, flags
-      22,   14, 0x0a095001,
-      34,   28, 0x87095103,
+      37,   29, 0x0a095001,
+      49,   43, 0x87095103,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_mimas__Button[] = {
-    "mimas::Button\0QString\0class\0float\0hue\0"
+    "mimas::Button\0\0clickedSlot()\0QString\0"
+    "class\0float\0hue\0"
 };
 
 const QMetaObject mimas::Button::staticMetaObject = {
@@ -70,9 +74,15 @@ int mimas::Button::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     _id = QPushButton::qt_metacall(_c, _id, _a);
     if (_id < 0)
         return _id;
-    
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        switch (_id) {
+        case 0: clickedSlot(); break;
+        default: ;
+        }
+        _id -= 1;
+    }
 #ifndef QT_NO_PROPERTIES
-     if (_c == QMetaObject::ReadProperty) {
+      else if (_c == QMetaObject::ReadProperty) {
         void *_v = _a[0];
         switch (_id) {
         case 0: *reinterpret_cast< QString*>(_v) = cssClass(); break;

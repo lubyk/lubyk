@@ -12,7 +12,7 @@ using namespace mimas;
 /* ============================ Constructors     ====================== */
 
 /** mimas::GLWidget::GLWidget()
- * include/mimas/GLWidget.h:81
+ * include/mimas/GLWidget.h:82
  */
 static int GLWidget_GLWidget(lua_State *L) {
   try {
@@ -141,7 +141,7 @@ static int QWidget_addWidget(lua_State *L) {
 
 
 /** void mimas::GLWidget::addWidgetToScene(QWidget *widget, float x=0, float y=0)
- * include/mimas/GLWidget.h:99
+ * include/mimas/GLWidget.h:100
  */
 static int GLWidget_addWidgetToScene(lua_State *L) {
   try {
@@ -192,7 +192,7 @@ static int QWidget_close(lua_State *L) {
 
 
 /** QString mimas::GLWidget::cssClass() const 
- * include/mimas/GLWidget.h:105
+ * include/mimas/GLWidget.h:106
  */
 static int GLWidget_cssClass(lua_State *L) {
   try {
@@ -774,7 +774,7 @@ static int QWidget_update(lua_State *L) {
 
 
 /** void mimas::GLWidget::updateGL()
- * include/mimas/GLWidget.h:112
+ * include/mimas/GLWidget.h:113
  */
 static int GLWidget_updateGL(lua_State *L) {
   try {

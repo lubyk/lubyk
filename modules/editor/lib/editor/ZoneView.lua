@@ -28,12 +28,14 @@ function lib:init(zone)
   self.library = zone.library
   self.library_view = editor.LibraryView(zone.library)
   self.layout:addWidget(self.library_view)
-  self.patching_view = editor.PatchingView()
-  self.layout:addWidget(self.patching_view, 1)
+  self.patch_view = editor.PatchView()
+  self.layout:addWidget(self.patch_view, 2)
   self.layout:setSpacing(PADDING)
   self.layout:setContentsMargins(0, 0, 0, 0)
   self.machine_list = editor.MachineList(self.zone)
   self.layout:addWidget(self.machine_list, 0, mimas.AlignRight)
+  self.control_tabs = editor.ControlTabs(self.zone)
+  self.layout:addWidget(self.control_tabs, 1)
   self.width  = WIDTH
   self.height = HEIGHT
   self:resize(self.width, self.height)
@@ -48,14 +50,14 @@ end
 
 function lib:addProcessView(view)
   local process = view.process
-  self.patching_view:addWidget(view)
+  self.patch_view:addWidget(view)
   view:move(process.x or 100, process.y or 100)
   -- trigger a full view rebuild once it is positioned
   process:updateView()
 end
 
 function lib:addLinkView(view)
-  self.patching_view:addWidget(view)
+  self.patch_view:addWidget(view)
 end
 
 --=============================================== Menu setup

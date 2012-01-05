@@ -117,11 +117,31 @@ function private.set:processes(data)
         host = self.machine.name
       end
       -- Declare
-      local process = self.zone:findProcess(name, host)
+      process = self.zone:findProcess(name, host)
       process.known_to_morph = true
     else
       -- Mark as known_to_morph
       process.known_to_morph = true
+    end
+  end
+end
+
+function private.set:views(data)
+  local views = self.zone.views
+  for name, info in pairs(data) do
+    local view = views[name]
+    if info == false then
+      -- removed view
+      if view then
+        view:remove()
+        views[name] = nil
+      end
+    elseif not view then
+      -- create new ControlView
+      -- Declare
+      view = editor.ControlView(info, self.zone)
+      self.zone.main_view.control_tabs:insertTab(0, view, name)
+      views[name] = view
     end
   end
 end

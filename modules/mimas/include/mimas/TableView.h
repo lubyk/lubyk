@@ -175,7 +175,6 @@ protected:
   /** The component's color.
    */
   float hue_;
-
 private:
   bool click(QMouseEvent *event, int type);
   bool select(QMouseEvent *event, int type);

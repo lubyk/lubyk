@@ -1,13 +1,13 @@
 --[[------------------------------------------------------
 
-  editor.PatchingView
+  editor.PatchView
   -------------------
 
   Displays all the ProcessViews.
 
 --]]------------------------------------------------------
 local lib = lk.SubClass(mimas, 'Widget')
-editor.PatchingView = lib
+editor.PatchView = lib
 
 -- constants
 

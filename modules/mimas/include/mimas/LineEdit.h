@@ -31,6 +31,7 @@
 
 #include "mimas/mimas.h"
 #include "mimas/constants.h"
+#include "mimas/Widget.h"
 
 using namespace lubyk;
 
@@ -181,33 +182,28 @@ public:
 protected:
 
   virtual void keyPressEvent(QKeyEvent *event) {
-    if (!keyboard(event, true)) {
+    if (!Widget::keyboard(this, event, true))
       QLineEdit::keyPressEvent(event);
-    }
   }
 
   virtual void keyReleaseEvent(QKeyEvent *event) {
-    if (!keyboard(event, false)) {
+    if (!Widget::keyboard(this, event, false))
       QLineEdit::keyReleaseEvent(event);
-    }
   }
 
   virtual void mousePressEvent(QMouseEvent *event) {
-    if (!click(event, MousePress)) {
+    if (!Widget::click(this, event, MousePress))
       QLineEdit::mousePressEvent(event);
-    }
   }
 
   virtual void mouseDoubleClickEvent(QMouseEvent *event) {
-    if (!click(event, DoubleClick)) {
+    if (!Widget::click(this, event, DoubleClick))
       QLineEdit::mouseDoubleClickEvent(event);
-    }
   }
 
   virtual void mouseReleaseEvent(QMouseEvent *event) {
-    if (!click(event, MouseRelease)) {
+    if (!Widget::click(this, event, MouseRelease))
       QLineEdit::mouseReleaseEvent(event);
-    }
   }
 
   virtual void moveEvent(QMoveEvent * event);
@@ -215,8 +211,6 @@ protected:
 
 private:
   virtual void paintEvent(QPaintEvent *event);
-  bool keyboard(QKeyEvent *event, bool isPressed);
-  bool click(QMouseEvent *event, int type);
 
 private slots:
 

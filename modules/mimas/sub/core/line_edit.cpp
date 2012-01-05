@@ -32,31 +32,6 @@
 
 namespace mimas {
 
-bool LineEdit::keyboard(QKeyEvent *event, bool isPressed) {
-  lua_State *L = lua_;
-
-  if (!pushLuaCallback("keyboard")) return false;
-  lua_pushnumber(L, event->key());
-  lua_pushboolean(L, isPressed);
-  lua_pushstring(L, event->text().toUtf8());
-  // <func> <self> <key> <on/off> <utf8>
-  int status = lua_pcall(L, 4, 1, 0);
-
-  if (status) {
-    fprintf(stderr, "Error in 'keyboard' callback: %s\n", lua_tostring(L, -1));
-  }
-
-  if (lua_isfalse(L, -1)) {
-    // Pass to LineEdit
-    lua_pop(L, 1);
-    return false;
-  } else {
-    lua_pop(L, 1);
-    return true;
-  }
-}
-
-
 void LineEdit::moveEvent(QMoveEvent * event) {
   lua_State *L = lua_;
 
@@ -83,33 +58,6 @@ void LineEdit::resizeEvent(QResizeEvent *event) {
   if (status) {
     fprintf(stderr, "Error in 'resized' callback: %s\n", lua_tostring(L, -1));
   }
-}
-
-bool LineEdit::click(QMouseEvent *event, int type) {
-  lua_State *L = lua_;
-
-  if (!pushLuaCallback("click")) return false;
-  lua_pushnumber(L, event->x());
-  lua_pushnumber(L, event->y());
-  lua_pushnumber(L, type);
-  lua_pushnumber(L, event->button());
-  lua_pushnumber(L, event->modifiers());
-  // <func> <self> <x> <y> <type> <btn> <modifiers>
-  int status = lua_pcall(L, 6, 1, 0);
-
-  if (status) {
-    fprintf(stderr, "Error in 'click' callback: %s\n", lua_tostring(L, -1));
-  }
-  // FIXME: find another way to remove the dotted lines around text after click.
-  clearFocus();
-  if (lua_isfalse(L, -1)) {
-    // Pass to ListView
-    lua_pop(L, 1);
-    return false;
-  }
-
-  lua_pop(L, 1);
-  return true;
 }
 
 void LineEdit::editingFinishedSlot() {

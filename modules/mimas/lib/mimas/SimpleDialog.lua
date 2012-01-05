@@ -22,6 +22,9 @@ function lib:init(def)
   return self
 end
 
+function lib:btn(name)
+  -- noop
+end
 
 --=============================================== PRIVATE
 local function makeWidget(main, parent, def)
@@ -98,18 +101,16 @@ local function makeWidget(main, parent, def)
             default_btn:click(0,0,mimas.MousePress)
           else
             -- pass to LineEdit
-            return false
+            return true
           end
         else
-          return false
+          return true
         end
       end
     end
   elseif t == 'btn' then
-    elem = mimas.Button(def[2], function(btn, x, y, op)
-      if op == mimas.MousePress then
-        main:btn(def[3] or def[2])
-      end
+    elem = mimas.Button(def[2], function()
+      main:btn(def[3] or def[2])
     end)
     -- access to personnalize button behavior
     main.widgets[def[3] or def[2]] = elem

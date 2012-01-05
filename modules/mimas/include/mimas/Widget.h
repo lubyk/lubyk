@@ -48,6 +48,7 @@ class Painter;
  *
  * @see QWidget
  * @dub destructor: 'luaDestroy'
+ *      ignore: 'keyboard,click'
  *      super: 'QWidget'
  */
 class Widget : public QWidget, public ThreadedLuaObject {
@@ -93,6 +94,14 @@ public:
                           const char *base_dir,
                           int options,
                           lua_State *L);
+
+  /** Common keyboard, mouse and click event handling to many widgets.
+   */
+  static bool keyboard(ThreadedLuaObject *obj, QKeyEvent *event, bool isPressed);
+  static bool mouse(ThreadedLuaObject *obj, QMouseEvent *event);
+  static bool click(ThreadedLuaObject *obj, QMouseEvent *event, int type);
+  static bool paintEvent(ThreadedLuaObject *obj, QPaintEvent *event);
+  static void paint(ThreadedLuaObject *obj, Painter &p);
 protected:
   virtual void closeEvent(QCloseEvent *event) {
     lua_State *L = lua_;
@@ -109,21 +118,30 @@ protected:
     lua_pop(L, 1);
   }
 
-  virtual void mouseMoveEvent(QMouseEvent *event);
+  virtual void mouseMoveEvent(QMouseEvent *event) {
+    Widget::mouse(this, event);
+  }
 
   virtual void mousePressEvent(QMouseEvent *event) {
-    click(event, MousePress);
+    if (!Widget::click(this, event, MousePress))
+      QWidget::mousePressEvent(event);
   }
 
   virtual void mouseDoubleClickEvent(QMouseEvent *event) {
-    click(event, DoubleClick);
+    if (!Widget::click(this, event, DoubleClick))
+      QWidget::mouseDoubleClickEvent(event);
   }
 
   virtual void mouseReleaseEvent(QMouseEvent *event) {
-    click(event, MouseRelease);
+    if (!Widget::click(this, event, MouseRelease))
+      QWidget::mouseReleaseEvent(event);
   }
 
-  virtual void paintEvent(QPaintEvent *event);
+  virtual void paintEvent(QPaintEvent *event) {
+    Widget::paintEvent(this, event);
+    QWidget::paintEvent(event);
+  }
+
   virtual void resizeEvent(QResizeEvent *event);
 
   virtual void moveEvent(QMoveEvent * event) {
@@ -141,11 +159,13 @@ protected:
   }
 
   virtual void keyPressEvent(QKeyEvent *event) {
-    keyboard(event, true);
+    if (!Widget::keyboard(this, event, true))
+      QWidget::keyPressEvent(event);
   }
 
   virtual void keyReleaseEvent(QKeyEvent *event) {
-    keyboard(event, false);
+    if (!Widget::keyboard(this, event, false))
+      QWidget::keyReleaseEvent(event);
   }
 
   virtual QSize sizeHint() const {
@@ -155,11 +175,6 @@ protected:
   /** The component's color.
    */
   float hue_;
-
-private:
-  void paint(Painter &p);
-  void keyboard(QKeyEvent *event, bool isPressed);
-  void click(QMouseEvent *event, int type);
 };
 
 } // mimas

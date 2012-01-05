@@ -1,11 +1,9 @@
 --[[------------------------------------------------------
 
-  Basic tests for lubyk GUI
-  -------------------------
+  mimas.VBoxLayout test
+  ---------------------
 
-  This tests multi-threading and event posting / triggering.
-  We cannot trigger these tests with other tests because Qt
-  does not like beeing started and stopped multiple times.
+  ...
 
 --]]------------------------------------------------------
 require 'lubyk'
@@ -41,8 +39,8 @@ function withUSer.should.displayWidgets(t)
   callback:connect(btn2, 'clicked')
 
   win:show()
-  t:timeout(function(done)
-    return done or t.continue
+  t:timeout(function()
+    return t.continue
   end)
   assertTrue(t.continue)
 end
@@ -70,8 +68,8 @@ function withUSer.should.nestLayouts(t)
   callback:connect(btn2, 'clicked')
 
   win:show()
-  t:timeout(function(done)
-    return done or t.continue
+  t:timeout(function()
+    return t.continue
   end)
   assertTrue(t.continue)
 end

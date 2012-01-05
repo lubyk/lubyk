@@ -126,25 +126,32 @@ function lib:resized(w, h)
 end
 
 -- loop in all links to find click
+-- FIXME: optimize: This is why we need to replace the view with
+-- mimas.View and Widget by mimas.Item.
 local function clickOnLink(self, x, y, type, btn, mod)
   local sx, sy = self:globalPosition()
   -- click global position
   local gx, gy = x + sx, y + sy
-  for _, node in pairs(self.process.nodes) do
-    for _, outlet in ipairs(node.sorted_outlets) do
-      for _, link in ipairs(outlet.links) do
-        local link_view = link.view
-        if link_view then
-          -- link_view global position
-          local lx, ly = link_view:globalPosition()
-          -- position in link_view
-          local rx, ry = gx - lx, gy - ly
-          if rx >= 0 and rx <= link_view.w and
-            ry >= 0 and ry <= link_view.h then
+  for _, process in pairs(self.process.zone.found_processes) do
+    if process.view then
+      -- Only test if links are shown
+      for _, node in pairs(process.nodes) do
+        for _, outlet in ipairs(node.sorted_outlets) do
+          for _, link in ipairs(outlet.links) do
+            local link_view = link.view
+            if link_view then
+              -- link_view global position
+              local lx, ly = link_view:globalPosition()
+              -- position in link_view
+              local rx, ry = gx - lx, gy - ly
+              if rx >= 0 and rx <= link_view.w and
+                ry >= 0 and ry <= link_view.h then
 
-            if link_view.outline:contains(rx, ry) then
-              link_view:click(rx, ry, type, btn, mod)
-              return true
+                if link_view.outline:contains(rx, ry) then
+                  link_view:click(rx, ry, type, btn, mod)
+                  return true
+                end
+              end
             end
           end
         end

@@ -24,9 +24,10 @@ setmetatable(lib, {
     -- OBSOLETE since WebDAV: remove
     observed_files          = {},
     file_observer           = mimas.FileObserver(),
-    -- Manage processes found
-    pending_processes       = {},
+    -- Manage found processes
     found_processes         = {},
+    -- Found views
+    views                   = {},
     -- Callbacks to trigger when a given process comes online
     on_process_connected    = {},
     -- Callbacks to trigger when a given process goes offline

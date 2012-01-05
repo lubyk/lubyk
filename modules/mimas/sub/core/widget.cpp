@@ -34,25 +34,24 @@
 
 namespace mimas {
 
-void Widget::paintEvent(QPaintEvent *event) {
+void Widget::paintEvent(ThreadedLuaObject *obj, QPaintEvent *event) {
   // has to be on the heap
   Painter *p = new Painter(this);
-  if (!parent()) {
+  if (!obj->parent()) {
     // window
-    p->QPainter::fillRect(rect(), palette().color(QPalette::Window));
+    p->QPainter::fillRect(obj->rect(), obj->palette().color(QPalette::Window));
   }
-  paint(*p);
+  Widget::paint(this, p);
   delete p;
-  QWidget::paintEvent(event);
 }
 
-void Widget::paint(Painter &p) {
+void Widget::paint(ThreadedLuaObject *obj, Painter *p) {
   lua_State *L = lua_;
 
   if (!pushLuaCallback("paint")) return;
 
   // Deletable out of Lua
-  lua_pushclass2<Painter>(L, &p, "mimas.Painter");
+  lua_pushclass2<Painter>(L, p, "mimas.Painter");
   lua_pushnumber(L, width());
   lua_pushnumber(L, height());
   // <func> <self> <Painter> <width> <height>
@@ -77,10 +76,10 @@ void Widget::resizeEvent(QResizeEvent *event) {
   }
 }
 
-void Widget::mouseMoveEvent(QMouseEvent *event) {
-  lua_State *L = lua_;
+bool Widget::mouse(ThreadedLuaObject *obj, QMouseEvent *event) {
+  lua_State *L = obj->lua_;
 
-  if (!pushLuaCallback("mouse")) return;
+  if (!obj->pushLuaCallback("mouse")) return false;
   lua_pushnumber(L, event->x());
   lua_pushnumber(L, event->y());
   // <func> <self> <x> <y>
@@ -91,16 +90,22 @@ void Widget::mouseMoveEvent(QMouseEvent *event) {
   }
 
   if (lua_isfalse(L, -1)) {
-    // Pass up
+    // We are not concerned.
     event->ignore();
+  } else if (lua_istrue(L, -1)) {
+    // continue with processing with super
+    lua_pop(L, 1);
+    return false;
   }
+  // processing done.
   lua_pop(L, 1);
+  return true;
 }
 
-void Widget::click(QMouseEvent *event, int type) {
-  lua_State *L = lua_;
+bool Widget::click(ThreadedLuaObject *obj, QMouseEvent *event, int type) {
+  lua_State *L = obj->lua_;
 
-  if (!pushLuaCallback("click")) return;
+  if (!obj->pushLuaCallback("click")) return false;
   lua_pushnumber(L, event->x());
   lua_pushnumber(L, event->y());
   lua_pushnumber(L, type);
@@ -114,26 +119,44 @@ void Widget::click(QMouseEvent *event, int type) {
   }
 
   if (lua_isfalse(L, -1)) {
-    // Pass up
+    // We are not concerned.
     event->ignore();
+  } else if (lua_istrue(L, -1)) {
+    // continue with processing with super
+    lua_pop(L, 1);
+    return false;
   }
+  // processing done.
   lua_pop(L, 1);
+  return true;
 }
 
-void Widget::keyboard(QKeyEvent *event, bool isPressed) {
-  lua_State *L = lua_;
-  if (!L) return;
+bool Widget::keyboard(ThreadedLuaObject *obj, QKeyEvent *event, bool isPressed) {
+  lua_State *L = obj->lua_;
 
-  if (!pushLuaCallback("keyboard")) return;
+  if (!obj->pushLuaCallback("keyboard")) return false;
   lua_pushnumber(L, event->key());
   lua_pushboolean(L, isPressed);
   lua_pushstring(L, event->text().toUtf8());
-  // <fun> <self> <key> <state> <utf8>
-  int status = lua_pcall(L, 4, 0, 0);
+  lua_pushnumber(L, event->modifiers());
+  // <fun> <self> <key> <state> <utf8> <modifiers>
+  int status = lua_pcall(L, 5, 1, 0);
 
   if (status) {
     fprintf(stderr, "Error in keyboard callback: %s\n", lua_tostring(L, -1));
   }
+
+  if (lua_isfalse(L, -1)) {
+    // We are not concerned.
+    event->ignore();
+  } else if (lua_istrue(L, -1)) {
+    // continue with processing with super
+    lua_pop(L, 1);
+    return false;
+  }
+  // processing done.
+  lua_pop(L, 1);
+  return true;
 }
 
 LuaStackSize Widget::getOpenFileName(const char *caption,

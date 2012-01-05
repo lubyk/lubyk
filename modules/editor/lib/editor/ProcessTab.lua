@@ -67,10 +67,6 @@ function lib:click(x, y, op, btn, mod)
   if not self.process.online then
     return
   end
-  --if op == MouseRelease then
-  --  -- open process in PatchingView
-  --  self.process:toggleView()
-  --end
   if op == MousePress then
     local sx, sy = self:globalPosition()
     private.showContextMenu(self, sx + x, sy + y)

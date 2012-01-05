@@ -26,35 +26,71 @@
 
   ==============================================================================
 */
+#ifndef LUBYK_INCLUDE_MIMAS_TAB_WIDGET_H_
+#define LUBYK_INCLUDE_MIMAS_TAB_WIDGET_H_
 
-#include "mimas/Button.h"
+#include "mimas/mimas.h"
+#include "mimas/Widget.h"
+#include <QtGui/QTabWidget>
+
+#include <iostream>
 
 namespace mimas {
 
-bool Button::click(QMouseEvent *event, int type) {
-  lua_State *L = lua_;
-
-  if (!pushLuaCallback("click")) return false;
-
-  lua_pushnumber(L, event->x());
-  lua_pushnumber(L, event->y());
-  lua_pushnumber(L, type);
-  lua_pushnumber(L, event->button());
-  lua_pushnumber(L, event->modifiers());
-  // <func> <self> <x> <y> <type> <btn> <modifiers>
-  int status = lua_pcall(L, 6, 1, 0);
-
-  if (status) {
-    fprintf(stderr, "Error in 'click' callback: %s\n", lua_tostring(L, -1));
+/** A TabWidget displays widgets with tabs.
+ *
+ * @see QWidget
+ * @dub destructor: 'luaDestroy'
+ *      super: 'QTabWidget'
+ */
+class TabWidget : public QTabWidget, public ThreadedLuaObject {
+  Q_OBJECT
+  Q_PROPERTY(QString class READ cssClass)
+public:
+  TabWidget(QWidget *parent = NULL)
+      : QTabWidget(parent) {
+    MIMAS_DEBUG_CC
   }
 
-  if (lua_isfalse(L, -1)) {
-    // Pass up
-    event->ignore();
+  ~TabWidget() {
+    MIMAS_DEBUG_GC
   }
-  lua_pop(L, 1);
-  // We do not ask QPushButton to deal with the click.
-  return true;
-}
+
+  /** Add a tab to the view at the given position.
+   */
+  int insertTab(int pos, QWidget *page, const char *name) {
+    if (pos < 0) {
+      // -1 = add after last, -2 = add after element before last
+      pos = count() + 1 + pos;
+    }
+    return QTabWidget::insertTab(pos, page, QString(name));
+  }
+
+  /** Add a tab to the view.
+   */
+  int addTab(QWidget *page, const char *name) {
+    return QTabWidget::addTab(page, QString(name));
+  }
+
+  QString cssClass() const {
+    return QString("tab_widget");
+  }
+
+  QSize size_hint_;
+
+protected:
+  virtual void keyPressEvent(QKeyEvent *event) {
+    if (!Widget::keyboard(this, event, true))
+      QWidget::keyPressEvent(event);
+  }
+
+  virtual void keyReleaseEvent(QKeyEvent *event) {
+    if (!Widget::keyboard(this, event, false))
+      QWidget::keyReleaseEvent(event);
+  }
+};
 
 } // mimas
+#endif // LUBYK_INCLUDE_MIMAS_TAB_WIDGET_H_
+
+

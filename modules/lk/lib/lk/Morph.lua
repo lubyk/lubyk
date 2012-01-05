@@ -32,6 +32,8 @@ local private = {
   process = {},
   -- Actions related to node handling.
   node    = {},
+  -- Actions related to view handling.
+  view    = {},
 }
 
 setmetatable(lib, {
@@ -45,6 +47,8 @@ setmetatable(lib, {
     processes  = {},
     -- Found stem cells (used to create new processes)
     stem_cells = {},
+    -- Holds the list of views declared for this project.
+    views      = {},
   }
   setmetatable(self, lib)
 
@@ -219,6 +223,7 @@ function private:readFile()
     -- private.set.lubyk(self, def.lubyk)
     func(self, def[k])
   end
+  -- TODO: read views
 end
 
 function private:writeFile()
@@ -296,7 +301,10 @@ end
 function private:createProcess(definition)
   local processes = self.processes
   local name = definition.name
-  if processes[name] then
+  if name == '_views' then
+    -- ERROR, not allowed
+    printf("Cannot create a process named '_views' (reserved name).")
+  elseif processes[name] then
     -- ERROR
     printf("Cannot create existing process '%s'.", definition.name)
   else
@@ -322,6 +330,23 @@ end
 
 --- Change views (we do a deep parsing to detect what to create/delete/update).
 function private.change:views(data)
+  printf("private.change.views: %s", yaml.dump(data))
+  local views = self.views
+  for name, def in pairs(data) do
+    local view = views[name]
+    if def == false then
+      if view then
+        view.file:delete()
+      end
+    elseif not view then
+      private.view.add(self, name, def)
+    else
+      local view_changed = lk.deepMerge(views, name, def)
+      if view_changed then
+        -- write view to filesystem
+      end
+    end
+  end
 end
 
 --=============================================== DUMP
@@ -360,6 +385,30 @@ function private.dump:processes(partial)
       else
         dump[name] = p
       end
+    end
+  end
+  return dump
+end
+
+--- Dump information on views
+function private.dump:views(partial)
+  local to_dump
+  if partial == true then
+    to_dump = self.views
+  else
+    to_dump = partial
+  end
+  local dump = {}
+  for name, def in pairs(to_dump) do
+    if def == false then
+      -- Removal information
+      dump[name] = false
+    elseif partial == true then
+      -- Full dump
+      dump[name] = def.cache
+    else
+      -- Partial dump: just echo changes back
+      dump[name] = def
     end
   end
   return dump
@@ -472,6 +521,7 @@ end
 
 --- Read and parse process patch definition file.
 function private.process.readFile(self, process)
+  process.cache = yaml.load(process.patch:body()) or {}
   if type(process.cache) ~= 'table' then
     process.cache = {}
   end
@@ -535,6 +585,37 @@ function private.node.updateCallback(process, node_name, resource)
       })
     end
   end)
+end
+
+--=============================================== VIEW
+-- When reading a view file 'reading_lkv' is set so we know that we must not
+-- write to lkv file.
+function private.view.add(self, name, info, reading_lkv)
+  local view = {}
+  self.views[name] = view
+  -- set resource
+  view.dir  = private.findOrMakeResource(self, '/_views', true)
+  view.file = private.findOrMakeResource(self, view.dir.url .. '/' .. name .. '.lkv')
+
+  private.view.readFile(self, view)
+  if not reading_lkv then
+    -- This is a new view
+    lk.deepMerge(view, 'cache', info)
+    private.view.writeFile(view)
+  end
+end
+
+--- Read and parse process view definition file.
+function private.view.readFile(self, view)
+  view.cache = yaml.load(view.file:body()) or {}
+  if type(view.cache) ~= 'table' then
+    view.cache = {}
+  end
+end
+
+--- Write patch definition to file.
+function private.view.writeFile(view)
+  view.file:update(yaml.dump(view.cache))
 end
 
 -- We need this for testing

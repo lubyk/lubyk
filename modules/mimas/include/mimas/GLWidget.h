@@ -33,6 +33,7 @@
 using namespace lubyk;
 
 #include "mimas/mimas.h"
+#include "mimas/Widget.h"
 #include <QtGui/QWidget>
 #include <QtGui/QGraphicsScene>
 #include <QtOpenGL/QtOpenGL>
@@ -160,16 +161,36 @@ protected:
     }
   }
 
-  //virtual void mousePressEvent(QMouseEvent *event);
-  //virtual void mouseMoveEvent(QMouseEvent *event);
-  //virtual void mouseDoubleClickEvent(QMouseEvent *event);
-  //virtual void paintEvent(QPaintEvent *event);
-  void keyPressEvent(QKeyEvent *event) {
-    keyboard(event, true);
+  virtual void mousePressEvent(QMouseEvent *event) {
+    if (!Widget::click(this, event, MousePress))
+      QGraphicsView::mousePressEvent(event);
   }
 
-  void keyReleaseEvent(QKeyEvent *event) {
-    keyboard(event, false);
+  virtual void mouseDoubleClickEvent(QMouseEvent *event) {
+    if (!Widget::click(this, event, DoubleClick))
+      QGraphicsView::mouseDoubleClickEvent(event);
+  }
+
+  virtual void mouseReleaseEvent(QMouseEvent *event) {
+    if (!Widget::click(this, event, MouseRelease))
+      QGraphicsView::mouseReleaseEvent(event);
+  }
+
+  virtual void mouseMoveEvent(QMouseEvent *event) {
+    if (!Widget::mouse(this, event))
+      QGraphicsView::mouseMoveEvent(event);
+  }
+
+  //virtual void paintEvent(QPaintEvent *event);
+
+  virtual void keyPressEvent(QKeyEvent *event) {
+    if (!Widget::keyboard(this, event, true))
+      QGraphicsView::keyPressEvent(event);
+  }
+
+  virtual void keyReleaseEvent(QKeyEvent *event) {
+    if (!Widget::keyboard(this, event, false))
+      QGraphicsView::keyReleaseEvent(event);
   }
 
 private:
@@ -213,20 +234,6 @@ private:
   //     fprintf(stderr, "Error in 'paint' callback: %s\n", lua_tostring(L, -1));
   //   }
   // }
-  void keyboard(QKeyEvent *event, bool isPressed) {
-    lua_State *L = lua_;
-
-    if (!pushLuaCallback("keyboard")) return;
-    lua_pushnumber(L, event->key());
-    lua_pushboolean(L, isPressed);
-    lua_pushstring(L, event->text().toUtf8());
-    // <func> <self> <key> <on/off> <utf8>
-    int status = lua_pcall(L, 4, 0, 0);
-
-    if (status) {
-      fprintf(stderr, "Error in 'keyboard' callback: %s\n", lua_tostring(L, -1));
-    }
-  }
 };
 
 } // mimas

@@ -29,6 +29,7 @@
 
 #include "mimas/TableView.h"
 #include "mimas/Painter.h"
+#include "mimas/Widget.h"
 
 namespace mimas {
 
@@ -53,36 +54,12 @@ void TableView::mouseMoveEvent(QMouseEvent *event) {
 }
 
 bool TableView::click(QMouseEvent *event, int type) {
-  lua_State *L = lua_;
-
   if (pushLuaCallback("select")) {
     // ... <select> <self>
     return select(event, type);
   } else {
-    if (!pushLuaCallback("click")) return false;
-    // ... <click> <self>
+    return Widget::click(this, event, type);
   }
-  lua_pushnumber(L, event->x());
-  lua_pushnumber(L, event->y());
-  lua_pushnumber(L, type);
-  lua_pushnumber(L, event->button());
-  lua_pushnumber(L, event->modifiers());
-  // ... <func> <self> <x> <y> <type> <btn> <modifiers>
-  int status = lua_pcall(L, 6, 1, 0);
-
-  if (status) {
-    fprintf(stderr, "Error in 'click' callback: %s\n", lua_tostring(L, -1));
-  }
-  // FIXME: find another way to remove the dotted lines around text after click.
-  clearFocus();
-  if (lua_isfalse(L, -1)) {
-    // Pass to TableView
-    lua_pop(L, 1);
-    return false;
-  }
-
-  lua_pop(L, 1);
-  return true;
 }
 
 bool TableView::select(QMouseEvent *event, int type) {

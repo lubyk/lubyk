@@ -160,7 +160,7 @@ function lib:keyboard(key, on)
         self:setText(self.prefix .. (self:data(i) or self.cue))
       end
     end
-    -- do not continue processing
+    -- Done: do not execute normal operations.
     return
 
   elseif on and key == mimas.Key_Escape then
@@ -169,9 +169,10 @@ function lib:keyboard(key, on)
     if self.editingFinished then
       self:editingFinished(nil)
     end
+    -- Done: do not execute normal operations.
     return
   end
-  -- normal op
-  return false
+  -- Normal operation.
+  return true
 end
 

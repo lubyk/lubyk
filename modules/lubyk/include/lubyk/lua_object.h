@@ -82,7 +82,6 @@ public:
 
   int luaInit(lua_State *L, void *ptr, const char *type_name) throw();
 
-protected:
   /** The caller should lock before calling this.
    * @return: true if the callback is set, false otherwise.
    *
@@ -91,6 +90,7 @@ protected:
    */
   bool pushLuaCallbackl(const char *method, int len) const;
 
+protected:
   void setupLuaThread(lua_State *L) throw();
 };
 

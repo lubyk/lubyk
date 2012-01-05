@@ -34,6 +34,7 @@ using namespace lubyk;
 
 #include "mimas/mimas.h"
 #include "mimas/constants.h"
+#include "mimas/Widget.h"
 
 #include <QtGui/QPushButton>
 #include <QtGui/QMouseEvent>
@@ -56,6 +57,8 @@ class Button : public QPushButton, public ThreadedLuaObject {
 public:
   Button(const char *title = NULL, QWidget *parent = NULL)
       : QPushButton(title, parent) {
+    QObject::connect(this, SIGNAL(clicked()),
+                     this, SLOT(clickedSlot()));
     MIMAS_DEBUG_CC
   }
 
@@ -74,32 +77,28 @@ public:
     update();
   }
 
+  void setText(const char *txt) {
+    QPushButton::setText(QString(txt));
+  }
+
   float hue() {
     return hue_;
   }
 
-protected:
-  virtual void mousePressEvent(QMouseEvent *event) {
-    if (!click(event, MousePress)) {
-      QPushButton::mousePressEvent(event);
+private slots:
+  void clickedSlot() {
+    lua_State *L = lua_;
+
+    if (!pushLuaCallback("click")) return;
+    // <func> <self>
+    int status = lua_pcall(L, 1, 0, 0);
+
+    if (status) {
+      // cannot raise an error here...
+      fprintf(stderr, "Error in 'click' callback: %s\n", lua_tostring(L, -1));
     }
   }
-
-  virtual void mouseDoubleClickEvent(QMouseEvent *event) {
-    if (!click(event, DoubleClick)) {
-      QPushButton::mouseDoubleClickEvent(event);
-    }
-  }
-
-  virtual void mouseReleaseEvent(QMouseEvent *event) {
-    if (!click(event, MouseRelease)) {
-      QPushButton::mouseReleaseEvent(event);
-    }
-  }
-
 private:
-  bool click(QMouseEvent *event, int type);
-
   float hue_;
 };
 

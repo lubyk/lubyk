@@ -195,7 +195,7 @@ function lib:pendingInlet(inlet_url)
   return inlet
 end
 
---- Display ProcessView in the PatchingView.
+--- Display ProcessView in the PatchView.
 function lib:toggleView()
   self.zone:toggleView(self)
 end

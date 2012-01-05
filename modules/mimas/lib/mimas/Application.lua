@@ -19,17 +19,15 @@ function mimas.Application(type)
   local self = constr(type)
   self:setQuitOnLastWindowClosed(Lubyk.mimas_quit_on_close)
   self:setStyleSheet [[
-    .window { background:rgb(38, 38, 38); color: rgb(180,180,180);}
-    .main_window { background:rgb(38, 38, 38); color: rgb(180,180,180);}
+    .window, .main_window, .widget, .table, .list, .menu, .tab_widget::pane, .label {
+      background:#262626;
+      color:rgb(180,180,180);
+    }
     .table {
-      background:rgb(38, 38, 38);
-      color: rgb(180,180,180);
       alternate-background-color:rgb(52, 52, 52);
       border:0;
     }
     .list, .menu {
-      background:rgb(38, 38, 38);
-      color: rgb(180,180,180);
       border:0;
       padding:0;
     }
@@ -57,10 +55,41 @@ function mimas.Application(type)
       selection-color:white;
       selection-background-color: rgb(40,85,140);
     }
-    .widget { background:rgb(38, 38, 38); }
     .glwindow { border-style: none;}
     .glwidget { border-style: none;}
-    .label { background: transparent; color: rgb(180,180,180); }
+    .label { background: transparent; }
+
+    /* TabWidget */
+    .tab_widget { 
+      background:#444;
+    }
+    .tab_widget::pane {
+      position:absolute;
+      top: -1px;
+      border-top:1px solid #999;
+    }
+    .tab_widget::tab-bar {
+      left:15px;
+    }
+    QTabBar::tab {
+      margin-top:8px;
+      border: 1px solid #999;
+      border-top-left-radius: 4px;
+      border-top-right-radius: 4px;
+      padding:2px 5px;
+      background:#777;
+      color:#222;
+    }
+    QTabBar::tab:first {
+      margin-left:0px;
+    }
+    QTabBar::tab:selected {
+      background:#262626;
+      border-bottom:0;
+      margin-top:5px;
+      color:rgb(180,180,180);
+    }
+    /* end TabWidget */
     .slider { qproperty-border:2;
       background:transparent;
       color:hsva(80,255,255,75%);
@@ -71,7 +100,6 @@ function mimas.Application(type)
     #test_name.slider { color:hsv(30,200,200); }
   ]]
 
-  -- TODO: rewrite 'post' to keep a pool of Callback objects (or accept an existing Callback).
   return self
 end
 

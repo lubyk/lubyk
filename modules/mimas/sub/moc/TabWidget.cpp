@@ -1,5 +1,5 @@
 /****************************************************************************
-** Meta object code from reading C++ file 'GLWidget.h'
+** Meta object code from reading C++ file 'TabWidget.h'
 **
 ** Created: Thu Jan 5 17:55:16 2012
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.2)
@@ -7,9 +7,9 @@
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
 
-#include "../../include/mimas/GLWidget.h"
+#include "../../include/mimas/TabWidget.h"
 #if !defined(Q_MOC_OUTPUT_REVISION)
-#error "The header file 'GLWidget.h' doesn't include <QObject>."
+#error "The header file 'TabWidget.h' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 62
 #error "This file was generated using the moc from 4.7.2. It"
 #error "cannot be used with the include files from this version of Qt."
@@ -17,7 +17,7 @@
 #endif
 
 QT_BEGIN_MOC_NAMESPACE
-static const uint qt_meta_data_mimas__GLWidget[] = {
+static const uint qt_meta_data_mimas__TabWidget[] = {
 
  // content:
        5,       // revision
@@ -31,42 +31,42 @@ static const uint qt_meta_data_mimas__GLWidget[] = {
        0,       // signalCount
 
  // properties: name, type, flags
-      24,   16, 0x0a095001,
+      25,   17, 0x0a095001,
 
        0        // eod
 };
 
-static const char qt_meta_stringdata_mimas__GLWidget[] = {
-    "mimas::GLWidget\0QString\0class\0"
+static const char qt_meta_stringdata_mimas__TabWidget[] = {
+    "mimas::TabWidget\0QString\0class\0"
 };
 
-const QMetaObject mimas::GLWidget::staticMetaObject = {
-    { &QGraphicsView::staticMetaObject, qt_meta_stringdata_mimas__GLWidget,
-      qt_meta_data_mimas__GLWidget, 0 }
+const QMetaObject mimas::TabWidget::staticMetaObject = {
+    { &QTabWidget::staticMetaObject, qt_meta_stringdata_mimas__TabWidget,
+      qt_meta_data_mimas__TabWidget, 0 }
 };
 
 #ifdef Q_NO_DATA_RELOCATION
-const QMetaObject &mimas::GLWidget::getStaticMetaObject() { return staticMetaObject; }
+const QMetaObject &mimas::TabWidget::getStaticMetaObject() { return staticMetaObject; }
 #endif //Q_NO_DATA_RELOCATION
 
-const QMetaObject *mimas::GLWidget::metaObject() const
+const QMetaObject *mimas::TabWidget::metaObject() const
 {
     return QObject::d_ptr->metaObject ? QObject::d_ptr->metaObject : &staticMetaObject;
 }
 
-void *mimas::GLWidget::qt_metacast(const char *_clname)
+void *mimas::TabWidget::qt_metacast(const char *_clname)
 {
     if (!_clname) return 0;
-    if (!strcmp(_clname, qt_meta_stringdata_mimas__GLWidget))
-        return static_cast<void*>(const_cast< GLWidget*>(this));
+    if (!strcmp(_clname, qt_meta_stringdata_mimas__TabWidget))
+        return static_cast<void*>(const_cast< TabWidget*>(this));
     if (!strcmp(_clname, "ThreadedLuaObject"))
-        return static_cast< ThreadedLuaObject*>(const_cast< GLWidget*>(this));
-    return QGraphicsView::qt_metacast(_clname);
+        return static_cast< ThreadedLuaObject*>(const_cast< TabWidget*>(this));
+    return QTabWidget::qt_metacast(_clname);
 }
 
-int mimas::GLWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+int mimas::TabWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
-    _id = QGraphicsView::qt_metacall(_c, _id, _a);
+    _id = QTabWidget::qt_metacall(_c, _id, _a);
     if (_id < 0)
         return _id;
     

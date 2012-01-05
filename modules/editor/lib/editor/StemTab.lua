@@ -45,7 +45,7 @@ function lib:click(x, y, op, btn, mod)
       -- drop
       self.dragging = false
       local gx, gy = self.ghost:globalPosition()
-      local px, py = self.zone.main_view.patching_view:globalPosition()
+      local px, py = self.zone.main_view.patch_view:globalPosition()
       self.ghost.def = {
         x   = gx - px,
         y   = gy - py,
@@ -67,8 +67,8 @@ function lib:click(x, y, op, btn, mod)
           self.ghost = nil
           return
         end
-        -- continue processing keyboard
-        return false
+        -- Normal processing
+        return true
       end
 
       self.ghost:addWidget(edit)
@@ -80,8 +80,8 @@ function lib:click(x, y, op, btn, mod)
         if name == '' then
           if self.ghost then
             self.ghost:hide()
+            self.ghost = nil
           end
-          self.ghost = nil
         else
           self.ghost:setName(name)
           self.ghost.def.name = name
@@ -94,7 +94,9 @@ function lib:click(x, y, op, btn, mod)
           local ghost = self.ghost
           ghost:animate(MAX_WAIT_MS, function()
             ghost:hide()
-            self.ghost = nil
+            if ghost == self.ghost then
+              self.ghost = nil
+            end
           end)
 
           -- Remove ghost on process connection

@@ -12,7 +12,7 @@ using namespace mimas;
 /* ============================ Constructors     ====================== */
 
 /** mimas::Button::Button(const char *title=NULL, QWidget *parent=NULL)
- * include/mimas/Button.h:58
+ * include/mimas/Button.h:59
  */
 static int Button_Button(lua_State *L) {
   try {
@@ -173,7 +173,7 @@ static int QWidget_close(lua_State *L) {
 
 
 /** QString mimas::Button::cssClass() const 
- * include/mimas/Button.h:66
+ * include/mimas/Button.h:69
  */
 static int Button_cssClass(lua_State *L) {
   try {
@@ -278,7 +278,7 @@ static int QWidget_hide(lua_State *L) {
 
 
 /** float mimas::Button::hue()
- * include/mimas/Button.h:77
+ * include/mimas/Button.h:84
  */
 static int Button_hue(lua_State *L) {
   try {
@@ -477,7 +477,7 @@ static int QWidget_resize(lua_State *L) {
 
 
 /** void mimas::Button::setHue(float hue)
- * include/mimas/Button.h:72
+ * include/mimas/Button.h:75
  */
 static int Button_setHue(lua_State *L) {
   try {
@@ -655,6 +655,26 @@ static int QWidget_setStyleSheet(lua_State *L) {
     lua_pushfstring(L, "setStyleSheet: %s", e.what());
   } catch (...) {
     lua_pushfstring(L, "setStyleSheet: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** void mimas::Button::setText(const char *txt)
+ * include/mimas/Button.h:80
+ */
+static int Button_setText(lua_State *L) {
+  try {
+    Button *self = *((Button**)dubL_checksdata(L, 1, "mimas.Button"));
+    if (!self) throw dub::Exception("Using deleted mimas.Button in setText");
+    const char *txt = dubL_checkstring(L, 2);
+    self->setText(txt);
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "setText: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "setText: Unknown exception");
   }
   return lua_error(L);
 }
@@ -907,6 +927,7 @@ static const struct luaL_Reg Button_member_methods[] = {
   {"setSizePolicy"     , QWidget_setSizePolicy},
   {"setStyle"          , QWidget_setStyle},
   {"setStyleSheet"     , QWidget_setStyleSheet},
+  {"setText"           , Button_setText},
   {"show"              , QWidget_show},
   {"showFullScreen"    , QWidget_showFullScreen},
   {"size"              , QWidget_size},
