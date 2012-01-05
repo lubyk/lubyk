@@ -21,7 +21,18 @@ local lib = {type='lk.Morph'}
 lib.__index = lib
 lk.Morph    = lib
 
-local private = {}
+local private = {
+  -- Actions triggered on a 'set' operation (while reading project).
+  set     = {},
+  -- Actions triggered on a 'change' operation (update from GUI).
+  change  = {},
+  -- Actions triggered on a (partial) 'dump' operation.
+  dump    = {},
+  -- Actions related to process handling.
+  process = {},
+  -- Actions related to node handling.
+  node    = {},
+}
 
 setmetatable(lib, {
   -- new method
@@ -75,6 +86,7 @@ function lib:openFile(filepath)
 end
 
 function lib:close()
+  -- TODO: notify changes (mark old processes with 'false')
   -- TODO: close all processes in same zone
   -- clear
   self.processes = {}
@@ -90,26 +102,51 @@ function lib:get(url)
   end
   return resource:body()
 end
+
+function lib:change(definitions)
+  for k, v in pairs(definitions) do
+    local func = private.change[k]
+    if func then
+      func(self, v)
+    end
+  end
+end
+
+function lib:dump()
+  return self:partialDump {processes = true, views = true}
+end
+
+function lib:partialDump(data)
+  local dump = {}
+  local d = private.dump
+  for k, v in pairs(data) do
+    local func = d[k]
+    if func then
+      dump[k] = func(self, v)
+    end
+  end
+  printf("PARTIAL DUMP:\n%s----------------------------\n%s", yaml.dump(data), yaml.dump(dump))
+  return dump
+end
+
 --============================================= lk.Service delegate
 
 --- Answering requests to Morph.
 function lib:callback(url, ...)
   if url == lubyk.dump_url then
-    local dump = private.dumpAll(self)
-    return dump
+    return self:dump()
   elseif url == lubyk.update_url then
-    local data = ...
     -- async call, no return value
-    -- update state
+    --print(yaml.dump(data))
+    self:change(...)
+    self.service:notify(self:partialDump(...))
   elseif url == lubyk.get_url then
     return self:get(...)
   elseif url == lubyk.quit_url then
     self:quit()
-  elseif url == lubyk.execute_url then
-    private.execute(self, ...)
   else
     -- ignore
-    print('Bad message to lk.Morph', url)
+    printf("Bad message '%s' to lk.Morph.", url)
   end
 end
 
@@ -157,11 +194,6 @@ function lib:processDisconnected(service)
 end
 
 --=============================================== PRIVATE
-local DUMP_KEYS = {'lubyk', 'processes'}
-private.dump = {}
-private.set  = {}
-private.process = {}
-private.node = {}
 
 --- Start service and launch processes.
 function private:start(opts)
@@ -183,25 +215,44 @@ function private:readFile()
     def = {}
   end
   local h = private.set
-  for _, k in ipairs(DUMP_KEYS) do
+  for k, func in pairs(private.set) do
     -- private.set.lubyk(self, def.lubyk)
-    h[k](self, def[k])
+    func(self, def[k])
   end
-end
-
-function private:dumpAll()
-  local dump = {}
-  local h = private.dump
-  for _, k in ipairs(DUMP_KEYS) do
-    h[k](self, dump)
-  end
-  return dump
 end
 
 function private:writeFile()
-  self.lkp_file:update(yaml.dump(private.dumpAll(self)))
+  self.lkp_file:update(yaml.dump(self:dump()))
 end
 
+--- Helper Used while parsing/updating patch definitions.
+function private.findOrMakeResource(self, url, is_dir)
+  local resource = self.root.cache[url]
+  if not resource then
+    local fullpath = self.root.path .. url
+    if not lk.exist(fullpath) then
+      if is_dir then
+        lk.makePath(fullpath)
+      else
+        lk.makePath(lk.directory(fullpath))
+        lk.writeall(fullpath, '')
+      end
+    end
+    resource = lk.FileResource(url, self.root)
+  end
+  return resource
+end
+function private:startStemCell()
+  worker:spawn([[
+  require 'lubyk'
+  stem = lk.StemCell()
+  run()
+  ]])
+end
+
+--=============================================== SET
+
+-- Parse Lubyk version information.
 function private.set:lubyk(lubyk)
   if lubyk and lubyk.version then
     self.lubyk = lubyk
@@ -210,10 +261,7 @@ function private.set:lubyk(lubyk)
   end
 end
 
-function private.dump:lubyk(dump)
-  dump.lubyk = self.lubyk
-end
-
+--- Parse processes machine assignments.
 function private.set:processes(processes)
   for name, info in pairs(processes or {}) do
     if type(info) == 'table' then
@@ -225,6 +273,23 @@ function private.set:processes(processes)
       info = {host = info}
     end
     private.process.add(self, name, info, true)
+  end
+end
+
+--=============================================== CHANGE
+
+--- Change processes: create, delete or change machine assignment.
+function private.change:processes(data)
+  for name, def in pairs(data) do
+    if def == false then
+      private.removeProcess(self, name)
+    elseif not self.processes[name] then
+      private.createProcess(self, def)
+    else
+      -- Change machine assignation. Other changes are notified by
+      -- process.
+      -- TODO
+    end
   end
 end
 
@@ -250,33 +315,60 @@ function private:removeProcess(name)
     end
   else
     -- ERROR
-    printf("Cannot create existing process '%s'.", definition.name)
+    printf("Cannot create existing process '%s'.", name)
   end
 end
 
-function private.dump:processes(dump)
-  local processes = {}
-  dump.processes = processes
-  for name, process in pairs(self.processes) do
-    local p, empty = {}, true
-    if process.host ~= Lubyk.host then
-      p.host = process.host
-      empty = false
-    end
-    if process.dir.name ~= name then
-      p.dir = process.dir.name
-      empty = false
-    end
-    if empty then
-      processes[name] = ''
+
+--- Change views (we do a deep parsing to detect what to create/delete/update).
+function private.change:views(data)
+end
+
+--=============================================== DUMP
+
+--- Dump Lubyk version information.
+function private.dump:lubyk(partial)
+  return self.lubyk
+end
+
+--- Dump information on processes machine assignments.
+function private.dump:processes(partial)
+  local to_dump
+  if partial == true then
+    to_dump = self.processes
+  else
+    to_dump = partial
+  end
+  local dump = {}
+  for name, def in pairs(to_dump) do
+    if def == false then
+      -- Removal information
+      dump[name] = false
     else
-      processes[name] = p
+      local process = self.processes[name]
+      local p, empty = {}, true
+      if process.host ~= Lubyk.host then
+        p.host = process.host
+        empty = false
+      end
+      if process.dir.name ~= name then
+        p.dir = process.dir.name
+        empty = false
+      end
+      if empty then
+        dump[name] = ''
+      else
+        dump[name] = p
+      end
     end
   end
+  return dump
 end
 
---=============================================== PRIVATE process
+--=============================================== PROCESS
 
+--- A process appeared on the network, we connect to this process to receive
+-- notifications.
 function private.process:connect(process, remote_process)
   process.sub = zmq.SimpleSub(function(changes)
     -- we receive notifications, update content
@@ -285,10 +377,15 @@ function private.process:connect(process, remote_process)
   process.sub:connect(remote_process.sub_url)
 end
 
+--- A process died, disconnect.
 function private.process:disconnect(process)
   process.sub = nil
 end
 
+--- We receive notifications from processes.
+-- FIXME: Process changes should go through lk.Morph so that we do not need to
+-- receive process notifications (most of these are GUI events).
+-- Another solution would be to use zmq filtering.
 function private.process.changed(self, process, changes)
   -- write changes to file    
   local cache = process.cache
@@ -373,22 +470,7 @@ function private.process.changed(self, process, changes)
   end                                         
 end
 
--- This is called when we do an update on the resource (file save).
-function private.node.updateCallback(process, node_name, resource)
-  print("CODE CHANGE", process.name, node_name)
-  -- We launch a new thread to make sure that we do not hang the server
-  -- if this fails.
-  process.update_thread = lk.Thread(function()
-    if process.online then
-      process.push:send(lubyk.update_url, {
-        nodes = {
-          [node_name] = { code = resource:body()}
-        }
-      })
-    end
-  end)
-end
-
+--- Read and parse process patch definition file.
 function private.process.readFile(self, process)
   if type(process.cache) ~= 'table' then
     process.cache = {}
@@ -400,26 +482,9 @@ function private.process.readFile(self, process)
   end
 end
 
+--- Write patch definition to file.
 function private.process.writeFile(process)
   process.patch:update(yaml.dump(process.cache))
-end
-
---=============================================== add/remove process
-function private.findOrMakeResource(self, url, is_dir)
-  local resource = self.root.cache[url]
-  if not resource then
-    local fullpath = self.root.path .. url
-    if not lk.exist(fullpath) then
-      if is_dir then
-        lk.makePath(fullpath)
-      else
-        lk.makePath(lk.directory(fullpath))
-        lk.writeall(fullpath, '')
-      end
-    end
-    resource = lk.FileResource(url, self.root)
-  end
-  return resource
 end
 
 -- When reading a file 'reading_lkp' is set so we know that we must not
@@ -444,6 +509,7 @@ function private.process.add(self, name, info, reading_lkp)
   private.process.start(self, process)
 end
 
+--- Try to start a process by calling the corresponding stem cell.
 function private.process:start(process)
   local stem = self.stem_cells[process.host]
   if not stem then
@@ -454,22 +520,21 @@ function private.process:start(process)
   stem.push:send(lubyk.execute_url, 'spawn', process.name)
 end
 
-function private:execute(action, ...)
-  if action == 'createProcess' then
-    private.createProcess(self, ...)
-  elseif action == 'removeProcess' then
-    private.removeProcess(self, ...)
-  else
-    printf("Cannot execute unknown action '%s'.", action)
-  end
-end
+--=============================================== NODE
 
-function private:startStemCell()
-  worker:spawn([[
-  require 'lubyk'
-  stem = lk.StemCell()
-  run()
-  ]])
+-- This is called when we do an update on the resource (file save).
+function private.node.updateCallback(process, node_name, resource)
+  -- We launch a new thread to make sure that we do not hang the server
+  -- if this fails.
+  process.update_thread = lk.Thread(function()
+    if process.online then
+      process.push:send(lubyk.update_url, {
+        nodes = {
+          [node_name] = { code = resource:body()}
+        }
+      })
+    end
+  end)
 end
 
 -- We need this for testing

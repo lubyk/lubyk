@@ -87,7 +87,8 @@ function lib:change(definition)
 end
 
 --- Remove (delete) process from patch.
-function lib:remove()
+function lib:remove(skip_morph)
+  self.known_to_morph = false
   local view = self.view
   if view then
     view:animate(8000)
@@ -101,12 +102,9 @@ function lib:remove()
     end)
   end
 
-  local morph = self.zone.morph
-  self.removed = true
-  if morph then
-    morph.push:send(lubyk.execute_url, 'removeProcess', self.name)
-  else
-    self.push:send(lubyk.quit_url)
+  if not skip_morph then
+    -- This remove operation is not part of a morph changed notification.
+    self.zone.morph:removeProcess(self)
   end
 end
 
@@ -287,3 +285,4 @@ end
 function lib:url()
   return '/' .. self.name
 end
+

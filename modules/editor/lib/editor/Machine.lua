@@ -48,32 +48,34 @@ function lib:setStem(remote)
   end
 end
 
+--- Ask morph to create a new process.
 function lib:createProcess(def)
   local stem = self.stem
-  -- show dialog for name and tell machine to create
-  -- a new process
   if stem then
-    -- FIXME: First write def to morph
     local morph = self.zone.morph
     if morph then
       def.host = stem.stem_name
-      morph.push:send(lubyk.execute_url, 'createProcess', def)
+      morph:createProcess(def)
     end
   end
 end
 
+--- Add a new process to the tab view.
 function lib:addProcess(service)
   if self.view then
     self.view:addProcess(service)
   end
 end
 
+--- Remove a process from the tab view.
 function lib:removeProcess(process_name)
   if self.view then
     self.view:removeProcess(process_name)
   end
 end
 
+--- Returns true if there is nothing to show and the machine
+-- can be removed.
 function lib:empty()
   return self.view and #self.view.process_list == 0
 end

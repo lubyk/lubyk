@@ -11,6 +11,11 @@ local lib      = {type='editor.Morph'}
 lib.__index    = lib
 editor.Morph   = lib
 
+local private  = {
+  -- Set GUI state from lk.Morph notifications.
+  set = {},
+}
+
 setmetatable(lib, {
   -- new method
  __call = function(lib, zone)
@@ -30,10 +35,15 @@ function lib:connect(service)
   self.req     = service.req
   self.push    = service.push
   self.machine = self.zone.machine_list:getMachine(service.ip)
-  -- noop
+  -- Receive changes from morph
+  self.sub = zmq.SimpleSub(function(changes)
+    -- we receive notifications, update content
+    private.changed(self, changes)
+  end)
+  self.sub:connect(service.sub_url)
   self.online = true
-  self:mountDav()
-  self:sync()
+  private.mountDav(self)
+  private.sync(self)
 end
 
 function lib:disconnect(remote)
@@ -41,7 +51,22 @@ function lib:disconnect(remote)
   self.online = false
 end
 
-function lib:mountDav()
+function lib:createProcess(def)
+  self.push:send(lubyk.update_url, {
+    processes = { [def.name] = def },
+  })
+end
+
+function lib:removeProcess(process)
+  process.removed = true
+  self.push:send(lubyk.update_url, {
+    processes = { [process.name] = false },
+  })
+end
+
+--=============================================== PRIVATE
+
+function private:mountDav()
   -- mount morph DAV server
   self.dav_url = string.format('http://%s:8103', self.ip)
   -- option -S == do not prompt when server goes offline
@@ -49,13 +74,37 @@ function lib:mountDav()
   self.mount_fd = worker:execute(cmd)
 end
 
-function lib:sync()
+function private:sync()
   -- Get patch definition
-  local patch = self.req:request(lubyk.dump_url)
-  local processes = patch.processes
-  if processes then
-    -- create disconnected processes in machine view
-    for name, info in pairs(processes) do
+  private.changed(self, self.req:request(lubyk.dump_url))
+end
+
+--=============================================== CHANGED
+--- We receive change information from lk.Morph.
+function private:changed(changes)
+  local set = private.set
+  for k, v in pairs(changes) do
+    local func = set[k]
+    if func then
+      func(self, v)
+    end
+  end
+end
+
+
+--=============================================== SET
+
+function private.set:processes(data)
+  local processes = self.zone.found_processes
+  for name, info in pairs(data) do
+    local process = processes[name]
+    if info == false then
+      -- removed process
+      if process then
+        process:remove(true)
+      end
+    elseif not process then
+      -- create disconnected processes in machine view
       local host
       if type(info) == 'string' then
         host = info
@@ -69,7 +118,10 @@ function lib:sync()
       end
       -- Declare
       local process = self.zone:findProcess(name, host)
-      process.keep_alive = true
+      process.known_to_morph = true
+    else
+      -- Mark as known_to_morph
+      process.known_to_morph = true
     end
   end
 end

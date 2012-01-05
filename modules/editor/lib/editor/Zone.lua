@@ -229,7 +229,7 @@ function lib:processDisconnected(remote_process)
     self.morph = nil
     -- Remove all pending process tabs
     for name, process in pairs(self.found_processes) do
-      process.keep_alive = false
+      process.known_to_morph = false
       if not process.online then
         self:processDisconnected {name = process.name, ip = process.machine.name}
       end
@@ -249,7 +249,7 @@ function lib:processDisconnected(remote_process)
           p:disconnectProcess(process)
         end
       end
-      clear_process = not process.keep_alive
+      clear_process = not process.known_to_morph
     end
   end
   if clear_process then

@@ -59,6 +59,10 @@ function lib:animate(max_wait, timeout_clbk)
     self.thread:kill()
   end
   self.thread = lk.Thread(function()
+    local tab
+    if self.process then
+      tab = self.process.tab
+    end
     local start_time = worker:now()
     local t = 0
     local i = 0
@@ -68,9 +72,14 @@ function lib:animate(max_wait, timeout_clbk)
       t = worker:now() - start_time
       -- blink while waiting for creation
       local sat = (0.75 + 0.2 * math.cos(t * math.pi / 750)) % 1.0
-      self.lbl_back  = mimas.Brush(self.process.hue, sat, sat, 0.5)
+      local lbl_back  = mimas.Brush(self.process.hue, sat, sat, 0.5)
       if not self:deleted() then
+        self.lbl_back = lbl_back
         self:update()
+      end
+      if tab and not tab:deleted() then
+        tab.brush = lbl_back
+        tab:update()
       end
     end
     if timeout_clbk then

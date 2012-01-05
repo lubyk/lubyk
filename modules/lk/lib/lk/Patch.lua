@@ -298,11 +298,10 @@ function lib:callback(url, ...)
     -- sync call, return content
     return self:dump()
   elseif url == lubyk.update_url then
-    local data = ...
     -- async call, no return value
     --print(yaml.dump(data))
-    self:set(data)
-    self:notify(self:partialDump(data))
+    self:set(...)
+    self:notify(self:partialDump(...))
   else
     -- Inter process communication
     local inlet = self:get(url)
