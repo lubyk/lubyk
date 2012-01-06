@@ -42,12 +42,14 @@ function lib:connect(service)
   end)
   self.sub:connect(service.sub_url)
   self.online = true
+  self.zone.control_tabs:addPlusView()
   private.mountDav(self)
   private.sync(self)
 end
 
 function lib:disconnect(remote)
   -- noop
+  self.zone.control_tabs:removePlusView()
   self.online = false
 end
 
@@ -138,10 +140,7 @@ function private.set:views(data)
       end
     elseif not view then
       -- create new ControlView
-      -- Declare
-      view = editor.ControlView(info, self.zone)
-      self.zone.main_view.control_tabs:insertTab(0, view, name)
-      views[name] = view
+      views[name] = self.zone.control_tabs:addView(name, info)
     end
   end
 end

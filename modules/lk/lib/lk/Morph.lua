@@ -223,7 +223,12 @@ function private:readFile()
     -- private.set.lubyk(self, def.lubyk)
     func(self, def[k])
   end
-  -- TODO: read views
+  self.views_dir = private.findOrMakeResource(self, '/_views', true)
+  local dir = lk.Dir(self.views_dir.path)
+  for file in dir:glob('%.lkv') do
+    local name = string.match(file, '/([^/]+)%.lkv$')
+    private.view.add(self, name, {}, true)
+  end
 end
 
 function private:writeFile()
@@ -594,8 +599,7 @@ function private.view.add(self, name, info, reading_lkv)
   local view = {}
   self.views[name] = view
   -- set resource
-  view.dir  = private.findOrMakeResource(self, '/_views', true)
-  view.file = private.findOrMakeResource(self, view.dir.url .. '/' .. name .. '.lkv')
+  view.file = private.findOrMakeResource(self, self.views_dir.url .. '/' .. name .. '.lkv')
 
   private.view.readFile(self, view)
   if not reading_lkv then

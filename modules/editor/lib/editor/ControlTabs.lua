@@ -9,9 +9,28 @@
 local lib = lk.SubClass(mimas, 'TabWidget')
 editor.ControlTabs = lib
 
+local private = {}
+
 -- constants
 function lib:init(zone)
   self.zone = zone
+end
+
+function lib:addView(name, def)
+  local view = editor.ControlView(name, def, self.zone)
+  self:insertTab(-2, view, name)
+  if self:count() == 2 then
+    self:selectTab(0)
+  end
+  return view
+end
+
+function lib:resized(w, h)
+  self.width  = w
+  self.height = h
+end
+
+function lib:addPlusView()
   local add = mimas.Widget()
   self.add_tab = add
   add.lay = mimas.VBoxLayout(add)
@@ -47,8 +66,8 @@ function lib:init(zone)
   self:addTab(self.add_tab, '+')
 end
 
-function lib:resized(w, h)
-  self.width  = w
-  self.height = h
+function lib:removePlusView()
+  self.add_tab:hide()
+  self.add_tab:__gc()
+  self.add_tab = nil
 end
-

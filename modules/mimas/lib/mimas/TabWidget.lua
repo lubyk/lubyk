@@ -46,6 +46,7 @@ function mt:insertTab(pos, widget, label)
   return pos
 end
 
+mt.selectTab = mt.setCurrentIndex
 local Key_Left, Key_Right = mimas.Key_Left, mimas.Key_Right
 local Modifier = mimas.AltModifier
 function mt:keyboard(key, on, chr, mod)
@@ -55,12 +56,12 @@ function mt:keyboard(key, on, chr, mod)
     if key == Key_Right then
       local selected = self:currentIndex()
       local count = self:count()
-      self:setCurrentIndex((selected+1) % count)
+      self:selectTab((selected+1) % count)
       return
     elseif key == Key_Left then
       local selected = self:currentIndex()
       local count = self:count()
-      self:setCurrentIndex((selected+count-1) % count)
+      self:selectTab((selected+count-1) % count)
       return
     end
   end

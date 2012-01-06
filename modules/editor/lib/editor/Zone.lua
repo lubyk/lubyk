@@ -37,9 +37,9 @@ setmetatable(lib, {
 
   private.setupLibrary(self)
 
-  private.setupProcessWatch(self, process_watch or lk.ProcessWatch())
-
   private.setupView(self)
+
+  private.setupProcessWatch(self, process_watch or lk.ProcessWatch())
 
   function self.file_observer.pathChanged(obs, path)
     self:pathChanged(path)
@@ -300,5 +300,6 @@ function private.setupView(self)
     app:removeZone(self.name)
   end
   self.machine_list = view.machine_list
+  self.control_tabs = view.control_tabs
   view:show()
 end

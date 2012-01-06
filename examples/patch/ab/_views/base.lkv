@@ -1,0 +1,11 @@
+s1:
+  type: mimas.Slider
+  hue: 0.2
+  x: 10
+  y: 30
+  w: 40
+  h: 100
+  connect:
+    /a/metro/@tempo:
+      min: 10
+      max: 700
