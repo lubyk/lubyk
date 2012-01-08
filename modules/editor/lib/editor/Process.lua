@@ -14,6 +14,8 @@ local lib      = {type='editor.Process'}
 lib.__index    = lib
 editor.Process = lib
 
+local private  = {}
+
 setmetatable(lib, {
   -- new method
  __call = function(lib, name)
@@ -23,6 +25,8 @@ setmetatable(lib, {
     y              = 100,
     nodes          = {},
     pending_inlets = {},
+    -- List of controls connected to this process
+    controls       = {},
   }
 
   setmetatable(self, lib)
@@ -242,9 +246,16 @@ function lib:connect(remote_process, zone)
   self.hue = remote_process.info.hue or 0.5
 
   --======================================= SUB client
-  self.sub = zmq.SimpleSub(function(changes)
+  self.sub = zmq.SimpleSub(function(...)
+    printf("editor.Process sub %s", yaml.dump(...))
+    local url, data = ...
     -- we receive notifications, update content
-    self:set(changes)
+    if url == lubyk.control_url then
+      -- notify views
+      private.updateControls(self, ...)
+    else
+      self:set(data)
+    end
   end)
   self.sub:connect(remote_process.sub_url)
 
@@ -257,6 +268,9 @@ function lib:connect(remote_process, zone)
   -- editor.Process needed by ProcessTab
   remote_process.process = self
   zone:toggleView(self)
+
+  --- Query for control values
+  private.getControlValues(self)
 end
 
 function lib:connected()
@@ -286,3 +300,20 @@ function lib:url()
   return '/' .. self.name
 end
 
+function private:updateControls(_, target, value)
+  local connections = self.controls[target]
+  if connections then
+    for _, conn in ipairs(connections) do
+      conn:set(value)
+    end
+  end
+end
+
+function private:getControlValues()
+  for target, list in pairs(self.controls) do
+    for _, conn in ipairs(list) do
+      -- Get current value (will be notified to all)
+      self.push:send(lubyk.control_url, conn.url)
+    end
+  end
+end

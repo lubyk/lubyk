@@ -40,6 +40,10 @@ setmetatable(lib, {
   env.inlet  = lk.InletMethod(self)
   -- method to declare outlets
   env.outlet = lk.OutletMethod(self)
+  -- method to declare default settings values
+  env.defaults = function(...)
+    private.defaults(self, ...)
+  end
 
   process.nodes[name] = self
   -- pending connection resolution
@@ -156,7 +160,7 @@ function lib:setParams(params)
   end
 end
 
-function private.dumpParams(self)
+function private:dumpParams()
   local env = self.env
   local has_params = false
   local res = {}
@@ -283,4 +287,41 @@ function lib:remove()
   end)
   self.env = nil
   self.process.need_cleanup = true
+end
+
+--- Receive a control event: update setting.
+function lib:control(param, value)
+  printf("%s::: %s %f", 'node', param, value or 0.00001)
+  local env = self.env
+  local var = string.match(param, '^@(.*)$')
+  if var then
+    if value then
+      local inlet = self.inlets[var]
+      if inlet then
+        inlet.receive(value)
+        return env[var] or value
+      else
+        env[var] = value
+        return value
+      end
+    else
+      return env[var]
+    end
+  end
+end
+
+function private:defaults(hash)
+  self.defaults = hash
+  local env = self.env
+  local process = self.process
+  local base = self:url() .. '/@'
+  -- FIXME: we should change control notification
+  -- from single url access to hash based updates.
+  -- Then we could just detect @params...
+  for key, value in pairs(hash) do
+    -- FIXME: What if someone sets 'defaults', 'inlet' or 'outlet' ?
+    -- Also in control....
+    env[key] = value
+    process:notify(control_url, base .. key, value)
+  end
 end

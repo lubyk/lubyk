@@ -1,27 +1,32 @@
 ---
-y: 20
-x: 114
+y: 22
+x: 58
 name: a
 nodes:
   metro:
     y: 45
     x: 30
     name: metro
+    params:
+      tempo: 60
+    hue: 0
     links:
       bang:
         /a/counter/in/bang: true
+  p:
     hue: 0
-    params:
-      tempo: 60
+    x: 70
+    y: 114
   counter:
-    y: 75
+    hue: 0
     x: 30
     name: counter
-    hue: 0
+    y: 75
     links:
       count:
         /b/div/in/input: true
+        /a/p/in/print: true
         /c/v/in/win: true
-h: 150
-w: 150
 hue: 0
+w: 150
+h: 150

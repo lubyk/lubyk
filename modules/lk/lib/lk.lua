@@ -52,6 +52,9 @@ lubyk.dump_url        = '/lk/dump'
 lubyk.update_url      = '/lk/update'
 -- Execute method (actions depend on the specific service)
 lubyk.execute_url     = '/lk/do' -- action, params
+-- Control parameters (notified). Not the same as update: we
+-- do not change the processing tree, we only tweak settings.
+lubyk.control_url     = '/lk/ctrl'
 -- Quit process
 lubyk.quit_url        = '/lk/quit'
 

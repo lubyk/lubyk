@@ -424,9 +424,14 @@ end
 --- A process appeared on the network, we connect to this process to receive
 -- notifications.
 function private.process:connect(process, remote_process)
-  process.sub = zmq.SimpleSub(function(changes)
+  process.sub = zmq.SimpleSub(function(url, changes)
     -- we receive notifications, update content
-    private.process.changed(self, process, changes)
+    if url == lubyk.update_url then
+      printf("UPDATE (%s) %s", url, yaml.dump(changes))
+      private.process.changed(self, process, changes)
+    elseif url == lubyk.control_url then
+      -- ignore
+    end
   end)
   process.sub:connect(remote_process.sub_url)
 end

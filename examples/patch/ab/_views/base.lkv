@@ -6,6 +6,29 @@ s1:
   w: 40
   h: 100
   connect:
-    /a/metro/@tempo:
-      min: 10
-      max: 700
+    x:
+      /a/metro/@tempo:
+        min: 1
+        max: 3000
+s2:
+  type: mimas.Slider
+  hue: 0
+  x: 65
+  y: 30
+  w: 40
+  h: 100
+  connect:
+    x:
+      /c/v/@size:
+p1:
+  type: mimas.Pad
+  hue: 0
+  x: 80
+  y: 30
+  w: 180
+  h: 180
+  connect:
+    x:
+      /c/v/@x:
+    y:
+      /c/v/@y:

@@ -304,6 +304,27 @@ static int Slider_setName(lua_State *L) {
 
 
 
+/** void mimas::Slider::setRange(double min, double max)
+ * include/mimas/Slider.h:176
+ */
+static int Slider_setRange(lua_State *L) {
+  try {
+    Slider *self = *((Slider**)dubL_checksdata(L, 1, "mimas.Slider"));
+    if (!self) throw dub::Exception("Using deleted mimas.Slider in setRange");
+    double min = dubL_checknumber(L, 2);
+    double max = dubL_checknumber(L, 3);
+    self->setRange(min, max);
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "setRange: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "setRange: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
 /** void mimas::Slider::setStyle(const char *text)
  * include/mimas/Slider.h:142
  */
@@ -345,7 +366,7 @@ static int Slider_setStyleSheet(lua_State *L) {
 
 
 /** void mimas::Slider::setValue(double remote_value)
- * include/mimas/Slider.h:180
+ * include/mimas/Slider.h:184
  */
 static int Slider_setValue(lua_State *L) {
   try {
@@ -385,7 +406,7 @@ static int Slider_sizeHint(lua_State *L) {
 
 
 /** void mimas::Slider::sliderChangedSlot(double value)
- * include/mimas/Slider.h:189
+ * include/mimas/Slider.h:193
  */
 static int Slider_sliderChangedSlot(lua_State *L) {
   try {
@@ -500,6 +521,7 @@ static const struct luaL_Reg Slider_member_methods[] = {
   {"setBorderWidth"    , Slider_setBorderWidth},
   {"setHue"            , Slider_setHue},
   {"setName"           , Slider_setName},
+  {"setRange"          , Slider_setRange},
   {"setStyle"          , Slider_setStyle},
   {"setStyleSheet"     , Slider_setStyleSheet},
   {"setValue"          , Slider_setValue},

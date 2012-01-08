@@ -15,15 +15,14 @@ tempo = tempo or 120
 timer = nil
 -- Private
 if not timer then
-  timer = lk.Thread(function()
-    while timer:shouldRun() do
-      timer:run()
-    end
+  timer = lk.Timer(tempo, function()
+    bang(true)
   end)
+  timer:start()
 end
 
 -- Accessor
-function inlet.tempo(va)
+function inlet.tempo(val)
   tempo = val
   if tempo > 0 then
     -- interval in [ms]
@@ -31,10 +30,4 @@ function inlet.tempo(va)
   else
     timer:stop()
   end
-end
-
-function timer:run()
-  sleep(10)
-  --sleep(0.01)
-  bang(true)
 end

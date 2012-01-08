@@ -49,6 +49,7 @@ function lib:update(changes)
         widget.id = id
         widgets[id] = widget
         self:addWidget(widget)
+        private.setupConnections(self, widget)
         private.placeWidget(self, widget, def)
         private.connectWidget(self, widget, def)
       end
@@ -74,4 +75,92 @@ function private:placeWidget(widget, def)
 end
 
 function private:connectWidget(widget, def)
+  local connect = def.connect or {}
+  for dir, connections in pairs(connect) do
+    local connector = private.getConnector(widget, dir)
+    for target, opt in pairs(connections) do
+      local connected = connector.connections[target]
+      if opt == false then
+        if connected then
+          -- TODO: REMOVE CONNECTION
+        end
+      elseif connected then
+        -- TODO: UPDATE
+      else
+        if type(opt) ~= 'table' then
+          opt = {}
+        end
+        local name, url = string.match(target, '^/([^/]+)/(.*)$')
+        -- Create new connection
+        local process = self.zone:findProcess(name)
+        local list = process.controls[url]
+        if not list then
+          list = {}
+          process.controls[url] = list
+        end
+        local conn = {
+          process = process,
+          url     = url, 
+          set     = private.setValue,
+          connector  = connector,
+        }
+        if opt.min then
+          connector:setRange(opt.min, opt.max)
+        end
+        connector.connections[target] = conn
+        table.insert(list, conn)
+        -- Query for current value (we will get a notification back)
+        -- TODO: remove once we have settings in process notifications and
+        -- dump !
+        if process.online then
+          private.sliderChanged(connector, nil)
+        else
+          -- we will query when it comes online
+        end
+      end
+    end
+  end
+end
+
+function private:setupConnections(widget)
+  widget.connections = {}
+  widget.sliderChanged = private.sliderChanged
+end
+
+--- self == widget
+function private:sliderChanged(value)
+  for _, conn in pairs(self.connections) do
+    local process = conn.process
+    if process.online then
+      process.push:send(lubyk.control_url, conn.url, value)
+    end
+  end
+end
+
+--- self == conn
+function private:setValue(value)
+  if value then
+    self.connector:setValue(value)
+  end
+end
+
+-- Get the connector for the given direction/param.
+-- TODO: remove and make 'getConnector' a method in the widgets.
+function private.getConnector(widget, dir)
+  local typ = widget.type
+  if typ == 'mimas.Slider' then
+    -- TODO
+    -- if dir == 'x' then
+    --   widget:setType(mimas.Horizontal)
+    -- else
+    --   widget:setType(mimas.Vertical)
+    -- end
+    return widget
+  elseif typ == 'mimas.Pad' then
+    if dir == 'x' then
+      return widget.range_x
+    else
+      return widget.range_y
+    end
+  end
 end

@@ -34,26 +34,26 @@
 
 namespace mimas {
 
-void Widget::paintEvent(ThreadedLuaObject *obj, QPaintEvent *event) {
-  // has to be on the heap
+void Widget::paintEvent(QPaintEvent *event) {
   Painter *p = new Painter(this);
-  if (!obj->parent()) {
+  if (!parent()) {
     // window
-    p->QPainter::fillRect(obj->rect(), obj->palette().color(QPalette::Window));
+    p->QPainter::fillRect(rect(), palette().color(QPalette::Window));
   }
-  Widget::paint(this, p);
+  Widget::paint(this, p, width(), height());
   delete p;
+  QWidget::paintEvent(event);
 }
 
-void Widget::paint(ThreadedLuaObject *obj, Painter *p) {
-  lua_State *L = lua_;
+void Widget::paint(ThreadedLuaObject *obj, Painter *p, int w, int h) {
+  lua_State *L = obj->lua_;
 
-  if (!pushLuaCallback("paint")) return;
+  if (!obj->pushLuaCallback("paint")) return;
 
   // Deletable out of Lua
   lua_pushclass2<Painter>(L, p, "mimas.Painter");
-  lua_pushnumber(L, width());
-  lua_pushnumber(L, height());
+  lua_pushnumber(L, w);
+  lua_pushnumber(L, h);
   // <func> <self> <Painter> <width> <height>
   int status = lua_pcall(L, 4, 0, 0);
 

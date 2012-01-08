@@ -41,7 +41,7 @@ using namespace lubyk;
 
 namespace mimas {
 
-/** Slider (async slider).
+/** Slider (async slider). FIXME: replace this C++ class by a sub-class of mimas.Widget written in Lua ?
  *
  * @dub lib_name:'Slider_core'
  *      destructor: 'luaDestroy'
@@ -171,6 +171,10 @@ public:
 
   int borderWidth() const {
     return border_width_;
+  }
+
+  void setRange(double min, double max) {
+    range_.setRange(min, max);
   }
 
 public slots:

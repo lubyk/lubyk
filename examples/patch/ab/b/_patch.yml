@@ -3,21 +3,21 @@ y: 214
 x: 72
 name: b
 nodes:
+  play:
+    hue: 0.3
+    x: 9
+    name: play
+    y: 97
+    params:
+      channel: 2
   div:
-    y: 35
+    hue: 0.3
     x: 68
     name: div
-    hue: 0.3
+    y: 35
     links:
       output:
         /b/play/in/trigger: true
-  play:
-    y: 97
-    x: 9
-    name: play
-    hue: 0.3
-    params:
-      channel: 2
-h: 150
-w: 150
 hue: 0.3
+w: 150
+h: 150

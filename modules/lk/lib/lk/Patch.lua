@@ -289,19 +289,25 @@ function lib:findClass(class_name)
   return code or lk.findCode(class_name)
 end
 
---===========================================================
---================= Process related methods ===========================
+--=========================================================== Process
+
+local update_url,       control_url,       dump_url = 
+      lubyk.update_url, lubyk.control_url, lubyk.dump_url
 
 --- Answering requests to Process.
 function lib:callback(url, ...)
-  if url == lubyk.dump_url then
+  if url == dump_url then
     -- sync call, return content
     return self:dump()
-  elseif url == lubyk.update_url then
+  elseif url == update_url then
     -- async call, no return value
     --print(yaml.dump(data))
     self:set(...)
-    self:notify(self:partialDump(...))
+    self:notify(update_url, self:partialDump(...))
+  elseif url == control_url then
+    local target, data = ...
+    self:notify(control_url, target, 
+      self:control(target, data))
   else
     -- Inter process communication
     local inlet = self:get(url)
@@ -314,11 +320,26 @@ function lib:callback(url, ...)
 end
 
 --- Inform listening editors that something changed.
-function lib:notify(changes)
+function lib:notify(...)
   local service = self.service
   if service then
-    service:notify(changes)
+    service:notify(...)
   end
+end
+
+--- relative url : ex. metro/@tempo
+function lib:control(url, value)
+  local parts = lk.split(url, '/')
+  local param_name = parts[#parts]
+  local loc = self
+  for i = 1,(#parts-1) do
+    local part = parts[i]
+    loc = loc.nodes[part]
+    if not loc then
+      return nil-- abort
+    end
+  end
+  return loc:control(param_name, value)
 end
 
 --- In order to resolve cross-process links, return a process by a given name.
@@ -356,7 +377,7 @@ function lib:sync()
   local patch = self:findCode(self:url() .. '/_patch.yml')
   if patch then
     loadFromYaml(self, patch)
-    self:notify(self:dump())
+    self:notify(lubyk.update_url, self:dump())
   else
     print("Could not sync: no _patch.yml")
   end

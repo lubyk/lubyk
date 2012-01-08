@@ -23,7 +23,7 @@ if not timer then
 end
 
 -- Accessor
-function inlet.tempo(va)
+function inlet.tempo(val)
   tempo = val
   if tempo > 0 then
     -- interval in [ms]

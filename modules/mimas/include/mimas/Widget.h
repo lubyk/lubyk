@@ -48,7 +48,7 @@ class Painter;
  *
  * @see QWidget
  * @dub destructor: 'luaDestroy'
- *      ignore: 'keyboard,click'
+ *      ignore: 'keyboard,click,paint'
  *      super: 'QWidget'
  */
 class Widget : public QWidget, public ThreadedLuaObject {
@@ -100,8 +100,7 @@ public:
   static bool keyboard(ThreadedLuaObject *obj, QKeyEvent *event, bool isPressed);
   static bool mouse(ThreadedLuaObject *obj, QMouseEvent *event);
   static bool click(ThreadedLuaObject *obj, QMouseEvent *event, int type);
-  static bool paintEvent(ThreadedLuaObject *obj, QPaintEvent *event);
-  static void paint(ThreadedLuaObject *obj, Painter &p);
+  static void paint(ThreadedLuaObject *obj, Painter *p, int w, int h);
 protected:
   virtual void closeEvent(QCloseEvent *event) {
     lua_State *L = lua_;
@@ -137,10 +136,7 @@ protected:
       QWidget::mouseReleaseEvent(event);
   }
 
-  virtual void paintEvent(QPaintEvent *event) {
-    Widget::paintEvent(this, event);
-    QWidget::paintEvent(event);
-  }
+  virtual void paintEvent(QPaintEvent *event);
 
   virtual void resizeEvent(QResizeEvent *event);
 
