@@ -232,7 +232,11 @@ function private:readFile()
 end
 
 function private:writeFile()
-  self.lkp_file:update(yaml.dump(self:dump()))
+  local dump = self:dump()
+  -- not saved in this file
+  dump.views = nil
+  dump.lubyk = self.lubyk
+  self.lkp_file:update(yaml.dump(dump))
 end
 
 --- Helper Used while parsing/updating patch definitions.
@@ -428,9 +432,8 @@ function private.process:connect(process, remote_process)
     -- we receive notifications, update content
     if url == lubyk.update_url then
       printf("UPDATE (%s) %s", url, yaml.dump(changes))
+      -- FIXME: filter control events ?
       private.process.changed(self, process, changes)
-    elseif url == lubyk.control_url then
-      -- ignore
     end
   end)
   process.sub:connect(remote_process.sub_url)

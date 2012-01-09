@@ -59,13 +59,15 @@ end
 
 function lib:setInterval(interval)
   if self.thread then
-    -- running, remove from scheduler
+    -- Running timer: remove from scheduler.
     self:stop()
     if interval == 0 then
+      -- Stop.
       self.interval = interval
       return
     end
   else
+    -- Not running: done.
     self.interval = interval
     return
   end
@@ -76,8 +78,8 @@ function lib:setInterval(interval)
     n = self.thread.wrap.at or 0
   end
   if self.interval > 0 then
+    -- Was running, move back to reschedule.
     while n > sched.now do
-      -- interrupting timer
       n = n - self.interval
     end
   else

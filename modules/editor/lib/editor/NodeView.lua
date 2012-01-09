@@ -223,8 +223,9 @@ function lib:click(x, y, type, btn, mod)
           }
         }
         ---- Update all incoming links
+        local old_process_len = string.len(old_process:url())
         for _, inlet in ipairs(self.node.sorted_inlets) do
-          local url = process:url() .. string.sub(inlet:url(), string.len(old_process:url()) + 1)
+          local url = process:url() .. string.sub(inlet:url(), old_process_len + 1)
           for _,link in ipairs(inlet.links) do
             local node = link.source.node
             lk.deepMerge(changed_processes, node.process, {
@@ -244,6 +245,39 @@ function lib:click(x, y, type, btn, mod)
             })
           end
         end
+        ---- Update all views
+        local base_url = old_process:url() .. '/' .. node.name .. '/'
+        local new_url  = process:url() .. '/' .. node.name .. '/'
+        local base_url_len = string.len(base_url)
+        for view_name, view in pairs(self.zone.views) do
+          for wid_id, widget in pairs(view) do
+            local connect = widget.connect
+            if connect then
+              for dir, def in pairs(connect) do
+                for target, opt in pairs(def) do
+                  printf("MATCH ? '%s' == '%s'", string.sub(target, 1, base_url_len), base_url)
+                  if string.sub(target, 1, base_url_len) == base_url then
+                    -- Update
+                    local new_target = new_url .. '/' .. string.sub(target, base_url_len + 1)
+                    lk.deepMerge(changed_processes, self.zone.morph, {
+                      _views = {
+                        [view_name] = {
+                          [wid_id] = {
+                            [dir] = {
+                              target     = false,
+                              new_target = opt,
+                            }
+                          }
+                        }
+                      }
+                    })
+                  end
+                end
+              end
+            end
+          end
+        end
+
         -- Execute receipt
         for p, def in pairs(changed_processes) do
           printf("--=============================================== %s [\n%s--=============================================== ]", p.name, yaml.dump(def))

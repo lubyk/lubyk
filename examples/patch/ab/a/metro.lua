@@ -9,16 +9,19 @@
 inlet('tempo', 'Set tempo [float: bpm].')
 outlet('bang', 'Sends a bang on every beat [true].')
 
--- Public values
-tempo = tempo or 120
+-- Public parameters.
+defaults {
+  tempo = 120,
+}
 
-timer = nil
 -- Private
 if not timer then
-  timer = lk.Timer(tempo, function()
-    bang(true)
-  end)
-  timer:start()
+  if tempo > 0 then
+    timer = lk.Timer(60000 / tempo)
+    timer:start()
+  else
+    timer = lk.Timer(0)
+  end
 end
 
 -- Accessor
@@ -30,4 +33,8 @@ function inlet.tempo(val)
   else
     timer:stop()
   end
+end
+
+function timer:tick()
+  bang(true)
 end

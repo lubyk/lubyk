@@ -145,6 +145,7 @@ end
 -- or  [parent node name]*/node name
 --
 -- ALSO USED BY editor.Process
+-- TODO: cache result by full url ?
 function lib:get(url, mt)
   -- not greedy regexp
   local process_name, path = string.match(url, '^/([^/]*)/(.*)$')
@@ -234,22 +235,21 @@ end
 -- data for parts that contain keys in the given table.
 function lib:partialDump(data)
   local res = {}
+  local nodes = self.nodes
   for k, v in pairs(data) do
-    if ALLOWED_KEYS[k] then
-      if k == 'nodes' then
-        res.nodes = {}
-        local nodes = res.nodes
-        for k, node_data in pairs(v) do
-          local node = self.nodes[k]
-          if node then
-            nodes[k] = node:partialDump(node_data)
-          else
-            nodes[k] = false
-          end
+    if k == 'nodes' then
+      res.nodes = {}
+      local res_nodes = res.nodes
+      for k, node_data in pairs(v) do
+        local node = nodes[k]
+        if node then
+          res_nodes[k] = node:partialDump(node_data)
+        else
+          res_nodes[k] = false
         end
-      else
-        res[k] = self[k]
       end
+    elseif ALLOWED_KEYS[k] then
+      res[k] = self[k]
     end
   end
   return res
@@ -291,8 +291,8 @@ end
 
 --=========================================================== Process
 
-local update_url,       control_url,       dump_url = 
-      lubyk.update_url, lubyk.control_url, lubyk.dump_url
+local update_url,       dump_url = 
+      lubyk.update_url, lubyk.dump_url
 
 --- Answering requests to Process.
 function lib:callback(url, ...)
@@ -300,18 +300,18 @@ function lib:callback(url, ...)
     -- sync call, return content
     return self:dump()
   elseif url == update_url then
+    local data = ...
     -- async call, no return value
-    --print(yaml.dump(data))
-    self:set(...)
-    self:notify(update_url, self:partialDump(...))
-  elseif url == control_url then
-    local target, data = ...
-    self:notify(control_url, target, 
-      self:control(target, data))
+    self:set(data)
+    local pdump = self:partialDump(data)
+    self:notify(pdump)
   else
     -- Inter process communication
     local inlet = self:get(url)
     if inlet then
+      -- FIXME: how to catch errors here ? Maybe we could mark the
+      -- current thread with an error function that would be used
+      -- by the scheduler's runThread...
       inlet.receive(...)
     else
       print('Received calls on missing inlet', url)
@@ -377,7 +377,7 @@ function lib:sync()
   local patch = self:findCode(self:url() .. '/_patch.yml')
   if patch then
     loadFromYaml(self, patch)
-    self:notify(lubyk.update_url, self:dump())
+    self:notify(self:dump())
   else
     print("Could not sync: no _patch.yml")
   end

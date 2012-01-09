@@ -103,11 +103,6 @@ function lib:eval(code_str)
 end
 
 function lib:set(definition)
-  -- load params before evaluating script code
-  local params = definition.params
-  if params then
-    self:setParams(params)
-  end
 
   if definition.code and definition.code ~= self.code then
     self:eval(definition.code)
@@ -135,9 +130,15 @@ function lib:set(definition)
   end
 
   for k, v in pairs(definition) do
-    if k == 'source' or
-       k == 'params' or
-       k == 'links' then
+    if k == '_' then
+      -- load params after evaluating script code (so that
+      -- allowed params and inlets are defined).
+      local params = definition._
+      if params then
+        private.setParams(self, params)
+      end
+    elseif k == 'source' or
+           k == 'links' then
       -- ignore (we want to run these in a specific order)
     else
       self[k] = v
@@ -150,30 +151,6 @@ function lib:set(definition)
   end
 end
 
-function lib:setParams(params)
-  self.params = {}
-  local p   = self.params
-  local env = self.env
-  for k, v in pairs(params) do
-    env[k] = v
-    p[k] = true
-  end
-end
-
-function private:dumpParams()
-  local env = self.env
-  local has_params = false
-  local res = {}
-  for k, _ in pairs(self.params or {}) do
-    has_params = true
-    res[k] = env[k]
-  end
-  if has_params then
-    return res
-  else
-    return nil
-  end
-end
 
 function lib:error(...)
   print(string.format(...))
@@ -255,7 +232,8 @@ function lib:dump()
     x    = self.x,
     y    = self.y,
     code = self.code,
-    params = private.dumpParams(self),
+    --- Params
+    _    = private.dumpParams(self, true),
     inlets  = dumpSlots(self.sorted_inlets),
     outlets = dumpSlots(self.sorted_outlets),
   }
@@ -264,8 +242,10 @@ end
 function lib:partialDump(data)
   local res = {}
   for k, v in pairs(data) do
-    -- 'inlets' and 'outlets' should never be in the data
-    if k ~= 'inlets' and k ~= 'outlets' and k ~= 'name' then
+    if k == '_' then
+      res[k] = private.dumpParams(self, v)
+    elseif k ~= 'inlets' and k ~= 'outlets' and k ~= 'name' then
+      -- 'inlets' and 'outlets' should never be in the data
       res[k] = self[k]
     end
   end
@@ -289,39 +269,77 @@ function lib:remove()
   self.process.need_cleanup = true
 end
 
---- Receive a control event: update setting.
-function lib:control(param, value)
-  printf("%s::: %s %f", 'node', param, value or 0.00001)
+function private:defaults(hash)
+  self.defaults = hash
   local env = self.env
-  local var = string.match(param, '^@(.*)$')
-  if var then
-    if value then
-      local inlet = self.inlets[var]
-      if inlet then
-        inlet.receive(value)
-        return env[var] or value
-      else
-        env[var] = value
-        return value
-      end
-    else
-      return env[var]
+  for k, v in pairs(hash) do
+    if env[k] == nil then
+      -- Do not overwrite current values on script reload.
+      env[k] = v
     end
   end
 end
 
-function private:defaults(hash)
-  self.defaults = hash
-  local env = self.env
-  local process = self.process
-  local base = self:url() .. '/@'
-  -- FIXME: we should change control notification
-  -- from single url access to hash based updates.
-  -- Then we could just detect @params...
-  for key, value in pairs(hash) do
-    -- FIXME: What if someone sets 'defaults', 'inlet' or 'outlet' ?
-    -- Also in control....
-    env[key] = value
-    process:notify(control_url, base .. key, value)
+--- Receive a control event: update setting.
+function private:setParams(params)
+  -- Prepare for partial dump
+  local pdump    = {}
+  self.pdump     = pdump
+  self.pdump_params = params
+  local env      = self.env
+  local inlets   = self.inlets
+  local defaults = self.defaults or {}
+  if params == true then
+    -- Query asked for a dump of the params.
+    pdump = defaults
+  else
+    for k, value in pairs(params) do
+      if not defaults[k] then
+        -- Error notification: Invalid param.
+        -- TODO: ERROR_VALUE
+        --printf("Cannot set parameter '%s' in node '%s'.", k, self.name)
+        pdump[k] = {}
+      else
+        local inlet = inlets[k]
+        if inlet then
+          inlet.receive(value)
+        else
+          env[k] = value
+        end
+        pdump[k] = env[k]
+      end
+    end
+  end
+end
+
+function private:dumpParams(params)
+  if params == self.pdump_params then
+    -- Optimization, send partial dump back.
+    return self.pdump
+  else
+    local defaults = self.defaults
+    if defaults then
+      local env = self.env
+      local res = {}
+      if params == true then
+        -- Dump all
+        for k, _ in pairs(defaults) do
+          res[k] = env[k]
+        end
+      else
+        for k, _ in pairs(params) do
+          -- Invalid param ?
+          if not defaults[k] then
+            -- Mark as invalid
+            res[k] = {}
+          else
+            res[k] = env[k]
+          end
+        end
+      end
+      return res
+    else 
+      return nil
+    end
   end
 end

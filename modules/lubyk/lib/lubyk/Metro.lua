@@ -9,8 +9,10 @@
 inlet('tempo', 'Set tempo [float: bpm].')
 outlet('bang', 'Sends a bang on every beat [true].')
 
--- Public values
-tempo = tempo or 120
+-- Public parameters.
+defaults {
+  tempo = 120,
+}
 
 -- Private
 if not timer then

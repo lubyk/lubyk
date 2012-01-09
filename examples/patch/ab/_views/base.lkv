@@ -7,7 +7,7 @@ s1:
   h: 100
   connect:
     x:
-      /a/metro/@tempo:
+      /a/metro/_/tempo:
         min: 1
         max: 3000
 s2:
@@ -19,16 +19,28 @@ s2:
   h: 100
   connect:
     x:
-      /c/v/@size:
+      /c/v/_/size:
+s3:
+  type: mimas.Slider
+  hue: 0
+  x: 120
+  y: 30
+  w: 40
+  h: 100
+  connect:
+    x:
+      /a/counter/_/step:
+        min: 0.1
+        max: 100
 p1:
   type: mimas.Pad
   hue: 0
-  x: 80
+  x: 175
   y: 30
   w: 180
   h: 180
   connect:
     x:
-      /c/v/@x:
+      /c/v/_/x:
     y:
-      /c/v/@y:
+      /c/v/_/y:

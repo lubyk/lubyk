@@ -194,7 +194,7 @@ public slots:
     lua_State *L = lua_;
 
     if (!pushLuaCallback("sliderChanged")) return;
-    lua_pushnumber(lua_, value);
+    lua_pushnumber(L, value);
     // ... <sliderChanged> <self> <value>
     int status = lua_pcall(L, 2, 0, 0);
 

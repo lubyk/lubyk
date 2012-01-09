@@ -1,28 +1,38 @@
-inlet('win')
+inlet('animate')
 
--- Parameters that are always notified with script changes and that
--- are recorded on settings save.
+-- Default values for parameters. This also declares which values have to be
+-- exported in a dump operation (to get a settings snapshot for example).
 defaults {
   x    = 0.5,
   y    = 0.5,
   size = 0.5,
+  hue  = 0.3,
 }
+
+local TIME_SCALE = math.pi / 1000 -- one rotation per second
+local sin, abs, min = math.sin, math.abs, math.min
 
 if not win then
   win = mimas.Window()
   win:show()
+  win:move(10,10)
+  win:resize(300,300)
 end
 
+t = t or 0
+
 function win:paint(p, w, h)
-  local px, py = w * x, h * y
-  local r = math.min(w, h) * size / 2
-  p:setBrush(mimas.Color(hue, 0.3, 0.3))
-  p:setPen(2, mimas.Color(hue, 0.5, 0.5))
+  local px = w * x
+  local r = min(w, h) * size / 2
+  local height = h - 2 * r - 7
+  local py = h - (height * abs(sin(t * TIME_SCALE))) - r
+  p:setBrush(mimas.Color(hue, 0.5, 0.5))
+  p:setPen(7, mimas.Color(hue, 0.8))
   p:drawEllipse(px - r, py - r, 2 * r, 2 * r)
 end
 win:update()
 
-function inlet.win(v)
-  hue = v / 80 % 1.0
+function inlet.animate(v)
+  t = v
   win:update()
 end

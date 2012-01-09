@@ -179,7 +179,7 @@ function lib:findProcess(name, host)
       }
     else
       -- process
-      process = editor.Process(name)
+      process = editor.Process(name, self)
       process.machine = machine
     end
 

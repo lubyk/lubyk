@@ -66,6 +66,10 @@ function lib:removeProcess(process)
   })
 end
 
+function lib:change(def)
+  self.push.send(lubyk.update_url, def)
+end
+
 --=============================================== PRIVATE
 
 function private:mountDav()

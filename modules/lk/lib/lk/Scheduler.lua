@@ -199,7 +199,7 @@ function lib:scheduleAt(at, thread)
     ne = prev.at_next
   end
   if self.mimas and self.at_next.at ~= previous_at then
-    -- We need to reschedule becase this method can be called from a GUI
+    -- We need to reschedule because this method can be called from a GUI
     -- callback and we won't get back to the loop to do this.
     self.poller:resumeAt(self.at_next.at)
   end
@@ -332,9 +332,7 @@ function private:runThread(thread)
 
   if not ok then
     -- a = error
-    if thread.fd then
-      self:removeFd(thread)
-    end
+    -- Do not remove from fd.
     print('ERROR', a, t.co, debug.traceback(t.co))
   elseif event then
     if thread.fd then

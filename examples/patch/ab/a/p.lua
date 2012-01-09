@@ -10,8 +10,8 @@ inlet('print', 'Print/dump incoming value [any].')
 
 function inlet.print(v)
   if type(v) == 'table' then
-    print(yaml.dump(v))
+    --print(yaml.dump(v))
   else
-    print(v)
+    --print(v)
   end
 end

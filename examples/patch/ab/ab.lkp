@@ -3,6 +3,6 @@ lubyk:
     major: 0
     minor: 5
 processes:
-  a:
-  b:
-  c:
+  a: 
+  c: 
+  b: 

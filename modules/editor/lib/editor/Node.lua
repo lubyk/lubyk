@@ -14,6 +14,8 @@ editor.Node = lib
 
 -- Minimal width of LineEdit to create node
 local MINW = 100
+local WeakTable = {__mode = 'v'}
+local private = {}
 
 setmetatable(lib, {
   --- Create a new editor.Node reflecting the content of a remote
@@ -31,13 +33,19 @@ setmetatable(lib, {
     hue            = 0.2,
     x              = 100,
     y              = 100,
-    inlets         = setmetatable({}, {__mode = 'v'}),
+    inlets         = setmetatable({}, WeakTable),
     sorted_inlets  = {},
-    outlets        = setmetatable({}, {__mode = 'v'}),
+    outlets        = setmetatable({}, WeakTable),
     sorted_outlets = {},
     process        = process,
     parent         = process,
     zone           = process.zone,
+    -- List of connected controls indexed by param name
+    controls       = setmetatable({}, WeakTable),
+    -- Sub-nodes
+    nodes          = {},
+    -- Current param values
+    params         = {},
   }
 
   -- List of inlet prototypes (already linked) to use
@@ -65,7 +73,10 @@ end
 -- remote. To actually change the remote Node, use "change".
 function lib:set(def)
   for k, v in pairs(def) do
-    if k == 'code' then
+    if k == '_' then
+      -- setParams
+      private.setParams(self, v)
+    elseif k == 'code' then
       setCode(self, v)
     elseif k == 'hue' or
            k == 'inlets' or
@@ -105,6 +116,8 @@ end
 function lib:dump()
   local res = {name = self.name, hue = self.hue, code = self.code}
   res.links = dumpSlots(self.sorted_outlets)
+  res._ = self.params
+
   return res
 end
 
@@ -311,4 +324,51 @@ function lib.makeGhost(node_def, zone)
     end
   end
   return ghost
+end
+
+function private:setParams(def)
+  printf("editor.Node:setParams : %s", yaml.dump(def))
+  local params = self.params
+  for k, v in pairs(def) do
+    params[k] = v
+    local list = self.controls[k]
+    if list then
+      for _, conn in ipairs(list) do
+        --- TODO: we need to detect an error value for unknown parameters
+        -- so that we can mark the widget as "error". ERROR_VALUE ?
+        printf("SET %s = %f", conn.param_name, v)
+        conn:set(v)
+      end
+    end
+  end
+end
+
+function lib:delete()
+  self:deleteView()
+  self:disconnectControls()
+end
+
+-- Node has been deleted or process is going offline.
+function lib:disconnectControls()
+  -- Disconnect controls.
+  for k, list in pairs(self.controls) do
+    for _, conn in ipairs(list) do
+      conn.view:disconnect(conn)
+    end
+  end
+end
+
+function lib:connectControl(param_name, conn)
+  local list = self.controls[param_name]
+  if not list then
+    list = {}
+    self.controls[param_name] = list
+  end
+  table.insert(list, conn)
+  -- Avoid list GC before last connection.
+  conn.list = list
+  local value = self.params[param_name]
+  if value then
+    conn:set(value)
+  end
 end

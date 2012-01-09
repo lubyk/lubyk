@@ -95,8 +95,7 @@ function private:showContextMenu(gx, gy)
   end)
 
   menu:addAction('Restart', '', function()
-    -- TODO:
-    printf("Restart action not implemented yet...")
+    self.process:restart()
   end)
 
   menu:addAction('Remove', '', function()

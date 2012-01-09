@@ -24,9 +24,7 @@ nodes:
     y: 75
     links:
       count:
-        /b/div/in/input: true
-        /a/p/in/print: true
-        /c/v/in/win: true
+        /c/v/in/animate: true
 hue: 0
 w: 150
 h: 150

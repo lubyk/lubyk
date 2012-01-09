@@ -124,7 +124,7 @@ function lib:mouse(x, y)
   if self.click_position and not self.dragging and manhattanDist(self.click_position, {x=x,y=y}) > START_DRAG_DIST then
     -- start drag operation: self becomes ghost
     self.dragging = true
-    self.ghost = editor.ProcessView { name = '', hue = math.random(), nodes = {}, pending_inlets = {}, delegate = zone }
+    self.ghost = editor.ProcessView { name = '', hue = math.random(), nodes = {}, pending_inlets = {}, zone = zone }
     self.ghost.is_ghost = true
     self.ghost:resize(EDIT_WIDTH + 20,100)
     main_view:addWidget(self.ghost)

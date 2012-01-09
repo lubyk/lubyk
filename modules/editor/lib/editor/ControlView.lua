@@ -16,7 +16,9 @@ function lib:init(name, def, zone)
   self.name = name
   self.zone = zone
   self.widgets = {}
-  -- Update view from definition
+  -- Disconnected connections.
+  self.disconnected = {}
+  -- Update view from definition.
   self:update(def)
 end
 
@@ -24,6 +26,18 @@ function lib:remove()
   if not self:deleted() then
     self:hide()
     self:__gc()
+  end
+end
+
+function lib:processConnected(process)
+  local list = self.disconnected
+  -- TODO: reconnect offline widgets
+  for i, conn in ipairs(list) do
+    if conn.process == process then
+      -- connect
+      private.connectToNode(self, conn)
+      table.remove(list, i)
+    end
   end
 end
 
@@ -55,6 +69,12 @@ function lib:update(changes)
       end
     end
   end
+end
+
+function lib:disconnect(connection)
+  table.insert(self.disconnected, connection)
+  -- TODO: mark connector as disabled
+  -- connection.connector:disable()
 end
 
 function private:placeWidget(widget, def)
@@ -90,32 +110,51 @@ function private:connectWidget(widget, def)
         if type(opt) ~= 'table' then
           opt = {}
         end
-        local name, url = string.match(target, '^/([^/]+)/(.*)$')
-        -- Create new connection
-        local process = self.zone:findProcess(name)
-        local list = process.controls[url]
-        if not list then
-          list = {}
-          process.controls[url] = list
+        local parts = lk.split(target, '/')
+        -- Remove '' element.
+        table.remove(parts, 1)
+        local process_name = parts[1]
+        local process = self.zone:findProcess(process_name)
+        -- Remove process name.
+        table.remove(parts, 1)
+        local param_name = parts[#parts]
+        -- Remove param name.
+        table.remove(parts, #parts)
+        -- Remove '_' (param indicator).
+        table.remove(parts, #parts)
+        -- Build msg template.
+        local msg = {nodes = {}}
+        local path = msg.nodes
+        for i, part in ipairs(parts) do
+          path[part] = {}
+          path = path[part]
         end
+        path._ = {}
+
+        -- Create new connection.
         local conn = {
-          process = process,
-          url     = url, 
-          set     = private.setValue,
+          view       = self,
+          process    = process,
+          set        = private.setValue,
+          -- self during set
           connector  = connector,
+          -- params to send to process
+          param_name = param_name,
+          param_list = path._,
+          msg        = msg,
+          -- To reconnect
+          parts      = parts,
         }
         if opt.min then
           connector:setRange(opt.min, opt.max)
         end
+        -- Set connection from widget to process.
         connector.connections[target] = conn
-        table.insert(list, conn)
-        -- Query for current value (we will get a notification back)
-        -- TODO: remove once we have settings in process notifications and
-        -- dump !
         if process.online then
-          private.sliderChanged(connector, nil)
+          -- Set connection from editor.Node to widget.
+          private.connectToNode(self, conn)
         else
-          -- we will query when it comes online
+          self:disconnect(conn)
         end
       end
     end
@@ -127,12 +166,23 @@ function private:setupConnections(widget)
   widget.sliderChanged = private.sliderChanged
 end
 
---- self == widget
+function private:connectToNode(conn)
+  local node = conn.process
+  for i, part in ipairs(conn.parts) do
+    node = node:findNode(part)
+  end
+  node:connectControl(conn.param_name, conn)
+end
+
+--- self == connector (widget or range)
 function private:sliderChanged(value)
   for _, conn in pairs(self.connections) do
     local process = conn.process
     if process.online then
-      process.push:send(lubyk.control_url, conn.url, value)
+      -- Pointer inside conn.msg to update value
+      local param_list = conn.param_list
+      param_list[conn.param_name] = value
+      process.push:send(lubyk.update_url, conn.msg)
     end
   end
 end
@@ -140,7 +190,12 @@ end
 --- self == conn
 function private:setValue(value)
   if value then
-    self.connector:setValue(value)
+    if type(value) == 'table' then
+      -- ERROR_VALUE
+      self.connector:error("Remote does not respond to '%s'.", self.param_name)
+    else
+      self.connector:setValue(value)
+    end
   end
 end
 

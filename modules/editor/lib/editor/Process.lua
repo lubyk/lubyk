@@ -18,15 +18,18 @@ local private  = {}
 
 setmetatable(lib, {
   -- new method
- __call = function(lib, name)
+ __call = function(lib, name, zone)
   local self = {
     name           = name,
+    zone           = zone,
     x              = 100,
     y              = 100,
     nodes          = {},
     pending_inlets = {},
     -- List of controls connected to this process
     controls       = {},
+    -- Nodes connected to controls but not yet online
+    pending_nodes  = {},
   }
 
   setmetatable(self, lib)
@@ -37,6 +40,7 @@ end})
 -- To remove a node, set it's value to false.
 local function setNodes(self, nodes_def)
   local nodes = self.nodes
+  local pending_nodes = self.pending_nodes
   for node_name, node_def in pairs(nodes_def) do
     local node = nodes[node_name]
     if node then
@@ -45,12 +49,19 @@ local function setNodes(self, nodes_def)
         node:set(node_def)
       else
         -- remove node
-        node:deleteView()
+        node:delete()
         nodes[node_name] = nil
       end
     elseif node_def then
       -- create new node
-      node = editor.Node(self, node_name, node_def)
+      node = pending_nodes[node_name]
+      if node then
+        pending_nodes[node_name] = nil
+        node:set(node_def)
+      else
+        node = editor.Node(self, node_name, node_def)
+      end
+      node.online = true
       nodes[node_name] = node
     end
   end
@@ -88,6 +99,24 @@ end
 --- Change remote content.
 function lib:change(definition)
   self.push:send(lubyk.update_url, definition)
+end
+
+--- Restart process.
+function lib:restart()
+  local view = self.view
+  if view then
+    view:animate(8000)
+
+    -- Remove ghost on process connection
+    self.zone:onProcessDisconnected(name, function()
+      if view.thread then
+        view.thread:kill()
+      end
+      view.thread = nil
+    end)
+  end
+
+  --self.push:send(lubyk.execute_url, 'restart')
 end
 
 --- Remove (delete) process from patch.
@@ -247,15 +276,8 @@ function lib:connect(remote_process, zone)
 
   --======================================= SUB client
   self.sub = zmq.SimpleSub(function(...)
-    printf("editor.Process sub %s", yaml.dump(...))
-    local url, data = ...
     -- we receive notifications, update content
-    if url == lubyk.control_url then
-      -- notify views
-      private.updateControls(self, ...)
-    else
-      self:set(data)
-    end
+    self:set(...)
   end)
   self.sub:connect(remote_process.sub_url)
 
@@ -268,9 +290,6 @@ function lib:connect(remote_process, zone)
   -- editor.Process needed by ProcessTab
   remote_process.process = self
   zone:toggleView(self)
-
-  --- Query for control values
-  private.getControlValues(self)
 end
 
 function lib:connected()
@@ -292,7 +311,11 @@ function lib:disconnect()
   self.sub = nil
   self.online = false
   if self.tab then
+    -- mark as offline
     self.tab:setHue(self.hue)
+  end
+  for _, node in pairs(self.nodes) do
+    node:disconnect()
   end
 end
 
@@ -300,20 +323,13 @@ function lib:url()
   return '/' .. self.name
 end
 
-function private:updateControls(_, target, value)
-  local connections = self.controls[target]
-  if connections then
-    for _, conn in ipairs(connections) do
-      conn:set(value)
-    end
+-- Returns an existing editor.Node or creates a pending node
+function lib:findNode(node_name)
+  local node = self.nodes[node_name]
+  if not node then
+    node = editor.Node(self, node_name, {})
+    self.pending_nodes[node_name] = node
+    node.online = false
   end
-end
-
-function private:getControlValues()
-  for target, list in pairs(self.controls) do
-    for _, conn in ipairs(list) do
-      -- Get current value (will be notified to all)
-      self.push:send(lubyk.control_url, conn.url)
-    end
-  end
+  return node
 end

@@ -60,3 +60,40 @@ function mt:center()
   self:move((w - sw) / 2, (h - sh) / 2)
 end
 
+--=============================================== DEFAULT METHODS
+function mt:initializeGL()
+  gl.Enable("POINT_SMOOTH")
+  gl.Enable("SMOOTH")
+  gl.Enable("BLEND")                                -- Enable alpha blending
+  gl.BlendFunc("SRC_ALPHA", "ONE_MINUS_SRC_ALPHA")  -- Set blend function
+
+  gl.ClearDepth(1.0)
+  gl.DepthFunc("LEQUAL");
+
+  -- gl.Enable('GL_CULL_FACE')
+  -- gl.Enable('GL_DEPTH_TEST')
+
+  gl.Hint("PERSPECTIVE_CORRECTION_HINT", "NICEST") -- Really nice perspective
+  gl.ClearColor(0.2,0.2,0.2,0.5)
+end
+
+function mt:resizeGL(w, h)
+  self.w = w
+  self.h = h
+  gl.Enable("BLEND")
+  --gl.Disable("DEPTH_TEST")
+  gl.BlendFunc("SRC_ALPHA", "ONE_MINUS_SRC_ALPHA")
+
+  gl.Enable("LINE_SMOOTH")
+  -- Select the projection matrix
+  gl.MatrixMode("PROJECTION")
+  -- reset
+  gl.LoadIdentity()
+  -- Calculate the aspect ratio of the view
+  glu.Perspective(
+  45,               -- Field of view angle
+  w / h,   -- Aspect ration
+  1,                -- zNear
+  100               -- zFar
+  )
+end
