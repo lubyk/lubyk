@@ -13,6 +13,7 @@ local private = {}
 
 -- constants
 function lib:init(name, def, zone)
+  self.cache = {}
   self.name = name
   self.zone = zone
   self.widgets = {}
@@ -42,6 +43,8 @@ function lib:processConnected(process)
 end
 
 function lib:update(changes)
+  printf("UPDATE VIEW: %s", yaml.dump(changes))
+  lk.deepMerge(self, 'cache', changes)
   local widgets = self.widgets
   for id, def in pairs(changes) do
     local widget = widgets[id]
@@ -53,6 +56,7 @@ function lib:update(changes)
       end
     elseif widget then
       -- update
+      private.updateWidget(self, widget, def)
     else
       -- create
       local typ = def.type
@@ -182,7 +186,10 @@ function private:sliderChanged(value)
       -- Pointer inside conn.msg to update value
       local param_list = conn.param_list
       param_list[conn.param_name] = value
+      printf("PUSH CTRL '%s' : %s", process.name, yaml.dump(conn.msg))
       process.push:send(lubyk.update_url, conn.msg)
+    else
+      printf("NOT ONLINE '%s'", process.name)
     end
   end
 end
@@ -216,6 +223,32 @@ function private.getConnector(widget, dir)
       return widget.range_x
     else
       return widget.range_y
+    end
+  end
+end
+
+function private:updateWidget(widget, def)
+  -- TODO: change type, pos, etc
+  if def.connect then
+    for dir, connections in pairs(def.connect) do
+      local connector = private.getConnector(widget, dir)
+      if connector then
+        local current_conn = connector.connections
+        -- Update connections.
+        for target, opt in pairs(connections) do
+          local conn = current_conn[target]
+          if opt == false then
+            -- Disconnect.
+            current_conn[target] = nil
+          else
+            if conn then
+              -- Should we clear old ?
+            end
+            -- Connect.
+            private.connectWidget(self, widget, def)
+          end
+        end
+      end
     end
   end
 end

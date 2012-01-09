@@ -67,7 +67,7 @@ function lib:removeProcess(process)
 end
 
 function lib:change(def)
-  self.push.send(lubyk.update_url, def)
+  self.push:send(lubyk.update_url, def)
 end
 
 --=============================================== PRIVATE
@@ -142,7 +142,10 @@ function private.set:views(data)
         view:remove()
         views[name] = nil
       end
-    elseif not view then
+    elseif view then
+      -- update
+      view:update(info)
+    else
       -- create new ControlView
       views[name] = self.zone.control_tabs:addView(name, info)
     end

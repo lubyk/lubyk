@@ -250,7 +250,9 @@ function lib:click(x, y, type, btn, mod)
         local new_url  = process:url() .. '/' .. node.name .. '/'
         local base_url_len = string.len(base_url)
         for view_name, view in pairs(self.zone.views) do
-          for wid_id, widget in pairs(view) do
+          printf("TESTS FOR '%s'", view_name)
+          for wid_id, widget in pairs(view.cache) do
+            printf("Wid id '%s'", wid_id)
             local connect = widget.connect
             if connect then
               for dir, def in pairs(connect) do
@@ -258,14 +260,14 @@ function lib:click(x, y, type, btn, mod)
                   printf("MATCH ? '%s' == '%s'", string.sub(target, 1, base_url_len), base_url)
                   if string.sub(target, 1, base_url_len) == base_url then
                     -- Update
-                    local new_target = new_url .. '/' .. string.sub(target, base_url_len + 1)
+                    local new_target = new_url .. string.sub(target, base_url_len + 1)
                     lk.deepMerge(changed_processes, self.zone.morph, {
                       _views = {
                         [view_name] = {
                           [wid_id] = {
                             [dir] = {
-                              target     = false,
-                              new_target = opt,
+                              [target]     = false,
+                              [new_target] = opt,
                             }
                           }
                         }

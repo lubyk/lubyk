@@ -315,7 +315,7 @@ function lib:disconnect()
     self.tab:setHue(self.hue)
   end
   for _, node in pairs(self.nodes) do
-    node:disconnect()
+    node:disconnectControls()
   end
 end
 
