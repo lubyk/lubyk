@@ -51,8 +51,8 @@ function should.removeNamespace()
   assertEqual('getlastmodified', prop[1].xml)
 end
 
-function should.encodeXml()
-  local data = xml.encode {
+function should.dumpXml()
+  local data = xml.dump {
     xml = 'Person',
     joe = 'bar',
     'This is bar'

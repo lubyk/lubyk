@@ -229,7 +229,7 @@ function lib:PROPFIND(request)
     end
   end
 
-  local body = "<?xml version='1.0' encoding='utf-8'?>\n" .. xml.encode(res)
+  local body = "<?xml version='1.0' encoding='utf-8'?>\n" .. xml.dump(res)
 
   headers = {
     status = 207,

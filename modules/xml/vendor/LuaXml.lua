@@ -37,7 +37,7 @@ function append(var,tag)
 end
 
 -- converts any Lua var into an XML string
-function encode(var,indent,tagValue)
+function dump(var,indent,tagValue)
   if base.type(var)=="nil" then return end
   local indent = indent or 0
   local indentStr=""

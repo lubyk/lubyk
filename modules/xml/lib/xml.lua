@@ -8,7 +8,7 @@
   This is a slightly modified version by Gaspard Bucher.
   Changes:
     * uses the 'xml' attribute for the tag name instead of [0].
-    * uses 'encode' and 'decode' methods instead of 'str' and
+    * uses 'dump' and 'parse' methods instead of 'str' and
       'eval'.
     * added xml.removeNamespace
 
