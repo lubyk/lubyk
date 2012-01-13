@@ -29,6 +29,16 @@ function lib.Suite(name)
   return suite
 end
 
+-- This is to execute the tests in creation order.
+function lib:__newindex(key, value)
+  rawset(self, key, value)
+  if type(value) == 'function' and
+    key ~= 'setup' and
+    key ~= 'teardown' then
+    table.insert(self._info.tests, {key, value})
+  end
+end
+
 --- Test suite requiring user interaction/visual feedback. These
 -- tests are turned off when running more then a single file.
 function lib.UserSuite(name)
@@ -43,19 +53,51 @@ function lib.UserSuite(name)
 end
 
 function lib.all()
-  lib.total_test = 0
+  lib.total_exec = 0
+  lib.total_count = 0
   lib.total_asrt = 0
   lib.total_fail = 0
   sched:run(function()
     for i, suite in ipairs(lib.suites) do
       lib.runSuite(suite)
       lib.reportSuite(suite)
+      if test.abort then
+        break
+      end
     end
     lib.report()
     sched:quit()
   end)
 end
 
+function lib.files(list_or_path, pattern, reject)
+  -- first disable test.all()
+  local all = lib.all
+  lib.all = function() end
+  -- load all files
+  if type(list_or_path) == 'string' then
+    pattern = pattern or '%_test.lua$'
+  end
+  local list = {}
+  if pattern then
+    local dir = lk.Dir(list_or_path)
+    for file in dir:glob(pattern) do
+      if reject and string.match(file, reject) then
+        -- skip
+      else
+        table.insert(list, file)
+      end
+    end
+  else
+    list = list_or_path
+  end
+  for _, file in ipairs(list) do
+    dofile(file)
+  end
+  all()
+end
+
+--- FIXME This is too dependent on lubyk !
 function lib.loadAll(...)
   local arg = {...}
   if not arg[1] then
@@ -103,7 +145,7 @@ function lib.trace(fun, ...)
 end
 
 function lib.runSuite(suite)
-  local test_count = 0
+  local exec_count = 0
   local fail_count = 0
   local skip_count = 0
   local errors = suite._info.errors
@@ -117,37 +159,37 @@ function lib.runSuite(suite)
   local gc_protect = suite._info.gc_protect
   -- run all tests in the current file
   local skip = suite._info.user_suite and lib.file_count > 1
-  for name,func in pairs(suite) do
-    if type(func) == 'function' then
-      -- make sure it's a test
-      if name ~= '_info' and name ~= 'setup' and name ~= 'teardown' then
-        test_count = test_count + 1
-        test_var = setmetatable({}, lib)
-        gc_protect[name] = test_var
-        test_func = func
-        if skip then
-          -- skip user tests
-          skip_count = skip_count + 1
-        elseif not lib.only or lib.only == name then
-          suite.setup(gc_protect[name])
-            local ok, err = sched:pcall(pass_args)
-            collectgarbage('collect')
-            if not ok then
-              fail_count = fail_count + 1
-              --local file, line, message = string.match(err, "([^/\.]+\.lua):(%d+): (.+)")
-              --if message then
-              --  errors[name] = message
-              --else
-                errors[name] = err
-              --end
-            end
-          suite.teardown(gc_protect[name])
-        end
+  for i,e in pairs(suite._info.tests) do
+    local name, func = unpack(e)
+    exec_count = exec_count + 1
+    test_var = setmetatable({}, lib)
+    gc_protect[name] = test_var
+    test_func = func
+    if skip then
+      -- skip user tests
+      skip_count = skip_count + 1
+    elseif not lib.only or lib.only == name then
+      suite.setup(gc_protect[name])
+      local ok, err = sched:pcall(pass_args)
+      collectgarbage('collect')
+      if not ok then
+        fail_count = fail_count + 1
+        --local file, line, message = string.match(err, "([^/\.]+\.lua):(%d+): (.+)")
+        --if message then
+        --  errors[name] = message
+        --else
+        table.insert(errors, {i, name, err})
+        --end
+      end
+      suite.teardown(gc_protect[name])
+      if test.abort then
+        break
       end
     end
   end
 
-  suite._info.test_count = test_count
+  suite._info.exec_count = exec_count
+  suite._info.total_count = #suite._info.tests
   suite._info.fail_count = fail_count
   suite._info.skip_count = skip_count
 end
@@ -160,20 +202,22 @@ function lib.reportSuite(suite)
     ok_message = string.format('%i Failure(s)', suite._info.fail_count)
   end
   if suite._info.skip_count > 0 then
-    if suite._info.skip_count == suite._info.test_count then
+    if suite._info.skip_count == suite._info.exec_count then
       ok_message = '-- skip'
     else
       skip_message = string.format(' / skipped %i', suite._info.skip_count)
     end
   end
-  print(string.format('==== %-18s (%2i tests%s): %s', suite._info.name, suite._info.test_count, skip_message, ok_message))
-  lib.total_test = lib.total_test + suite._info.test_count
+  print(string.format('==== %-18s (%2i tests%s): %s', suite._info.name, suite._info.exec_count, skip_message, ok_message))
+  lib.total_exec = lib.total_exec + suite._info.exec_count
+  lib.total_count = lib.total_count + suite._info.total_count
   lib.total_asrt = lib.total_asrt + suite._info.assert_count
   if suite._info.fail_count > 0 then
-    for name, err in pairs(suite._info.errors) do
+    for _, e in ipairs(suite._info.errors) do
+      local i, name, err = unpack(e)
       lib.total_fail = lib.total_fail + 1
       local hname = string.gsub(name, '([A-Z])', function(x) return ' '..string.lower(x) end)
-      print(string.format('  %i. Should %s\n     %s\n', lib.total_fail, hname, string.gsub(err, '\n', '\n     ')))
+      print(string.format('  %i. Should %s\n     %s\n', i, hname, string.gsub(err, '\n', '\n     ')))
     end
   end
 end
@@ -181,25 +225,27 @@ end
 function lib.report()
   print('\n')
 
-  if lib.total_test == 0 then
+  if lib.total_exec == 0 then
     print(string.format('No tests defined. Test files must end with "_test.lua"'))
+  elseif lib.abort then
+    print(string.format('Abort after %i / %i tests', lib.total_exec, lib.total_count))
   elseif lib.total_fail == 0 then
-    if lib.total_test == 1 then
-      print(string.format('Success! %i test passes (%i assertions).', lib.total_test, lib.total_asrt))
+    if lib.total_exec == 1 then
+      print(string.format('Success! %i test passes (%i assertions).', lib.total_exec, lib.total_asrt))
     else
-      print(string.format('Success! %i tests pass (%i assertions).', lib.total_test, lib.total_asrt))
+      print(string.format('Success! %i tests pass (%i assertions).', lib.total_exec, lib.total_asrt))
     end
-  elseif lib.total_test == 1 then
+  elseif lib.total_exec == 1 then
     if lib.total_fail == 1 then
-      print(string.format('Fail... %i failure / %i test', lib.total_fail, lib.total_test))
+      print(string.format('Fail... %i failure / %i test', lib.total_fail, lib.total_exec))
     else
-      print(string.format('Fail... %i failures / %i test', lib.total_fail, lib.total_test))
+      print(string.format('Fail... %i failures / %i test', lib.total_fail, lib.total_exec))
     end
   else
     if lib.total_fail == 1 then
-      print(string.format('Fail... %i failure / %i tests', lib.total_fail, lib.total_test))
+      print(string.format('Fail... %i failure / %i tests', lib.total_fail, lib.total_exec))
     else
-      print(string.format('Fail... %i failures / %i tests', lib.total_fail, lib.total_test))
+      print(string.format('Fail... %i failures / %i tests', lib.total_fail, lib.total_exec))
     end
   end
   print('')
@@ -264,6 +310,7 @@ function assertTableEqual(expected, value, resolution)
   for k, v in pairs(expected) do
     assertValueEqual(v, value[k], resolution)
   end
+  assertEqual(#expected, #value)
 end
 
 function assertNotEqual(unexpected, value)
@@ -275,7 +322,7 @@ function assertMatch(pattern, value)
   lib.assert(string.find(value, pattern), string.format('Expected to match %s but was %s.', formatArg(pattern), formatArg(value)))
 end
 
-function assertNotMatch(pattern, actual, msg)
+function assertNotMatch(pattern, value, msg)
   lib.assert(type(value) == 'string', string.format('Should be a string but was a %s.', type(value)))
   lib.assert(not string.find(value, pattern), string.format('Expected to not match %s but was %s.', formatArg(pattern), formatArg(value)))
 end
@@ -286,8 +333,11 @@ function assertError(pattern, func)
   lib.assert(string.find(err, pattern), string.format('Error expected to match %s but was %s.', formatArg(pattern), formatArg(err)))
 end
 
-function assertPass(func)
+function assertPass(func, teardown)
   local ok, err = pcall(func)
+  if teardown then
+    teardown()
+  end
   if ok then
     lib.assert(true)
   else
