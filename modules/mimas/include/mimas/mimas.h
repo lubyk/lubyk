@@ -44,9 +44,6 @@ using namespace lubyk;
 
 #include <QtGui/QWidget>
 
-// All descendants from QWidget can have actions attached
-#include "mimas/Action.h"
-
 namespace mimas {
 
 void setHue(QPalette &palette, float hue);

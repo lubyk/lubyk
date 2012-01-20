@@ -21,7 +21,8 @@ local BOX_PADDING = 1
 local HPEN_WIDTH = 1 -- half pen width
 local bp = HPEN_WIDTH + BOX_PADDING -- full box padding
 local arc_radius = 8
-local text_padding = 5
+local TEXT_PADDING = 5
+local CENTER_TEXT_PADDING = 9
 
 function lib:init(process)
   self.process  = process
@@ -46,19 +47,33 @@ end
 function lib:setTitle(name)
   self.title = name
   local w, h = self.super:textSize(name)
-  self.min_width  = w + 4 * text_padding -- 2 paddings on sides
-  self.min_height = h + 2 * text_padding
+  if self.align == mimas.AlignCenter then
+    self.min_width = w + 4 * CENTER_TEXT_PADDING -- 2 paddings on sides
+  else
+    self.min_width = w + 4 * TEXT_PADDING -- 4 paddings on sides
+  end
+  self.min_height = h + 2 * TEXT_PADDING
   self:setSizeHint(self.min_width, self.min_height)
   self:setSizePolicy(mimas.Minimum, mimas.Fixed)
 end
 
--- custom paint
 function lib:paint(p, w, h)
   p:setBrush(self.brush)
   p:setPen(self.pen)
-  p:drawRoundedRect(bp, bp, w + arc_radius + bp, h - 2 * bp, arc_radius)
-  p:setPen(mimas.Pen(1, mimas.Color(0, 0, 1)))
-  p:drawText(2 * text_padding, text_padding, w - 4*text_padding, h - 2*text_padding, mimas.AlignRight + mimas.AlignVCenter, self.title)
+  if self.align == mimas.AlignRight then
+    p:drawRoundedRect(bp, bp, w + arc_radius + bp, h - 2 * bp, arc_radius)
+    p:setPen(mimas.Pen(1, mimas.Color(0, 0, 1)))
+    p:drawText(2 * TEXT_PADDING, TEXT_PADDING, w - 4*TEXT_PADDING, h - 2*TEXT_PADDING, mimas.AlignRight + mimas.AlignVCenter, self.title)
+  elseif self.align == mimas.AlignLeft then
+    p:drawRoundedRect(-bp-arc_radius, bp, w + arc_radius, h - 2 * bp, arc_radius)
+    p:setPen(mimas.Pen(1, mimas.Color(0, 0, 1)))
+    p:drawText(2 * TEXT_PADDING, TEXT_PADDING, w - 4*TEXT_PADDING, h - 2*TEXT_PADDING, mimas.AlignLeft + mimas.AlignVCenter, self.title)
+  else
+    -- center
+    p:drawRoundedRect(bp, bp, w - 2 * bp, h - 2 * bp, arc_radius)
+    p:setPen(mimas.Pen(1, mimas.Color(0, 0, 1)))
+    p:drawText(2 * TEXT_PADDING, TEXT_PADDING, w - 4*TEXT_PADDING, h - 2*TEXT_PADDING, mimas.AlignCenter + mimas.AlignVCenter, self.title)
+  end
 end
 
 local MousePress, MouseRelease = mimas.MousePress, mimas.MouseRelease
@@ -102,4 +117,11 @@ function private:showContextMenu(gx, gy)
     self.process:remove()
   end)
   menu:popup(gx - 5, gy - 5)
+end
+
+function lib:setAlignment(align)
+  self.align = align
+  self:update()
+  -- update SizeHint
+  self:setTitle(self.title)
 end

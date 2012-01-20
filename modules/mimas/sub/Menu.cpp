@@ -12,7 +12,7 @@ using namespace mimas;
 /* ============================ Constructors     ====================== */
 
 /** mimas::Menu::Menu(const char *name="")
- * include/mimas/Menu.h:54
+ * include/mimas/Menu.h:55
  */
 static int Menu_Menu(lua_State *L) {
   try {
@@ -207,7 +207,7 @@ static int QWidget_close(lua_State *L) {
 
 
 /** QString mimas::Menu::cssClass() const 
- * include/mimas/Menu.h:66
+ * include/mimas/Menu.h:67
  */
 static int Menu_cssClass(lua_State *L) {
   try {
@@ -431,7 +431,7 @@ static int QObject_object(lua_State *L) {
 
 
 /** void mimas::Menu::popup(int gx, int gy)
- * include/mimas/Menu.h:62
+ * include/mimas/Menu.h:63
  */
 static int Menu_popup(lua_State *L) {
   try {

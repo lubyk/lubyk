@@ -78,6 +78,66 @@ static int Action__tostring(lua_State *L) {
 /* ============================ Member Methods   ====================== */
 
 
+/** bool mimas::QAction::isCheckable() const 
+ * mimas/bind/QAction.h:19
+ */
+static int QAction_isCheckable(lua_State *L) {
+  try {
+    Action *self = *((Action**)dubL_checksdata(L, 1, "mimas.Action"));
+    if (!self) throw dub::Exception("Using deleted mimas.Action in isCheckable");
+    bool  retval__ = self->isCheckable();
+    lua_pushboolean(L, retval__);
+    return 1;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "isCheckable: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "isCheckable: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** bool mimas::QAction::isChecked() const 
+ * mimas/bind/QAction.h:15
+ */
+static int QAction_isChecked(lua_State *L) {
+  try {
+    Action *self = *((Action**)dubL_checksdata(L, 1, "mimas.Action"));
+    if (!self) throw dub::Exception("Using deleted mimas.Action in isChecked");
+    bool  retval__ = self->isChecked();
+    lua_pushboolean(L, retval__);
+    return 1;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "isChecked: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "isChecked: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** bool mimas::QAction::isEnabled() const 
+ * mimas/bind/QAction.h:17
+ */
+static int QAction_isEnabled(lua_State *L) {
+  try {
+    Action *self = *((Action**)dubL_checksdata(L, 1, "mimas.Action"));
+    if (!self) throw dub::Exception("Using deleted mimas.Action in isEnabled");
+    bool  retval__ = self->isEnabled();
+    lua_pushboolean(L, retval__);
+    return 1;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "isEnabled: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "isEnabled: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
 /** void mimas::QObject::name()
  * mimas/bind/QObject.h:12
  */
@@ -111,6 +171,66 @@ static int QObject_object(lua_State *L) {
     lua_pushfstring(L, "object: %s", e.what());
   } catch (...) {
     lua_pushfstring(L, "object: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** void mimas::QAction::setCheckable(bool on)
+ * mimas/bind/QAction.h:20
+ */
+static int QAction_setCheckable(lua_State *L) {
+  try {
+    Action *self = *((Action**)dubL_checksdata(L, 1, "mimas.Action"));
+    if (!self) throw dub::Exception("Using deleted mimas.Action in setCheckable");
+    bool on = lua_toboolean(L, 2);
+    self->setCheckable(on);
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "setCheckable: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "setCheckable: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** void mimas::QAction::setChecked(bool on)
+ * mimas/bind/QAction.h:16
+ */
+static int QAction_setChecked(lua_State *L) {
+  try {
+    Action *self = *((Action**)dubL_checksdata(L, 1, "mimas.Action"));
+    if (!self) throw dub::Exception("Using deleted mimas.Action in setChecked");
+    bool on = lua_toboolean(L, 2);
+    self->setChecked(on);
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "setChecked: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "setChecked: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** void mimas::QAction::setEnabled(bool on)
+ * mimas/bind/QAction.h:18
+ */
+static int QAction_setEnabled(lua_State *L) {
+  try {
+    Action *self = *((Action**)dubL_checksdata(L, 1, "mimas.Action"));
+    if (!self) throw dub::Exception("Using deleted mimas.Action in setEnabled");
+    bool on = lua_toboolean(L, 2);
+    self->setEnabled(on);
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "setEnabled: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "setEnabled: Unknown exception");
   }
   return lua_error(L);
 }
@@ -221,8 +341,14 @@ static int QAction_text(lua_State *L) {
 /* ============================ Lua Registration ====================== */
 
 static const struct luaL_Reg Action_member_methods[] = {
+  {"isCheckable"       , QAction_isCheckable},
+  {"isChecked"         , QAction_isChecked},
+  {"isEnabled"         , QAction_isEnabled},
   {"name"              , QObject_name},
   {"object"            , QObject_object},
+  {"setCheckable"      , QAction_setCheckable},
+  {"setChecked"        , QAction_setChecked},
+  {"setEnabled"        , QAction_setEnabled},
   {"setMenuRole"       , Action_setMenuRole},
   {"setName"           , QObject_setName},
   {"setShortcut"       , Action_setShortcut},

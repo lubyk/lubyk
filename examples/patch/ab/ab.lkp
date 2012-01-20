@@ -1,8 +1,10 @@
+---
+processes:
+  hello: 
+  a: 
+  c: 
+  b: 
 lubyk:
   version:
     major: 0
     minor: 5
-processes:
-  a: 
-  c: 
-  b: 

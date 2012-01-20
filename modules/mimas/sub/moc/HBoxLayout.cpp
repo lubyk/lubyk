@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'HBoxLayout.h'
 **
-** Created: Sat Dec 31 15:55:37 2011
+** Created: Mon Jan 9 20:26:01 2012
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.2)
 **
 ** WARNING! All changes made in this file will be lost!

@@ -30,7 +30,22 @@ function lib:resized(w, h)
   self.height = h
 end
 
+function lib:hide()
+  self.super:hide()
+  if self.zone.machine_list then
+    self.zone.machine_list:controlViewChanged(false)
+  end
+end
+
+function lib:show()
+  self.super:show()
+  if self.zone.machine_list then
+    self.zone.machine_list:controlViewChanged(true)
+  end
+end
+
 function lib:addPlusView()
+  local zone = self.zone
   local add = mimas.Widget()
   self.add_tab = add
   add.lay = mimas.VBoxLayout(add)

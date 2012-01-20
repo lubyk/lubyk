@@ -198,11 +198,17 @@ function lib:processConnected(remote_process)
   local process = self:findProcess(name, remote_process.ip)
   process:connect(remote_process, self)
 
+  for _, view in pairs(self.views) do
+    view:processConnected(process)
+  end
+
   -- Trigger connection callbacks
-  for i, clbk in ipairs(self.on_process_connected) do
+  local list = self.on_process_connected
+  for i=#list,1,-1 do
+    local clbk = list[i]
     if clbk.name == name then
       clbk.clbk()
-      table.remove(self.on_process_connected, i)
+      table.remove(list, i)
     end
   end
 end
@@ -261,10 +267,12 @@ function lib:processDisconnected(remote_process)
   end
 
   -- Trigger disconnection callbacks
-  for i, clbk in ipairs(self.on_process_disconnected) do
+  local list = self.on_process_connected
+  for i=#list,1,-1 do
+    local clbk = list[i]
     if clbk.name == name then
       clbk.clbk()
-      table.remove(self.on_process_disconnected, i)
+      table.remove(list, i)
     end
   end
   -- Is this needed ?
@@ -303,3 +311,4 @@ function private.setupView(self)
   self.control_tabs = view.control_tabs
   view:show()
 end
+

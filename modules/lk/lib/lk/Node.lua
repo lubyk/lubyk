@@ -262,9 +262,9 @@ end
 
 --- Node has been removed from patch, remove links and gc.
 function lib:remove()
-  self.fin = lk.Finalizer(function()
-    print('******************* DELETED', self.name)
-  end)
+  --self.fin = lk.Finalizer(function()
+  --  print('******************* DELETED', self.name)
+  --end)
   self.env = nil
   self.process.need_cleanup = true
 end

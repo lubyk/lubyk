@@ -19,11 +19,16 @@ function lib:init(def)
     private.makeWidget(self, self.widgets.lay, elem)
   end
   -- Can we suspend execution until dialog ends ?
+  self:resize(self:minimumSize())
   return self
 end
 
 function lib:btn(name)
   -- noop
+end
+
+function lib:minimumSize()
+  return self.widgets.lay:minimumSize()
 end
 
 --=============================================== PRIVATE

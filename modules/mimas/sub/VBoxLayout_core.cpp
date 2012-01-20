@@ -104,7 +104,7 @@ static int VBoxLayout_addLayout(lua_State *L) {
 
 
 /** void mimas::VBoxLayout::addSpacing(int size)
- * include/mimas/VBoxLayout.h:92
+ * include/mimas/VBoxLayout.h:100
  */
 static int VBoxLayout_addSpacing(lua_State *L) {
   try {
@@ -124,7 +124,7 @@ static int VBoxLayout_addSpacing(lua_State *L) {
 
 
 /** void mimas::VBoxLayout::addStretch(int stretch=1)
- * include/mimas/VBoxLayout.h:86
+ * include/mimas/VBoxLayout.h:94
  */
 static int VBoxLayout_addStretch(lua_State *L) {
   try {
@@ -239,7 +239,7 @@ static int VBoxLayout_insertWidget(lua_State *L) {
 
 
 /** QLayout* mimas::VBoxLayout::layout()
- * include/mimas/VBoxLayout.h:106
+ * include/mimas/VBoxLayout.h:121
  */
 static int VBoxLayout_layout(lua_State *L) {
   try {
@@ -258,8 +258,50 @@ static int VBoxLayout_layout(lua_State *L) {
 
 
 
+/** LuaStackSize mimas::VBoxLayout::minimumSize(lua_State *L) const 
+ * include/mimas/VBoxLayout.h:114
+ */
+static int VBoxLayout_minimumSize(lua_State *L) {
+  try {
+    VBoxLayout *self = *((VBoxLayout**)dubL_checksdata(L, 1, "mimas.VBoxLayout"));
+    if (!self) throw dub::Exception("Using deleted mimas.VBoxLayout in minimumSize");
+    
+    LuaStackSize  retval__ = self->minimumSize(L);
+    return retval__;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "minimumSize: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "minimumSize: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** bool mimas::VBoxLayout::setAlignment(QWidget *w, int alignment)
+ * include/mimas/VBoxLayout.h:88
+ */
+static int VBoxLayout_setAlignment(lua_State *L) {
+  try {
+    VBoxLayout *self = *((VBoxLayout**)dubL_checksdata(L, 1, "mimas.VBoxLayout"));
+    if (!self) throw dub::Exception("Using deleted mimas.VBoxLayout in setAlignment");
+    QWidget *w = *((QWidget **)dubL_checksdata(L, 2, "mimas.QWidget"));
+    int alignment = dubL_checkint(L, 3);
+    bool  retval__ = self->setAlignment(w, alignment);
+    lua_pushboolean(L, retval__);
+    return 1;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "setAlignment: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "setAlignment: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
 /** void mimas::VBoxLayout::setContentsMargins(int left, int top, int right, int bottom)
- * include/mimas/VBoxLayout.h:102
+ * include/mimas/VBoxLayout.h:110
  */
 static int VBoxLayout_setContentsMargins(lua_State *L) {
   try {
@@ -282,7 +324,7 @@ static int VBoxLayout_setContentsMargins(lua_State *L) {
 
 
 /** void mimas::VBoxLayout::setSpacing(int space)
- * include/mimas/VBoxLayout.h:98
+ * include/mimas/VBoxLayout.h:106
  */
 static int VBoxLayout_setSpacing(lua_State *L) {
   try {
@@ -313,6 +355,8 @@ static const struct luaL_Reg VBoxLayout_member_methods[] = {
   {"insertLayout"      , VBoxLayout_insertLayout},
   {"insertWidget"      , VBoxLayout_insertWidget},
   {"layout"            , VBoxLayout_layout},
+  {"minimumSize"       , VBoxLayout_minimumSize},
+  {"setAlignment"      , VBoxLayout_setAlignment},
   {"setContentsMargins", VBoxLayout_setContentsMargins},
   {"setSpacing"        , VBoxLayout_setSpacing},
   {"__tostring"        , VBoxLayout__tostring},

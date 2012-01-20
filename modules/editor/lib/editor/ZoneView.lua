@@ -9,7 +9,7 @@
 --]]------------------------------------------------------
 local lib = lk.SubClass(mimas, 'MainWindow')
 editor.ZoneView = lib
-local private = {}
+local private = {dialog = {}}
 
 -- constants
 local WIDTH   = 600
@@ -28,12 +28,13 @@ function lib:init(zone)
   self.library = zone.library
   self.library_view = editor.LibraryView(zone.library)
   self.layout:addWidget(self.library_view)
-  self.patch_view = editor.PatchView()
+  self.patch_view = editor.PatchView(zone)
   self.layout:addWidget(self.patch_view, 2)
   self.layout:setSpacing(PADDING)
   self.layout:setContentsMargins(0, 0, 0, 0)
   self.machine_list = editor.MachineList(self.zone)
-  self.layout:addWidget(self.machine_list, 0, mimas.AlignRight)
+  self:addWidget(self.machine_list)
+  --self.layout:addWidget(self.machine_list, 0, mimas.AlignRight)
   self.control_tabs = editor.ControlTabs(self.zone)
   self.layout:addWidget(self.control_tabs, 1)
   self.width  = WIDTH
@@ -46,6 +47,7 @@ function lib:resized(w, h)
   self.width  = w
   self.height = h
   self.layout_holder:resize(w, h)
+  self.machine_list:updatePosition()
 end
 
 function lib:addProcessView(view)
@@ -63,34 +65,75 @@ end
 --=============================================== Menu setup
 function private:setupMenus()
   self.menu_bar = mimas.MenuBar(self)
-  local file = self.menu_bar:addMenu('File')
-  file:addAction('New...', 'Ctrl+N', function()
+
+  --=============================================== File
+  local menu = self.menu_bar:addMenu('File')
+  local action
+  action = menu:addAction('New...', 'Ctrl+N', function()
     -- Choose folder & name
-    private.newProjectAction(self)
+    private.dialog.newProject(self)
   end)
-  file:addAction('Open...', 'Ctrl+O', function()
+  action = menu:addAction('Open...', 'Ctrl+O', function()
     -- Choose folder & name
-    private.openProjectAction(self)
+    private.dialog.openProject(self)
   end)
-  local pref = file:addAction('Preferences...', '', function()
+  action = menu:addAction('Preferences...', '', function()
     -- Show pref dialog
   end)
-  pref:setMenuRole(mimas.PreferencesRole)         
-  local special = self.menu_bar:addMenu('Special')
-  special:addAction('Stop', 'Ctrl+K', function()
+  action:setMenuRole(mimas.PreferencesRole)         
+
+  --=============================================== Project
+  menu = self.menu_bar:addMenu('Project')
+  action = menu:addAction('New view', 'Ctrl+Shift+I', function()
+    private.dialog.addView(self)
+  end)
+  action = menu:addAction('Commit', 'Ctrl+S', function()
+  end)
+
+  --=============================================== Show
+  local show = Lubyk.editor.show
+  menu = self.menu_bar:addMenu('Show')
+  private.setupShowAction(menu, 'Library', 'Ctrl+L', show.Library, self.library_view)
+  private.setupShowAction(menu, 'Patch',   'Ctrl+E', show.Patch,   self.patch_view)
+  private.setupShowAction(menu, 'View',    'Ctrl+I', show.View,    self.control_tabs)
+
+  --=============================================== Special
+  local menu = self.menu_bar:addMenu('Special')
+  action = menu:addAction('Stop', 'Ctrl+Shift+K', function()
     for k, process in pairs(self.zone.process_watch.processes) do
       if process.online then
         process.push:send(lubyk.quit_url)
       end
     end
   end)
-  special:addAction('Start Stem Cell', 'Ctrl+L', function()
+  action = menu:addAction('Start Stem Cell', 'Ctrl+Shift+C', function()
     self.zone:startStemCell()
   end)
+
   self:setMenuBar(self.menu_bar)
 end  
 
-function private:newProjectAction()
+-- self == menu
+function private:setupShowAction(title, shortcut, show, view)
+  local action = self:addAction(title, shortcut, function(action)
+    if view.hidden then
+      view:show()
+    else
+      view:hide()
+    end
+    view.hidden = not view.hidden
+    action:setChecked(not view.hidden)
+  end)
+  action:setCheckable(true)
+  if not show then
+    view:hide()
+    view.hidden = true
+  else
+    action:setChecked(true)
+  end
+end
+
+function private.dialog:newProject()
   self.doit = lk.Thread(function()
   self.dlg = mimas.SimpleDialog {
     'Who are you ?',
@@ -130,7 +173,7 @@ function private:newProjectAction()
 end)
 end
 
--- function private:openNewDialog()
+-- function private.dialog:openProject()
 --   self.dlg = editor.SimpleDialog {
 --     message = string.format('Please enter project path on "%s"', self.host_name),
 --     line    = 'Zone',
@@ -167,3 +210,49 @@ end
 --   end        
 -- end
 
+function private.dialog:addView()
+  local dlg = mimas.SimpleDialog {
+    'Create a new view',
+    {'vbox', box=true, style='background: #222',
+      'view name',
+      {'input', 'name', 'base'},
+    },
+    {'hbox',
+      {}, -- this adds stretch
+      {'btn', 'Cancel'},
+      {'btn', 'OK', default=true},
+    },
+  }
+  self.dlg = dlg
+
+  function dlg.btn(dlg, name)
+    if name == 'OK' then
+      -- create view
+      local morph = self.zone.morph
+      if morph then
+        morph.push:send(lubyk.update_url, {
+          views = {
+            [dlg.form.name] = {},
+          }
+        })
+      end
+    else
+      -- do nothing
+      dlg:close()
+    end
+  end
+
+  function dlg.closed()
+    self.dlg = nil
+  end
+
+  dlg:show()
+end
+
+-- Keep machine list centered/left or right depending on Patch and ControlView
+-- visibility.
+function private:positionMachineList()
+  local view = self.machine_list
+  local w, h = 
+  self.machine_list
+end

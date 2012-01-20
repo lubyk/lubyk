@@ -21,7 +21,9 @@ function mt:addAction(title, shortcut, func)
   else
     -- we create a new action
     action = mimas.Action(title, self)
-    action:setShortcut(shortcut)
+    if shortcut then
+      action:setShortcut(shortcut)
+    end
     action.trigger = func
   end
   addAction(self, action)

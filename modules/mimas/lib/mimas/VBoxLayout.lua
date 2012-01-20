@@ -48,3 +48,8 @@ end
 function mt:insertLayout(pos, other, ...)
   insertLayout(self, pos, other:layout(), ...)
 end
+
+local setAlignment = mt.setAlignment
+function mt:setAlignment(widget, ...)
+  return setAlignment(self, widget:widget(), ...)
+end

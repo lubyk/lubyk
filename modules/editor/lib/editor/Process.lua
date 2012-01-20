@@ -59,6 +59,7 @@ local function setNodes(self, nodes_def)
         pending_nodes[node_name] = nil
         node:set(node_def)
       else
+        printf("NO NODE '%s' IN '%s'", node_name, self.name)
         node = editor.Node(self, node_name, node_def)
       end
       node.online = true
@@ -144,12 +145,10 @@ end
 -- If self.view is nil, only set the data without
 -- creating/changing views.
 function lib:set(definition)
+  doSet(self, definition)
   if self.view then
-    doSet(self, definition)
     self.view:processChanged()
     self:updateView()
-  else
-    doSet(self, definition)
   end
 end
 
@@ -328,6 +327,7 @@ function lib:findNode(node_name)
   local node = self.nodes[node_name]
   if not node then
     node = editor.Node(self, node_name, {})
+    printf("MAKE PENDING NODE '%s' IN '%s'", node_name, self.name)
     self.pending_nodes[node_name] = node
     node.online = false
   end

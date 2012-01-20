@@ -25,5 +25,6 @@ function lib:init(morph)
   self.brush = mimas.Brush(mimas.Color(0, 0, 0.3, 0.5))
 end
 
-lib.setTitle = editor.ProcessTab.setTitle
-lib.paint    = editor.ProcessTab.paint
+lib.setTitle     = editor.ProcessTab.setTitle
+lib.paint        = editor.ProcessTab.paint
+lib.setAlignment = editor.ProcessTab.setAlignment

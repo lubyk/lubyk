@@ -73,9 +73,7 @@ setmetatable(lib, {
     -- delegate used for drag&drop operations in LinkView
     delegate = delegate,
     -- Dir patterns to glob for files.
-    sources = {
-      lubyk = Lubyk.lib .. '/lubyk',
-    },
+    sources = {}
   }
   if db then
     self.db = db
@@ -85,7 +83,12 @@ setmetatable(lib, {
     self.db = sqlite3.open(self.filepath)
   end
   prepareDb(self)
-  for lib_name, path in pairs(Lubyk.library_sources) do
+  for lib_name, path in pairs(Lubyk.editor.base_library_sources) do
+    printf("ADD SOURCE '%s' => '%s'", lib_name, path)
+    self.sources[lib_name] = Lubyk.lib .. '/' .. path
+  end
+  for lib_name, path in pairs(Lubyk.editor.library_sources) do
+    printf("ADD SOURCE '%s' => '%s'", lib_name, path)
     self.sources[lib_name] = path
   end
   setmetatable(self, lib)

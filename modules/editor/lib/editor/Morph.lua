@@ -36,9 +36,9 @@ function lib:connect(service)
   self.push    = service.push
   self.machine = self.zone.machine_list:getMachine(service.ip)
   -- Receive changes from morph
-  self.sub = zmq.SimpleSub(function(changes)
+  self.sub = zmq.SimpleSub(function(...)
     -- we receive notifications, update content
-    private.changed(self, changes)
+    private.changed(self, ...)
   end)
   self.sub:connect(service.sub_url)
   self.online = true
@@ -132,7 +132,7 @@ function private.set:processes(data)
   end
 end
 
-function private.set:views(data)
+function private.set:_views(data)
   local views = self.zone.views
   for name, info in pairs(data) do
     local view = views[name]

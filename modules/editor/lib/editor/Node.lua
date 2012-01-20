@@ -72,6 +72,7 @@ end
 --- Called when we receive a change notification from the
 -- remote. To actually change the remote Node, use "change".
 function lib:set(def)
+  local view_update = false
   for k, v in pairs(def) do
     if k == '_' then
       -- setParams
@@ -84,6 +85,7 @@ function lib:set(def)
            k == 'outlets' then
       -- skip
     else
+      view_update = true
       self[k] = v
     end
   end
@@ -98,7 +100,7 @@ function lib:set(def)
     self:setOutlets(def.outlets, def.has_all_slots)
   end
 
-  if self.process.view then
+  if view_update and self.process.view then
     self:updateView()
   end
 end
@@ -339,6 +341,8 @@ function private:setParams(def)
         printf("SET %s = %f", conn.param_name, v)
         conn:set(v)
       end
+    else
+      printf("NO controls for %s.", k)
     end
   end
 end
@@ -358,7 +362,23 @@ function lib:disconnectControls()
   end
 end
 
-function lib:connectControl(param_name, conn)
+function lib:connectControl(conn)
+  local param_name = conn.param_name
+  local list = self.controls[param_name]
+  if not list then
+    list = {}
+    self.controls[param_name] = list
+  end
+  table.insert(list, conn)
+  -- Avoid list GC before last connection.
+  conn.list = list
+  local value = self.params[param_name]
+  if value then
+    conn:set(value)
+  end
+end
+
+function lib:disconnectControl(conn)
   local list = self.controls[param_name]
   if not list then
     list = {}

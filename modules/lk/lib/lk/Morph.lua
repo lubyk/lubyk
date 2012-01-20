@@ -117,7 +117,7 @@ function lib:change(definitions)
 end
 
 function lib:dump()
-  return self:partialDump {processes = true, views = true}
+  return self:partialDump {processes = true, _views = true}
 end
 
 function lib:partialDump(data)
@@ -129,7 +129,6 @@ function lib:partialDump(data)
       dump[k] = func(self, v)
     end
   end
-  printf("PARTIAL DUMP:\n%s----------------------------\n%s", yaml.dump(data), yaml.dump(dump))
   return dump
 end
 
@@ -141,9 +140,9 @@ function lib:callback(url, ...)
     return self:dump()
   elseif url == lubyk.update_url then
     -- async call, no return value
-    --print(yaml.dump(data))
     self:change(...)
-    self.service:notify(self:partialDump(...))
+    local p = self:partialDump(...)
+    self.service:notify(p)
   elseif url == lubyk.get_url then
     return self:get(...)
   elseif url == lubyk.quit_url then
@@ -234,7 +233,7 @@ end
 function private:writeFile()
   local dump = self:dump()
   -- not saved in this file
-  dump.views = nil
+  dump._views = nil
   dump.lubyk = self.lubyk
   self.lkp_file:update(yaml.dump(dump))
 end
@@ -400,7 +399,7 @@ function private.dump:processes(partial)
 end
 
 --- Dump information on views
-function private.dump:views(partial)
+function private.dump:_views(partial)
   local to_dump
   if partial == true then
     to_dump = self.views
@@ -431,7 +430,6 @@ function private.process:connect(process, remote_process)
   process.sub = zmq.SimpleSub(function(url, changes)
     -- we receive notifications, update content
     if url == lubyk.update_url then
-      printf("UPDATE (%s) %s", url, yaml.dump(changes))
       -- FIXME: filter control events ?
       private.process.changed(self, process, changes)
     end

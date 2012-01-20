@@ -32,8 +32,9 @@ function lib:init(stem)
   self.brush = mimas.Brush(mimas.Color(0.3, 0.3, 0.3, 0.5))
 end
 
-lib.setTitle = editor.ProcessTab.setTitle
-lib.paint    = editor.ProcessTab.paint
+lib.setTitle     = editor.ProcessTab.setTitle
+lib.paint        = editor.ProcessTab.paint
+lib.setAlignment = editor.ProcessTab.setAlignment
 
 function lib:click(x, y, op, btn, mod)
   if op == MousePress then
@@ -137,13 +138,4 @@ function lib:mouse(x, y)
     self.ghost:globalMove(gx, gy)
   end
 end
-
-
-
-
-
-
-
-
-
 

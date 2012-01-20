@@ -21,12 +21,9 @@ local HPEN_W      = 1
 -- +----------------+
 -- |   title        |
 -- +----------------+
--- | hbox           |
--- | +---------+    |
--- | |  vbox   |    |
--- | +---------+    |
+-- |   vbox         |
 -- +----------------+
--- | stretch        |
+-- |   stretch      |
 -- +----------------+
 --
 function lib:init(machine)
@@ -38,12 +35,11 @@ function lib:init(machine)
   self.title = mimas.Widget()
   self.title:setSizePolicy(mimas.Minimum, mimas.Fixed)
   self.lay:addWidget(self.title)
-  self.hbox = mimas.HBoxLayout()
   self.vbox = mimas.VBoxLayout()
-  self.vbox:setContentsMargins(10,0,0,5)
-  self.hbox:addWidget(self.vbox)
-  self.lay:addWidget(self.hbox)
+  self.lay:addWidget(self.vbox)
+
   self:setName(machine.name)
+  self:layoutChanged(Lubyk.editor.show.Patch, Lubyk.editor.show.View)
 end
 
 function lib:setName(name)
@@ -102,8 +98,56 @@ end
 function lib:paint(p, w, h)
   local pen_color = mimas.Color(0, 0, 0.25, 0.5)
   local lbl_back  = mimas.Brush(0, 0, 0.25, 0.5)
-  local back      = mimas.Brush() --0, 0, 0.2, 0.5)
+  local back      = mimas.Brush(0, 0, 0, 0.80)
 
   -- Add 40 to go beyond border
-  editor.paintWithRoundedTitle(p, w + 40, h, self.name, self.lbl_w, self.lbl_h, pen_color, mimas.Color(0, 0, 0.8), lbl_back, back)
+  editor.paintWithRoundedTitle(p, w + self.pad_right, h, self.name, self.lbl_w, self.lbl_h, pen_color, mimas.Color(0, 0, 0.8), lbl_back, back, self.lbl_align, self.pad_left)
+end
+
+function lib:layoutChanged(patch_visible, controls_visible)
+  local align = 0
+  if controls_visible then
+    align = 1
+    self.pad_right = 0
+  else
+    self.pad_right = 40
+  end
+
+  if patch_visible then
+    align = align + 2
+    self.pad_left = 0
+  else
+    self.pad_left = -40
+  end
+
+  if align == 0 then
+    -- none visible
+    self.pad_left  = 0
+    self.pad_right = 0
+    self.align = mimas.AlignCenter
+    self.tab_align = mimas.AlignCenter
+    self.vbox:setContentsMargins(10,0,10,5)
+  elseif align == 3 then
+    -- both visible
+    self.align = mimas.AlignCenter
+    self.tab_align = mimas.AlignCenter
+    self.vbox:setContentsMargins(10,0,10,5)
+  elseif align == 2 then
+    -- label left, tabs to the right
+    self.lbl_align = mimas.AlignLeft
+    self.tab_align = mimas.AlignRight
+    self.vbox:setContentsMargins(10,0,0,5)
+  else
+    -- label right, tabs to the left
+    self.lbl_align = mimas.AlignRight
+    self.tab_align = mimas.AlignLeft
+    self.vbox:setContentsMargins(0,0,10,5)
+  end
+
+  for _, view in ipairs(self.process_list) do
+    self.vbox:setAlignment(view, self.tab_align)
+    view:setAlignment(self.tab_align)
+  end
+
+  self:update()
 end

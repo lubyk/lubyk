@@ -152,7 +152,9 @@ void Slider::paintEvent(QPaintEvent *event) {
     }
   }
 
-  QPen pen(palette.color(QPalette::AlternateBase), border_width_);
+  QColor c(palette.color(QPalette::AlternateBase));
+  c.setAlphaF(0.8);
+  QPen pen(c, border_width_);
   pen.setJoinStyle(Qt::MiterJoin);
   p.setPen(pen);
   p.setBrush(Qt::NoBrush);

@@ -30,6 +30,7 @@
 #define LUBYK_INCLUDE_MIMAS_GROUP_BOX_H_
 
 #include "mimas/mimas.h"
+#include "mimas/Action.h"
 
 using namespace lubyk;
 

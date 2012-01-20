@@ -12,7 +12,7 @@ using namespace mimas;
 /* ============================ Constructors     ====================== */
 
 /** mimas::GroupBox::GroupBox(const char *title=NULL, QWidget *parent=NULL)
- * include/mimas/GroupBox.h:54
+ * include/mimas/GroupBox.h:55
  */
 static int GroupBox_GroupBox(lua_State *L) {
   try {
@@ -173,7 +173,7 @@ static int QWidget_close(lua_State *L) {
 
 
 /** QString mimas::GroupBox::cssClass() const 
- * include/mimas/GroupBox.h:62
+ * include/mimas/GroupBox.h:63
  */
 static int GroupBox_cssClass(lua_State *L) {
   try {

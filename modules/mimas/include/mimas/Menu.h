@@ -30,6 +30,7 @@
 #define LUBYK_INCLUDE_MIMAS_MENU_H_
 
 #include "mimas/mimas.h"
+#include "mimas/Action.h"
 #include "mimas/Color.h"
 #include <QtGui/QMenu>
 

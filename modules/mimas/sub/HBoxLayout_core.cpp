@@ -105,7 +105,7 @@ static int HBoxLayout_addLayout(lua_State *L) {
 
 
 /** void mimas::HBoxLayout::addSpacing(int size)
- * include/mimas/HBoxLayout.h:93
+ * include/mimas/HBoxLayout.h:101
  */
 static int HBoxLayout_addSpacing(lua_State *L) {
   try {
@@ -125,7 +125,7 @@ static int HBoxLayout_addSpacing(lua_State *L) {
 
 
 /** void mimas::HBoxLayout::addStretch(int stretch=1)
- * include/mimas/HBoxLayout.h:87
+ * include/mimas/HBoxLayout.h:95
  */
 static int HBoxLayout_addStretch(lua_State *L) {
   try {
@@ -240,7 +240,7 @@ static int HBoxLayout_insertWidget(lua_State *L) {
 
 
 /** QLayout* mimas::HBoxLayout::layout()
- * include/mimas/HBoxLayout.h:107
+ * include/mimas/HBoxLayout.h:122
  */
 static int HBoxLayout_layout(lua_State *L) {
   try {
@@ -259,8 +259,50 @@ static int HBoxLayout_layout(lua_State *L) {
 
 
 
+/** LuaStackSize mimas::HBoxLayout::minimumSize(lua_State *L) const 
+ * include/mimas/HBoxLayout.h:115
+ */
+static int HBoxLayout_minimumSize(lua_State *L) {
+  try {
+    HBoxLayout *self = *((HBoxLayout**)dubL_checksdata(L, 1, "mimas.HBoxLayout"));
+    if (!self) throw dub::Exception("Using deleted mimas.HBoxLayout in minimumSize");
+    
+    LuaStackSize  retval__ = self->minimumSize(L);
+    return retval__;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "minimumSize: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "minimumSize: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** bool mimas::HBoxLayout::setAlignment(QWidget *w, int alignment)
+ * include/mimas/HBoxLayout.h:89
+ */
+static int HBoxLayout_setAlignment(lua_State *L) {
+  try {
+    HBoxLayout *self = *((HBoxLayout**)dubL_checksdata(L, 1, "mimas.HBoxLayout"));
+    if (!self) throw dub::Exception("Using deleted mimas.HBoxLayout in setAlignment");
+    QWidget *w = *((QWidget **)dubL_checksdata(L, 2, "mimas.QWidget"));
+    int alignment = dubL_checkint(L, 3);
+    bool  retval__ = self->setAlignment(w, alignment);
+    lua_pushboolean(L, retval__);
+    return 1;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "setAlignment: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "setAlignment: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
 /** void mimas::HBoxLayout::setContentsMargins(int left, int top, int right, int bottom)
- * include/mimas/HBoxLayout.h:103
+ * include/mimas/HBoxLayout.h:111
  */
 static int HBoxLayout_setContentsMargins(lua_State *L) {
   try {
@@ -283,7 +325,7 @@ static int HBoxLayout_setContentsMargins(lua_State *L) {
 
 
 /** void mimas::HBoxLayout::setSpacing(int space)
- * include/mimas/HBoxLayout.h:99
+ * include/mimas/HBoxLayout.h:107
  */
 static int HBoxLayout_setSpacing(lua_State *L) {
   try {
@@ -314,6 +356,8 @@ static const struct luaL_Reg HBoxLayout_member_methods[] = {
   {"insertLayout"      , HBoxLayout_insertLayout},
   {"insertWidget"      , HBoxLayout_insertWidget},
   {"layout"            , HBoxLayout_layout},
+  {"minimumSize"       , HBoxLayout_minimumSize},
+  {"setAlignment"      , HBoxLayout_setAlignment},
   {"setContentsMargins", HBoxLayout_setContentsMargins},
   {"setSpacing"        , HBoxLayout_setSpacing},
   {"__tostring"        , HBoxLayout__tostring},

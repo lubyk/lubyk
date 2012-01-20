@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'GroupBox.h'
 **
-** Created: Thu Dec 8 15:25:07 2011
+** Created: Mon Jan 9 16:50:55 2012
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.2)
 **
 ** WARNING! All changes made in this file will be lost!

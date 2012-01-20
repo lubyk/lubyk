@@ -20,7 +20,7 @@ function mimas.Application(type)
   self:setQuitOnLastWindowClosed(Lubyk.mimas_quit_on_close)
   self:setStyleSheet [[
     .window, .main_window, .widget, .table, .list, .menu, .tab_widget::pane, .label {
-      background:#262626;
+      background:#151515;
       color:rgb(180,180,180);
     }
     .table {
@@ -76,7 +76,7 @@ function mimas.Application(type)
       border: 1px solid #999;
       border-top-left-radius: 4px;
       border-top-right-radius: 4px;
-      padding:2px 5px;
+      padding:2px 8px;
       background:#777;
       color:#222;
     }

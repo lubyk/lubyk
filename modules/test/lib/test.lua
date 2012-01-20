@@ -174,12 +174,8 @@ function lib.runSuite(suite)
       collectgarbage('collect')
       if not ok then
         fail_count = fail_count + 1
-        --local file, line, message = string.match(err, "([^/\.]+\.lua):(%d+): (.+)")
-        --if message then
-        --  errors[name] = message
-        --else
+        -- Get line and message for assertPass, assertError
         table.insert(errors, {i, name, err})
-        --end
       end
       suite.teardown(gc_protect[name])
       if test.abort then
@@ -208,7 +204,7 @@ function lib.reportSuite(suite)
       skip_message = string.format(' / skipped %i', suite._info.skip_count)
     end
   end
-  print(string.format('==== %-18s (%2i tests%s): %s', suite._info.name, suite._info.exec_count, skip_message, ok_message))
+  print(string.format('==== %-28s (%2i tests%s): %s', suite._info.name, suite._info.exec_count, skip_message, ok_message))
   lib.total_exec = lib.total_exec + suite._info.exec_count
   lib.total_count = lib.total_count + suite._info.total_count
   lib.total_asrt = lib.total_asrt + suite._info.assert_count
@@ -264,10 +260,11 @@ local function formatArg(arg)
   end
 end
 
-function lib.assert(ok, msg)
+function lib.assert(ok, msg, up_count)
+  up_count = up_count or 2
   lib.current_suite._info.assert_count = lib.current_suite._info.assert_count + 1
   if not ok then
-    error(msg, 3)
+    error(msg, up_count + 1)
   end
 end
 
@@ -284,33 +281,42 @@ function assertTrue(ok, msg)
 end
 
 -- Test raw equality (same table)
-function assertEqual(expected, value, resolution)
+function assertEqual(expected, value, resolution, up_count)
+  up_count = up_count or 1
   if resolution and type(expected) == 'number' then
     local ok = (value >= expected - resolution) and (value <= expected + resolution)
-    lib.assert(ok, string.format('Expected %s but found %s (resolution: %f).', formatArg(expected), formatArg(value), resolution))
+    lib.assert(ok, string.format('Expected %s but found %s (resolution: %f).', formatArg(expected), formatArg(value), resolution), up_count + 1)
   else
-    lib.assert(value == expected, string.format('Expected %s but found %s.', formatArg(expected), formatArg(value)))
+    lib.assert(value == expected, string.format('Expected %s but found %s.', formatArg(expected), formatArg(value)), up_count + 1)
   end
 end
 
 -- Test value equality (same table content)
-function assertValueEqual(expected, value, resolution)
+function assertValueEqual(expected, value, resolution, up_count)
+  up_count = up_count or 1
   if type(expected) == 'table' then
-    assertTableEqual(expected, value, resolution)
+    assertTableEqual(expected, value, resolution, up_count + 1)
   else
-    assertEqual(expected, value, resolution)
+    assertEqual(expected, value, resolution, up_count + 1)
   end
 end
 
-function assertTableEqual(expected, value, resolution)
+function assertTableEqual(expected, value, resolution, up_count)
+  up_count = up_count or 1
   assertEqual('table', type(value))
   for i, v in ipairs(expected) do
-    assertValueEqual(v, value[i], resolution)
+    assertValueEqual(v, value[i], resolution, up_count + 1)
   end
   for k, v in pairs(expected) do
-    assertValueEqual(v, value[k], resolution)
+    assertValueEqual(v, value[k], resolution, up_count + 1)
   end
-  assertEqual(#expected, #value)
+  for k, v in pairs(value) do
+    if not expected[k] then
+      lib.assert(false, string.format("Expected no '%s' key but found %s.", k, formatArg(v)), up_count + 1)
+    end
+    assertValueEqual(v, value[k], resolution, up_count + 1)
+  end
+  assertEqual(#expected, #value, up_count + 1)
 end
 
 function assertNotEqual(unexpected, value)
@@ -341,7 +347,7 @@ function assertPass(func, teardown)
   if ok then
     lib.assert(true)
   else
-    lib.assert(false, string.format('Should not raise an error but %s found.', err))
+    lib.assert(false, err) --string.format('Should not raise an error but %s found.', err))
   end
 end
 

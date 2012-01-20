@@ -28,7 +28,7 @@ function win:paint(p, w, h)
   local py = h - (height * abs(sin(t * TIME_SCALE))) - r
   p:setBrush(mimas.Color(hue, 0.5, 0.5))
   p:setPen(7, mimas.Color(hue, 0.8))
-  p:drawEllipse(px - r, py - r, 2 * r, 2 * r)
+  p:drawRect(px - r, py - r, 2 * r, 2 * r)
 end
 win:update()
 

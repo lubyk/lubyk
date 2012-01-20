@@ -30,6 +30,7 @@
 #define LUBYK_INCLUDE_MIMAS_CONSTANTS_H_
 
 #include "mimas/mimas.h"
+#include "mimas/Action.h"
 #include <QtGui/QFileDialog>
 
 #include "lubyk.h"

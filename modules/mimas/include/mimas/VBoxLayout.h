@@ -81,6 +81,14 @@ public:
     QBoxLayout::insertLayout(pos, layout, stretch);
   }
 
+  /** Set the alignment of the given widget.
+   * Returns true if the widget was found in this layout (not including
+   * children).
+   */
+  bool setAlignment(QWidget *w, int alignment) {
+    return QLayout::setAlignment(w, (Qt::Alignment)alignment);
+  }
+
   /** Add a strechable item.
    */
   void addStretch(int stretch = 1) {
@@ -101,6 +109,13 @@ public:
 
   void setContentsMargins(int left, int top, int right, int bottom) {
     QVBoxLayout::setContentsMargins(left, top, right, bottom);
+  }
+
+  LuaStackSize minimumSize(lua_State *L) const {
+    QSize s(QVBoxLayout::minimumSize());
+    lua_pushnumber(L, s.width());
+    lua_pushnumber(L, s.height());
+    return 2;
   }
 
   QLayout *layout() {
