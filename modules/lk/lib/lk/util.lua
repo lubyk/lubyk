@@ -149,7 +149,6 @@ function lk.writeall(filepath, data, check_diff)
   -- get base directory and build components if necessary
   lk.makePath(lk.directory(filepath))
   if check_diff and lk.exist(filepath) then
-    local f = io.open(filepath, 'rb')
     if data == lk.readall(filepath) then
       return true
     end
