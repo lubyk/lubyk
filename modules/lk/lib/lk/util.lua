@@ -143,10 +143,17 @@ function lk.rmFile(path)
   end
 end
 
---- Write data to a filepath, creating path folder if necessary.
-function lk.writeall(filepath, data)
+--- Write data to a filepath, creating path folder if necessary. If check_diff
+-- is true, only write if the content has changed.
+function lk.writeall(filepath, data, check_diff)
   -- get base directory and build components if necessary
   lk.makePath(lk.directory(filepath))
+  if check_diff and lk.exist(filepath) then
+    local f = io.open(filepath, 'rb')
+    if data == lk.readall(filepath) then
+      return true
+    end
+  end
   local f = assert(io.open(filepath, 'wb'))
   local s = f:write(data)
   f:close()
@@ -254,7 +261,12 @@ end
 -- chain (-1 = up one level).
 function lk.dir(level)
   local level = level or 0
-  return string.gsub(lk.file(level - 1), '/[^/]+$', '')
+  local file = lk.file(level - 1)
+  if string.match(file, '/') then
+    return string.gsub(lk.file(level - 1), '/[^/]+$', '')
+  else
+    return '.'
+  end
 end
 
 -------------------------------- lk.fileType(path)
