@@ -101,20 +101,12 @@ public:
   static bool mouse(ThreadedLuaObject *obj, QMouseEvent *event);
   static bool click(ThreadedLuaObject *obj, QMouseEvent *event, int type);
   static void paint(ThreadedLuaObject *obj, Painter *p, int w, int h);
+  static bool resized(ThreadedLuaObject *obj, double width, double height);
+  static bool moved(ThreadedLuaObject *obj, QMoveEvent *event);
+  static bool closed(ThreadedLuaObject *obj, QCloseEvent *event);
 protected:
   virtual void closeEvent(QCloseEvent *event) {
-    lua_State *L = lua_;
-    if (!pushLuaCallback("closed")) return;
-    // <func> <self>
-    int status = lua_pcall(L, 1, 1, 0);
-    if (status) {
-      fprintf(stderr, "Error in 'closed' callback: %s\n", lua_tostring(L, -1));
-    }
-    if (lua_isfalse(L, -1)) {
-      // Do not close
-      event->ignore();
-    }
-    lua_pop(L, 1);
+    Widget::closed(this, event);
   }
 
   virtual void mouseMoveEvent(QMouseEvent *event) {
@@ -138,20 +130,12 @@ protected:
 
   virtual void paintEvent(QPaintEvent *event);
 
-  virtual void resizeEvent(QResizeEvent *event);
+  virtual void resizeEvent(QResizeEvent *event) {
+    Widget::resize(this, width(), height());
+  }
 
   virtual void moveEvent(QMoveEvent * event) {
-    lua_State *L = lua_;
-
-    if (!pushLuaCallback("moved")) return;
-    lua_pushnumber(L, event->pos().x());
-    lua_pushnumber(L, event->pos().y());
-    // <func> <self> <x> <y>
-    int status = lua_pcall(L, 3, 0, 0);
-
-    if (status) {
-      fprintf(stderr, "Error in 'moved' callback: %s\n", lua_tostring(L, -1));
-    }
+    Widget::moved(this, event);
   }
 
   virtual void keyPressEvent(QKeyEvent *event) {

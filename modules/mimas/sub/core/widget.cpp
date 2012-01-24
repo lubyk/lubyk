@@ -62,18 +62,47 @@ void Widget::paint(ThreadedLuaObject *obj, Painter *p, int w, int h) {
   }
 }
 
-void Widget::resizeEvent(QResizeEvent *event) {
-  lua_State *L = lua_;
+void Widget::resize(ThreadedLuaObject *obj, double width, double height) {
+  lua_State *L = obj->lua_;
 
   if (!pushLuaCallback("resized")) return;
-  lua_pushnumber(L, width());
-  lua_pushnumber(L, height());
+  lua_pushnumber(L, width);
+  lua_pushnumber(L, height);
   // <func> <self> <width> <height>
   int status = lua_pcall(L, 3, 0, 0);
 
   if (status) {
     fprintf(stderr, "Error in 'resized' callback: %s\n", lua_tostring(L, -1));
   }
+}
+
+void Widget::moved(ThreadedLuaObject *obj, QMoveEvent *event) {
+  lua_State *L = obj->lua_;
+
+  if (!pushLuaCallback("moved")) return;
+  lua_pushnumber(L, event->pos().x());
+  lua_pushnumber(L, event->pos().y());
+  // <func> <self> <x> <y>
+  int status = lua_pcall(L, 3, 0, 0);
+
+  if (status) {
+    fprintf(stderr, "Error in 'moved' callback: %s\n", lua_tostring(L, -1));
+  }
+}
+
+void Widget::closed(ThreadedLuaObject *obj, QCloseEvent *event) {
+  lua_State *L = obj->lua_;
+  if (!pushLuaCallback("closed")) return;
+  // <func> <self>
+  int status = lua_pcall(L, 1, 1, 0);
+  if (status) {
+    fprintf(stderr, "Error in 'closed' callback: %s\n", lua_tostring(L, -1));
+  }
+  if (lua_isfalse(L, -1)) {
+    // Do not close
+    event->ignore();
+  }
+  lua_pop(L, 1);
 }
 
 bool Widget::mouse(ThreadedLuaObject *obj, QMouseEvent *event) {
