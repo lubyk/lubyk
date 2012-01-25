@@ -8,6 +8,7 @@
 *.pbxuser
 *.mode1v3
 .DS_Store
+._.DS_Store
 *~
 *.swp
 *.swo
