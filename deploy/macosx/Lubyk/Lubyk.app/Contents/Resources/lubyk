@@ -1,0 +1,18 @@
+#!/usr/bin/env lua
+-- Lubyk alters the search path to search first int it's own
+-- global directory, the user's personal lib and the current
+-- path's lib.
+
+local action = arg[1]
+if action == '--testInstall' then
+  io.write('Trying to require lubyk...')
+  io.flush()
+  require 'lubyk'
+  print('ok')
+  print('Executing lk.Command("--testInstall")...')
+  cmd = lk.Command('--testInstall')
+else
+  require 'lubyk'
+  cmd = lk.Command(unpack(arg))
+end
+run()

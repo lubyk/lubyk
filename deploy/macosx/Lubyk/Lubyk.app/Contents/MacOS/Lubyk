@@ -1,0 +1,8 @@
+#!/bin/sh
+# MacOS
+f=`dirname "$0"`
+# Resources
+r="$f/../Resources"
+lua="$r/lua"
+app="$r/app.lua"
+exec "$lua" "$app" "$f/../../../lib" "$1"
