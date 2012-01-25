@@ -329,7 +329,6 @@ function lib.makeGhost(node_def, zone)
 end
 
 function private:setParams(def)
-  printf("editor.Node:setParams : %s", yaml.dump(def))
   local params = self.params
   for k, v in pairs(def) do
     params[k] = v
@@ -338,7 +337,6 @@ function private:setParams(def)
       for _, conn in ipairs(list) do
         --- TODO: we need to detect an error value for unknown parameters
         -- so that we can mark the widget as "error". ERROR_VALUE ?
-        printf("SET %s = %f", conn.param_name, v)
         conn:set(v)
       end
     else

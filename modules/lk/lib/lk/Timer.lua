@@ -57,7 +57,7 @@ function lib:run()
   end
 end  
 
-function lib:setInterval(interval)
+function lib:setInterval(interval, start_if_stopped)
   if self.thread then
     -- Running timer: remove from scheduler.
     self:stop()
@@ -67,8 +67,11 @@ function lib:setInterval(interval)
       return
     end
   else
-    -- Not running: done.
+    -- Not running.
     self.interval = interval
+    if start_if_stopped then
+      self:start()
+    end
     return
   end
   -- new trigger is

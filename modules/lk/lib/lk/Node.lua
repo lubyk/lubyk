@@ -44,6 +44,8 @@ setmetatable(lib, {
   env.defaults = function(...)
     private.defaults(self, ...)
   end
+  -- metho to set a parameter and notify
+  env.param = lk.ParamMethod(self)
 
   process.nodes[name] = self
   -- pending connection resolution
@@ -300,11 +302,18 @@ function private:setParams(params)
         --printf("Cannot set parameter '%s' in node '%s'.", k, self.name)
         pdump[k] = {}
       else
+        -- This is also used in ParamMethod.
         local inlet = inlets[k]
         if inlet then
           inlet.receive(value)
         else
           env[k] = value
+          -- Call 'paramChanged' function in env if
+          -- it exists.
+          local func = env.paramChanged
+          if func then
+            func(k)
+          end
         end
         pdump[k] = env[k]
       end

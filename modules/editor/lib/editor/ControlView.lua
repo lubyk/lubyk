@@ -203,6 +203,8 @@ function private:updateConnections(connector, connections)
       if type(opt) ~= 'table' then
         opt = {}
       end
+      -- Takes a target link like '/a/metro/_/tempo'
+      -- /[process]/[node](/[sub-node])/_/[param name]
       local parts = lk.split(target, '/')
       -- Remove '' element.
       table.remove(parts, 1)

@@ -3,13 +3,6 @@ y: 187
 x: 260
 name: c
 nodes:
-  loop:
-    y: 62
-    x: 71
-    name: loop
-    hue: 0.5
-    links:
-      pass: {}
   v:
     hue: 0.5
     x: 73

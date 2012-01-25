@@ -1,9 +1,8 @@
 ---
 processes:
-  hello: 
   a: 
-  c: 
   b: 
+  c: 
 lubyk:
   version:
     major: 0

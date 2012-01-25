@@ -29,7 +29,7 @@ function inlet.tempo(val)
   tempo = val
   if tempo > 0 then
     -- interval in [ms]
-    timer:setInterval(60000 / tempo)
+    timer:setInterval(60000 / tempo, true)
   else
     timer:stop()
   end
