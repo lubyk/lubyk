@@ -1,7 +1,7 @@
 --[[------------------------------------------------------
 
-  lk.Timer
-  --------
+  lk.Timer test
+  -------------
 
   The timer calls the 'tick' method at regular intervals.
 

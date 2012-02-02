@@ -3,9 +3,9 @@
   worker
   ------
 
-  The worker is an essential part as it is passed to all
-  Cpp code that needs to callback (the worker holds a
-  mutex).
+  This worker is only needed for accurate sleep and other
+  OS specific things like spawning process. This could be
+  renamed as lk.System...
 
 --]]------------------------------------------------------
 require 'lubyk.Worker'
@@ -23,7 +23,7 @@ function mt:spawn(code, args)
   local sep = ''
   -- Make sure the literal string in the yaml dump is not finished too soon by the
   -- text in the dump.
-  while string.match(dump, string.format('\]%s\]', sep)) do
+  while dump:match(string.format('%%]%s%%]', sep)) do
     sep = sep .. '='
   end
 

@@ -1,11 +1,10 @@
 --[[------------------------------------------------------
 
-  Basic tests for lubyk GUI
-  -------------------------
+  Basic tests for legacy OpenGL window
+  ------------------------------------
 
-  This tests multi-threading and event posting / triggering.
-  We cannot trigger these tests with other tests because Qt
-  does not like beeing started and stopped multiple times.
+  This is for direct-mode OpenGL. Please look at GLSWindow
+  for the modern approach.
 
 --]]------------------------------------------------------
 require 'lubyk'

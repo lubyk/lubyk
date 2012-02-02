@@ -1,7 +1,7 @@
 --[[------------------------------------------------------
 
   lk.Timer
-  ------
+  --------
 
   The Timer contains a callback to execute a function at
   regular intervals. This file helps hide worker dependency

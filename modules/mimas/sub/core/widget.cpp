@@ -59,6 +59,7 @@ void Widget::paint(ThreadedLuaObject *obj, Painter *p, int w, int h) {
 
   if (status) {
     fprintf(stderr, "Error in 'paint' callback: %s\n", lua_tostring(L, -1));
+    lua_pop(L, 1);
   }
 }
 

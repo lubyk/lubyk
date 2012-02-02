@@ -311,7 +311,7 @@ function assertTableEqual(expected, value, resolution, up_count)
     assertValueEqual(v, value[k], resolution, up_count + 1)
   end
   for k, v in pairs(value) do
-    if not expected[k] then
+    if expected[k] == nil then
       lib.assert(false, string.format("Expected no '%s' key but found %s.", k, formatArg(v)), up_count + 1)
     end
     assertValueEqual(v, value[k], resolution, up_count + 1)
