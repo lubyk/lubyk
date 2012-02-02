@@ -80,16 +80,13 @@ class GLWidget : public QGraphicsView, public ThreadedLuaObject
   OpenGLScene *gl_scene_;
 public:
   GLWidget() {
-    QGLFormat gl_format;
-    gl_format.setVersion(3, 2);
-    gl_format.setProfile(QGLFormat::CoreProfile);
-    gl_format.setSampleBuffers(true);
-    QGLWidget *gl_widget = new GLWidget(); //gl_format);
-    setViewport(gl_widget);
+    setViewport(new QGLWidget(QGLFormat(
+            QGL::SampleBuffers
+            )));
     setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
     gl_scene_ = new OpenGLScene(this);
     setScene(gl_scene_);
-    
+
     setAttribute(Qt::WA_DeleteOnClose);
     // get focus on tab and click
     setFocusPolicy(Qt::StrongFocus);

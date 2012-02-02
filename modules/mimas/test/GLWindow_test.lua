@@ -3,7 +3,7 @@
   Basic tests for legacy OpenGL window
   ------------------------------------
 
-  This is for direct-mode OpenGL. Please look at GLSWindow
+  This is for direct-mode OpenGL. Please look at GLSLWindow
   for the modern approach.
 
 --]]------------------------------------------------------

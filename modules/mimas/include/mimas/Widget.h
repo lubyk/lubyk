@@ -48,7 +48,7 @@ class Painter;
  *
  * @see QWidget
  * @dub destructor: 'luaDestroy'
- *      ignore: 'keyboard,click,paint'
+ *      ignore: 'keyboard,click,paint,resized,moved,closed,paint'
  *      super: 'QWidget'
  */
 class Widget : public QWidget, public ThreadedLuaObject {
@@ -101,9 +101,9 @@ public:
   static bool mouse(ThreadedLuaObject *obj, QMouseEvent *event);
   static bool click(ThreadedLuaObject *obj, QMouseEvent *event, int type);
   static void paint(ThreadedLuaObject *obj, Painter *p, int w, int h);
-  static bool resized(ThreadedLuaObject *obj, double width, double height);
-  static bool moved(ThreadedLuaObject *obj, QMoveEvent *event);
-  static bool closed(ThreadedLuaObject *obj, QCloseEvent *event);
+  static void resized(ThreadedLuaObject *obj, double width, double height);
+  static void moved(ThreadedLuaObject *obj, QMoveEvent *event);
+  static void closed(ThreadedLuaObject *obj, QCloseEvent *event);
 protected:
   virtual void closeEvent(QCloseEvent *event) {
     Widget::closed(this, event);
@@ -131,7 +131,7 @@ protected:
   virtual void paintEvent(QPaintEvent *event);
 
   virtual void resizeEvent(QResizeEvent *event) {
-    Widget::resize(this, width(), height());
+    Widget::resized(this, width(), height());
   }
 
   virtual void moveEvent(QMoveEvent * event) {

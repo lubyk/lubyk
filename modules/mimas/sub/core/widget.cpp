@@ -63,10 +63,10 @@ void Widget::paint(ThreadedLuaObject *obj, Painter *p, int w, int h) {
   }
 }
 
-void Widget::resize(ThreadedLuaObject *obj, double width, double height) {
+void Widget::resized(ThreadedLuaObject *obj, double width, double height) {
   lua_State *L = obj->lua_;
 
-  if (!pushLuaCallback("resized")) return;
+  if (!obj->pushLuaCallback("resized")) return;
   lua_pushnumber(L, width);
   lua_pushnumber(L, height);
   // <func> <self> <width> <height>
@@ -80,7 +80,7 @@ void Widget::resize(ThreadedLuaObject *obj, double width, double height) {
 void Widget::moved(ThreadedLuaObject *obj, QMoveEvent *event) {
   lua_State *L = obj->lua_;
 
-  if (!pushLuaCallback("moved")) return;
+  if (!obj->pushLuaCallback("moved")) return;
   lua_pushnumber(L, event->pos().x());
   lua_pushnumber(L, event->pos().y());
   // <func> <self> <x> <y>
@@ -93,7 +93,7 @@ void Widget::moved(ThreadedLuaObject *obj, QMoveEvent *event) {
 
 void Widget::closed(ThreadedLuaObject *obj, QCloseEvent *event) {
   lua_State *L = obj->lua_;
-  if (!pushLuaCallback("closed")) return;
+  if (!obj->pushLuaCallback("closed")) return;
   // <func> <self>
   int status = lua_pcall(L, 1, 1, 0);
   if (status) {

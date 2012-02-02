@@ -94,6 +94,7 @@ int luaload_mimas_Callback_core(lua_State *L);
 int luaload_mimas_Color(lua_State *L);
 int luaload_mimas_DataSource(lua_State *L);
 int luaload_mimas_FileObserver(lua_State *L);
+int luaload_mimas_GLSLWidget(lua_State *L);
 int luaload_mimas_GLWidget(lua_State *L);
 int luaload_mimas_GroupBox_core(lua_State *L);
 int luaload_mimas_HBoxLayout_core(lua_State *L);
@@ -135,6 +136,7 @@ extern "C" int luaopen_mimas_core(lua_State *L) {
   luaload_mimas_Color(L);
   luaload_mimas_DataSource(L);
   luaload_mimas_FileObserver(L);
+  luaload_mimas_GLSLWidget(L);
   luaload_mimas_GLWidget(L);
   luaload_mimas_GroupBox_core(L);
   luaload_mimas_HBoxLayout_core(L);

@@ -44,31 +44,7 @@ mimas_classes.sort!
 # 'lubyk' namespace should be parsed first because it is used by others
 Dub::Lua.bind namespace = Dub.parse(XML_DOC_PATH + "namespacelubyk.xml")[:lubyk]
 
-
-SPECIAL_NAMESPACES = {}
-B2CLASSES = %w{b2Body b2Vec2 b2FixtureDef b2Fixture b2ContactEdge b2JointEdge b2MassData}
-# Special handling for box2d (create a pseudo namespace)
-def prepare_box2d
-  box2d = {}
-  SPECIAL_NAMESPACES[:b2] = box2d
-  B2CLASSES.each do |class_name|
-    name = class_name.gsub(/([A-Z])/) {|n| "_#{n.downcase}"}
-    filepath = XML_DOC_PATH + "class#{name}.xml"
-    if not File.exist?(filepath)
-      filepath = XML_DOC_PATH + "struct#{name}.xml"
-    end
-    class_xml = (Hpricot::XML(File.read(filepath))/'compounddef').first
-    klass = Dub::Klass.new(box2d, class_name, class_xml, 'b2')
-    klass.bind_name = class_name.sub('b2','')
-    Dub::Lua.bind(klass)
-    box2d[class_name] = klass
-  end
-end 
-
-prepare_box2d
-
 modules = {
-  'b2' => B2CLASSES,
   'dummy' => %w{Dummy},
   'lk' => {
     'class' => %w{Debug Finalizer Socket Mutex},
@@ -93,15 +69,12 @@ modules = {
     opts = {'class' => opts}
   end
 
-  namespace = SPECIAL_NAMESPACES[mod_name.to_sym]
-  if not namespace
-    namespace = Dub.parse(XML_DOC_PATH + "namespace#{mod_name}.xml")[mod_name.to_sym]
-    if mod_name == 'mimas'
-      # ignore setHue, variantFromLua
-      namespace.ignore %w{setHue variantFromLua}
-    end
-    Dub::Lua.bind(namespace)
+  namespace = Dub.parse(XML_DOC_PATH + "namespace#{mod_name}.xml")[mod_name.to_sym]
+  if mod_name == 'mimas'
+    # ignore setHue, variantFromLua
+    namespace.ignore %w{setHue variantFromLua}
   end
+  Dub::Lua.bind(namespace)
 
   # Dub::Lua.function_generator.template_path = (BINDINGS_PATH + 'lua_function.cpp.erb')
 

@@ -48,6 +48,7 @@ if(QT_SRC_PATH STREQUAL "")
   find_package(Qt4 REQUIRED)
   set(QT_USE_QTGUI TRUE)
   set(QT_USE_QTOPENGL TRUE)
+  SET(QT_USE_QTOPENGL TRUE)
   include(${QT_USE_FILE})
   add_definitions(${QT_DEFINITIONS})
 else(QT_SRC_PATH STREQUAL "")
@@ -61,11 +62,18 @@ else(QT_SRC_PATH STREQUAL "")
   set(QT_LIBRARIES "-framework Carbon -framework AppKit -framework ApplicationServices ${QT_LIB_PATH}/libQtGui.a ${QT_LIB_PATH}/libQtOpenGL.a ${QT_LIB_PATH}/libQtCore.a /usr/lib/libz.dylib")
 endif(QT_SRC_PATH STREQUAL "")
 
+# --=============================================== OpenGL
+
+ 
+FIND_PACKAGE(OpenGL)
 # ==============================================================================
 
 # create name/[SUB_MOD_NAME].so library
 build_sub_module("core" ${SUB_MODULE_SOURCES} ${SUB_MODULE_HEADERS_MOC})
-target_link_libraries("${MODULE_NAME}_core" ${QT_LIBRARIES})
+target_link_libraries("${MODULE_NAME}_core"
+  ${QT_LIBRARIES}
+  ${OPENGL_LIBRARIES}
+  )
 
 # CMake with Qt ref:
 # http://developer.qt.nokia.com/quarterly/view/using_cmake_to_build_qt_projects

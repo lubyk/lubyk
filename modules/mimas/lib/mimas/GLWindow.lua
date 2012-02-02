@@ -6,6 +6,7 @@
   A window to draw legacy (direct-mode) OpenGL content.
 
 --]]------------------------------------------------------
+-- Make sure we load alterations of the metatable
 require 'mimas.GLWidget'
 -- Constr is the original constructor, not the bootstraping alias
 local constr  = mimas_core.GLWidget
