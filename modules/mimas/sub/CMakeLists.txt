@@ -64,6 +64,7 @@ endif(QT_SRC_PATH STREQUAL "")
 
 # --=============================================== OpenGL
 
+
  
 FIND_PACKAGE(OpenGL)
 # ==============================================================================
@@ -73,6 +74,7 @@ build_sub_module("core" ${SUB_MODULE_SOURCES} ${SUB_MODULE_HEADERS_MOC})
 target_link_libraries("${MODULE_NAME}_core"
   ${QT_LIBRARIES}
   ${OPENGL_LIBRARIES}
+  ${LUBYK_SOURCE_DIR}/modules/mimas/vendor/glew/lib/libglew.a
   )
 
 # CMake with Qt ref:

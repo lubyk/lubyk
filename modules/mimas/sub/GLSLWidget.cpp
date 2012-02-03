@@ -12,7 +12,7 @@ using namespace mimas;
 /* ============================ Constructors     ====================== */
 
 /** mimas::GLSLWidget::GLSLWidget()
- * include/mimas/GLSLWidget.h:87
+ * include/mimas/GLSLWidget.h:88
  */
 static int GLSLWidget_GLSLWidget(lua_State *L) {
   try {
@@ -160,8 +160,30 @@ static int QWidget_close(lua_State *L) {
 
 
 
+/** bool mimas::GLSLWidget::compile(const char *vertex_shader, const char *fragment_shader)
+ * include/mimas/GLSLWidget.h:116
+ */
+static int GLSLWidget_compile(lua_State *L) {
+  try {
+    GLSLWidget *self = *((GLSLWidget**)dubL_checksdata(L, 1, "mimas.GLSLWidget"));
+    if (!self) throw dub::Exception("Using deleted mimas.GLSLWidget in compile");
+    const char *vertex_shader = dubL_checkstring(L, 2);
+    const char *fragment_shader = dubL_checkstring(L, 3);
+    bool  retval__ = self->compile(vertex_shader, fragment_shader);
+    lua_pushboolean(L, retval__);
+    return 1;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "compile: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "compile: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
 /** QString mimas::GLSLWidget::cssClass() const 
- * include/mimas/GLSLWidget.h:98
+ * include/mimas/GLSLWidget.h:99
  */
 static int GLSLWidget_cssClass(lua_State *L) {
   try {
@@ -385,7 +407,7 @@ static int QObject_object(lua_State *L) {
 
 
 /** LuaStackSize mimas::GLSLWidget::openGLVersion(lua_State *L)
- * include/mimas/GLSLWidget.h:109
+ * include/mimas/GLSLWidget.h:110
  */
 static int GLSLWidget_openGLVersion(lua_State *L) {
   try {
@@ -763,7 +785,7 @@ static int QWidget_update(lua_State *L) {
 
 
 /** void mimas::GLSLWidget::updateGL()
- * include/mimas/GLSLWidget.h:105
+ * include/mimas/GLSLWidget.h:106
  */
 static int GLSLWidget_updateGL(lua_State *L) {
   try {
@@ -870,6 +892,7 @@ static const struct luaL_Reg GLSLWidget_member_methods[] = {
   {"addAction"         , QWidget_addAction},
   {"addWidget"         , QWidget_addWidget},
   {"close"             , QWidget_close},
+  {"compile"           , GLSLWidget_compile},
   {"cssClass"          , GLSLWidget_cssClass},
   {"globalMove"        , QWidget_globalMove},
   {"globalPosition"    , QWidget_globalPosition},

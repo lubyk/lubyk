@@ -32,6 +32,8 @@
 #include "lubyk.h"
 using namespace lubyk;
 
+#include "GL/glew.h"
+
 #include "mimas/mimas.h"
 #include "mimas/Widget.h"
 
@@ -39,9 +41,19 @@ using namespace lubyk;
 #include <QGLContext>
 
 #ifdef __macosx__
-void* mimasSelectModernOpenGLMac(GDHandle handle);
+  //#include <OpenGL/gl.h>
+  //#include <OpenGL/glu.h>
+  void* mimasSelectModernOpenGLMac(GDHandle handle);
+#else
+  //#include <GL/gl.h>
+  //#include <GL/glu.h>
 #endif
 
+#define CHECKERROR(msg) ErrorCheckValue = glGetError();\
+if (ErrorCheckValue != GL_NO_ERROR) { \
+  fprintf(stderr, "%s: %s \n", #msg, gluErrorString(ErrorCheckValue)); \
+  exit(-1); \
+}
 namespace mimas {
 
   
@@ -92,6 +104,8 @@ public:
   }   
 
   ~GLSLWidget() {
+    destroyShaders();
+    destroyVBO();
     MIMAS_DEBUG_GC
   }
 
@@ -112,10 +126,39 @@ public:
     return 2;
   }
 
-  //bool prepareShaderProgram(const char *xxx, const char *yyy);
+  bool compile(const char *vertex_shader, const char *fragment_shader) {
+    if (!isVisible()) {
+      // This should initialize OpenGL
+      show();
+    }
+    if (!glGetString(GL_VERSION)) {
+      printf("OpenGL not initialized. Show window before compiling.\n");
+    } else {
+      printf("COMPILE...\n");
+      createShaders(vertex_shader, fragment_shader);
+      createVBO();
+    }
+    updateGL();
+    return true;
+  }
 
 protected:
   virtual void initializeGL() {
+    printf("glewInit\n");     
+    glewExperimental = GL_TRUE;
+    GLenum err = glewInit();
+    if (GLEW_OK != err) {
+      fprintf(
+        stderr,
+        "glewInit error: %s\n",
+        glewGetErrorString(err)
+        );
+      exit(EXIT_FAILURE);
+    } 
+    glClearColor(0,0,0,0);
+    glClear(GL_COLOR_BUFFER_BIT);
+  }
+  /*
     lua_State *L = lua_;
 
     if (!pushLuaCallback("initializeGL")) return;
@@ -126,8 +169,13 @@ protected:
       fprintf(stderr, "Error in 'initializeGL' callback: %s\n", lua_tostring(L, -1));
     }
   }
+  */
 
   virtual void resizeGL(int width, int height) {
+    glViewport(0, 0, width, height);
+  }
+/*
+
     lua_State *L = lua_;
 
     if (!pushLuaCallback("resizeGL")) return;
@@ -140,10 +188,11 @@ protected:
       fprintf(stderr, "Error in 'resizeGL' callback: %s\n", lua_tostring(L, -1));
     }
   }
+  */
 
   virtual void paintGL() {
-    glClearColor(0,1,0,1);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
   }
   /*
     lua_State *L = lua_;
@@ -200,8 +249,121 @@ protected:
       QWidget::keyReleaseEvent(event);
   }
 
+
+
   //virtual void paintEvent(QPaintEvent *event);
 private:
+  GLuint
+    VertexShaderId,
+    FragmentShaderId,
+    ProgramId,
+    VaoId,
+    VboId,
+    ColorBufferId;
+   
+  // FIXME: Write gl bindings so that we can do all this in Lua.
+  void createVBO() {
+    GLenum ErrorCheckValue;
+
+    GLfloat Vertices[] = {
+        -0.8f, -0.8f, 0.0f, 1.0f,
+         0.0f,  0.8f, 0.0f, 1.0f,
+         0.8f, -0.8f, 0.0f, 1.0f
+    };
+ 
+    GLfloat Colors[] = {
+        1.0f, 0.0f, 0.0f, 1.0f,
+        0.0f, 1.0f, 0.0f, 1.0f,
+        0.0f, 0.0f, 1.0f, 1.0f
+    };
+ 
+    CHECKERROR(createVBO);
+ 
+    glGenVertexArrays(1, &VaoId);
+    glBindVertexArray(VaoId);
+ 
+    glGenBuffers(1, &VboId);
+    glBindBuffer(GL_ARRAY_BUFFER, VboId);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(0);
+ 
+    glGenBuffers(1, &ColorBufferId);
+    glBindBuffer(GL_ARRAY_BUFFER, ColorBufferId);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(Colors), Colors, GL_STATIC_DRAW);
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(1);
+ 
+    ErrorCheckValue = glGetError();
+    if (ErrorCheckValue != GL_NO_ERROR)
+    {
+        fprintf(
+            stderr,
+            "ERROR: Could not create a VBO: %s \n",
+            gluErrorString(ErrorCheckValue)
+        );
+ 
+        exit(-1);
+    }
+  }
+
+  void destroyVBO() {
+
+    GLenum ErrorCheckValue = glGetError();
+
+    glDisableVertexAttribArray(1);
+    glDisableVertexAttribArray(0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    glDeleteBuffers(1, &ColorBufferId);
+    glDeleteBuffers(1, &VboId);
+
+    glBindVertexArray(0);
+    glDeleteVertexArrays(1, &VaoId);
+
+    ErrorCheckValue = glGetError();
+    if (ErrorCheckValue != GL_NO_ERROR)
+    {
+      fprintf(
+          stderr,
+          "ERROR: Could not destroy the VBO: %s \n",
+          gluErrorString(ErrorCheckValue)
+          );
+
+      exit(-1);
+    }
+  }
+
+
+  void createShaders(const char *vertex_shader, const char *fragment_shader);
+
+  void destroyShaders(void) {
+    GLenum ErrorCheckValue = glGetError();
+ 
+    glUseProgram(0);
+ 
+    glDetachShader(ProgramId, VertexShaderId);
+    glDetachShader(ProgramId, FragmentShaderId);
+ 
+    glDeleteShader(FragmentShaderId);
+    glDeleteShader(VertexShaderId);
+ 
+    glDeleteProgram(ProgramId);
+ 
+    ErrorCheckValue = glGetError();
+    if (ErrorCheckValue != GL_NO_ERROR)
+    {
+        fprintf(
+            stderr,
+            "ERROR: Could not destroy the shaders: %s \n",
+            gluErrorString(ErrorCheckValue)
+        );
+ 
+        exit(-1);
+    }
+  }
+
 };
 
 } // mimas

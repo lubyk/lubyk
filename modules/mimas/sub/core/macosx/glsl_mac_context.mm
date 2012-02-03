@@ -1,6 +1,5 @@
 #include "mimas/GLSLWidget.h"
  
- 
 void* mimasSelectModernOpenGLMac(GDHandle handle) {
     static const int Max = 40;
     NSOpenGLPixelFormatAttribute attribs[Max];
