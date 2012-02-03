@@ -77,7 +77,7 @@ function dump(var,indent,tagValue)
     return indentStr.."<"..tag.."> "..raw_encode(base.tostring(var)).." </"..tag..">\n"
   end
 end
-dump = encode
+encode = dump
 
 
 -- saves a Lua var as xml file

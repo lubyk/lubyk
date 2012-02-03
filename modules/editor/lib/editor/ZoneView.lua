@@ -20,6 +20,7 @@ function lib:init(zone)
   -- The layout holder is just there so that the main_view does not have
   -- a "master" layout and can therefore hold dragged views and such without
   -- making a mess with widget sizes.
+  self:setWindowTitle(zone.name)
   self.zone = zone
   self.layout_holder = mimas.Widget()
   self:addWidget(self.layout_holder)
@@ -135,42 +136,37 @@ end
 
 function private.dialog:newProject()
   self.doit = lk.Thread(function()
-  self.dlg = mimas.SimpleDialog {
-    'Who are you ?',
-    {'vbox',
-      {'hbox', 'First name', {'input', 'first_name', 'Gaspard'}},
-      {'hbox', 'Last name',  {'input', 'last_name',  'Bucher'}},
-      {'hbox', 'In lubyk',   {'input', 'dir', lfs.currentdir(), folder=true}},
-    },
-    {'hbox',
-      {'btn', 'Cancel'},
-      {'btn', 'OK', default = true},
-    },
-  }
-  --self.dlg = mimas.SimpleDialog {
-  --  'Create a new lubyk project.',
-  --  {'vbox', box = true,
-  --    'Project name',
-  --    {'input', 'name'},
-  --    'Create project in directory',
-  --    {'input', 'dir', folder=true},
-  --  },
-  --  {'hbox', {},
-  --    {'btn', 'cancel'},
-  --    {'btn', 'OK', default=true},
-  --  },
-  --}
-  function self.dlg:btn(name)
-    if name == 'OK' then
-      -- Create project
+    self.dlg = mimas.SimpleDialog {
+      parent = self,
+      'Create a new lubyk project.',
+      {'vbox', box = true,
+        'Project name',
+        {'input', 'name'},
+        'Create project in directory',
+        {'input', 'dir', os.getenv('HOME'), folder=true},
+      },
+      {'hbox', {},
+        {'btn', 'cancel'},
+        {'btn', 'OK', default=true},
+      },
+    }
+
+    function self.dlg.btn(dlg, name)
+      if name == 'OK' then
+        -- Create project
+        local path = dlg.form.dir .. '/' .. name .. '.lkp'
+        if not lk.exist(path) then
+          lk.writeall(path, '')
+        end
+        app:openFile(path)
+      end
+      dlg:hide()
+      self.dlg = nil
+      self.doit = nil
     end
-    self.dlg:hide()
-    self.dlg = nil
-    self.doit = nil
-  end
-  self.dlg:resize(400,200)
-  self.dlg:show()
-end)
+    self.dlg:resize(400,200)
+    self.dlg:show()
+  end)
 end
 
 -- function private.dialog:openProject()

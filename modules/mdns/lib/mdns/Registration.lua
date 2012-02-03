@@ -58,9 +58,9 @@ function mdns.Registration(service_type, name, port, txt, func)
       txt = nil
     end
   end
-  self.callback = func or dummy
   txt = buildTXT(txt)
   local self = constr(service_type, name, port, txt)
+  self.callback = func or dummy
   self.txt = txt
   self.thread = lk.Thread(function()
     while true do

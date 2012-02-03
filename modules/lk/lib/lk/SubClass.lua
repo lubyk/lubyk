@@ -15,6 +15,7 @@
   function MyWidget.new(...)
     local self = mimas.Widget()
     setmetatable(self, MyWidget)
+    self:init(...)
     return self
   end
 
