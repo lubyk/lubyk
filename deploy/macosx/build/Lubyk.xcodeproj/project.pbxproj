@@ -1,0 +1,319 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		2B4A30A71410E5CF000B674A /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B4A30A61410E5CF000B674A /* Cocoa.framework */; };
+		2B4A30B11410E5CF000B674A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2B4A30AF1410E5CF000B674A /* InfoPlist.strings */; };
+		2B4A30B31410E5CF000B674A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B4A30B21410E5CF000B674A /* main.m */; };
+		2B4A30B71410E5CF000B674A /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 2B4A30B51410E5CF000B674A /* Credits.rtf */; };
+		2B4A30BA1410E5CF000B674A /* MainDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B4A30B91410E5CF000B674A /* MainDocument.m */; };
+		2B4A30BD1410E5CF000B674A /* MainDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2B4A30BB1410E5CF000B674A /* MainDocument.xib */; };
+		2B4A30C01410E5CF000B674A /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2B4A30BE1410E5CF000B674A /* MainMenu.xib */; };
+		2B4A30DF1410E5E0000B674A /* app.icns in Resources */ = {isa = PBXBuildFile; fileRef = 2B4A30DE1410E5E0000B674A /* app.icns */; };
+		2BE0DFC014152BC300E28CB3 /* lkp.icns in Resources */ = {isa = PBXBuildFile; fileRef = 2BE0DFBF14152BC300E28CB3 /* lkp.icns */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		2B4A30A21410E5CF000B674A /* Lubyk.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lubyk.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2B4A30A61410E5CF000B674A /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		2B4A30A91410E5CF000B674A /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		2B4A30AA1410E5CF000B674A /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		2B4A30AB1410E5CF000B674A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		2B4A30AE1410E5CF000B674A /* Lubyk-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Lubyk-Info.plist"; sourceTree = "<group>"; };
+		2B4A30B01410E5CF000B674A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		2B4A30B21410E5CF000B674A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		2B4A30B41410E5CF000B674A /* Lubyk-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Lubyk-Prefix.pch"; sourceTree = "<group>"; };
+		2B4A30B61410E5CF000B674A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
+		2B4A30B81410E5CF000B674A /* MainDocument.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MainDocument.h; sourceTree = "<group>"; };
+		2B4A30B91410E5CF000B674A /* MainDocument.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MainDocument.m; sourceTree = "<group>"; };
+		2B4A30BC1410E5CF000B674A /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainDocument.xib; sourceTree = "<group>"; };
+		2B4A30BF1410E5CF000B674A /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		2B4A30C71410E5D0000B674A /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		2B4A30DE1410E5E0000B674A /* app.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = app.icns; sourceTree = "<group>"; };
+		2BE0DFBF14152BC300E28CB3 /* lkp.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = lkp.icns; sourceTree = "<group>"; };
+		2BE0DFC114152D4300E28CB3 /* Lubyk.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Lubyk.entitlements; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		2B4A309F1410E5CF000B674A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2B4A30A71410E5CF000B674A /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		2B4A30971410E5CF000B674A = {
+			isa = PBXGroup;
+			children = (
+				2B4A30DE1410E5E0000B674A /* app.icns */,
+				2BE0DFBF14152BC300E28CB3 /* lkp.icns */,
+				2B4A30AC1410E5CF000B674A /* Lubyk */,
+				2B4A30A51410E5CF000B674A /* Frameworks */,
+				2B4A30A31410E5CF000B674A /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		2B4A30A31410E5CF000B674A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2B4A30A21410E5CF000B674A /* Lubyk.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		2B4A30A51410E5CF000B674A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2B4A30A61410E5CF000B674A /* Cocoa.framework */,
+				2B4A30C71410E5D0000B674A /* SenTestingKit.framework */,
+				2B4A30A81410E5CF000B674A /* Other Frameworks */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		2B4A30A81410E5CF000B674A /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2B4A30A91410E5CF000B674A /* AppKit.framework */,
+				2B4A30AA1410E5CF000B674A /* CoreData.framework */,
+				2B4A30AB1410E5CF000B674A /* Foundation.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		2B4A30AC1410E5CF000B674A /* Lubyk */ = {
+			isa = PBXGroup;
+			children = (
+				2BE0DFC114152D4300E28CB3 /* Lubyk.entitlements */,
+				2B4A30B81410E5CF000B674A /* MainDocument.h */,
+				2B4A30B91410E5CF000B674A /* MainDocument.m */,
+				2B4A30BB1410E5CF000B674A /* MainDocument.xib */,
+				2B4A30BE1410E5CF000B674A /* MainMenu.xib */,
+				2B4A30AD1410E5CF000B674A /* Supporting Files */,
+			);
+			path = Lubyk;
+			sourceTree = "<group>";
+		};
+		2B4A30AD1410E5CF000B674A /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				2B4A30AE1410E5CF000B674A /* Lubyk-Info.plist */,
+				2B4A30AF1410E5CF000B674A /* InfoPlist.strings */,
+				2B4A30B21410E5CF000B674A /* main.m */,
+				2B4A30B41410E5CF000B674A /* Lubyk-Prefix.pch */,
+				2B4A30B51410E5CF000B674A /* Credits.rtf */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		2B4A30A11410E5CF000B674A /* Lubyk */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2B4A30D81410E5D0000B674A /* Build configuration list for PBXNativeTarget "Lubyk" */;
+			buildPhases = (
+				2B4A309E1410E5CF000B674A /* Sources */,
+				2B4A309F1410E5CF000B674A /* Frameworks */,
+				2B4A30A01410E5CF000B674A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Lubyk;
+			productName = Lubyk;
+			productReference = 2B4A30A21410E5CF000B674A /* Lubyk.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		2B4A30991410E5CF000B674A /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 2B4A309C1410E5CF000B674A /* Build configuration list for PBXProject "Lubyk" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 2B4A30971410E5CF000B674A;
+			productRefGroup = 2B4A30A31410E5CF000B674A /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				2B4A30A11410E5CF000B674A /* Lubyk */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		2B4A30A01410E5CF000B674A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2B4A30B11410E5CF000B674A /* InfoPlist.strings in Resources */,
+				2B4A30B71410E5CF000B674A /* Credits.rtf in Resources */,
+				2B4A30BD1410E5CF000B674A /* MainDocument.xib in Resources */,
+				2B4A30C01410E5CF000B674A /* MainMenu.xib in Resources */,
+				2B4A30DF1410E5E0000B674A /* app.icns in Resources */,
+				2BE0DFC014152BC300E28CB3 /* lkp.icns in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		2B4A309E1410E5CF000B674A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2B4A30B31410E5CF000B674A /* main.m in Sources */,
+				2B4A30BA1410E5CF000B674A /* MainDocument.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		2B4A30AF1410E5CF000B674A /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				2B4A30B01410E5CF000B674A /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		2B4A30B51410E5CF000B674A /* Credits.rtf */ = {
+			isa = PBXVariantGroup;
+			children = (
+				2B4A30B61410E5CF000B674A /* en */,
+			);
+			name = Credits.rtf;
+			sourceTree = "<group>";
+		};
+		2B4A30BB1410E5CF000B674A /* MainDocument.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				2B4A30BC1410E5CF000B674A /* en */,
+			);
+			name = MainDocument.xib;
+			sourceTree = "<group>";
+		};
+		2B4A30BE1410E5CF000B674A /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				2B4A30BF1410E5CF000B674A /* en */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		2B4A30D61410E5D0000B674A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx10.6;
+			};
+			name = Debug;
+		};
+		2B4A30D71410E5D0000B674A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				SDKROOT = macosx10.6;
+			};
+			name = Release;
+		};
+		2B4A30D91410E5D0000B674A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Lubyk/Lubyk-Prefix.pch";
+				INFOPLIST_FILE = "Lubyk/Lubyk-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		2B4A30DA1410E5D0000B674A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Lubyk/Lubyk-Prefix.pch";
+				INFOPLIST_FILE = "Lubyk/Lubyk-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2B4A309C1410E5CF000B674A /* Build configuration list for PBXProject "Lubyk" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2B4A30D61410E5D0000B674A /* Debug */,
+				2B4A30D71410E5D0000B674A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2B4A30D81410E5D0000B674A /* Build configuration list for PBXNativeTarget "Lubyk" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2B4A30D91410E5D0000B674A /* Debug */,
+				2B4A30DA1410E5D0000B674A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 2B4A30991410E5CF000B674A /* Project object */;
+}

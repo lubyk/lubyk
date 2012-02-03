@@ -3,6 +3,8 @@
 *.logic
 *.perspectivev3
 *.o
+*.pic_o
+*.pc
 *.a
 *.dSYM
 *.pbxuser
@@ -24,3 +26,6 @@
 /rename.rb
 /modules/lua/vendor/lua5.1/src/lua
 /modules/lua/vendor/lua5.1/src/luac
+/modules/mimas/vendor/glew/bin
+/modules/mimas/vendor/glew/lib
+/tags
