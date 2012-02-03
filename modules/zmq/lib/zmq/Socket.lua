@@ -82,8 +82,7 @@ end
 
 function lib:request(...)
   self:send(...)
-  local data = {self:recv()}
-  return unpack(data)
+  return self:recv()
 end
 
 local zmq_POLLIN = zmq.POLLIN

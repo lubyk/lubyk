@@ -14,8 +14,17 @@ function zmq.SimplePull(location, func)
     location = nil
   end
   return zmq.Pull(location, function(self)
+    local clients = {}
     while self.thread do
-      func(self:recv())
+      -- Run in a new thread so that errors do not
+      -- halt the socket...
+      -- TODO: should (and can) we reuse the coroutine ?
+      local data = {self:recv()}
+      clients[data] = lk.Thread(function()
+        func(unpack(data))
+        -- Garbage collect
+        clients[data] = nil
+      end)
     end
   end)
 end
