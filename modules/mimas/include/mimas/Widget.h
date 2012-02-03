@@ -57,8 +57,14 @@ class Widget : public QWidget, public ThreadedLuaObject {
   Q_PROPERTY(float hue READ hue WRITE setHue)
 
 public:
-  Widget(int window_flags = 0) :
+  Widget(int window_flags) :
     QWidget(NULL, (Qt::WindowFlags)window_flags) {
+    setAttribute(Qt::WA_DeleteOnClose);
+    MIMAS_DEBUG_CC
+  }
+
+  Widget(QWidget *parent = 0, int window_flags = 0) :
+    QWidget(parent, (Qt::WindowFlags)window_flags) {
     setAttribute(Qt::WA_DeleteOnClose);
     MIMAS_DEBUG_CC
   }

@@ -11,18 +11,42 @@ using namespace mimas;
 
 /* ============================ Constructors     ====================== */
 
-/** mimas::Widget::Widget(int window_flags=0)
+
+/** mimas::Widget::Widget(int window_flags)
  * include/mimas/Widget.h:61
  */
-static int Widget_Widget(lua_State *L) {
+static int Widget_Widget1(lua_State *L) {
+  try {
+    int window_flags = dubL_checkint(L, 1);
+    Widget * retval__ = new Widget(window_flags);
+    return retval__->luaInit(L, retval__, "mimas.Widget");
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "Widget: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "Widget: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** mimas::Widget::Widget(QWidget *parent=0, int window_flags=0)
+ * include/mimas/Widget.h:67
+ */
+static int Widget_Widget2(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
     Widget * retval__;
     if (top__ < 1) {
       retval__ = new Widget();
     } else {
-      int window_flags = dubL_checkint(L, 1);
-      retval__ = new Widget(window_flags);
+      QWidget *parent = *((QWidget **)dubL_checksdata(L, 1, "mimas.QWidget"));
+      if (top__ < 2) {
+        retval__ = new Widget(parent);
+      } else {
+        int window_flags = dubL_checkint(L, 2);
+        retval__ = new Widget(parent, window_flags);
+      }
     }
     return retval__->luaInit(L, retval__, "mimas.Widget");
   } catch (std::exception &e) {
@@ -33,6 +57,24 @@ static int Widget_Widget(lua_State *L) {
   return lua_error(L);
 }
 
+
+
+
+/** Overloaded function chooser for Widget(...) */
+static int Widget_Widget(lua_State *L) {
+  int type__ = lua_type(L, 1);
+  int top__  = lua_gettop(L);
+  if (type__ == LUA_TNUMBER) {
+    return Widget_Widget1(L);
+  } else if (top__ < 1) {
+    return Widget_Widget2(L);
+  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "mimas.QWidget")) {
+    return Widget_Widget2(L);
+  } else {
+    // use any to raise errors
+    return Widget_Widget2(L);
+  }
+}
 
 
 /* ============================ Destructor       ====================== */
@@ -117,7 +159,7 @@ static int QWidget_addAction(lua_State *L) {
 
 
 /** void mimas::QWidget::addWidget(QWidget *widget, float x=0, float y=0)
- * mimas/bind/QWidget.h:41
+ * mimas/bind/QWidget.h:44
  */
 static int QWidget_addWidget(lua_State *L) {
   try {
@@ -168,7 +210,7 @@ static int QWidget_close(lua_State *L) {
 
 
 /** QString mimas::Widget::cssClass() const 
- * include/mimas/Widget.h:70
+ * include/mimas/Widget.h:76
  */
 static int Widget_cssClass(lua_State *L) {
   try {
@@ -188,7 +230,7 @@ static int Widget_cssClass(lua_State *L) {
 
 
 /** LuaStackSize mimas::Widget::getExistingDirectory(const char *caption, const char *base_dir, int options, lua_State *L)
- * include/mimas/Widget.h:96
+ * include/mimas/Widget.h:102
  */
 static int Widget_getExistingDirectory(lua_State *L) {
   try {
@@ -211,7 +253,7 @@ static int Widget_getExistingDirectory(lua_State *L) {
 
 
 /** LuaStackSize mimas::Widget::getOpenFileName(const char *caption, const char *base_dir, const char *filter, int options, lua_State *L)
- * include/mimas/Widget.h:91
+ * include/mimas/Widget.h:97
  */
 static int Widget_getOpenFileName(lua_State *L) {
   try {
@@ -235,7 +277,7 @@ static int Widget_getOpenFileName(lua_State *L) {
 
 
 /** void mimas::QWidget::globalMove(float x, float y)
- * mimas/bind/QWidget.h:77
+ * mimas/bind/QWidget.h:83
  */
 static int QWidget_globalMove(lua_State *L) {
   try {
@@ -260,7 +302,7 @@ static int QWidget_globalMove(lua_State *L) {
 
 
 /** LuaStackSize mimas::QWidget::globalPosition()
- * mimas/bind/QWidget.h:68
+ * mimas/bind/QWidget.h:74
  */
 static int QWidget_globalPosition(lua_State *L) {
   try {
@@ -320,7 +362,7 @@ static int QWidget_hide(lua_State *L) {
 
 
 /** float mimas::Widget::hue()
- * include/mimas/Widget.h:81
+ * include/mimas/Widget.h:87
  */
 static int Widget_hue(lua_State *L) {
   try {
@@ -399,7 +441,7 @@ static int QWidget_lower(lua_State *L) {
 
 
 /** static bool mimas::Widget::mouse(ThreadedLuaObject *obj, QMouseEvent *event)
- * include/mimas/Widget.h:101
+ * include/mimas/Widget.h:107
  */
 static int Widget_mouse(lua_State *L) {
   try {
@@ -479,7 +521,7 @@ static int QObject_object(lua_State *L) {
 
 
 /** LuaStackSize mimas::QWidget::position()
- * mimas/bind/QWidget.h:73
+ * mimas/bind/QWidget.h:79
  */
 static int QWidget_position(lua_State *L) {
   try {
@@ -539,7 +581,7 @@ static int QWidget_resize(lua_State *L) {
 
 
 /** void mimas::Widget::setHue(float hue)
- * include/mimas/Widget.h:76
+ * include/mimas/Widget.h:82
  */
 static int Widget_setHue(lua_State *L) {
   try {
@@ -640,7 +682,7 @@ static int QWidget_setParent(lua_State *L) {
 
 
 /** void mimas::QWidget::setSizeHint(float w, float h)
- * mimas/bind/QWidget.h:54
+ * mimas/bind/QWidget.h:60
  */
 static int QWidget_setSizeHint(lua_State *L) {
   try {
@@ -662,7 +704,7 @@ static int QWidget_setSizeHint(lua_State *L) {
 
 
 /** void mimas::QWidget::setSizePolicy(int horizontal, int vertical)
- * mimas/bind/QWidget.h:58
+ * mimas/bind/QWidget.h:64
  */
 static int QWidget_setSizePolicy(lua_State *L) {
   try {
@@ -684,7 +726,7 @@ static int QWidget_setSizePolicy(lua_State *L) {
 
 
 /** void mimas::QWidget::setStyle(const char *text)
- * mimas/bind/QWidget.h:46
+ * mimas/bind/QWidget.h:52
  */
 static int QWidget_setStyle(lua_State *L) {
   try {
@@ -704,7 +746,7 @@ static int QWidget_setStyle(lua_State *L) {
 
 
 /** void mimas::QWidget::setStyleSheet(const char *text)
- * mimas/bind/QWidget.h:47
+ * mimas/bind/QWidget.h:53
  */
 static int QWidget_setStyleSheet(lua_State *L) {
   try {
@@ -717,6 +759,26 @@ static int QWidget_setStyleSheet(lua_State *L) {
     lua_pushfstring(L, "setStyleSheet: %s", e.what());
   } catch (...) {
     lua_pushfstring(L, "setStyleSheet: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** void mimas::QWidget::setWindowTitle(const char *text)
+ * mimas/bind/QWidget.h:37
+ */
+static int QWidget_setWindowTitle(lua_State *L) {
+  try {
+    Widget *self = *((Widget**)dubL_checksdata(L, 1, "mimas.Widget"));
+    if (!self) throw dub::Exception("Using deleted mimas.Widget in setWindowTitle");
+    const char *text = dubL_checkstring(L, 2);
+    self->setWindowTitle(text);
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "setWindowTitle: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "setWindowTitle: Unknown exception");
   }
   return lua_error(L);
 }
@@ -743,7 +805,7 @@ static int QWidget_show(lua_State *L) {
 
 
 /** void mimas::QWidget::showFullScreen(bool enable=true)
- * mimas/bind/QWidget.h:60
+ * mimas/bind/QWidget.h:66
  */
 static int QWidget_showFullScreen(lua_State *L) {
   try {
@@ -772,8 +834,8 @@ static int QWidget_showFullScreen(lua_State *L) {
 
 
 
-/** void mimas::QWidget::size()
- * mimas/bind/QWidget.h:45
+/** LuaStackSize mimas::QWidget::size()
+ * mimas/bind/QWidget.h:51
  */
 static int QWidget_size(lua_State *L) {
   try {
@@ -794,7 +856,7 @@ static int QWidget_size(lua_State *L) {
 
 
 /** void mimas::QWidget::swapFullScreen()
- * mimas/bind/QWidget.h:64
+ * mimas/bind/QWidget.h:70
  */
 static int QWidget_swapFullScreen(lua_State *L) {
   try {
@@ -817,7 +879,7 @@ static int QWidget_swapFullScreen(lua_State *L) {
 
 
 /** void mimas::QWidget::textSize(const char *text)
- * mimas/bind/QWidget.h:50
+ * mimas/bind/QWidget.h:56
  */
 static int QWidget_textSize(lua_State *L) {
   try {
@@ -857,7 +919,7 @@ static int QWidget_update(lua_State *L) {
 
 
 /** void mimas::QWidget::widget()
- * mimas/bind/QWidget.h:40
+ * mimas/bind/QWidget.h:43
  */
 static int QWidget_widget(lua_State *L) {
   try {
@@ -890,6 +952,25 @@ static int QWidget_width(lua_State *L) {
     lua_pushfstring(L, "width: %s", e.what());
   } catch (...) {
     lua_pushfstring(L, "width: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** LuaStackSize mimas::QWidget::windowTitle()
+ * mimas/bind/QWidget.h:47
+ */
+static int QWidget_windowTitle(lua_State *L) {
+  try {
+    Widget *self = *((Widget**)dubL_checksdata(L, 1, "mimas.Widget"));
+    if (!self) throw dub::Exception("Using deleted mimas.Widget in windowTitle");
+    lua_pushstring(L, self->windowTitle().toUtf8());
+    return 1;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "windowTitle: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "windowTitle: Unknown exception");
   }
   return lua_error(L);
 }
@@ -971,6 +1052,7 @@ static const struct luaL_Reg Widget_member_methods[] = {
   {"setSizePolicy"     , QWidget_setSizePolicy},
   {"setStyle"          , QWidget_setStyle},
   {"setStyleSheet"     , QWidget_setStyleSheet},
+  {"setWindowTitle"    , QWidget_setWindowTitle},
   {"show"              , QWidget_show},
   {"showFullScreen"    , QWidget_showFullScreen},
   {"size"              , QWidget_size},
@@ -979,6 +1061,7 @@ static const struct luaL_Reg Widget_member_methods[] = {
   {"update"            , QWidget_update},
   {"widget"            , QWidget_widget},
   {"width"             , QWidget_width},
+  {"windowTitle"       , QWidget_windowTitle},
   {"x"                 , QWidget_x},
   {"y"                 , QWidget_y},
   {"__tostring"        , Widget__tostring},

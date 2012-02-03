@@ -32,6 +32,9 @@ class QWidget {
   void activateWindow();
   bool isFullScreen();
   void addAction(Action *action);
+  // TODO: change for QString with new Dub (we fake QString with
+  // const char *)...
+  void setWindowTitle(const char *text);
 
   // ==============================================
   // === custom (implementation in QWidget.yml)
@@ -40,9 +43,12 @@ class QWidget {
   void widget();
   void addWidget(QWidget *widget, float x=0, float y=0);
 
+  // TODO: remove custom binding when using new Dub.
+  LuaStackSize windowTitle();
+
   /** Return the size of the widget as a pair (width, height).
    */
-  void size();
+  LuaStackSize size();
   void setStyle(const char *text);
   void setStyleSheet(const char *text);
   /** Get size of text with current widget font.

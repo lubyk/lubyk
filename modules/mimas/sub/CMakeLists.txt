@@ -76,6 +76,7 @@ target_link_libraries("${MODULE_NAME}_core"
   ${OPENGL_LIBRARIES}
   ${LUBYK_SOURCE_DIR}/modules/mimas/vendor/glew/lib/libglew.a
   )
+add_dependencies("${MODULE_NAME}_core" glew_make)
 
 # CMake with Qt ref:
 # http://developer.qt.nokia.com/quarterly/view/using_cmake_to_build_qt_projects

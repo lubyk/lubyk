@@ -12,7 +12,7 @@ using namespace mimas;
 /* ============================ Constructors     ====================== */
 
 /** mimas::GLSLWidget::GLSLWidget()
- * include/mimas/GLSLWidget.h:88
+ * include/mimas/GLSLWidget.h:99
  */
 static int GLSLWidget_GLSLWidget(lua_State *L) {
   try {
@@ -110,7 +110,7 @@ static int QWidget_addAction(lua_State *L) {
 
 
 /** void mimas::QWidget::addWidget(QWidget *widget, float x=0, float y=0)
- * mimas/bind/QWidget.h:41
+ * mimas/bind/QWidget.h:44
  */
 static int QWidget_addWidget(lua_State *L) {
   try {
@@ -161,7 +161,7 @@ static int QWidget_close(lua_State *L) {
 
 
 /** bool mimas::GLSLWidget::compile(const char *vertex_shader, const char *fragment_shader)
- * include/mimas/GLSLWidget.h:116
+ * include/mimas/GLSLWidget.h:129
  */
 static int GLSLWidget_compile(lua_State *L) {
   try {
@@ -183,7 +183,7 @@ static int GLSLWidget_compile(lua_State *L) {
 
 
 /** QString mimas::GLSLWidget::cssClass() const 
- * include/mimas/GLSLWidget.h:99
+ * include/mimas/GLSLWidget.h:112
  */
 static int GLSLWidget_cssClass(lua_State *L) {
   try {
@@ -203,7 +203,7 @@ static int GLSLWidget_cssClass(lua_State *L) {
 
 
 /** void mimas::QWidget::globalMove(float x, float y)
- * mimas/bind/QWidget.h:77
+ * mimas/bind/QWidget.h:83
  */
 static int QWidget_globalMove(lua_State *L) {
   try {
@@ -228,7 +228,7 @@ static int QWidget_globalMove(lua_State *L) {
 
 
 /** LuaStackSize mimas::QWidget::globalPosition()
- * mimas/bind/QWidget.h:68
+ * mimas/bind/QWidget.h:74
  */
 static int QWidget_globalPosition(lua_State *L) {
   try {
@@ -407,7 +407,7 @@ static int QObject_object(lua_State *L) {
 
 
 /** LuaStackSize mimas::GLSLWidget::openGLVersion(lua_State *L)
- * include/mimas/GLSLWidget.h:110
+ * include/mimas/GLSLWidget.h:123
  */
 static int GLSLWidget_openGLVersion(lua_State *L) {
   try {
@@ -427,7 +427,7 @@ static int GLSLWidget_openGLVersion(lua_State *L) {
 
 
 /** LuaStackSize mimas::QWidget::position()
- * mimas/bind/QWidget.h:73
+ * mimas/bind/QWidget.h:79
  */
 static int QWidget_position(lua_State *L) {
   try {
@@ -568,7 +568,7 @@ static int QWidget_setParent(lua_State *L) {
 
 
 /** void mimas::QWidget::setSizeHint(float w, float h)
- * mimas/bind/QWidget.h:54
+ * mimas/bind/QWidget.h:60
  */
 static int QWidget_setSizeHint(lua_State *L) {
   try {
@@ -590,7 +590,7 @@ static int QWidget_setSizeHint(lua_State *L) {
 
 
 /** void mimas::QWidget::setSizePolicy(int horizontal, int vertical)
- * mimas/bind/QWidget.h:58
+ * mimas/bind/QWidget.h:64
  */
 static int QWidget_setSizePolicy(lua_State *L) {
   try {
@@ -612,7 +612,7 @@ static int QWidget_setSizePolicy(lua_State *L) {
 
 
 /** void mimas::QWidget::setStyle(const char *text)
- * mimas/bind/QWidget.h:46
+ * mimas/bind/QWidget.h:52
  */
 static int QWidget_setStyle(lua_State *L) {
   try {
@@ -632,7 +632,7 @@ static int QWidget_setStyle(lua_State *L) {
 
 
 /** void mimas::QWidget::setStyleSheet(const char *text)
- * mimas/bind/QWidget.h:47
+ * mimas/bind/QWidget.h:53
  */
 static int QWidget_setStyleSheet(lua_State *L) {
   try {
@@ -645,6 +645,26 @@ static int QWidget_setStyleSheet(lua_State *L) {
     lua_pushfstring(L, "setStyleSheet: %s", e.what());
   } catch (...) {
     lua_pushfstring(L, "setStyleSheet: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** void mimas::QWidget::setWindowTitle(const char *text)
+ * mimas/bind/QWidget.h:37
+ */
+static int QWidget_setWindowTitle(lua_State *L) {
+  try {
+    GLSLWidget *self = *((GLSLWidget**)dubL_checksdata(L, 1, "mimas.GLSLWidget"));
+    if (!self) throw dub::Exception("Using deleted mimas.GLSLWidget in setWindowTitle");
+    const char *text = dubL_checkstring(L, 2);
+    self->setWindowTitle(text);
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "setWindowTitle: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "setWindowTitle: Unknown exception");
   }
   return lua_error(L);
 }
@@ -671,7 +691,7 @@ static int QWidget_show(lua_State *L) {
 
 
 /** void mimas::QWidget::showFullScreen(bool enable=true)
- * mimas/bind/QWidget.h:60
+ * mimas/bind/QWidget.h:66
  */
 static int QWidget_showFullScreen(lua_State *L) {
   try {
@@ -700,8 +720,8 @@ static int QWidget_showFullScreen(lua_State *L) {
 
 
 
-/** void mimas::QWidget::size()
- * mimas/bind/QWidget.h:45
+/** LuaStackSize mimas::QWidget::size()
+ * mimas/bind/QWidget.h:51
  */
 static int QWidget_size(lua_State *L) {
   try {
@@ -722,7 +742,7 @@ static int QWidget_size(lua_State *L) {
 
 
 /** void mimas::QWidget::swapFullScreen()
- * mimas/bind/QWidget.h:64
+ * mimas/bind/QWidget.h:70
  */
 static int QWidget_swapFullScreen(lua_State *L) {
   try {
@@ -745,7 +765,7 @@ static int QWidget_swapFullScreen(lua_State *L) {
 
 
 /** void mimas::QWidget::textSize(const char *text)
- * mimas/bind/QWidget.h:50
+ * mimas/bind/QWidget.h:56
  */
 static int QWidget_textSize(lua_State *L) {
   try {
@@ -785,7 +805,7 @@ static int QWidget_update(lua_State *L) {
 
 
 /** void mimas::GLSLWidget::updateGL()
- * include/mimas/GLSLWidget.h:106
+ * include/mimas/GLSLWidget.h:119
  */
 static int GLSLWidget_updateGL(lua_State *L) {
   try {
@@ -804,7 +824,7 @@ static int GLSLWidget_updateGL(lua_State *L) {
 
 
 /** void mimas::QWidget::widget()
- * mimas/bind/QWidget.h:40
+ * mimas/bind/QWidget.h:43
  */
 static int QWidget_widget(lua_State *L) {
   try {
@@ -837,6 +857,25 @@ static int QWidget_width(lua_State *L) {
     lua_pushfstring(L, "width: %s", e.what());
   } catch (...) {
     lua_pushfstring(L, "width: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** LuaStackSize mimas::QWidget::windowTitle()
+ * mimas/bind/QWidget.h:47
+ */
+static int QWidget_windowTitle(lua_State *L) {
+  try {
+    GLSLWidget *self = *((GLSLWidget**)dubL_checksdata(L, 1, "mimas.GLSLWidget"));
+    if (!self) throw dub::Exception("Using deleted mimas.GLSLWidget in windowTitle");
+    lua_pushstring(L, self->windowTitle().toUtf8());
+    return 1;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "windowTitle: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "windowTitle: Unknown exception");
   }
   return lua_error(L);
 }
@@ -916,6 +955,7 @@ static const struct luaL_Reg GLSLWidget_member_methods[] = {
   {"setSizePolicy"     , QWidget_setSizePolicy},
   {"setStyle"          , QWidget_setStyle},
   {"setStyleSheet"     , QWidget_setStyleSheet},
+  {"setWindowTitle"    , QWidget_setWindowTitle},
   {"show"              , QWidget_show},
   {"showFullScreen"    , QWidget_showFullScreen},
   {"size"              , QWidget_size},
@@ -925,6 +965,7 @@ static const struct luaL_Reg GLSLWidget_member_methods[] = {
   {"updateGL"          , GLSLWidget_updateGL},
   {"widget"            , QWidget_widget},
   {"width"             , QWidget_width},
+  {"windowTitle"       , QWidget_windowTitle},
   {"x"                 , QWidget_x},
   {"y"                 , QWidget_y},
   {"__tostring"        , GLSLWidget__tostring},

@@ -14,8 +14,22 @@ mimas.Widget_ = mt
 require 'mimas.Menu'
 
 local constr  = mimas.Widget
+function mimas.Widget_constr(parent, flag)
+  if flag and parent then
+    return constr(parent:widget(), flag)
+  elseif flag then
+    return constr(flag)
+  elseif type(parent) == 'table' then
+    return constr(parent:widget())
+  elseif parent then
+    return constr(parent)
+  else
+    return constr()
+  end
+end
+
 function mimas.Widget(...)
-  return mimas.bootstrap('Widget', constr, ...)
+  return mimas.bootstrap('Widget', mimas.Widget_constr, ...)
 end
 
 

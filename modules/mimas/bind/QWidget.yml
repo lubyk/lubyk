@@ -24,6 +24,10 @@ lua:
     widget->move(x, y);
     widget->show();
 
+  windowTitle: |
+    lua_pushstring(L, self->windowTitle().toUtf8());
+    return 1;
+
   size: |
     QRect rect = self->geometry();
     lua_pushnumber(L, rect.width());
