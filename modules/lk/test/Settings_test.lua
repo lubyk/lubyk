@@ -13,6 +13,9 @@ local should = test.Suite('lk.Settings')
 local defaults = {
   name = 'Buzz',
   list = { 'a','b','c' },
+  foo = {
+    bar = 'Baz',
+  }
 }
 
 local settings = lk.Settings('TestSettings', defaults)
@@ -45,10 +48,24 @@ function should.dumpStringWithQuote()
   assertMatch('return {.*angle = "24\\"",', lk.Settings.dump(s))
 end
 
-function should.dumpDeepSetting()
+function should.copyOnWrite()
   local s = lk.Settings('TestSettings', defaults)
-  s.list = {'e','f', g = 'h'}
-  assertMatch('return {.*list = {.*%[1%] = "e",.*g = "h"', lk.Settings.dump(s))
+  s.foo.ban = 'Boom'
+  -- Default in table copied
+  assertMatch('return {.*foo = {.*bar = "Baz"', lk.Settings.dump(s))
+  -- Custom value
+  assertMatch('return {.*foo = {.*ban = "Boom"', lk.Settings.dump(s))
+end
+
+function should.copyOnWriteInSameTable()
+  local s = lk.Settings('TestSettings', defaults)
+  local f = s.foo
+  f.ban = 'Boom'
+  f.bar = 'Biz'
+  -- Default in table copied
+  assertMatch('return {.*foo = {.*bar = "Biz"', lk.Settings.dump(s))
+  -- Custom value
+  assertMatch('return {.*foo = {.*ban = "Boom"', lk.Settings.dump(s))
 end
 
 function should.readSettingsFromFile()
@@ -56,33 +73,46 @@ function should.readSettingsFromFile()
   return {
     name = 'John',
     age  = 22,
+    foo  = { bar = 'Biz', ban = 'Boom' },
   }
   ]])
   local s = lk.Settings('TestSettings', defaults)
   assertEqual('John', s.name)
   assertEqual(22, s.age)
+  assertEqual('Biz', s.foo.bar)
 end
 
 function should.saveSettings()
   local s = lk.Settings('TestSettings', defaults)
   s.name = 'Fuzz'
-  s.list = {1,2,'a'}
+  s.foo.ban = 'Boom'
   assertFalse(lk.exist(settings.module.path))
   s:save()
   assertTrue(lk.exist(settings.module.path))
   local dump = lk.readall(settings.module.path)
   assertMatch('name = "Fuzz"', dump)
-  assertMatch('list = {.*%[1%] = 1', dump)
+  assertMatch('foo = {.*ban = "Boom"', dump)
 end
 
 function should.saveValidLua()
   local s = lk.Settings('TestSettings', defaults)
   s.name = 'Fuzz'
-  s.list = {1,2,'a'}
+  s.foo.ban = 'Boom'
   s:save()
   local t = loadfile(settings.module.path)()
   assertEqual('Fuzz', t.name)
-  assertEqual('a', t.list[3])
+  assertEqual('Boom', t.foo.ban)
+  assertEqual('Baz',  t.foo.bar)
+end
+
+function should.saveTrueFalse()
+  local s = lk.Settings('TestSettings', defaults)
+  s.name = true
+  s.foo.ban = false
+  s:save()
+  local t = loadfile(settings.module.path)()
+  assertEqual(true, t.name)
+  assertEqual(false, t.foo.ban)
 end
 
 function should.teardown()

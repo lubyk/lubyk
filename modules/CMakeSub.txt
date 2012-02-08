@@ -39,17 +39,17 @@ endforeach (SUB_MODULE ${SUB_MODULES})
 
 # ----------------------------------------------------------------------------------
 #  Simple helper to copy a list of files
-#  The DESTINATION pattern should be relative ("lib", "lib/socket")
+#  The DESTINATION pattern should be absolute
 # ----------------------------------------------------------------------------------
-macro(copy_files TARGET_NAME COPY_FILES DESTINATION)
+macro(lubyk_copy_files TARGET_NAME COPY_FILES DESTINATION)
   foreach(FILEPATH ${COPY_FILES})
     get_filename_component(FILENAME ${FILEPATH} NAME)
     set(SRC "${CMAKE_CURRENT_SOURCE_DIR}/${FILEPATH}")
-    set(DST "${LUBYK_SOURCE_DIR}/${DESTINATION}/${FILENAME}")
+    set(DST "${DESTINATION}/${FILENAME}")
 
     add_custom_command(
       TARGET  ${TARGET_NAME}
       COMMAND ${CMAKE_COMMAND} -E copy ${SRC} ${DST}
       )
   endforeach(FILEPATH)
-endmacro(copy_files)
+endmacro(lubyk_copy_files)

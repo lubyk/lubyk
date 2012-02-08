@@ -9,14 +9,17 @@
   the default library path.
 
 --]]------------------------------------------------------
-local code = loadfile(string.format('%s/.lubyk', os.getenv('HOME')))
+local code = loadfile(string.format('%s/.lubyk/lk.lua', os.getenv('HOME')))
 if code then
   Lubyk = code()
 else
   Lubyk = {}
 end
 
-Lubyk.lib = Lubyk.lib or '/Applications/Lubyk/lib'
+--- PLATFORM SPECIFIC
+Lubyk.lib  = Lubyk.lib  or '/Applications/Lubyk/lib'
+Lubyk.plat = Lubyk.plat or 'macosx'
+--- END PLATFORM SPECIFIC
 package.path  = Lubyk.lib .. '/?.lua;' .. package.path
 package.cpath = Lubyk.lib .. '/?.so;'  .. package.cpath
 require 'lk'

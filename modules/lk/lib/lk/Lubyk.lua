@@ -12,38 +12,25 @@ local version = {
 }
 ----------------------------------------------------------
 
-local Lubyk   = {}
-Lubyk.__index = Lubyk
+local defaults = {
+  zone = 'default',
+  version = version,
+  service_type = '_lubyk._tcp',
+  --- WebDAV port for live coding
+  dav_port = 8103,
+  -- This is set to false by lk.Patch so that lk.Process do not quit on closing windows.
+  mimas_quit_on_close = true,
+  -- The following settings are set in bootstrap loader lubyk.lua
+  -- and are platform specific.
+  
+  -- Main location for lubyk libraries
+  lib = Lubyk and Lubyk.lib,
 
-function lk.Lubyk(tbl)
-  for k, v in pairs(tbl) do
-    if type(v) == 'table' and type(Lubyk[k]) == 'table' then
-      Lubyk[k].__index = Lubyk[k]
-      setmetatable(v, Lubyk[k])
-    end
-  end
-  return setmetatable(tbl, Lubyk)
-end
-
-Lubyk.zone = 'default'
-Lubyk.version = version
-Lubyk.service_type = '_lubyk._tcp'
-Lubyk.prototypes_lib = string.format('%s/Documents/Lubyk.db', os.getenv('HOME'))
-Lubyk.editor = {
-  base_library_sources = {
-    -- Paths relative to Lubyk.lib
-    lubyk = 'lubyk',
-  },
-  -- Absolute paths (user setings)
-  library_sources = {},
-  -- Which views to show on launch.
-  show = {
-    Patch = true,
-  },
+  -- Platform code (linux,macosx,windows)
+  plat= Lubyk and Lubyk.plat,
 }
-Lubyk.dav_port = 8103 -- BLOK
--- This is set to false by lk.Patch so that lk.Process do not quit on closing windows.
-Lubyk.mimas_quit_on_close = true
+
+Lubyk = lk.Settings('lk', defaults)
 
 -- Default host name
 local function getMachineName()
@@ -52,5 +39,5 @@ local function getMachineName()
   local short_name = string.match(name, '^([^-.]+)')
   return short_name or name
 end
-Lubyk.host = getMachineName()
+defaults.host = getMachineName()
 

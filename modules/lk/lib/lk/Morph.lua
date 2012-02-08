@@ -117,7 +117,11 @@ function lib:change(definitions)
 end
 
 function lib:dump()
-  return self:partialDump {processes = true, _views = true}
+  return self:partialDump {
+    name      = true,
+    processes = true,
+    _views    = true,
+  }
 end
 
 function lib:partialDump(data)
@@ -358,6 +362,13 @@ function private.change:views(data)
 end
 
 --=============================================== DUMP
+
+--- Dump name
+-- default: "tmp/bob.lkp" @ gaspard
+function private.dump:name()
+  local path = self.root.name .. '/' .. self.lkp_file.name 
+  return string.format('"%s" @ %s', path, Lubyk.host)
+end
 
 --- Dump Lubyk version information.
 function private.dump:lubyk(partial)

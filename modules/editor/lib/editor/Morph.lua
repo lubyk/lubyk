@@ -100,6 +100,14 @@ end
 
 --=============================================== SET
 
+function private.set:name(name)
+  self.fullname = name
+  local view = self.zone.view
+  if view then
+    view:setWindowTitle(string.format('%s: %s', Lubyk.zone, name))
+  end
+end
+
 function private.set:processes(data)
   local processes = self.zone.found_processes
   for name, info in pairs(data) do

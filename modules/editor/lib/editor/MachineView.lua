@@ -39,7 +39,7 @@ function lib:init(machine)
   self.lay:addWidget(self.vbox)
 
   self:setName(machine.name)
-  self:layoutChanged(Lubyk.editor.show.Patch, Lubyk.editor.show.View)
+  self:layoutChanged(editor.Settings.show.Patch, editor.Settings.show.View)
 end
 
 function lib:setName(name)

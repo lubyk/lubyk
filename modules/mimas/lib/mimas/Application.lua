@@ -17,7 +17,7 @@ mimas.Application_ = mt
 
 function mimas.Application(type)
   local self = constr(type)
-  self:setQuitOnLastWindowClosed(Lubyk.mimas_quit_on_close)
+  self:setQuitOnLastWindowClosed(mimas.Settings.quit_on_close)
   self:setStyleSheet [[
     .window, .main_window, .widget, .table, .list, .menu, .tab_widget::pane, .label {
       background:#151515;

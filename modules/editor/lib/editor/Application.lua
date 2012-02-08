@@ -125,6 +125,26 @@ function lib:openFile(path)
       self.morph.push:send(lubyk.quit_url)
       self.morph     = nil
     end
+
+    -- Manage recent files
+    local s = editor.Settings
+    if not s.open_recent then
+      s.open_recent = {path}
+    else
+      for i, rpath in ipairs(s.open_recent) do
+        if rpath == path then
+          -- already in list
+          table.remove(s.open_recent, i)
+          break
+        end
+      end
+      table.insert(s.open_recent, 1, path)
+      while #s.open_recent > s.open_recent_max and s.open_recent > 0 do
+        table.remove(s.open_recent, #s.open_recent)
+      end
+    end
+    s:save()
+
     self:startZone {path = path, start_stem = true}
   end
 end

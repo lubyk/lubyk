@@ -302,6 +302,8 @@ end
 
 function private.setupView(self)
   local view = editor.ZoneView(self)
+  self.view = view
+  -- FIXME: remove references to 'main_view' (GREP in modules/editor).
   self.main_view = view
   function view:closed()
     -- when window is closed, we remove this zone

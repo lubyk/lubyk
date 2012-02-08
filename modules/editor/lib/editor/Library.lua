@@ -78,18 +78,20 @@ setmetatable(lib, {
   if db then
     self.db = db
   else
-    self.filepath = Lubyk.prototypes_lib
+    self.filepath = editor.Settings.prototypes_db
     lk.makePath(lk.directory(self.filepath))
     self.db = sqlite3.open(self.filepath)
   end
   prepareDb(self)
-  for lib_name, path in pairs(Lubyk.editor.base_library_sources) do
-    printf("ADD SOURCE '%s' => '%s'", lib_name, path)
-    self.sources[lib_name] = Lubyk.lib .. '/' .. path
+  for lib_name, path in pairs(editor.Settings.prototypes_base_src) do
+    if not lib_name:match('^_') then
+      self.sources[lib_name] = Lubyk.lib .. '/' .. path
+    end
   end
-  for lib_name, path in pairs(Lubyk.editor.library_sources) do
-    printf("ADD SOURCE '%s' => '%s'", lib_name, path)
-    self.sources[lib_name] = path
+  for lib_name, path in pairs(editor.Settings.prototypes_src) do
+    if not lib_name:match('^_') then
+      self.sources[lib_name] = path
+    end
   end
   setmetatable(self, lib)
   return self

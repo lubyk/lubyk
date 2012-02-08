@@ -12,9 +12,8 @@ editor.ZoneView = lib
 local private = {dialog = {}}
 
 -- constants
-local WIDTH   = 600
-local HEIGHT  = 400
 local PADDING = 2
+local settings = editor.Settings
 
 function lib:init(zone)
   -- The layout holder is just there so that the main_view does not have
@@ -38,13 +37,26 @@ function lib:init(zone)
   --self.layout:addWidget(self.machine_list, 0, mimas.AlignRight)
   self.control_tabs = editor.ControlTabs(self.zone)
   self.layout:addWidget(self.control_tabs, 1)
-  self.width  = WIDTH
-  self.height = HEIGHT
+  self.width  = settings.main_view.w
+  self.height = settings.main_view.h
   self:resize(self.width, self.height)
+  self:move(settings.main_view.x, settings.main_view.y)
   private.setupMenus(self)
 end
 
+function lib:moved(x, y)
+  local v = settings.main_view
+  v.x = x
+  v.y = y
+  settings:save()
+end
+
 function lib:resized(w, h)
+  local v = settings.main_view
+  v.w = w
+  v.h = h
+  settings:save()
+
   self.width  = w
   self.height = h
   self.layout_holder:resize(w, h)
@@ -92,7 +104,7 @@ function private:setupMenus()
   end)
 
   --=============================================== Show
-  local show = Lubyk.editor.show
+  local show = settings.show
   menu = self.menu_bar:addMenu('Show')
   private.setupShowAction(menu, 'Library', 'Ctrl+L', show.Library, self.library_view)
   private.setupShowAction(menu, 'Patch',   'Ctrl+E', show.Patch,   self.patch_view)
@@ -123,6 +135,8 @@ function private:setupShowAction(title, shortcut, show, view)
       view:hide()
     end
     view.hidden = not view.hidden
+    settings.show[title] = not view.hidden
+    settings:save()
     action:setChecked(not view.hidden)
   end)
   action:setCheckable(true)
@@ -151,10 +165,11 @@ function private.dialog:newProject()
       },
     }
 
-    function self.dlg.btn(dlg, name)
-      if name == 'OK' then
+    function self.dlg.btn(dlg, btn_name)
+      if btn_name == 'OK' then
         -- Create project
-        local path = dlg.form.dir .. '/' .. name .. '.lkp'
+        local name = dlg.form.name
+        local path = dlg.form.dir .. '/' .. name .. '/' .. name .. '.lkp'
         if not lk.exist(path) then
           lk.writeall(path, '')
         end
@@ -169,42 +184,17 @@ function private.dialog:newProject()
   end)
 end
 
--- function private.dialog:openProject()
---   self.dlg = editor.SimpleDialog {
---     message = string.format('Please enter project path on "%s"', self.host_name),
---     line    = 'Zone',
---     line_value = 'default', -- FIXME: use last value (create editor.Settings)
---     line2   = 'Project path',
---     line2_value = '',       -- FIXME: use last value (create editor.Settings)
---     cancel  = 'Back',
---     ok      = 'Start',
---   }
--- 
---   function self.dlg.cancel(dlg)
---     -- Abort choosing path
---     dlg:close()
---     self.host_name = nil
---     makeHostChooser(self)
---   end
--- 
---   function self.dlg.ok(dlg)
---     -- Start morph server on the host with the given path.
---     self.zone = dlg:line()
---     self.project_path = dlg:line2()
---     dlg:close()
---     self.delegate:startZone(self.zone, self.host_name, self.project_path)
---   end
--- 
---   self.lay:addWidget(self.dlg)
---   if is_local then
---     function self.dlg.widgets.line2.click()
---       self.dlg:openProjectDialog()
---     end
--- 
---     -- open file dialog
---     self.dlg:openProjectDialog()
---   end        
--- end
+function private.dialog:openProject()
+  local base = (settings.open_recent or {})[1] or os.getenv('HOME')
+  local path = self:getOpenFileName(
+    'Choose project file',
+    base,
+    'Lubyk project (*.lkp)'
+  )
+  if path then
+    app:openFile(path)
+  end
+end
 
 function private.dialog:addView()
   local dlg = mimas.SimpleDialog {
@@ -249,6 +239,6 @@ end
 -- visibility.
 function private:positionMachineList()
   local view = self.machine_list
-  local w, h = 
-  self.machine_list
+  --local w, h = 
+  --self.machine_list
 end

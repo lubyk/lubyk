@@ -10,8 +10,8 @@ add_custom_target(${target})
 set(TO_TOP_SHARE src/ltn12.lua src/mime.lua)
 set(TO_SOCKET_SHARE src/socket.lua src/http.lua src/url.lua src/tp.lua src/ftp.lua src/smtp.lua)
 
-copy_files(${target} "${TO_TOP_SHARE}"    lib)
-copy_files(${target} "${TO_SOCKET_SHARE}" lib/socket)
+lubyk_copy_files(${target} "${TO_TOP_SHARE}"    ${LUBYK_LIB})
+lubyk_copy_files(${target} "${TO_SOCKET_SHARE}" ${LUBYK_LIB}/socket)
 
 add_dependencies(${MODULE_NAME} ${target})
 

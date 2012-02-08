@@ -15,8 +15,8 @@ local WIDTH       = 120
 local PADDING     = 10
 
 function lib:init(zone)
-  self.controls_visible = Lubyk.editor.show.View
-  self.patch_visible    = Lubyk.editor.show.Patch
+  self.controls_visible = editor.Settings.show.View
+  self.patch_visible    = editor.Settings.show.Patch
   self.zone = zone
   self.vbox = mimas.VBoxLayout(self)
   self.vbox:setContentsMargins(0,40,0,0)
