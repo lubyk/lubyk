@@ -170,7 +170,7 @@ bool Widget::click(ThreadedLuaObject *obj, QMouseEvent *event, int type) {
     // We are not concerned.
     event->ignore();
   } else if (lua_istrue(L, -1)) {
-    // continue with processing with super
+    // continue processing with super
     lua_pop(L, 1);
     return false;
   }
@@ -198,7 +198,7 @@ bool Widget::keyboard(ThreadedLuaObject *obj, QKeyEvent *event, bool isPressed) 
     // We are not concerned.
     event->ignore();
   } else if (lua_istrue(L, -1)) {
-    // continue with processing with super
+    // continue processing with super
     lua_pop(L, 1);
     return false;
   }

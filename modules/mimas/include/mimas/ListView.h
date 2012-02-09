@@ -32,6 +32,7 @@
 #include "mimas/mimas.h"
 #include "mimas/constants.h"
 #include "mimas/DataSource.h"
+#include "mimas/Widget.h"
 
 using namespace lubyk;
 
@@ -226,6 +227,29 @@ class ListView : public QListView, public ThreadedLuaObject {
 
   // ============================================================= ListView
 
+  /** Return a list of selected elements. Each element is identified
+   * with a table {row, col}.
+   */
+  LuaStackSize selectedIndexes(lua_State *L) {
+    QModelIndexList indexes = QListView::selectedIndexes();
+    lua_newtable(L);
+    // <tbl>
+    int i = 0;
+    foreach(QModelIndex index, indexes) {
+      ++i;
+      lua_newtable(L);
+      lua_pushnumber(L, index.row() + 1);
+      // <tbl> <tbl> row
+      lua_rawseti(L, -2, 1);
+      lua_pushnumber(L, index.column() + 1);
+      // <tbl> <tbl> col
+      lua_rawseti(L, -2, 2);
+      // <tbl> <tbl>
+      lua_rawseti(L, -2, i);
+    }
+    return 1;
+  }
+
   /** Return the index of the model at the given x,y position.
    * @return x, y
    */
@@ -276,12 +300,44 @@ class ListView : public QListView, public ThreadedLuaObject {
   }
 
 protected:
-  virtual void keyPressEvent(QKeyEvent *event) {
-    printf("key pressed\n");
-    QListView::keyPressEvent(event);
+  //--=============================================== COMMON CALLBACKS
+  virtual void closeEvent(QCloseEvent *event) {
+    Widget::closed(this, event);
   }
 
-  virtual void mouseMoveEvent(QMouseEvent *event);
+  virtual void mouseMoveEvent(QMouseEvent *event) {
+    Widget::mouse(this, event);
+  }
+
+  virtual void resizeEvent(QResizeEvent *event) {
+    Widget::resized(this, width(), height());
+  }
+
+  virtual void moveEvent(QMoveEvent * event) {
+    Widget::moved(this, event);
+  }
+
+  // Not sure this is useful
+
+  // virtual void showEvent(QShowEvent *event) {
+  //   Widget::showHide(this, true);
+  // }
+
+  // virtual void hideEvent(QHideEvent *event) {
+  //   Widget::showHide(this, false);
+  // }
+
+  virtual void keyPressEvent(QKeyEvent *event) {
+    if (!Widget::keyboard(this, event, true))
+      QListView::keyPressEvent(event);
+  }
+
+  virtual void keyReleaseEvent(QKeyEvent *event) {
+    if (!Widget::keyboard(this, event, false))
+      QListView::keyReleaseEvent(event);
+  }
+
+  // --=============================================== COMMON CALLBACKS END
 
   virtual void mousePressEvent(QMouseEvent *event) {
     if (!click(event, MousePress))
@@ -308,7 +364,7 @@ protected:
 
 private:
   bool click(QMouseEvent *event, int type);
-  bool select(const QModelIndex &idx);
+  bool select(const QModelIndex &idx, QEvent *event);
 
 };
 

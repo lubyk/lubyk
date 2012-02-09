@@ -32,65 +32,22 @@
 
 namespace mimas {
 
-
-void ListView::mouseMoveEvent(QMouseEvent *event) {
-  lua_State *L = lua_;
-
-  if (!pushLuaCallback("mouse")) return;
-  lua_pushnumber(L, event->x());
-  lua_pushnumber(L, event->y());
-  // <func> <self> <x> <y>
-  int status = lua_pcall(L, 3, 1, 0);
-
-  if (status) {
-    fprintf(stderr, "Error in 'mouse' callback: %s\n", lua_tostring(L, -1));
-  }
-
-  if (lua_isfalse(L, -1)) {
-    // Pass to QListView
-    QListView::mouseMoveEvent(event);
-  }
-  lua_pop(L, 1);
-}
-
 bool ListView::click(QMouseEvent *event, int type) {
   lua_State *L = lua_;
 
   if (pushLuaCallback("select")) {
     // ... <select> <self>
-    if (type != MousePress) {
-      return true; // ignore
-    } else {
+    if (type == MousePress) {
       QModelIndex idx = QListView::indexAt(QPoint(event->x(), event->y()));
-      return select(idx);
+      return select(idx, event);
+    } else {
+      lua_pop(L, 2);
     }
-  } else {
-    if (!pushLuaCallback("click")) return false;
-    // ... <click> <self>
   }
-  lua_pushnumber(L, event->x());
-  lua_pushnumber(L, event->y());
-  lua_pushnumber(L, type);
-  lua_pushnumber(L, event->button());
-  lua_pushnumber(L, event->modifiers());
-  // ... <func> <self> <x> <y> <type> <btn> <modifiers>
-  int status = lua_pcall(L, 6, 1, 0);
-
-  if (status) {
-    fprintf(stderr, "Error in 'click' callback: %s\n", lua_tostring(L, -1));
-  }
-  
-  if (lua_isfalse(L, -1)) {
-    // Pass to ListView
-    lua_pop(L, 1);
-    return false;
-  }
-
-  lua_pop(L, 1);
-  return true;
+  return Widget::click(this, event, type);
 }
 
-bool ListView::select(const QModelIndex &idx) {
+bool ListView::select(const QModelIndex &idx, QEvent *event) {
   lua_State *L = lua_;
   // ... <select> <self>
   if (!idx.isValid()) {
@@ -108,14 +65,16 @@ bool ListView::select(const QModelIndex &idx) {
   }
 
   if (lua_isfalse(L, -1)) {
-    // Do not activate selection.
+    // We are not concerned.
+    event->ignore();
+  } else if (lua_istrue(L, -1)) {
+    // continue processing with super
     lua_pop(L, 1);
-    return true;
+    return false;
   }
-
-  // Continue processing (activate).
+  // processing done.
   lua_pop(L, 1);
-  return false;
+  return true;
 }
 
 } // mimas

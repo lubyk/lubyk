@@ -45,7 +45,6 @@ setmetatable(lib, {
       return self.info
     elseif url == lubyk.quit_url then
       -- quit
-      print('QUIT RECEIVED', sched, name)
       return sched:quit()
     else
       -- handle requests here. Maybe we need two different callbacks

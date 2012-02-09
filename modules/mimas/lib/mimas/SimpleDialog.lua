@@ -114,7 +114,7 @@ local function makeWidget(main, parent, def)
           local default_btn = main.widgets.default_btn
           if default_btn then
             self:editingFinished(self:text())
-            default_btn:click(0,0,mimas.MousePress)
+            default_btn:click()
           else
             -- pass to LineEdit
             return true
@@ -148,6 +148,7 @@ local function makeWidget(main, parent, def)
       function elem:rowCount()
         return #data
       end
+
       function elem:data(row_i)
         local n = data[row_i]
         if main.max_list_len and n and string.len(n) > main.max_list_len then
@@ -156,9 +157,29 @@ local function makeWidget(main, parent, def)
           return n
         end
       end
+
       function elem:select(i)
         main:list(data[i])
       end
+
+      function elem:keyboard(key, on)
+        if on and (key == mimas.Key_Enter or key == mimas.Key_Return) then
+          print("ON")
+          local selected = elem:selectedIndexes()
+          print(yaml.dump(selected))
+          if selected[1] then
+            main:list(data[selected[1][1]])
+          else
+            local default_btn = main.widgets.default_btn
+            if default_btn then
+              default_btn:click()
+            end
+          end
+        end
+        -- continue processing with QListView's keyboard handling
+        return true
+      end
+
     else
       error('DataSource not supported in SimpleDialog yet...')
       elem:setModel(data)

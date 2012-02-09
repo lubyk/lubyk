@@ -110,6 +110,10 @@ LuaStackSize getExistingDirectory(const char *caption, const char *base_dir,
   static void closed(ThreadedLuaObject *obj, QCloseEvent *event);
   static void showHide(ThreadedLuaObject *obj, bool shown);
 protected:
+
+  virtual void paintEvent(QPaintEvent *event);
+
+  //--=============================================== COMMON CALLBACKS
   virtual void closeEvent(QCloseEvent *event) {
     Widget::closed(this, event);
   }
@@ -132,8 +136,6 @@ protected:
     if (!Widget::click(this, event, MouseRelease))
       QWidget::mouseReleaseEvent(event);
   }
-
-  virtual void paintEvent(QPaintEvent *event);
 
   virtual void resizeEvent(QResizeEvent *event) {
     Widget::resized(this, width(), height());
@@ -163,6 +165,7 @@ protected:
       QWidget::keyReleaseEvent(event);
   }
 
+  // --=============================================== COMMON CALLBACKS END
   virtual QSize sizeHint() const {
     return size_hint_;
   }

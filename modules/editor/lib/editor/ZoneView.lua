@@ -291,8 +291,10 @@ function private.dialog:start()
   function dlg.btn(dlg, btn_name)
     if btn_name == 'New...' then
       private.dialog.newProject(self)
-    else
+    elseif btn_name == 'Open...' then
       private.dialog.openProject(self)
+    elseif #settings.open_recent > 0 then
+      app:openFile(settings.open_recent[1])
     end
     lk.Thread(function()
       -- delete later
