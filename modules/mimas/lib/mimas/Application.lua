@@ -46,7 +46,7 @@ function mimas.Application(type)
     .list::item:selected {
         border: 0;
         color: rgb(180,180,180);
-        background: rgb(55, 55, 55);
+        background:#6E4E24;
         padding:0px;
      }
     .line_edit {

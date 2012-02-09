@@ -78,6 +78,7 @@ public:
   void hide() {
     QLineEdit::hide();
   }
+
   QString cssClass() const {
     return QString("line_edit");
   }
@@ -158,10 +159,6 @@ public:
 
   float hue() {
     return hue_;
-  }
-
-  void hide() {
-    QWidget::hide();
   }
 
   // =============================================================

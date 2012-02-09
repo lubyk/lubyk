@@ -157,17 +157,12 @@ local function makeWidget(main, parent, def)
         end
       end
       function elem:select(i)
-        print('selected', data[i])
         main:list(data[i])
       end
     else
       error('DataSource not supported in SimpleDialog yet...')
       elem:setModel(data)
     end
-    elem:setStyleSheet[[
-      .list {background:#333; border:1px solid #666}
-      .list::item { border-bottom:1px solid #666; color:white; background:#6E4E24}
-    ]]
 
 
   elseif t == 'space' then

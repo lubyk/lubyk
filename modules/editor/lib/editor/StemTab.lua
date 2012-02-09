@@ -46,7 +46,7 @@ function lib:click(x, y, op, btn, mod)
       -- drop
       self.dragging = false
       local gx, gy = self.ghost:globalPosition()
-      local px, py = self.zone.main_view.patch_view:globalPosition()
+      local px, py = self.zone.view.patch_view:globalPosition()
       self.ghost.def = {
         x   = gx - px,
         y   = gy - py,
@@ -75,6 +75,7 @@ function lib:click(x, y, op, btn, mod)
       self.ghost:addWidget(edit)
       edit:resize(EDIT_WIDTH, self.min_height - EDIT_PADDING)
       edit:move(2*EDIT_PADDING, EDIT_PADDING)
+      edit:show()
       edit:setFocus()
 
       function edit.editingFinished(edit, name)
@@ -121,7 +122,7 @@ end
 
 function lib:mouse(x, y)
   local zone = self.zone
-  local main_view = zone.main_view
+  local main_view = zone.view
   if self.click_position and not self.dragging and manhattanDist(self.click_position, {x=x,y=y}) > START_DRAG_DIST then
     -- start drag operation: self becomes ghost
     self.dragging = true
@@ -129,6 +130,7 @@ function lib:mouse(x, y)
     self.ghost.is_ghost = true
     self.ghost:resize(EDIT_WIDTH + 20,100)
     main_view:addWidget(self.ghost)
+    self.ghost:show()
   end
 
   if self.dragging then

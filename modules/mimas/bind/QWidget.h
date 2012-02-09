@@ -42,7 +42,7 @@ class QWidget {
   // ==============================================
 
   void widget();
-  void addWidget(QWidget *widget, float x=0, float y=0);
+  void addWidget(QWidget *widget);
 
   // TODO: remove custom binding when using new Dub.
   LuaStackSize windowTitle();

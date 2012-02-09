@@ -64,8 +64,6 @@ class ListView : public QListView, public ThreadedLuaObject {
     // Not editable
     setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-    // FIXME: find another way to remove the dotted lines around text after click.
-    clearFocus();
     MIMAS_DEBUG_CC
   }
 
@@ -278,6 +276,11 @@ class ListView : public QListView, public ThreadedLuaObject {
   }
 
 protected:
+  virtual void keyPressEvent(QKeyEvent *event) {
+    printf("key pressed\n");
+    QListView::keyPressEvent(event);
+  }
+
   virtual void mouseMoveEvent(QMouseEvent *event);
 
   virtual void mousePressEvent(QMouseEvent *event) {
@@ -305,7 +308,8 @@ protected:
 
 private:
   bool click(QMouseEvent *event, int type);
-  bool select(QMouseEvent *event, int type);
+  bool select(const QModelIndex &idx);
+
 };
 
 } // mimas

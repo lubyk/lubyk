@@ -87,6 +87,7 @@ function lib:init(node, parent_view)
     local w, h = self.width, self.height
     parent_view:addWidget(self)
     self:resize(w, h)
+    self:show()
   else
     print('Start NodeView without parent')
   end

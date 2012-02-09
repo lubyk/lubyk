@@ -136,26 +136,15 @@ static int QMenuBar_addMenu(lua_State *L) {
 
 
 
-/** void mimas::QWidget::addWidget(QWidget *widget, float x=0, float y=0)
+/** void mimas::QWidget::addWidget(QWidget *widget)
  * mimas/bind/QWidget.h:45
  */
 static int QWidget_addWidget(lua_State *L) {
   try {
     MenuBar *self = *((MenuBar**)dubL_checksdata(L, 1, "mimas.MenuBar"));
     if (!self) throw dub::Exception("Using deleted mimas.MenuBar in addWidget");
-    int top__ = lua_gettop(L);
     QWidget *widget = *((QWidget **)dubL_checksdata(L, 2, "mimas.QWidget"));
-    float x = 0;
-    float y = 0;
-    if (top__ >= 3) {
-      x = dubL_checknumber(L, 3);
-      if (top__ >= 4) {
-        y = dubL_checknumber(L, 4);
-      }
-    }
     widget->setParent(self);
-    widget->move(x, y);
-    widget->show();
     return 0;
   } catch (std::exception &e) {
     lua_pushfstring(L, "addWidget: %s", e.what());

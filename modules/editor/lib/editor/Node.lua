@@ -295,9 +295,10 @@ function lib.makeGhost(node_def, zone)
     local edit = editor.NodeLineEdit(zone.main_view, node.name, zone.library)
     self.edit = edit
     edit:selectAll()
-    zone.main_view:addWidget(edit)
+    zone.view:addWidget(edit)
     edit:resize(math.max(self.width, MINW), self.height)
     edit:globalMove(self:globalPosition())
+    edit:show()
     edit:setFocus()
     function edit.editingFinished(edit, text)
       if not text or text == '' then

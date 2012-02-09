@@ -49,9 +49,7 @@ function lib:init(zone)
   private.setupMenus(self)
   -- Display open recent / create new dialog until something appears on the
   -- network.
-  lk.Thread(function()
-    private.dialog.start(self)
-  end, 500)
+  private.dialog.start(self)
 end
 
 function lib:moved(x, y)
@@ -78,6 +76,7 @@ function lib:addProcessView(view)
   view:move(process.x or 100, process.y or 100)
   -- trigger a full view rebuild once it is positioned
   process:updateView()
+  view:show()
 end
 
 function lib:addLinkView(view)
@@ -283,25 +282,32 @@ function private.dialog:start()
       {'space', 120},
       {'btn', 'New...'},
       {'btn', 'Open...'},
+      {'btn', 'Open Recent', default = true},
     },
   }
   self.dlg = dlg
   self:addWidget(dlg)
 
   function dlg.btn(dlg, btn_name)
-    self:hideDialog()
     if btn_name == 'New...' then
       private.dialog.newProject(self)
     else
       private.dialog.openProject(self)
     end
+    lk.Thread(function()
+      -- delete later
+      self:hideDialog()
+    end)
   end
 
   dlg.max_list_len = 30
   function dlg.list(dlg, path)
-    self:hideDialog()
     if path then
       app:openFile(path)
+      lk.Thread(function()
+        -- delete later
+        self:hideDialog()
+      end)
     end
   end
   dlg.widgets.lay:setContentsMargins(15,15,15,15)

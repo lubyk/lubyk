@@ -32,6 +32,7 @@
 
 namespace mimas {
 
+
 void ListView::mouseMoveEvent(QMouseEvent *event) {
   lua_State *L = lua_;
 
@@ -57,7 +58,12 @@ bool ListView::click(QMouseEvent *event, int type) {
 
   if (pushLuaCallback("select")) {
     // ... <select> <self>
-    return select(event, type);
+    if (type != MousePress) {
+      return true; // ignore
+    } else {
+      QModelIndex idx = QListView::indexAt(QPoint(event->x(), event->y()));
+      return select(idx);
+    }
   } else {
     if (!pushLuaCallback("click")) return false;
     // ... <click> <self>
@@ -73,8 +79,7 @@ bool ListView::click(QMouseEvent *event, int type) {
   if (status) {
     fprintf(stderr, "Error in 'click' callback: %s\n", lua_tostring(L, -1));
   }
-  // FIXME: find another way to remove the dotted lines around text after click.
-  clearFocus();
+  
   if (lua_isfalse(L, -1)) {
     // Pass to ListView
     lua_pop(L, 1);
@@ -85,15 +90,9 @@ bool ListView::click(QMouseEvent *event, int type) {
   return true;
 }
 
-bool ListView::select(QMouseEvent *event, int type) {
+bool ListView::select(const QModelIndex &idx) {
   lua_State *L = lua_;
   // ... <select> <self>
-  if (type != MousePress) {
-    lua_pop(L, 2);
-    return true; // ignore
-  }
-
-  QModelIndex idx = QListView::indexAt(QPoint(event->x(), event->y()));
   if (!idx.isValid()) {
     lua_pop(L, 2);
     return false;
@@ -108,16 +107,15 @@ bool ListView::select(QMouseEvent *event, int type) {
     fprintf(stderr, "Error in 'select' callback: %s\n", lua_tostring(L, -1));
   }
 
-  // FIXME: find another way to remove the dotted lines around text after click.
-  clearFocus();
   if (lua_isfalse(L, -1)) {
-    // Pass to ListView
+    // Do not activate selection.
     lua_pop(L, 1);
-    return false;
+    return true;
   }
 
+  // Continue processing (activate).
   lua_pop(L, 1);
-  return true;
+  return false;
 }
 
 } // mimas

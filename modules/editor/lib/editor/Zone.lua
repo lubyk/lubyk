@@ -69,7 +69,7 @@ end
 function lib:toggleView(process)
   if not process.view then
     process.view = editor.ProcessView(process)
-    self.main_view:addProcessView(process.view)
+    self.view:addProcessView(process.view)
   else
     process:deleteView()
   end
@@ -186,7 +186,7 @@ function lib:findProcess(name, host)
     self.found_processes[name] = process
 
     machine:addProcess(process)
-    self.main_view:update()
+    self.view:update()
   end
 
   return process
@@ -277,7 +277,7 @@ function lib:processDisconnected(remote_process)
     end
   end
   -- Is this needed ?
-  self.main_view:update()
+  self.view:update()
 end
 
 function lib:startStemCell()

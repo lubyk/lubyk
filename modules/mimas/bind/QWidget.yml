@@ -7,22 +7,9 @@ lua:
     lua_pushclass<QWidget>(L, retval__, "mimas.QWidget");
     return 1;
 
-# There are default values, we have to get the actual ones ourselves.
-# void addWidget(QWidget *widget, float x=0, float y=0)
+# void addWidget(QWidget *widget)
   addWidget: |
-    int top__ = lua_gettop(L);
-    QWidget *widget = *((QWidget **)dubL_checksdata(L, 2, "mimas.QWidget"));
-    float x = 0;
-    float y = 0;
-    if (top__ >= 3) {
-      x = dubL_checknumber(L, 3);
-      if (top__ >= 4) {
-        y = dubL_checknumber(L, 4);
-      }
-    }
     widget->setParent(self);
-    widget->move(x, y);
-    widget->show();
 
   windowTitle: |
     lua_pushstring(L, self->windowTitle().toUtf8());

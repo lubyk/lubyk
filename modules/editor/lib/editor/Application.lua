@@ -21,7 +21,9 @@ local private      = {}
 function lib.new()
   local self = app
   setmetatable(self, lib)
-  self:init()
+  self.start = lk.Thread(function()
+    self:init()
+  end)
   return self
 end
 
