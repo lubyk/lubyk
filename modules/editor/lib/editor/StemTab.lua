@@ -35,6 +35,7 @@ end
 lib.setTitle     = editor.ProcessTab.setTitle
 lib.paint        = editor.ProcessTab.paint
 lib.setAlignment = editor.ProcessTab.setAlignment
+lib.minimumSize  = editor.ProcessTab.minimumSize
 
 function lib:click(x, y, op, btn, mod)
   if op == MousePress then

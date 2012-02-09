@@ -77,6 +77,25 @@ static int VBoxLayout__tostring(lua_State *L) {
 /* ============================ Member Methods   ====================== */
 
 
+/** void mimas::VBoxLayout::activate()
+ * include/mimas/VBoxLayout.h:114
+ */
+static int VBoxLayout_activate(lua_State *L) {
+  try {
+    VBoxLayout *self = *((VBoxLayout**)dubL_checksdata(L, 1, "mimas.VBoxLayout"));
+    if (!self) throw dub::Exception("Using deleted mimas.VBoxLayout in activate");
+    self->activate();
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "activate: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "activate: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
 /** void mimas::VBoxLayout::addLayout(QLayout *layout, int stretch=0)
  * include/mimas/VBoxLayout.h:72
  */
@@ -239,7 +258,7 @@ static int VBoxLayout_insertWidget(lua_State *L) {
 
 
 /** QLayout* mimas::VBoxLayout::layout()
- * include/mimas/VBoxLayout.h:121
+ * include/mimas/VBoxLayout.h:125
  */
 static int VBoxLayout_layout(lua_State *L) {
   try {
@@ -259,7 +278,7 @@ static int VBoxLayout_layout(lua_State *L) {
 
 
 /** LuaStackSize mimas::VBoxLayout::minimumSize(lua_State *L) const 
- * include/mimas/VBoxLayout.h:114
+ * include/mimas/VBoxLayout.h:118
  */
 static int VBoxLayout_minimumSize(lua_State *L) {
   try {
@@ -348,6 +367,7 @@ static int VBoxLayout_setSpacing(lua_State *L) {
 /* ============================ Lua Registration ====================== */
 
 static const struct luaL_Reg VBoxLayout_member_methods[] = {
+  {"activate"          , VBoxLayout_activate},
   {"addLayout"         , VBoxLayout_addLayout},
   {"addSpacing"        , VBoxLayout_addSpacing},
   {"addStretch"        , VBoxLayout_addStretch},

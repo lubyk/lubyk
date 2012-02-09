@@ -14,4 +14,4 @@ local defaults = {
   quit_on_close = Lubyk.mimas_quit_on_close,
 }
 
-Lubyk = lk.Settings('lk', defaults)
+mimas.Settings = lk.Settings('mimas', defaults)

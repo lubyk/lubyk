@@ -21,22 +21,27 @@ function lib:init(zone)
   -- making a mess with widget sizes.
   self:setWindowTitle(zone.name)
   self.zone = zone
+
   self.layout_holder = mimas.Widget()
   self:addWidget(self.layout_holder)
   self.layout_holder:move(0,0)
   self.layout = mimas.HBoxLayout(self.layout_holder)
+
   self.library = zone.library
   self.library_view = editor.LibraryView(zone.library)
   self.layout:addWidget(self.library_view)
-  self.patch_view = editor.PatchView(zone)
+
+  self.patch_view = editor.PatchView(self)
   self.layout:addWidget(self.patch_view, 2)
   self.layout:setSpacing(PADDING)
   self.layout:setContentsMargins(0, 0, 0, 0)
-  self.machine_list = editor.MachineList(self.zone)
+
+  self.machine_list = editor.MachineList(self)
   self:addWidget(self.machine_list)
-  --self.layout:addWidget(self.machine_list, 0, mimas.AlignRight)
-  self.control_tabs = editor.ControlTabs(self.zone)
+
+  self.control_tabs = editor.ControlTabs(self)
   self.layout:addWidget(self.control_tabs, 1)
+
   self.width  = settings.main_view.w
   self.height = settings.main_view.h
   self:resize(self.width, self.height)
@@ -48,14 +53,14 @@ function lib:moved(x, y)
   local v = settings.main_view
   v.x = x
   v.y = y
-  settings:save()
+  settings:save(true)
 end
 
 function lib:resized(w, h)
   local v = settings.main_view
   v.w = w
   v.h = h
-  settings:save()
+  settings:save(true)
 
   self.width  = w
   self.height = h
@@ -115,6 +120,7 @@ function private:setupMenus()
   action = menu:addAction('Stop', 'Ctrl+Shift+K', function()
     for k, process in pairs(self.zone.process_watch.processes) do
       if process.online then
+        print('QUIT', process.name)
         process.push:send(lubyk.quit_url)
       end
     end
@@ -144,44 +150,57 @@ function private:setupShowAction(title, shortcut, show, view)
     view:hide()
     view.hidden = true
   else
+    view:show()
+    view.hidden = false
     action:setChecked(true)
   end
 end
 
 function private.dialog:newProject()
-  self.doit = lk.Thread(function()
-    self.dlg = mimas.SimpleDialog {
-      parent = self,
-      'Create a new lubyk project.',
-      {'vbox', box = true,
-        'Project name',
-        {'input', 'name'},
-        'Create project in directory',
-        {'input', 'dir', os.getenv('HOME'), folder=true},
-      },
-      {'hbox', {},
-        {'btn', 'cancel'},
-        {'btn', 'OK', default=true},
-      },
-    }
+  local base = (settings.open_recent or {})[1]
+  if base then
+    -- Go from lkp file to directory containing project
+    -- folder.
+    base = lk.directory(base)
+    base = lk.directory(base)
+  else
+    base = os.getenv('HOME')
+  end
+  --self.doit = lk.Thread(function()
+  self.dlg = mimas.SimpleDialog {
+    parent = self,
+    'Create a new lubyk project.',
+    { 
+      'vbox', box = true,
+      'Project name',
+      {'input', 'name'},
+      'Create project in directory',
+      {'input', 'dir', base, folder=true},
+    },
+    {
+      'hbox', {},
+      {'btn', 'cancel'},
+      {'btn', 'OK', default=true},
+    },
+  }
 
-    function self.dlg.btn(dlg, btn_name)
-      if btn_name == 'OK' then
-        -- Create project
-        local name = dlg.form.name
-        local path = dlg.form.dir .. '/' .. name .. '/' .. name .. '.lkp'
-        if not lk.exist(path) then
-          lk.writeall(path, '')
-        end
-        app:openFile(path)
+  function self.dlg.btn(dlg, btn_name)
+    if btn_name == 'OK' then
+      -- Create project
+      local name = dlg.form.name
+      local path = dlg.form.dir .. '/' .. name .. '/' .. name .. '.lkp'
+      if not lk.exist(path) then
+        lk.writeall(path, '')
       end
-      dlg:hide()
-      self.dlg = nil
-      self.doit = nil
+      app:openFile(path)
     end
-    self.dlg:resize(400,200)
-    self.dlg:show()
-  end)
+    dlg:hide()
+    self.dlg = nil
+    --self.doit = nil
+  end
+  self.dlg:resize(400,200)
+  self.dlg:show()
+  --end)
 end
 
 function private.dialog:openProject()
@@ -235,10 +254,3 @@ function private.dialog:addView()
   dlg:show()
 end
 
--- Keep machine list centered/left or right depending on Patch and ControlView
--- visibility.
-function private:positionMachineList()
-  local view = self.machine_list
-  --local w, h = 
-  --self.machine_list
-end

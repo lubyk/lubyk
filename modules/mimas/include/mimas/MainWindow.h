@@ -30,6 +30,7 @@
 #define LUBYK_INCLUDE_MIMAS_MAIN_WINDOW_H_
 
 #include "mimas/mimas.h"
+#include "mimas/Widget.h"
 #include "mimas/constants.h"
 #include "mimas/Menu.h"
 #include "mimas/MenuBar.h"
@@ -86,54 +87,66 @@ public:
 
   QSize size_hint_;
 protected:
-  virtual void mouseMoveEvent(QMouseEvent *event);
+
+  virtual void paintEvent(QPaintEvent *event);
+
+  //--=============================================== COMMON CALLBACKS
+  virtual void closeEvent(QCloseEvent *event) {
+    Widget::closed(this, event);
+  }
+
+  virtual void mouseMoveEvent(QMouseEvent *event) {
+    Widget::mouse(this, event);
+  }
 
   virtual void mousePressEvent(QMouseEvent *event) {
-    click(event, MousePress);
+    if (!Widget::click(this, event, MousePress))
+      QWidget::mousePressEvent(event);
   }
 
   virtual void mouseDoubleClickEvent(QMouseEvent *event) {
-    click(event, DoubleClick);
+    if (!Widget::click(this, event, DoubleClick))
+      QWidget::mouseDoubleClickEvent(event);
   }
 
   virtual void mouseReleaseEvent(QMouseEvent *event) {
-    click(event, MouseRelease);
+    if (!Widget::click(this, event, MouseRelease))
+      QWidget::mouseReleaseEvent(event);
   }
 
-  virtual void paintEvent(QPaintEvent *event);
-  virtual void resizeEvent(QResizeEvent *event);
+  virtual void resizeEvent(QResizeEvent *event) {
+    Widget::resized(this, width(), height());
+  }
 
   virtual void moveEvent(QMoveEvent * event) {
-    lua_State *L = lua_;
-
-    if (!pushLuaCallback("moved")) return;
-    lua_pushnumber(L, event->pos().x());
-    lua_pushnumber(L, event->pos().y());
-    // <func> <self> <x> <y>
-    luaDump(L, "moved");
-    int status = lua_pcall(L, 3, 0, 0);
-
-    if (status) {
-      fprintf(stderr, "Error in 'moved' callback: %s\n", lua_tostring(L, -1));
-    }
+    Widget::moved(this, event);
   }
 
+  // Not sure this is useful
+
+  // virtual void showEvent(QShowEvent *event) {
+  //   Widget::showHide(this, true);
+  // }
+
+  // virtual void hideEvent(QHideEvent *event) {
+  //   Widget::showHide(this, false);
+  // }
+
   virtual void keyPressEvent(QKeyEvent *event) {
-    keyboard(event, true);
+    if (!Widget::keyboard(this, event, true))
+      QWidget::keyPressEvent(event);
   }
 
   virtual void keyReleaseEvent(QKeyEvent *event) {
-    keyboard(event, false);
+    if (!Widget::keyboard(this, event, false))
+      QWidget::keyReleaseEvent(event);
   }
+
+  // --=============================================== COMMON CALLBACKS END
 
   virtual QSize sizeHint() const {
     return size_hint_;
   }
-
-private:
-  void paint(Painter &p);
-  void keyboard(QKeyEvent *event, bool isPressed);
-  void click(QMouseEvent *event, int type);
 };
 
 } // mimas

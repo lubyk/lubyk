@@ -11,7 +11,7 @@ editor.MachineView = lib
 
 -- constants
 local WIDTH       = 120
-local PADDING     = 10
+local PADDING     = 5
 -- half pen width
 local HPEN_W      = 1
 
@@ -32,6 +32,7 @@ function lib:init(machine)
   self.zone    = machine.zone
   self.lay = mimas.VBoxLayout(self)
   self.lay:setContentsMargins(0,0,0,0)
+  self.lay:setSpacing(PADDING)
   self.title = mimas.Widget()
   self.title:setSizePolicy(mimas.Minimum, mimas.Fixed)
   self.lay:addWidget(self.title)
@@ -82,6 +83,7 @@ function lib:addProcess(service)
     table.insert(self.process_list, add_pos, view)
     self.vbox:insertWidget(add_pos-1, view, 0, mimas.AlignRight)
   end
+  self.machine_list:updatePosition()
 end
 
 function lib:removeProcess(service_name)
@@ -92,6 +94,7 @@ function lib:removeProcess(service_name)
       break
     end
   end
+  self.machine_list:updatePosition()
 end
 
 -- custom paint
@@ -150,4 +153,14 @@ function lib:layoutChanged(patch_visible, controls_visible)
   end
 
   self:update()
+end
+
+function lib:minimumSize()
+  local w, h = self.lbl_w + 30, self.lbl_h + 8
+  for _, tab in ipairs(self.process_list) do
+    local pw, ph = tab:minimumSize()
+    w = math.max(pw, w)
+    h = h + ph + PADDING
+  end
+  return w, h
 end

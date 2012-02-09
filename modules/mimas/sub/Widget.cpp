@@ -230,7 +230,7 @@ static int Widget_cssClass(lua_State *L) {
 
 
 /** LuaStackSize mimas::Widget::getExistingDirectory(const char *caption, const char *base_dir, int options, lua_State *L)
- * include/mimas/Widget.h:102
+ * include/mimas/Widget.h:100
  */
 static int Widget_getExistingDirectory(lua_State *L) {
   try {
@@ -441,7 +441,7 @@ static int QWidget_lower(lua_State *L) {
 
 
 /** static bool mimas::Widget::mouse(ThreadedLuaObject *obj, QMouseEvent *event)
- * include/mimas/Widget.h:107
+ * include/mimas/Widget.h:105
  */
 static int Widget_mouse(lua_State *L) {
   try {
@@ -834,6 +834,25 @@ static int QWidget_showFullScreen(lua_State *L) {
 
 
 
+/** static void mimas::Widget::showHide(ThreadedLuaObject *obj, bool shown)
+ * include/mimas/Widget.h:111
+ */
+static int Widget_showHide(lua_State *L) {
+  try {
+    ThreadedLuaObject *obj = *((ThreadedLuaObject **)dubL_checksdata(L, 1, "mimas.ThreadedLuaObject"));
+    bool shown = lua_toboolean(L, 2);
+    Widget::showHide(obj, shown);
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "showHide: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "showHide: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
 /** LuaStackSize mimas::QWidget::size()
  * mimas/bind/QWidget.h:51
  */
@@ -1073,6 +1092,7 @@ static const struct luaL_Reg Widget_member_methods[] = {
 static const struct luaL_Reg Widget_namespace_methods[] = {
   {"Widget"            , Widget_Widget},
   {"Widget_mouse"      , Widget_mouse},
+  {"Widget_showHide"   , Widget_showHide},
   {NULL, NULL},
 };
 

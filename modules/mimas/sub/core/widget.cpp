@@ -106,6 +106,24 @@ void Widget::closed(ThreadedLuaObject *obj, QCloseEvent *event) {
   lua_pop(L, 1);
 }
 
+void Widget::showHide(ThreadedLuaObject *obj, bool shown) {
+  lua_State *L = obj->lua_;
+  if (shown) {
+    if (!obj->pushLuaCallback("shown")) return;
+  } else {
+    if (!obj->pushLuaCallback("hidden")) return;
+  }
+  // <func> <self>
+  int status = lua_pcall(L, 1, 0, 0);
+  if (status) {
+    if (shown) {
+      fprintf(stderr, "Error in 'shown' callback: %s\n", lua_tostring(L, -1));
+    } else {
+      fprintf(stderr, "Error in 'hidden' callback: %s\n", lua_tostring(L, -1));
+    }
+  }
+}
+
 bool Widget::mouse(ThreadedLuaObject *obj, QMouseEvent *event) {
   lua_State *L = obj->lua_;
 

@@ -57,6 +57,10 @@ function lib:setTitle(name)
   self:setSizePolicy(mimas.Minimum, mimas.Fixed)
 end
 
+function lib:minimumSize()
+  return self.min_width, self.min_height
+end
+
 function lib:paint(p, w, h)
   p:setBrush(self.brush)
   p:setPen(self.pen)

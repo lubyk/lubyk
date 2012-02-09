@@ -11,15 +11,15 @@ editor.PatchView = lib
 
 -- constants
 
-function lib:init(zone)
-  self.zone = zone
+function lib:init(zone_view)
+  self.zone_view = zone_view
+  self.zone = zone_view.zone
 end
 
 function lib:resized(w, h)
   self.w = w
   self.h = h
-  print('resized', w, h)
-  self.zone.machine_list:updatePosition()
+  self.zone_view.machine_list:updatePosition()
 end
 
 function lib:showProcessView(process_view)
@@ -28,10 +28,10 @@ end
 
 function lib:hide()
   self.super:hide()
-  self.zone.machine_list:patchViewChanged(false)
+  self.zone_view.machine_list:patchViewChanged(false)
 end
 
 function lib:show()
   self.super:show()
-  self.zone.machine_list:patchViewChanged(true)
+  self.zone_view.machine_list:patchViewChanged(true)
 end

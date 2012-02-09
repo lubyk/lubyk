@@ -111,6 +111,10 @@ public:
     QVBoxLayout::setContentsMargins(left, top, right, bottom);
   }
 
+  void activate() {
+    QLayout::activate();
+  }
+
   LuaStackSize minimumSize(lua_State *L) const {
     QSize s(QVBoxLayout::minimumSize());
     lua_pushnumber(L, s.width());

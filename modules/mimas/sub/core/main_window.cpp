@@ -59,106 +59,16 @@ void MainWindow::testMenus(bool inplace, lua_State *L) {
     setMenuBar(bar);
   }
 }
+
 void MainWindow::paintEvent(QPaintEvent *event) {
-  // has to be on the heap
   Painter *p = new Painter(this);
   if (!parent()) {
     // window
     p->QPainter::fillRect(rect(), palette().color(QPalette::Window));
   }
-  paint(*p);
+  Widget::paint(this, p, width(), height());
   delete p;
   QMainWindow::paintEvent(event);
-}
-
-void MainWindow::paint(Painter &p) {
-  lua_State *L = lua_;
-
-  if (!pushLuaCallback("paint")) return;
-
-  // Deletable out of Lua
-  lua_pushclass2<Painter>(L, &p, "mimas.Painter");
-  lua_pushnumber(L, width());
-  lua_pushnumber(L, height());
-  // <func> <self> <Painter> <width> <height>
-  int status = lua_pcall(L, 4, 0, 0);
-
-  if (status) {
-    fprintf(stderr, "Error in 'paint' callback: %s\n", lua_tostring(L, -1));
-  }
-}
-
-void MainWindow::resizeEvent(QResizeEvent *event) {
-  lua_State *L = lua_;
-
-  if (!pushLuaCallback("resized")) return;
-  lua_pushnumber(L, width());
-  lua_pushnumber(L, height());
-  // <func> <self> <width> <height>
-  int status = lua_pcall(L, 3, 0, 0);
-
-  if (status) {
-    fprintf(stderr, "Error in 'resized' callback: %s\n", lua_tostring(L, -1));
-  }
-}
-
-void MainWindow::mouseMoveEvent(QMouseEvent *event) {
-  lua_State *L = lua_;
-
-  if (!pushLuaCallback("mouse")) return;
-  lua_pushnumber(L, event->x());
-  lua_pushnumber(L, event->y());
-  // <func> <self> <x> <y>
-  int status = lua_pcall(L, 3, 1, 0);
-
-  if (status) {
-    fprintf(stderr, "Error in 'mouse' callback: %s\n", lua_tostring(L, -1));
-  }
-
-  if (lua_isfalse(L, -1)) {
-    // Pass up
-    event->ignore();
-  }
-  lua_pop(L, 1);
-}
-
-void MainWindow::click(QMouseEvent *event, int type) {
-  lua_State *L = lua_;
-
-  if (!pushLuaCallback("click")) return;
-  lua_pushnumber(L, event->x());
-  lua_pushnumber(L, event->y());
-  lua_pushnumber(L, type);
-  lua_pushnumber(L, event->button());
-  lua_pushnumber(L, event->modifiers());
-  // <func> <self> <x> <y> <type> <btn> <modifiers>
-  int status = lua_pcall(L, 6, 1, 0);
-
-  if (status) {
-    fprintf(stderr, "Error in 'click' callback: %s\n", lua_tostring(L, -1));
-  }
-
-  if (lua_isfalse(L, -1)) {
-    // Pass up
-    event->ignore();
-  }
-  lua_pop(L, 1);
-}
-
-void MainWindow::keyboard(QKeyEvent *event, bool isPressed) {
-  lua_State *L = lua_;
-  if (!L) return;
-
-  if (!pushLuaCallback("keyboard")) return;
-  lua_pushnumber(L, event->key());
-  lua_pushboolean(L, isPressed);
-  lua_pushstring(L, event->text().toUtf8());
-  // <fun> <self> <key> <state> <utf8>
-  int status = lua_pcall(L, 4, 0, 0);
-
-  if (status) {
-    fprintf(stderr, "Error in keyboard callback: %s\n", lua_tostring(L, -1));
-  }
 }
 
 LuaStackSize MainWindow::getOpenFileName(const char *caption,

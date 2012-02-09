@@ -28,3 +28,4 @@ end
 lib.setTitle     = editor.ProcessTab.setTitle
 lib.paint        = editor.ProcessTab.paint
 lib.setAlignment = editor.ProcessTab.setAlignment
+lib.minimumSize  = editor.ProcessTab.minimumSize

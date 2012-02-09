@@ -12,7 +12,7 @@ using namespace mimas;
 /* ============================ Constructors     ====================== */
 
 /** mimas::MainWindow::MainWindow()
- * include/mimas/MainWindow.h:60
+ * include/mimas/MainWindow.h:61
  */
 static int MainWindow_MainWindow(lua_State *L) {
   try {
@@ -161,7 +161,7 @@ static int QWidget_close(lua_State *L) {
 
 
 /** QString mimas::MainWindow::cssClass() const 
- * include/mimas/MainWindow.h:69
+ * include/mimas/MainWindow.h:70
  */
 static int MainWindow_cssClass(lua_State *L) {
   try {
@@ -181,7 +181,7 @@ static int MainWindow_cssClass(lua_State *L) {
 
 
 /** LuaStackSize mimas::MainWindow::getExistingDirectory(const char *caption, const char *base_dir, int options, lua_State *L)
- * include/mimas/MainWindow.h:85
+ * include/mimas/MainWindow.h:86
  */
 static int MainWindow_getExistingDirectory(lua_State *L) {
   try {
@@ -204,7 +204,7 @@ static int MainWindow_getExistingDirectory(lua_State *L) {
 
 
 /** LuaStackSize mimas::MainWindow::getOpenFileName(const char *caption, const char *base_dir, const char *filter, int options, lua_State *L)
- * include/mimas/MainWindow.h:80
+ * include/mimas/MainWindow.h:81
  */
 static int MainWindow_getOpenFileName(lua_State *L) {
   try {
@@ -790,7 +790,7 @@ static int QWidget_swapFullScreen(lua_State *L) {
 
 
 /** void mimas::MainWindow::testMenus(bool inplace, lua_State *L)
- * include/mimas/MainWindow.h:73
+ * include/mimas/MainWindow.h:74
  */
 static int MainWindow_testMenus(lua_State *L) {
   try {

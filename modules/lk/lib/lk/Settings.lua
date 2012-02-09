@@ -26,9 +26,22 @@ setmetatable(lib, {
 })
 
 --- Dump settings as a lua file in the settings path.
-function lib:save()
-  local path = self.module.path
-  lk.writeall(path, lib.dump(self))
+function lib:save(later)
+  if later then
+    -- save in a few ms (do not repeatedly save during window
+    -- move/resize)
+    local thread = self.module.thread
+    if thread then
+      thread:kill()
+    end
+    self.module.thread = lk.Thread(function()
+      self.module.thread = nil
+      self:save()
+    end, worker:now() + 500)
+  else
+    local path = self.module.path
+    lk.writeall(path, lib.dump(self))
+  end
 end
 
 function lib:dump()

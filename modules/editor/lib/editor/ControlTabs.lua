@@ -12,8 +12,9 @@ editor.ControlTabs = lib
 local private = {}
 
 -- constants
-function lib:init(zone)
-  self.zone = zone
+function lib:init(zone_view)
+  self.zone_view = zone_view
+  self.zone = zone_view.zone
 end
 
 function lib:addView(name, def)

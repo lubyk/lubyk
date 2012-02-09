@@ -95,9 +95,7 @@ public:
                           const char *filter,
                           int options,
                           lua_State *L);
-
-  LuaStackSize getExistingDirectory(const char *caption,
-                          const char *base_dir,
+LuaStackSize getExistingDirectory(const char *caption, const char *base_dir,
                           int options,
                           lua_State *L);
 
@@ -110,6 +108,7 @@ public:
   static void resized(ThreadedLuaObject *obj, double width, double height);
   static void moved(ThreadedLuaObject *obj, QMoveEvent *event);
   static void closed(ThreadedLuaObject *obj, QCloseEvent *event);
+  static void showHide(ThreadedLuaObject *obj, bool shown);
 protected:
   virtual void closeEvent(QCloseEvent *event) {
     Widget::closed(this, event);
@@ -143,6 +142,16 @@ protected:
   virtual void moveEvent(QMoveEvent * event) {
     Widget::moved(this, event);
   }
+
+  // Not sure this is useful
+
+  // virtual void showEvent(QShowEvent *event) {
+  //   Widget::showHide(this, true);
+  // }
+
+  // virtual void hideEvent(QHideEvent *event) {
+  //   Widget::showHide(this, false);
+  // }
 
   virtual void keyPressEvent(QKeyEvent *event) {
     if (!Widget::keyboard(this, event, true))

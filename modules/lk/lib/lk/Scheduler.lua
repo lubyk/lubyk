@@ -8,7 +8,7 @@
   loop to the GUI.
 
 --]]------------------------------------------------------
-local lib     = {}
+local lib     = {type = 'lk.Scheduler'}
 lib.__index   = lib
 lk.Scheduler  = lib
 local private = {}
@@ -97,11 +97,15 @@ function lib:run(func)
     app:exec()
   end
   private.finalize(self)
+  print("Bye...")
 end
 
 function lib:loop()
   local poller = self.poller
   local idx_to_thread = self.idx_to_thread
+
+
+  --=============================================== MAIN EVENT LOOP
   while self.should_run do
     local now = worker:now()
     local now_list = {}
@@ -137,11 +141,10 @@ function lib:loop()
     if self.fd_count == 0 and timeout == -1 and not self.mimas then
       -- done
       self.should_run = false
-    else
+    elseif self.should_run then
       if not poller:poll(timeout) then
         -- interrupted
         self.should_run = false
-        print("\nBye...")
         break
       end
       -- First collect events so that running the threads (and
@@ -165,7 +168,6 @@ function lib:loop()
           end
         end
       end
-
     end
     if self.garbage then
       private.cleanup(self)
