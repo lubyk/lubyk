@@ -83,7 +83,7 @@ static int GroupBox__tostring(lua_State *L) {
 
 
 /** void mimas::QWidget::activateWindow()
- * mimas/bind/QWidget.h:32
+ * mimas/bind/QWidget.h:33
  */
 static int QWidget_activateWindow(lua_State *L) {
   try {
@@ -102,7 +102,7 @@ static int QWidget_activateWindow(lua_State *L) {
 
 
 /** void mimas::QWidget::addAction(Action *action)
- * mimas/bind/QWidget.h:34
+ * mimas/bind/QWidget.h:35
  */
 static int QWidget_addAction(lua_State *L) {
   try {
@@ -122,7 +122,7 @@ static int QWidget_addAction(lua_State *L) {
 
 
 /** void mimas::QWidget::addWidget(QWidget *widget, float x=0, float y=0)
- * mimas/bind/QWidget.h:44
+ * mimas/bind/QWidget.h:45
  */
 static int QWidget_addWidget(lua_State *L) {
   try {
@@ -152,8 +152,27 @@ static int QWidget_addWidget(lua_State *L) {
 
 
 
+/** void mimas::QWidget::adjustSize()
+ * mimas/bind/QWidget.h:21
+ */
+static int QWidget_adjustSize(lua_State *L) {
+  try {
+    GroupBox *self = *((GroupBox**)dubL_checksdata(L, 1, "mimas.GroupBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.GroupBox in adjustSize");
+    self->adjustSize();
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "adjustSize: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "adjustSize: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
 /** bool mimas::QWidget::close()
- * mimas/bind/QWidget.h:26
+ * mimas/bind/QWidget.h:27
  */
 static int QWidget_close(lua_State *L) {
   try {
@@ -193,7 +212,7 @@ static int GroupBox_cssClass(lua_State *L) {
 
 
 /** void mimas::QWidget::globalMove(float x, float y)
- * mimas/bind/QWidget.h:83
+ * mimas/bind/QWidget.h:84
  */
 static int QWidget_globalMove(lua_State *L) {
   try {
@@ -218,7 +237,7 @@ static int QWidget_globalMove(lua_State *L) {
 
 
 /** LuaStackSize mimas::QWidget::globalPosition()
- * mimas/bind/QWidget.h:74
+ * mimas/bind/QWidget.h:75
  */
 static int QWidget_globalPosition(lua_State *L) {
   try {
@@ -259,7 +278,7 @@ static int QWidget_height(lua_State *L) {
 
 
 /** void mimas::QWidget::hide()
- * mimas/bind/QWidget.h:29
+ * mimas/bind/QWidget.h:30
  */
 static int QWidget_hide(lua_State *L) {
   try {
@@ -278,7 +297,7 @@ static int QWidget_hide(lua_State *L) {
 
 
 /** bool mimas::QWidget::isFullScreen()
- * mimas/bind/QWidget.h:33
+ * mimas/bind/QWidget.h:34
  */
 static int QWidget_isFullScreen(lua_State *L) {
   try {
@@ -298,7 +317,7 @@ static int QWidget_isFullScreen(lua_State *L) {
 
 
 /** bool mimas::QWidget::isVisible()
- * mimas/bind/QWidget.h:27
+ * mimas/bind/QWidget.h:28
  */
 static int QWidget_isVisible(lua_State *L) {
   try {
@@ -318,7 +337,7 @@ static int QWidget_isVisible(lua_State *L) {
 
 
 /** void mimas::QWidget::lower()
- * mimas/bind/QWidget.h:30
+ * mimas/bind/QWidget.h:31
  */
 static int QWidget_lower(lua_State *L) {
   try {
@@ -397,7 +416,7 @@ static int QObject_object(lua_State *L) {
 
 
 /** LuaStackSize mimas::QWidget::position()
- * mimas/bind/QWidget.h:79
+ * mimas/bind/QWidget.h:80
  */
 static int QWidget_position(lua_State *L) {
   try {
@@ -417,7 +436,7 @@ static int QWidget_position(lua_State *L) {
 
 
 /** void mimas::QWidget::raise()
- * mimas/bind/QWidget.h:31
+ * mimas/bind/QWidget.h:32
  */
 static int QWidget_raise(lua_State *L) {
   try {
@@ -457,7 +476,7 @@ static int QWidget_resize(lua_State *L) {
 
 
 /** void mimas::QWidget::setMinimumSize(float w, float h)
- * mimas/bind/QWidget.h:22
+ * mimas/bind/QWidget.h:23
  */
 static int QWidget_setMinimumSize(lua_State *L) {
   try {
@@ -478,7 +497,7 @@ static int QWidget_setMinimumSize(lua_State *L) {
 
 
 /** void mimas::QWidget::setMouseTracking(bool enable)
- * mimas/bind/QWidget.h:25
+ * mimas/bind/QWidget.h:26
  */
 static int QWidget_setMouseTracking(lua_State *L) {
   try {
@@ -538,7 +557,7 @@ static int QWidget_setParent(lua_State *L) {
 
 
 /** void mimas::QWidget::setSizeHint(float w, float h)
- * mimas/bind/QWidget.h:60
+ * mimas/bind/QWidget.h:61
  */
 static int QWidget_setSizeHint(lua_State *L) {
   try {
@@ -560,7 +579,7 @@ static int QWidget_setSizeHint(lua_State *L) {
 
 
 /** void mimas::QWidget::setSizePolicy(int horizontal, int vertical)
- * mimas/bind/QWidget.h:64
+ * mimas/bind/QWidget.h:65
  */
 static int QWidget_setSizePolicy(lua_State *L) {
   try {
@@ -582,7 +601,7 @@ static int QWidget_setSizePolicy(lua_State *L) {
 
 
 /** void mimas::QWidget::setStyle(const char *text)
- * mimas/bind/QWidget.h:52
+ * mimas/bind/QWidget.h:53
  */
 static int QWidget_setStyle(lua_State *L) {
   try {
@@ -602,7 +621,7 @@ static int QWidget_setStyle(lua_State *L) {
 
 
 /** void mimas::QWidget::setStyleSheet(const char *text)
- * mimas/bind/QWidget.h:53
+ * mimas/bind/QWidget.h:54
  */
 static int QWidget_setStyleSheet(lua_State *L) {
   try {
@@ -622,7 +641,7 @@ static int QWidget_setStyleSheet(lua_State *L) {
 
 
 /** void mimas::QWidget::setWindowTitle(const char *text)
- * mimas/bind/QWidget.h:37
+ * mimas/bind/QWidget.h:38
  */
 static int QWidget_setWindowTitle(lua_State *L) {
   try {
@@ -642,7 +661,7 @@ static int QWidget_setWindowTitle(lua_State *L) {
 
 
 /** void mimas::QWidget::show()
- * mimas/bind/QWidget.h:28
+ * mimas/bind/QWidget.h:29
  */
 static int QWidget_show(lua_State *L) {
   try {
@@ -661,7 +680,7 @@ static int QWidget_show(lua_State *L) {
 
 
 /** void mimas::QWidget::showFullScreen(bool enable=true)
- * mimas/bind/QWidget.h:66
+ * mimas/bind/QWidget.h:67
  */
 static int QWidget_showFullScreen(lua_State *L) {
   try {
@@ -691,7 +710,7 @@ static int QWidget_showFullScreen(lua_State *L) {
 
 
 /** LuaStackSize mimas::QWidget::size()
- * mimas/bind/QWidget.h:51
+ * mimas/bind/QWidget.h:52
  */
 static int QWidget_size(lua_State *L) {
   try {
@@ -712,7 +731,7 @@ static int QWidget_size(lua_State *L) {
 
 
 /** void mimas::QWidget::swapFullScreen()
- * mimas/bind/QWidget.h:70
+ * mimas/bind/QWidget.h:71
  */
 static int QWidget_swapFullScreen(lua_State *L) {
   try {
@@ -735,7 +754,7 @@ static int QWidget_swapFullScreen(lua_State *L) {
 
 
 /** void mimas::QWidget::textSize(const char *text)
- * mimas/bind/QWidget.h:56
+ * mimas/bind/QWidget.h:57
  */
 static int QWidget_textSize(lua_State *L) {
   try {
@@ -775,7 +794,7 @@ static int QWidget_update(lua_State *L) {
 
 
 /** void mimas::QWidget::widget()
- * mimas/bind/QWidget.h:43
+ * mimas/bind/QWidget.h:44
  */
 static int QWidget_widget(lua_State *L) {
   try {
@@ -815,7 +834,7 @@ static int QWidget_width(lua_State *L) {
 
 
 /** LuaStackSize mimas::QWidget::windowTitle()
- * mimas/bind/QWidget.h:47
+ * mimas/bind/QWidget.h:48
  */
 static int QWidget_windowTitle(lua_State *L) {
   try {
@@ -881,6 +900,7 @@ static const struct luaL_Reg GroupBox_member_methods[] = {
   {"activateWindow"    , QWidget_activateWindow},
   {"addAction"         , QWidget_addAction},
   {"addWidget"         , QWidget_addWidget},
+  {"adjustSize"        , QWidget_adjustSize},
   {"close"             , QWidget_close},
   {"cssClass"          , GroupBox_cssClass},
   {"globalMove"        , QWidget_globalMove},

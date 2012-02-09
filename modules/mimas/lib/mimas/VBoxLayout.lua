@@ -26,6 +26,11 @@ function mt:addWidget(other, ...)
     addLayout(self, other:layout(), ...)
   else
     addWidget(self, other:widget(), ...)
+    if not other.show then
+      print(other.type)
+    else
+      other:show()
+    end
   end
 end
 
@@ -42,6 +47,7 @@ function mt:insertWidget(pos, other, ...)
     insertLayout(self, pos, other:layout(), ...)
   else
     insertWidget(self, pos, other:widget(), ...)
+    other:show()
   end
 end
 

@@ -24,6 +24,11 @@ function mt:setParent(other, ...)
   setParent(self, other:widget(), ...)
 end
 
+local setCentralWidget = mt.setCentralWidget
+function mt:setCentralWidget(other, ...)
+  setCentralWidget(self, other:widget(), ...)
+end
+
 local addLayout = mt.addLayout
 function mt:addLayout(other)
   addLayout(self, other:layout())

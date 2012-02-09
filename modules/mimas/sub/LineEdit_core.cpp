@@ -83,7 +83,7 @@ static int LineEdit__tostring(lua_State *L) {
 
 
 /** QString mimas::LineEdit::cssClass() const 
- * include/mimas/LineEdit.h:73
+ * include/mimas/LineEdit.h:81
  */
 static int LineEdit_cssClass(lua_State *L) {
   try {
@@ -103,7 +103,7 @@ static int LineEdit_cssClass(lua_State *L) {
 
 
 /** void mimas::LineEdit::globalMove(float x, float y)
- * include/mimas/LineEdit.h:101
+ * include/mimas/LineEdit.h:109
  */
 static int LineEdit_globalMove(lua_State *L) {
   try {
@@ -124,7 +124,7 @@ static int LineEdit_globalMove(lua_State *L) {
 
 
 /** LuaStackSize mimas::LineEdit::globalPosition(lua_State *L)
- * include/mimas/LineEdit.h:92
+ * include/mimas/LineEdit.h:100
  */
 static int LineEdit_globalPosition(lua_State *L) {
   try {
@@ -144,7 +144,7 @@ static int LineEdit_globalPosition(lua_State *L) {
 
 
 /** int mimas::LineEdit::height()
- * include/mimas/LineEdit.h:138
+ * include/mimas/LineEdit.h:146
  */
 static int LineEdit_height(lua_State *L) {
   try {
@@ -163,10 +163,11 @@ static int LineEdit_height(lua_State *L) {
 
 
 
+
 /** void mimas::LineEdit::hide()
- * include/mimas/LineEdit.h:155
+ * include/mimas/LineEdit.h:78
  */
-static int LineEdit_hide(lua_State *L) {
+static int LineEdit_hide1(lua_State *L) {
   try {
     LineEdit *self = *((LineEdit**)dubL_checksdata(L, 1, "mimas.LineEdit"));
     if (!self) throw dub::Exception("Using deleted mimas.LineEdit in hide");
@@ -182,8 +183,41 @@ static int LineEdit_hide(lua_State *L) {
 
 
 
+/** void mimas::LineEdit::hide()
+ * include/mimas/LineEdit.h:163
+ */
+static int LineEdit_hide2(lua_State *L) {
+  try {
+    LineEdit *self = *((LineEdit**)dubL_checksdata(L, 1, "mimas.LineEdit"));
+    if (!self) throw dub::Exception("Using deleted mimas.LineEdit in hide");
+    self->hide();
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "hide: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "hide: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+
+/** Overloaded function chooser for hide(...) */
+static int LineEdit_hide(lua_State *L) {
+  int type__ = lua_type(L, 2);
+  int top__  = lua_gettop(L);
+  if (top__ < 2) {
+    return LineEdit_hide1(L);
+  } else {
+    // use any to raise errors
+    return LineEdit_hide1(L);
+  }
+}
+
+
 /** float mimas::LineEdit::hue()
- * include/mimas/LineEdit.h:151
+ * include/mimas/LineEdit.h:159
  */
 static int LineEdit_hue(lua_State *L) {
   try {
@@ -203,7 +237,7 @@ static int LineEdit_hue(lua_State *L) {
 
 
 /** void mimas::LineEdit::move(int x, int y)
- * include/mimas/LineEdit.h:118
+ * include/mimas/LineEdit.h:126
  */
 static int LineEdit_move(lua_State *L) {
   try {
@@ -224,7 +258,7 @@ static int LineEdit_move(lua_State *L) {
 
 
 /** LuaStackSize mimas::LineEdit::name(lua_State *L)
- * include/mimas/LineEdit.h:107
+ * include/mimas/LineEdit.h:115
  */
 static int LineEdit_name(lua_State *L) {
   try {
@@ -244,7 +278,7 @@ static int LineEdit_name(lua_State *L) {
 
 
 /** QObject* mimas::LineEdit::object()
- * include/mimas/LineEdit.h:85
+ * include/mimas/LineEdit.h:93
  */
 static int LineEdit_object(lua_State *L) {
   try {
@@ -264,7 +298,7 @@ static int LineEdit_object(lua_State *L) {
 
 
 /** void mimas::LineEdit::resize(int w, int h)
- * include/mimas/LineEdit.h:122
+ * include/mimas/LineEdit.h:130
  */
 static int LineEdit_resize(lua_State *L) {
   try {
@@ -285,7 +319,7 @@ static int LineEdit_resize(lua_State *L) {
 
 
 /** void mimas::LineEdit::selectAll()
- * include/mimas/LineEdit.h:174
+ * include/mimas/LineEdit.h:182
  */
 static int LineEdit_selectAll(lua_State *L) {
   try {
@@ -304,7 +338,7 @@ static int LineEdit_selectAll(lua_State *L) {
 
 
 /** void mimas::LineEdit::setFocus()
- * include/mimas/LineEdit.h:178
+ * include/mimas/LineEdit.h:186
  */
 static int LineEdit_setFocus(lua_State *L) {
   try {
@@ -323,7 +357,7 @@ static int LineEdit_setFocus(lua_State *L) {
 
 
 /** void mimas::LineEdit::setHue(float hue)
- * include/mimas/LineEdit.h:146
+ * include/mimas/LineEdit.h:154
  */
 static int LineEdit_setHue(lua_State *L) {
   try {
@@ -343,7 +377,7 @@ static int LineEdit_setHue(lua_State *L) {
 
 
 /** void mimas::LineEdit::setName(const char *name)
- * include/mimas/LineEdit.h:114
+ * include/mimas/LineEdit.h:122
  */
 static int LineEdit_setName(lua_State *L) {
   try {
@@ -363,7 +397,7 @@ static int LineEdit_setName(lua_State *L) {
 
 
 /** void mimas::LineEdit::setParent(QWidget *parent)
- * include/mimas/LineEdit.h:81
+ * include/mimas/LineEdit.h:89
  */
 static int LineEdit_setParent(lua_State *L) {
   try {
@@ -383,7 +417,7 @@ static int LineEdit_setParent(lua_State *L) {
 
 
 /** void mimas::LineEdit::setSelection(int start, int length)
- * include/mimas/LineEdit.h:170
+ * include/mimas/LineEdit.h:178
  */
 static int LineEdit_setSelection(lua_State *L) {
   try {
@@ -404,7 +438,7 @@ static int LineEdit_setSelection(lua_State *L) {
 
 
 /** void mimas::LineEdit::setStyle(const char *text)
- * include/mimas/LineEdit.h:142
+ * include/mimas/LineEdit.h:150
  */
 static int LineEdit_setStyle(lua_State *L) {
   try {
@@ -424,7 +458,7 @@ static int LineEdit_setStyle(lua_State *L) {
 
 
 /** void mimas::LineEdit::setText(const char *text)
- * include/mimas/LineEdit.h:161
+ * include/mimas/LineEdit.h:169
  */
 static int LineEdit_setText(lua_State *L) {
   try {
@@ -443,8 +477,27 @@ static int LineEdit_setText(lua_State *L) {
 
 
 
+/** void mimas::LineEdit::show()
+ * include/mimas/LineEdit.h:74
+ */
+static int LineEdit_show(lua_State *L) {
+  try {
+    LineEdit *self = *((LineEdit**)dubL_checksdata(L, 1, "mimas.LineEdit"));
+    if (!self) throw dub::Exception("Using deleted mimas.LineEdit in show");
+    self->show();
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "show: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "show: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
 /** const char* mimas::LineEdit::text() const 
- * include/mimas/LineEdit.h:166
+ * include/mimas/LineEdit.h:174
  */
 static int LineEdit_text(lua_State *L) {
   try {
@@ -464,7 +517,7 @@ static int LineEdit_text(lua_State *L) {
 
 
 /** QWidget* mimas::LineEdit::widget()
- * include/mimas/LineEdit.h:77
+ * include/mimas/LineEdit.h:85
  */
 static int LineEdit_widget(lua_State *L) {
   try {
@@ -484,7 +537,7 @@ static int LineEdit_widget(lua_State *L) {
 
 
 /** int mimas::LineEdit::width()
- * include/mimas/LineEdit.h:134
+ * include/mimas/LineEdit.h:142
  */
 static int LineEdit_width(lua_State *L) {
   try {
@@ -504,7 +557,7 @@ static int LineEdit_width(lua_State *L) {
 
 
 /** int mimas::LineEdit::x()
- * include/mimas/LineEdit.h:126
+ * include/mimas/LineEdit.h:134
  */
 static int LineEdit_x(lua_State *L) {
   try {
@@ -524,7 +577,7 @@ static int LineEdit_x(lua_State *L) {
 
 
 /** int mimas::LineEdit::y()
- * include/mimas/LineEdit.h:130
+ * include/mimas/LineEdit.h:138
  */
 static int LineEdit_y(lua_State *L) {
   try {
@@ -566,6 +619,7 @@ static const struct luaL_Reg LineEdit_member_methods[] = {
   {"setSelection"      , LineEdit_setSelection},
   {"setStyle"          , LineEdit_setStyle},
   {"setText"           , LineEdit_setText},
+  {"show"              , LineEdit_show},
   {"text"              , LineEdit_text},
   {"widget"            , LineEdit_widget},
   {"width"             , LineEdit_width},

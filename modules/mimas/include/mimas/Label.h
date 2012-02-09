@@ -63,6 +63,15 @@ public:
 
   // ============================ common code to all mimas Widgets
 
+  // FIXME: should inherit from pseudo class QWidgetBase.
+  void show() {
+    QLabel::show();
+  }
+
+  void hide() {
+    QLabel::hide();
+  }
+
   QString cssClass() const {
     return QString("label");
   }

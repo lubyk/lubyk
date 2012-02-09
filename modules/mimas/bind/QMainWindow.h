@@ -9,7 +9,8 @@ namespace mimas {
  */
 class QMainWindow {
  public:
-  setMenuBar(MenuBar *bar);
+  void setMenuBar(MenuBar *bar);
+  void setCentralWidget(QWidget *w);
 };
 
 } // mimas

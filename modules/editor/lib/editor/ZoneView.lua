@@ -42,11 +42,16 @@ function lib:init(zone)
   self.control_tabs = editor.ControlTabs(self)
   self.layout:addWidget(self.control_tabs, 1)
 
-  self.width  = settings.main_view.w
-  self.height = settings.main_view.h
-  self:resize(self.width, self.height)
+  self.w = settings.main_view.w
+  self.h = settings.main_view.h
+  self:resize(self.w, self.h)
   self:move(settings.main_view.x, settings.main_view.y)
   private.setupMenus(self)
+  -- Display open recent / create new dialog until something appears on the
+  -- network.
+  lk.Thread(function()
+    private.dialog.start(self)
+  end, 500)
 end
 
 function lib:moved(x, y)
@@ -62,10 +67,9 @@ function lib:resized(w, h)
   v.h = h
   settings:save(true)
 
-  self.width  = w
-  self.height = h
   self.layout_holder:resize(w, h)
   self.machine_list:updatePosition()
+  private.centerDlg(self)
 end
 
 function lib:addProcessView(view)
@@ -80,6 +84,16 @@ function lib:addLinkView(view)
   self.patch_view:addWidget(view)
 end
 
+function lib:hideDialog()
+  local dlg = self.dlg
+  if dlg then
+    dlg:hide()
+    dlg:__gc()
+    self.dlg = nil
+  else
+    self.dlg_hidden = true
+  end
+end
 --=============================================== Menu setup
 function private:setupMenus()
   self.menu_bar = mimas.MenuBar(self)
@@ -120,7 +134,6 @@ function private:setupMenus()
   action = menu:addAction('Stop', 'Ctrl+Shift+K', function()
     for k, process in pairs(self.zone.process_watch.processes) do
       if process.online then
-        print('QUIT', process.name)
         process.push:send(lubyk.quit_url)
       end
     end
@@ -254,3 +267,58 @@ function private.dialog:addView()
   dlg:show()
 end
 
+function private.dialog:start()
+  if self.dlg_hidden then
+    -- Do not show
+    self.dlg_hidden = nil
+    return
+  end
+
+  local dlg = mimas.SimpleDialog {
+    flag = mimas.WidgetFlag,
+    'Start or create a project',
+    {'list', settings.open_recent},
+    {'hbox',
+      {}, -- stretch
+      {'space', 120},
+      {'btn', 'New...'},
+      {'btn', 'Open...'},
+    },
+  }
+  self.dlg = dlg
+  self:addWidget(dlg)
+
+  function dlg.btn(dlg, btn_name)
+    self:hideDialog()
+    if btn_name == 'New...' then
+      private.dialog.newProject(self)
+    else
+      private.dialog.openProject(self)
+    end
+  end
+
+  dlg.max_list_len = 30
+  function dlg.list(dlg, path)
+    self:hideDialog()
+    if path then
+      app:openFile(path)
+    end
+  end
+  dlg.widgets.lay:setContentsMargins(15,15,15,15)
+  function dlg:paint(p, w, h)
+    p:setBrush(mimas.Color(0, 0, 0.2))
+    p:setPen(3, mimas.Color(0.2, 0.8, 0.3))
+    p:drawRoundedRect(4, 4, w-8, h-8, 10)
+  end
+  private.centerDlg(self)
+end
+
+
+function private:centerDlg()
+  local dlg = self.dlg
+  if dlg then
+    local w, h = dlg:width(), dlg:height()
+    local pw, ph = self.w, self.h
+    dlg:move((pw-w)/2, (ph-h)/2)
+  end
+end

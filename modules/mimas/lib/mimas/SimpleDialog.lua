@@ -143,9 +143,26 @@ local function makeWidget(main, parent, def)
   elseif t == 'list' then
     ---------------------------- List
     elem = mimas.ListView()
-    elem:setModel(def[2])
-    function elem:select(...)
-      main:list(...)
+    local data = def[2]
+    if data.type ~= 'mimas.DataSource' then
+      function elem:rowCount()
+        return #data
+      end
+      function elem:data(row_i)
+        local n = data[row_i]
+        if main.max_list_len and n and string.len(n) > main.max_list_len then
+          return '...' .. string.sub(n, -main.max_list_len, -1)
+        else
+          return n
+        end
+      end
+      function elem:select(i)
+        print('selected', data[i])
+        main:list(data[i])
+      end
+    else
+      error('DataSource not supported in SimpleDialog yet...')
+      elem:setModel(data)
     end
     elem:setStyleSheet[[
       .list {background:#333; border:1px solid #666}
@@ -153,7 +170,13 @@ local function makeWidget(main, parent, def)
     ]]
 
 
+  elseif t == 'space' then
+    ---------------------------- Space
+    parent:addSpacing(def[2])
+
+
   elseif t == nil then
+    ---------------------------- Stretch
     parent:addStretch()
   end
 

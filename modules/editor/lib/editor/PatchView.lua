@@ -28,10 +28,14 @@ end
 
 function lib:hide()
   self.super:hide()
-  self.zone_view.machine_list:patchViewChanged(false)
+  if self.zone_view.machine_list then
+    self.zone_view.machine_list:patchViewChanged(false)
+  end
 end
 
 function lib:show()
   self.super:show()
-  self.zone_view.machine_list:patchViewChanged(true)
+  if self.zone_view.machine_list then
+    self.zone_view.machine_list:patchViewChanged(true)
+  end
 end

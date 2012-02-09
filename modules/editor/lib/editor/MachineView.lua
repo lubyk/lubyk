@@ -89,11 +89,13 @@ end
 function lib:removeProcess(service_name)
   for i, v in ipairs(self.process_list) do
     if v.name == service_name then
+      v:hide()
       v.super:__gc() -- delete
       table.remove(self.process_list, i)
       break
     end
   end
+  self:adjustSize()
   self.machine_list:updatePosition()
 end
 
@@ -155,12 +157,3 @@ function lib:layoutChanged(patch_visible, controls_visible)
   self:update()
 end
 
-function lib:minimumSize()
-  local w, h = self.lbl_w + 30, self.lbl_h + 8
-  for _, tab in ipairs(self.process_list) do
-    local pw, ph = tab:minimumSize()
-    w = math.max(pw, w)
-    h = h + ph + PADDING
-  end
-  return w, h
-end

@@ -81,8 +81,7 @@ end
 
 function lib:updatePosition()
   local main = self.zone_view
-  self.vbox:activate()
-  local w, h = private.minimumSize(self)
+  local w, h = self.vbox:minimumSize()
   self:resize(w, h)
   if self.patch_visible and self.controls_visible then
     -- center in the middle
@@ -110,17 +109,4 @@ function private:machineLayoutChanged()
   end
 end
 
--- There seems to be a bug in Qt minimumSize calculation before
--- the widget is drawn. We use this instead until the bug
--- is fixed or we understand we we do wrong.
-function private:minimumSize()
-  local w, h = 0, 40
-  for _,machine in ipairs(self.machine_view_list) do
-    local mw, mh = machine:minimumSize()
-    w = math.max(w, mw)
-    h = h + mh + PADDING
-  end
-  return w, h
-  --return self.vbox:minimumSize()
-end
 

@@ -122,7 +122,7 @@ static int Label__tostring(lua_State *L) {
 
 
 /** QString mimas::Label::cssClass() const 
- * include/mimas/Label.h:66
+ * include/mimas/Label.h:75
  */
 static int Label_cssClass(lua_State *L) {
   try {
@@ -142,7 +142,7 @@ static int Label_cssClass(lua_State *L) {
 
 
 /** int mimas::Label::height()
- * include/mimas/Label.h:111
+ * include/mimas/Label.h:120
  */
 static int Label_height(lua_State *L) {
   try {
@@ -161,8 +161,27 @@ static int Label_height(lua_State *L) {
 
 
 
+/** void mimas::Label::hide()
+ * include/mimas/Label.h:71
+ */
+static int Label_hide(lua_State *L) {
+  try {
+    Label *self = *((Label**)dubL_checksdata(L, 1, "mimas.Label"));
+    if (!self) throw dub::Exception("Using deleted mimas.Label in hide");
+    self->hide();
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "hide: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "hide: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
 /** float mimas::Label::hue()
- * include/mimas/Label.h:128
+ * include/mimas/Label.h:137
  */
 static int Label_hue(lua_State *L) {
   try {
@@ -182,7 +201,7 @@ static int Label_hue(lua_State *L) {
 
 
 /** void mimas::Label::move(int x, int y)
- * include/mimas/Label.h:91
+ * include/mimas/Label.h:100
  */
 static int Label_move(lua_State *L) {
   try {
@@ -203,7 +222,7 @@ static int Label_move(lua_State *L) {
 
 
 /** LuaStackSize mimas::Label::name(lua_State *L)
- * include/mimas/Label.h:80
+ * include/mimas/Label.h:89
  */
 static int Label_name(lua_State *L) {
   try {
@@ -223,7 +242,7 @@ static int Label_name(lua_State *L) {
 
 
 /** QObject* mimas::Label::object()
- * include/mimas/Label.h:74
+ * include/mimas/Label.h:83
  */
 static int Label_object(lua_State *L) {
   try {
@@ -243,7 +262,7 @@ static int Label_object(lua_State *L) {
 
 
 /** void mimas::Label::resize(int w, int h)
- * include/mimas/Label.h:95
+ * include/mimas/Label.h:104
  */
 static int Label_resize(lua_State *L) {
   try {
@@ -264,7 +283,7 @@ static int Label_resize(lua_State *L) {
 
 
 /** void mimas::Label::setAlignment(int align)
- * include/mimas/Label.h:139
+ * include/mimas/Label.h:148
  */
 static int Label_setAlignment(lua_State *L) {
   try {
@@ -284,7 +303,7 @@ static int Label_setAlignment(lua_State *L) {
 
 
 /** void mimas::Label::setHue(float hue)
- * include/mimas/Label.h:123
+ * include/mimas/Label.h:132
  */
 static int Label_setHue(lua_State *L) {
   try {
@@ -304,7 +323,7 @@ static int Label_setHue(lua_State *L) {
 
 
 /** void mimas::Label::setName(const char *name)
- * include/mimas/Label.h:87
+ * include/mimas/Label.h:96
  */
 static int Label_setName(lua_State *L) {
   try {
@@ -324,7 +343,7 @@ static int Label_setName(lua_State *L) {
 
 
 /** void mimas::Label::setStyle(const char *text)
- * include/mimas/Label.h:115
+ * include/mimas/Label.h:124
  */
 static int Label_setStyle(lua_State *L) {
   try {
@@ -344,7 +363,7 @@ static int Label_setStyle(lua_State *L) {
 
 
 /** void mimas::Label::setStyleSheet(const char *text)
- * include/mimas/Label.h:119
+ * include/mimas/Label.h:128
  */
 static int Label_setStyleSheet(lua_State *L) {
   try {
@@ -364,7 +383,7 @@ static int Label_setStyleSheet(lua_State *L) {
 
 
 /** void mimas::Label::setText(const char *text)
- * include/mimas/Label.h:134
+ * include/mimas/Label.h:143
  */
 static int Label_setText(lua_State *L) {
   try {
@@ -383,8 +402,27 @@ static int Label_setText(lua_State *L) {
 
 
 
+/** void mimas::Label::show()
+ * include/mimas/Label.h:67
+ */
+static int Label_show(lua_State *L) {
+  try {
+    Label *self = *((Label**)dubL_checksdata(L, 1, "mimas.Label"));
+    if (!self) throw dub::Exception("Using deleted mimas.Label in show");
+    self->show();
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "show: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "show: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
 /** QWidget* mimas::Label::widget()
- * include/mimas/Label.h:70
+ * include/mimas/Label.h:79
  */
 static int Label_widget(lua_State *L) {
   try {
@@ -404,7 +442,7 @@ static int Label_widget(lua_State *L) {
 
 
 /** int mimas::Label::width()
- * include/mimas/Label.h:107
+ * include/mimas/Label.h:116
  */
 static int Label_width(lua_State *L) {
   try {
@@ -424,7 +462,7 @@ static int Label_width(lua_State *L) {
 
 
 /** int mimas::Label::x()
- * include/mimas/Label.h:99
+ * include/mimas/Label.h:108
  */
 static int Label_x(lua_State *L) {
   try {
@@ -444,7 +482,7 @@ static int Label_x(lua_State *L) {
 
 
 /** int mimas::Label::y()
- * include/mimas/Label.h:103
+ * include/mimas/Label.h:112
  */
 static int Label_y(lua_State *L) {
   try {
@@ -470,6 +508,7 @@ static int Label_y(lua_State *L) {
 static const struct luaL_Reg Label_member_methods[] = {
   {"cssClass"          , Label_cssClass},
   {"height"            , Label_height},
+  {"hide"              , Label_hide},
   {"hue"               , Label_hue},
   {"move"              , Label_move},
   {"name"              , Label_name},
@@ -481,6 +520,7 @@ static const struct luaL_Reg Label_member_methods[] = {
   {"setStyle"          , Label_setStyle},
   {"setStyleSheet"     , Label_setStyleSheet},
   {"setText"           , Label_setText},
+  {"show"              , Label_show},
   {"widget"            , Label_widget},
   {"width"             , Label_width},
   {"x"                 , Label_x},

@@ -18,6 +18,7 @@ class QWidget {
   int height();
   void setParent(QWidget *parent);
   void update();
+  void adjustSize();
   // FIXME: maybe we can remove this and only use setSizeHint + setSizePolicy...
   void setMinimumSize(float w, float h);
   /** Receive mouse move events even if no button is pressed.
