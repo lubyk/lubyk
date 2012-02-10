@@ -26,7 +26,6 @@ function lib.new(type, func)
   -- HWM = AVAIL MEMORY / SUBSCRIBERS / MSG_SIZE = nb messages per subscriber
   self:setsockopt(zmq.HWM, 500)
 
-  -- FIXME: ZMQ_NOBLOCK hangs ???
   self:setNonBlocking(true)
 
   setmetatable(self, lib)
@@ -49,6 +48,9 @@ function lib:start()
     self.loop(self)
     self.thread = nil
   end)
+  -- In case an unprotected error occurs in the thread, automatically
+  -- restart:
+  self.thread.restart = true
 end
 
 function lib:quit()

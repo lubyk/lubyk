@@ -13,18 +13,12 @@ function zmq.SimplePull(location, func)
     func = location
     location = nil
   end
-  return zmq.Pull(location, function(self)
+  local self = zmq.Pull(location, function(self)
     local clients = {}
     while self.thread do
-      -- Run in a new thread so that errors do not
-      -- halt the socket...
-      -- TODO: should (and can) we reuse the coroutine ?
-      local data = {self:recv()}
-      clients[data] = lk.Thread(function()
-        func(unpack(data))
-        -- Garbage collect
-        clients[data] = nil
-      end)
+      -- In case of unprotected errors, the thread is automatically
+      -- restarted.
+      func(self:recv())
     end
   end)
 end
