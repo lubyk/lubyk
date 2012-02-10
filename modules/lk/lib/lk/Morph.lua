@@ -73,6 +73,7 @@ function lib:start(opts)
       end
     end,
     type = 'lk.Morph',
+    info = opts.info,
   }
   self.service = lk.Service(Lubyk.zone .. ':', srv_opts)
 end
@@ -438,12 +439,10 @@ end
 --- A process appeared on the network, we connect to this process to receive
 -- notifications.
 function private.process:connect(process, remote_process)
-  process.sub = zmq.SimpleSub(function(url, changes)
+  process.sub = zmq.SimpleSub(function(changes)
     -- we receive notifications, update content
-    if url == lubyk.update_url then
-      -- FIXME: filter control events ?
-      private.process.changed(self, process, changes)
-    end
+    -- FIXME: filter control events ?
+    private.process.changed(self, process, changes)
   end)
   process.sub:connect(remote_process.sub_url)
 end

@@ -259,6 +259,7 @@ function lib:partialDump(data)
     res.outlets = dumpSlots(self.sorted_outlets, data.links)
   end
 
+  print('NODE', self.name, '\n', yaml.dump(res))
   return res
 end
 

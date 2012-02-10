@@ -19,6 +19,11 @@ function lk.DavMorph(opts)
   self.join = function(self)
     self.dav_thread:join()
   end
+  opts.info = {}
+  self.dav = lk.DavServer()
+  opts.info.davport = self.dav.port
+  -- Register WebDAV service
+  self.dav_registration = mdns.Registration('_webdav._tcp', Lubyk.zone .. '.lubyk', self.dav.port)
   self:start(opts)
   return self
 end
@@ -38,18 +43,7 @@ function private:openFile(filepath)
   -- super
   lk.Morph.openFile(self, filepath)
   -- setup server
-  if self.dav then
-    self.dav:setRoot(self.root)
-  else
-    -- try 5 times (now, 2s, 4s, 8s, 16s)
-    self.start = sched:try(function()
-      self.dav = lk.DavServer(Lubyk.dav_port, self.root)
-      self.start = nil
-    end, function(err)
-      print("Could not start DavServer", err)
-      sched:quit()
-    end)
-  end
+  self.dav:setRoot(self.root)
 end
 
 function private:quit()

@@ -30,7 +30,9 @@ setmetatable(lib, {
       return nil
     end
   end
-  local self = {name = name, callback = callback, info = {type = type_name}}
+  local info = opts.info or {}
+  info.type = type_name
+  local self = {name = name, callback = callback, info = (opts.info or {})}
 
   --======================================= PUB server
   self.pub = zmq.Pub()
