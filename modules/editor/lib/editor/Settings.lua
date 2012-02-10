@@ -18,7 +18,7 @@ local defaults = {
   prototypes_db = string.format('%s/Documents/Lubyk.db', os.getenv('HOME')),
   -- Paths relative to Lubyk.lib (should not be changed by user)
   prototypes_base_src = {
-    lubyk = 'lubyk',
+    '_prototypes',
   },
   -- Absolute paths (user setings)
   prototypes_src = {},

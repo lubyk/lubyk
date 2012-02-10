@@ -75,17 +75,25 @@ function lib:toggleView(process)
   end
 end
 
-local work_path = '/Volumes/Lubyk'
+local basew_path = '/Volumes/Lubyk'
                   --(Lubyk.editor or {}).work_path or
                   --string.format('%s/tmp_lubyk/editor/tmp', os.getenv('HOME'))
 
-lk.makePath(work_path)
 
 function lib:workPath()
-  return work_path
+  if not self.work_path then
+    if lk.exist(basew_path) then
+      -- OK, reuse
+      self.work_path = basew_path
+    else
+      self.work_path = basew_path
+      lk.makePath(self.work_path)
+    end
+  end
+  return self.work_path
 end
 
-local editor_cmd = (Lubyk.editor or {}).editor_cmd
+local editor_cmd = editor.Settings.editor_cmd
 
 function lib:editFile(filepath, node)
   if editor_cmd then

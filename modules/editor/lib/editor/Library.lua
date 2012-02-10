@@ -12,9 +12,122 @@
 local lib      = {type='editor.Library'}
 lib.__index    = lib
 editor.Library = lib
+local private  = {}
+
+setmetatable(lib, {
+  --- Create a new editor.Link reflecting the content of a remote
+  -- link. If the process view is not shown, the LinkView is not
+  -- created.
+ __call = function(table, db, zone)
+  local self = {
+    -- delegate used for drag&drop operations in LinkView
+    zone = zone,
+    -- Dir patterns to glob for files.
+    sources = {}
+  }
+  if db then
+    self.db = db
+  else
+    self.filepath = editor.Settings.prototypes_db
+    lk.makePath(lk.directory(self.filepath))
+    self.db = sqlite3.open(self.filepath)
+  end
+  private.prepareDb(self)
+  private.setupSources(self)
+
+  setmetatable(self, lib)
+  return self
+end})
+
+function lib:addSource(lib_name, path)
+  self.sources[lib_name] = path
+end
+
+-- Recreate database from content in filesystem.
+function lib:sync()
+  local db = self.db
+  db:exec 'DELETE from nodes;'
+  for _, dir in ipairs(self.sources) do
+    for folder in dir:list() do
+      if lk.fileType(folder) == 'directory' then
+        local _, lib_name = lk.directory(folder)
+        local dir = lk.Dir(folder)
+        for file in dir:glob('[.]lua$') do
+          private.addNode(self, lib_name, file)
+        end
+      end
+    end
+  end
+end
+
+function lib:nodeCount(filter)
+  filter = private.prepareFilter(filter)
+  local stmt = self.get_node_count_with_filter_stmt
+  stmt:bind_names {filter = filter}
+  return stmt:first_row()[1]
+end
+
+function lib:code(name)
+  local stmt = self.get_code_by_name_stmt
+  stmt:bind_names {name = name}
+  local row = stmt:first_row()
+  if row then
+    return row[1]
+  else
+    return nil
+  end
+end
+
+function lib:node(filter, pos)
+  if type(filter) == 'number' then
+    pos = filter
+    filter = nil
+  end
+  filter = private.prepareFilter(filter)
+  local stmt = self.get_node_by_position_and_filter_stmt
+  local filter = private.prepareFilter(filter)
+  stmt:bind_names {
+    p = (pos or 1) - 1,
+    filter = filter,
+  }
+  local row = stmt:first_row()
+  if row then
+    return {
+      --id   = row[1],
+      name = row[2],
+      path = row[3],
+      code = row[4],
+      keywords = row[5],
+    }
+  else
+    return nil
+  end
+end
+
+--=============================================== PRIVATE
+
+function private:setupSources()
+  local list = editor.Settings.prototypes_base_src
+  -- Use the real list in case we have a copy-on-write (empty) placeholder
+  -- list.
+  list = list._placeholder or list
+  for _, path in ipairs(list) do
+    local dir = lk.Dir(Lubyk.lib .. '/' .. path)
+    table.insert(self.sources, dir)
+  end
+
+  list = editor.Settings.prototypes_src
+  -- Use the real list in case we have a copy-on-write (empty) placeholder
+  -- list.
+  list = list._placeholder or list
+  for _, path in ipairs(list) do
+    local dir = lk.Dir(path)
+    table.insert(self.sources, dir)
+  end
+end
 
 -- Prepare the database for events
-local function prepareDb(self)
+function private:prepareDb()
   local db = self.db
   -- FIXME: only create tables if db tables do not exist yet
 
@@ -48,7 +161,7 @@ local function prepareDb(self)
   ]]
 end
 
-local function addNode(self, lib_name, filepath)
+function private:addNode(lib_name, filepath)
   local name = lib_name .. '.' .. string.match(filepath, '([^%./]+)%.lua$')
   local stmt = self.add_node_stmt
   local code = lk.readall(filepath)
@@ -58,103 +171,18 @@ local function addNode(self, lib_name, filepath)
     name = name,
     path = filepath,
     code = lk.readall(filepath),
-    keywords = name,
+    keywords = lib_name ..'.'.. name,
   }
   stmt:step()
   stmt:reset()
 end
 
-setmetatable(lib, {
-  --- Create a new editor.Link reflecting the content of a remote
-  -- link. If the process view is not shown, the LinkView is not
-  -- created.
- __call = function(table, db, delegate)
-  local self = {
-    -- delegate used for drag&drop operations in LinkView
-    delegate = delegate,
-    -- Dir patterns to glob for files.
-    sources = {}
-  }
-  if db then
-    self.db = db
+function private.prepareFilter(filter)
+  if not filter then
+    return '%'
+  elseif not string.match(filter, '%%') then
+    return '%' .. (filter or '') .. '%'
   else
-    self.filepath = editor.Settings.prototypes_db
-    lk.makePath(lk.directory(self.filepath))
-    self.db = sqlite3.open(self.filepath)
-  end
-  prepareDb(self)
-  for lib_name, path in pairs(editor.Settings.prototypes_base_src) do
-    if not lib_name:match('^_') then
-      self.sources[lib_name] = Lubyk.lib .. '/' .. path
-    end
-  end
-  for lib_name, path in pairs(editor.Settings.prototypes_src) do
-    if not lib_name:match('^_') then
-      self.sources[lib_name] = path
-    end
-  end
-  setmetatable(self, lib)
-  return self
-end})
-
-function lib:addSource(lib_name, path)
-  self.sources[lib_name] = path
-end
-
--- Recreate database from content in filesystem.
-function lib:sync()
-  local db = self.db
-  db:exec 'DELETE from nodes;'
-  for lib_name, path in pairs(self.sources) do
-    local dir = lk.Dir(path)
-    for file in dir:glob('[.]lua$') do
-      addNode(self, lib_name, file)
-    end
-  end
-end
-
-function lib:nodeCount(filter)
-  local stmt = self.get_node_count_with_filter_stmt
-  stmt:bind_names {filter = filter or '%'}
-  return stmt:first_row()[1]
-end
-
-function lib:code(name)
-  local stmt = self.get_code_by_name_stmt
-  stmt:bind_names {name = name}
-  local row = stmt:first_row()
-  if row then
-    return row[1]
-  else
-    return nil
-  end
-end
-
-function lib:node(filter, pos)
-  if type(filter) == 'number' then
-    pos = filter
-    filter = ''
-  elseif not filter then
-    filter = ''
-  end
-  local stmt = self.get_node_by_position_and_filter_stmt
-  if not string.match(filter, '%%') then
-    filter = '%' .. (filter or '') .. '%'
-  end
-  stmt:bind_names {
-    p = (pos or 1) - 1,
-    filter = filter,
-  }
-  local row = stmt:first_row()
-  if row then
-    return {
-      --id   = row[1],
-      name = row[2],
-      path = row[3],
-      code = row[4],
-      keywords = row[5],
-    }
-  else
-    return nil
+    return filter
   end
 end

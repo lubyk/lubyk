@@ -106,7 +106,7 @@ local function makeGhostLink(self)
 
   -- We add the slot in the main view in case it is used for
   -- inter-process linking.
-  slot.node.process.zone.main_view:addLinkView(self.ghost.link_view)
+  slot.node.process.zone.view:addLinkView(self.ghost.link_view)
   self.ghost.link_view:lower()
 end
 
@@ -124,7 +124,7 @@ function lib:mouse(x, y)
     gy = gy + y
     local view, d = self.node.process.zone:closestSlotView(gx, gy, self.type, slot.node)
     local old_closest = self.zone.closest_slot_view
-    if d < LINK_DISTANCE then
+    if view and d < LINK_DISTANCE then
       self.zone.closest_slot_view = view
       if old_closest ~= view then
         if old_closest then

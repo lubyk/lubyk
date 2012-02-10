@@ -59,7 +59,6 @@ local function setNodes(self, nodes_def)
         pending_nodes[node_name] = nil
         node:set(node_def)
       else
-        printf("NO NODE '%s' IN '%s'", node_name, self.name)
         node = editor.Node(self, node_name, node_def)
       end
       node.online = true

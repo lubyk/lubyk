@@ -32,6 +32,7 @@ end})
 
 function lib:connect(service)
   self.ip      = service.ip
+  self.davport = service.info.davport
   self.req     = service.req
   self.push    = service.push
   self.machine = self.zone.machine_list:getMachine(service.ip)
@@ -74,7 +75,7 @@ end
 
 function private:mountDav()
   -- mount morph DAV server
-  self.dav_url = string.format('http://%s:8103', self.ip)
+  self.dav_url = string.format('http://%s:%i', self.ip, self.davport)
   -- option -S == do not prompt when server goes offline
   local cmd = string.format('mount_webdav -S %s %s', self.dav_url, self.zone:workPath())
   self.mount_fd = worker:execute(cmd)

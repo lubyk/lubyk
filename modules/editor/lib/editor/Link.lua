@@ -36,9 +36,10 @@ function lib:updateView()
     -- Create link view
     self.view = editor.LinkView(self.source.view, self.target.view)
     if self:isCrossProcess() then
-      self.source.node.process.zone.main_view:addLinkView(self.view)
+      self.source.node.process.zone.view:addLinkView(self.view)
     else
       self.source.node.process.view:addWidget(self.view)
+      self.view:show()
     end
     self.view:lower() -- send to back
   end

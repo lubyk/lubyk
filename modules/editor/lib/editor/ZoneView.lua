@@ -64,6 +64,8 @@ function lib:resized(w, h)
   v.w = w
   v.h = h
   settings:save(true)
+  self.w = w
+  self.h = h
 
   self.layout_holder:resize(w, h)
   self.machine_list:updatePosition()
@@ -81,6 +83,7 @@ end
 
 function lib:addLinkView(view)
   self.patch_view:addWidget(view)
+  view:show()
 end
 
 function lib:hideDialog()
@@ -124,9 +127,9 @@ function private:setupMenus()
   --=============================================== Show
   local show = settings.show
   menu = self.menu_bar:addMenu('Show')
-  private.setupShowAction(menu, 'Library', 'Ctrl+L', show.Library, self.library_view)
-  private.setupShowAction(menu, 'Patch',   'Ctrl+E', show.Patch,   self.patch_view)
-  private.setupShowAction(menu, 'View',    'Ctrl+I', show.View,    self.control_tabs)
+  private.setupShowAction(self, menu, 'Library', 'Ctrl+L', show.Library, self.library_view)
+  private.setupShowAction(self, menu, 'Patch',   'Ctrl+E', show.Patch,   self.patch_view)
+  private.setupShowAction(self, menu, 'View',    'Ctrl+I', show.View,    self.control_tabs)
 
   --=============================================== Special
   local menu = self.menu_bar:addMenu('Special')
@@ -144,9 +147,8 @@ function private:setupMenus()
   self:setMenuBar(self.menu_bar)
 end  
 
--- self == menu
-function private:setupShowAction(title, shortcut, show, view)
-  local action = self:addAction(title, shortcut, function(action)
+function private:setupShowAction(menu, title, shortcut, show, view)
+  local action = menu:addAction(title, shortcut, function(action)
     if view.hidden then
       view:show()
     else
@@ -156,6 +158,7 @@ function private:setupShowAction(title, shortcut, show, view)
     settings.show[title] = not view.hidden
     settings:save()
     action:setChecked(not view.hidden)
+    private.centerDlg(self)
   end)
   action:setCheckable(true)
   if not show then
@@ -327,6 +330,12 @@ function private:centerDlg()
   if dlg then
     local w, h = dlg:width(), dlg:height()
     local pw, ph = self.w, self.h
-    dlg:move((pw-w)/2, (ph-h)/2)
+    local lw
+    if not self.library_view.hidden then
+      lw = self.library_view:width()
+    else
+      lw = 0
+    end
+    dlg:move(lw + (pw-w-lw)/2, (ph-h)/2)
   end
 end
