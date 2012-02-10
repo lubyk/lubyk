@@ -302,7 +302,7 @@ end
 --   * Nothing else
 
 function private:runThread(thread)
-  -- get thread from wrap
+  -- get lk.Thread from wrap
   local t = thread.t.t
   if not t or not t.co then
     -- has been killed or gc
@@ -327,15 +327,25 @@ function private:runThread(thread)
   else
     sched.now = worker:now()
   end
-  -- FIXME: pcall ?
   thread.at = nil
   local ok, a, b = coroutine.resume(t.co)
   local event = zmq_const[a]
 
   if not ok then
-    -- a = error
-    -- Do not remove from fd.
+    -- a = error (unhandled errors is bad)
     print('ERROR', a, t.co, debug.traceback(t.co))
+    if t.restart then
+      -- This is a safety net to avoid dead sockets.
+      t.co = coroutine.create(t.func)
+    else
+      if thread.fd then
+        self:removeFd(thread)
+      end
+      -- let it repose in peace
+      thread.fd = nil
+      t.co = nil
+      t:finalize(self)
+    end
   elseif event then
     if thread.fd then
       if thread.fd == b then

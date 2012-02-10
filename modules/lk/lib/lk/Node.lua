@@ -154,10 +154,8 @@ function lib:set(definition)
 end
 
 
-function lib:error(...)
-  print(string.format(...))
-  print(debug.traceback(coroutine.running()))
-  print('----------------')
+function lib:error(msg)
+  print(msg)
 --  table.insert(self.errors, string.format(...))
 end
 

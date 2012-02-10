@@ -35,21 +35,11 @@ function lib.__newindex(self, name, func)
     error(string.format("Inlet '%s' not declared.", name))
   end
 
-  -- -- pcall protected receive
-  -- inlet.receive = function(...)
-  --   data = {...}
-  --   pcall(receive_wrap)
-  -- end
-
   -- Protection with pcall
-  -- local data
-  -- local function receive_wrap()
-  --   func(unpack(data))
-  -- end
-
-  -- -- pcall protected receive
-  -- inlet.receive = function(...)
-  --   data = {...}
-  --   pcall(receive_wrap)
-  -- end
+  inlet.receive = function(...)
+    local ok, err = pcall(func, ...)
+    if not ok then
+      self.node:error(err)
+    end
+  end
 end

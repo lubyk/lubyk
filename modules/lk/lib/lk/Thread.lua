@@ -28,6 +28,7 @@ setmetatable(lib, {
   __call = function(lib, func, at)
     local self = {
       co = coroutine.create(func),
+      func = func,
       should_run = true,
     }
     setmetatable(self, lib)

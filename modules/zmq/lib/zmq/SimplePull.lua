@@ -13,7 +13,7 @@ function zmq.SimplePull(location, func)
     func = location
     location = nil
   end
-  local self = zmq.Pull(location, function(self)
+  return zmq.Pull(location, function(self)
     local clients = {}
     while self.thread do
       -- In case of unprotected errors, the thread is automatically
