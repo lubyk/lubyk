@@ -57,20 +57,13 @@ class ListView : public QListView, public ThreadedLuaObject {
   Q_PROPERTY(QString class READ cssClass)
   Q_PROPERTY(float hue READ hue WRITE setHue)
 
+  class ItemPaintDelegate;
+  ItemPaintDelegate *item_delegate_;
   QSize size_hint_;
  public:
-  ListView(lubyk::Worker *worker)  {
-    setAttribute(Qt::WA_DeleteOnClose);
-    setSelectionMode(QAbstractItemView::SingleSelection);
-    // Not editable
-    setEditTriggers(QAbstractItemView::NoEditTriggers);
+  ListView();
 
-    MIMAS_DEBUG_CC
-  }
-
-  ~ListView() {
-    MIMAS_DEBUG_GC
-  }
+  ~ListView();
 
   // ============================ [ all Widgets
 
@@ -299,6 +292,11 @@ class ListView : public QListView, public ThreadedLuaObject {
     return 1;
   }
 
+  /** Turning this option on will call the 'paintItem' callback to draw
+   * each cell (with the text as parameter).
+   */
+  void enablePaintItem(bool enable);
+      
 protected:
   //--=============================================== COMMON CALLBACKS
   virtual void closeEvent(QCloseEvent *event) {
@@ -363,6 +361,9 @@ protected:
   float hue_;
 
 private:
+  friend class ItemPaintDelegate;
+  bool paintItem(Painter *p, const QStyleOptionViewItem &option, const QModelIndex &idx);
+
   bool click(QMouseEvent *event, int type);
   bool select(const QModelIndex &idx, QEvent *event);
 

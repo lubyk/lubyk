@@ -29,6 +29,7 @@
 
 #include "mimas/ListView.h"
 #include "mimas/Painter.h"
+#include <QtGui/QStyledItemDelegate>
 
 namespace mimas {
 
@@ -74,6 +75,85 @@ bool ListView::select(const QModelIndex &idx, QEvent *event) {
   }
   // processing done.
   lua_pop(L, 1);
+  return true;
+}
+
+class ListView::ItemPaintDelegate : public QStyledItemDelegate {
+  ListView *master_;
+public:
+  ItemPaintDelegate(ListView *master)
+    : master_(master) {}
+  
+  void paint(QPainter *painter, const QStyleOptionViewItem &option,
+                            const QModelIndex &index) const;
+};
+
+void ListView::enablePaintItem(bool enable) {
+  if (!enable) {
+    if (item_delegate_) {
+      delete item_delegate_;
+      item_delegate_ = NULL;
+      setItemDelegate(NULL);
+    }
+  } else {
+    if (!item_delegate_) {
+      item_delegate_ = new ItemPaintDelegate(this);
+      setItemDelegate(item_delegate_);
+    }
+  }
+}
+
+
+ListView::ListView() : item_delegate_(NULL) {
+  setAttribute(Qt::WA_DeleteOnClose);
+  setSelectionMode(QAbstractItemView::SingleSelection);
+  // Not editable
+  setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+  MIMAS_DEBUG_CC
+}
+
+ListView::~ListView() {
+  if (item_delegate_) delete item_delegate_;
+  MIMAS_DEBUG_GC
+}
+
+void ListView::ItemPaintDelegate::paint(
+    QPainter *painter,
+    const QStyleOptionViewItem &option,
+    const QModelIndex &index) const {
+  if (!master_->paintItem((Painter*)painter, option, index)) {
+    QStyledItemDelegate::paint(painter, option, index);
+  }
+}
+
+bool ListView::paintItem(
+    Painter *p,
+    const QStyleOptionViewItem &option,
+    const QModelIndex &idx) {
+  
+  p->setRenderHints(QPainter::Antialiasing);
+  lua_State *L = lua_;
+
+  const QRect &rect = option.rect;
+
+  if (!pushLuaCallback("paintItem")) return false;
+
+  // Deletable out of Lua
+  lua_pushclass2<Painter>(L, p, "mimas.Painter");
+  lua_pushnumber(L, rect.x());
+  lua_pushnumber(L, rect.y());
+  lua_pushnumber(L, rect.width());
+  lua_pushnumber(L, rect.height());
+  lua_pushnumber(L, idx.row() + 1);
+  lua_pushnumber(L, idx.column() + 1);
+  // <func> <self> <Painter> <x> <y> <width> <height> <col> <row>
+  int status = lua_pcall(L, 8, 0, 0);
+
+  if (status) {
+    fprintf(stderr, "Error in 'paintItem' callback: %s\n", lua_tostring(L, -1));
+    lua_pop(L, 1);
+  }
   return true;
 }
 

@@ -113,6 +113,14 @@ enum TextFlags {
   TextIncludeTrailingSpaces = Qt::TextIncludeTrailingSpaces,
 };
 
+enum FocusPolicy {
+  TabFocus    = Qt::TabFocus,
+  ClickFocus  = Qt::ClickFocus,
+  StrongFocus = Qt::StrongFocus,
+  WheelFocus  = Qt::WheelFocus,
+  NoFocus     = Qt::NoFocus,
+};
+
 enum SizePolicy {
   Fixed            = QSizePolicy::Fixed,
   Minimum          = QSizePolicy::Minimum,

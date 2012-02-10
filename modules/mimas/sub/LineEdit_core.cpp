@@ -322,6 +322,26 @@ static int LineEdit_setFocus(lua_State *L) {
 
 
 
+/** void mimas::LineEdit::setFocusPolicy(int policy)
+ * include/mimas/LineEdit.h:187
+ */
+static int LineEdit_setFocusPolicy(lua_State *L) {
+  try {
+    LineEdit *self = *((LineEdit**)dubL_checksdata(L, 1, "mimas.LineEdit"));
+    if (!self) throw dub::Exception("Using deleted mimas.LineEdit in setFocusPolicy");
+    int policy = dubL_checkint(L, 2);
+    self->setFocusPolicy(policy);
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "setFocusPolicy: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "setFocusPolicy: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
 /** void mimas::LineEdit::setHue(float hue)
  * include/mimas/LineEdit.h:155
  */
@@ -579,6 +599,7 @@ static const struct luaL_Reg LineEdit_member_methods[] = {
   {"resize"            , LineEdit_resize},
   {"selectAll"         , LineEdit_selectAll},
   {"setFocus"          , LineEdit_setFocus},
+  {"setFocusPolicy"    , LineEdit_setFocusPolicy},
   {"setHue"            , LineEdit_setHue},
   {"setName"           , LineEdit_setName},
   {"setParent"         , LineEdit_setParent},

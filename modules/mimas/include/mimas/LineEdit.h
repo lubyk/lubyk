@@ -184,6 +184,10 @@ public:
     QWidget::setFocus(Qt::OtherFocusReason);
   }
 
+  void setFocusPolicy(int policy) {
+    QLineEdit::setFocusPolicy((Qt::FocusPolicy)policy);
+  }
+
 protected:
 
   virtual void keyPressEvent(QKeyEvent *event) {

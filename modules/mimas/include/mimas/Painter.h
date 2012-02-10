@@ -44,9 +44,9 @@ namespace mimas {
 
 /** Painter.
  *
- * @dub destructor: 'luaDestroy'
+ * @dub destructor: 'noDestroy'
  */
-class Painter : public QPainter, public DeletableOutOfLua
+class Painter : public QPainter
 {
 public:
   Painter(QWidget *widget) :
@@ -57,6 +57,14 @@ public:
 
   ~Painter() {
     MIMAS_DEBUG_GX("~Painter")
+  }
+
+  // FIXME: temporary hack until we can use new dub with "NO DESTROY"
+  void noDestroy(lua_State *L) {
+    // noop
+  }
+  void setupDeletable(void **x) {
+    // noop
   }
 
   void fillRect( int x, int y, int width, int height, const Color &color) {
