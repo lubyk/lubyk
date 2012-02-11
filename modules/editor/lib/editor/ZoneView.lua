@@ -27,20 +27,27 @@ function lib:init(zone)
   self.layout_holder:move(0,0)
   self.layout = mimas.HBoxLayout(self.layout_holder)
 
-  self.library = zone.library
-  self.library_view = editor.LibraryView(zone.library)
+  --=============================================== Prototypes library
+  self.library_view = editor.LibraryView(zone.library, zone)
   self.layout:addWidget(self.library_view)
 
+  --=============================================== Patch view
   self.patch_view = editor.PatchView(self)
   self.layout:addWidget(self.patch_view, 2)
   self.layout:setSpacing(PADDING)
   self.layout:setContentsMargins(0, 0, 0, 0)
 
+  --=============================================== Machine list
   self.machine_list = editor.MachineList(self)
   self:addWidget(self.machine_list)
 
+  --=============================================== Control views
   self.control_tabs = editor.ControlTabs(self)
   self.layout:addWidget(self.control_tabs, 1)
+
+  --=============================================== Controls library
+  self.ctrl_library_view = editor.LibraryView(zone.ctrl_library, zone)
+  self.layout:addWidget(self.ctrl_library_view)
 
   self.w = settings.main_view.w
   self.h = settings.main_view.h
@@ -127,9 +134,10 @@ function private:setupMenus()
   --=============================================== Show
   local show = settings.show
   menu = self.menu_bar:addMenu('Show')
-  private.setupShowAction(self, menu, 'Library', 'Ctrl+L', show.Library, self.library_view)
-  private.setupShowAction(self, menu, 'Patch',   'Ctrl+E', show.Patch,   self.patch_view)
-  private.setupShowAction(self, menu, 'View',    'Ctrl+I', show.View,    self.control_tabs)
+  private.setupShowAction(self, menu, 'Library', 'Ctrl+L', show.Library,     self.library_view)
+  private.setupShowAction(self, menu, 'Patch',   'Ctrl+E', show.Patch,       self.patch_view)
+  private.setupShowAction(self, menu, 'View',    'Ctrl+I', show.View,        self.control_tabs)
+  private.setupShowAction(self, menu, 'Controls','Ctrl+O', show.CtrlLibrary, self.ctrl_library_view)
 
   --=============================================== Special
   local menu = self.menu_bar:addMenu('Special')
@@ -298,11 +306,11 @@ function private.dialog:start()
       private.dialog.openProject(self)
     elseif #settings.open_recent > 0 then
       app:openFile(settings.open_recent[1])
+      lk.Thread(function()
+        -- delete later
+        self:hideDialog()
+      end)
     end
-    lk.Thread(function()
-      -- delete later
-      self:hideDialog()
-    end)
   end
 
   dlg.max_list_len = 30
@@ -330,12 +338,14 @@ function private:centerDlg()
   if dlg then
     local w, h = dlg:width(), dlg:height()
     local pw, ph = self.w, self.h
-    local lw
+    -- left and right padding
+    local ll, lr = 0, 0
     if not self.library_view.hidden then
-      lw = self.library_view:width()
-    else
-      lw = 0
+      ll = self.library_view:width()
     end
-    dlg:move(lw + (pw-w-lw)/2, (ph-h)/2)
+    if not self.ctrl_library_view.hidden then
+      lr = self.ctrl_library_view:width()
+    end
+    dlg:move(ll + (pw-w-ll-lr)/2, (ph-h)/2)
   end
 end

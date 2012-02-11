@@ -14,14 +14,18 @@ local defaults = {
   show = {
     Patch = true,
   },
-  -- Where the prototypes database lives
-  prototypes_db = string.format('%s/Documents/Lubyk.db', os.getenv('HOME')),
+  -- Where the databases (prototypes, controls) lives
+  db_path = Lubyk.lib .. '/Lubyk.db',
   -- Paths relative to Lubyk.lib (should not be changed by user)
-  prototypes_base_src = {
-    '_prototypes',
+  prototype_base_src = {
+    '_prototype',
+  },
+  -- Paths relative to Lubyk.lib (should not be changed by user)
+  control_base_src = {
+    '_control',
   },
   -- Absolute paths (user setings)
-  prototypes_src = {},
+  prototype_src = {},
   -- Number of files to keep in open recent list
   open_recent_max = 5,
 

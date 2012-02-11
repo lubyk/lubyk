@@ -34,7 +34,8 @@ function lib:__newindex(key, value)
   rawset(self, key, value)
   if type(value) == 'function' and
     key ~= 'setup' and
-    key ~= 'teardown' then
+    key ~= 'teardown' and
+    key ~= 'should' then
     table.insert(self._info.tests, {key, value})
   end
 end
@@ -45,6 +46,7 @@ function lib.UserSuite(name)
   local suite = {_info = {name = name .. '[ux]', tests = {}, errors = {}, user_suite = true}}
   -- this is to enable syntax like: withUser.should.receiveClick()
   suite.should = suite
+  setmetatable(suite, lib)
   table.insert(lib.suites, suite)
   -- default setup and teardown functions
   suite.setup    = function() end

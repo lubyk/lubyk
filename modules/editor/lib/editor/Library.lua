@@ -18,17 +18,21 @@ setmetatable(lib, {
   --- Create a new editor.Link reflecting the content of a remote
   -- link. If the process view is not shown, the LinkView is not
   -- created.
- __call = function(table, db, zone)
+  -- 'table_name' can be 'prototypes' or 'controls'
+ __call = function(lib, table_name, db)
+   table_name = table_name or 'prototype'
   local self = {
-    -- delegate used for drag&drop operations in LinkView
-    zone = zone,
     -- Dir patterns to glob for files.
-    sources = {}
+    sources = {},
+    -- This is the name of the table containing the objects in the
+    -- database. It is also used to get the sources from editor
+    -- Settings.
+    table_name = table_name,
   }
   if db then
     self.db = db
   else
-    self.filepath = editor.Settings.prototypes_db
+    self.filepath = editor.Settings.db_path
     lk.makePath(lk.directory(self.filepath))
     self.db = sqlite3.open(self.filepath)
   end
@@ -46,7 +50,7 @@ end
 -- Recreate database from content in filesystem.
 function lib:sync()
   local db = self.db
-  db:exec 'DELETE from nodes;'
+  db:exec(private.gsub('DELETE from NODE_TABLE;', 'NODE_TABLE', self.table_name))
   for _, dir in ipairs(self.sources) do
     for folder in dir:list() do
       if lk.fileType(folder) == 'directory' then
@@ -106,23 +110,36 @@ end
 
 --=============================================== PRIVATE
 
+local function gsub(str, pat, rep)
+  local str = string.gsub(str, pat, rep)
+  -- Avoid returning substitution count values 
+  return str
+end
+private.gsub = gsub
+
 function private:setupSources()
-  local list = editor.Settings.prototypes_base_src
-  -- Use the real list in case we have a copy-on-write (empty) placeholder
-  -- list.
-  list = list._placeholder or list
-  for _, path in ipairs(list) do
-    local dir = lk.Dir(Lubyk.lib .. '/' .. path)
-    table.insert(self.sources, dir)
+  -- prototypes_base_src, controls_base_src
+  local list = editor.Settings[self.table_name .. '_base_src']
+  if list then
+    -- Use the real list in case we have a copy-on-write (empty) placeholder
+    -- list.
+    list = list._placeholder or list
+    for _, path in ipairs(list) do
+      local dir = lk.Dir(Lubyk.lib .. '/' .. path)
+      table.insert(self.sources, dir)
+    end
   end
 
-  list = editor.Settings.prototypes_src
-  -- Use the real list in case we have a copy-on-write (empty) placeholder
-  -- list.
-  list = list._placeholder or list
-  for _, path in ipairs(list) do
-    local dir = lk.Dir(path)
-    table.insert(self.sources, dir)
+  -- prototypes_src, controls_src
+  list = editor.Settings[self.table_name .. '_src']
+  if list then
+    -- Use the real list in case we have a copy-on-write (empty) placeholder
+    -- list.
+    list = list._placeholder or list
+    for _, path in ipairs(list) do
+      local dir = lk.Dir(path)
+      table.insert(self.sources, dir)
+    end
   end
 end
 
@@ -131,34 +148,33 @@ function private:prepareDb()
   local db = self.db
   -- FIXME: only create tables if db tables do not exist yet
 
-  -- TODO: store hue
-
+  -- Code is not used for controls.
   if not false then
-    db:exec[[
-      CREATE TABLE nodes (id INTEGER PRIMARY KEY, name TEXT, path TEXT, code TEXT, keywords TEXT);
-      CREATE INDEX nodes_keywords_idx ON nodes(keywords);
-      CREATE UNIQUE INDEX nodes_id_idx ON nodes(id);
-      CREATE UNIQUE INDEX nodes_name_idx ON nodes(name);
-    ]]
+    db:exec(gsub([[
+      CREATE TABLE NODE_TABLE (id INTEGER PRIMARY KEY, name TEXT, path TEXT, code TEXT, keywords TEXT);
+      CREATE INDEX NODE_TABLE_keywords_idx ON NODE_TABLE(keywords);
+      CREATE UNIQUE INDEX NODE_TABLE_id_idx ON NODE_TABLE(id);
+      CREATE UNIQUE INDEX NODE_TABLE_name_idx ON NODE_TABLE(name);
+    ]], 'NODE_TABLE', self.table_name))
   end
 
   ------------------------------------------------------------  READ nodes
-  self.get_node_by_position_and_filter_stmt = db:prepare[[
-    SELECT * FROM nodes WHERE keywords LIKE :filter ORDER BY name LIMIT 1 OFFSET :p;
-  ]]
+  self.get_node_by_position_and_filter_stmt = db:prepare(gsub([[
+    SELECT * FROM NODE_TABLE WHERE keywords LIKE :filter ORDER BY name LIMIT 1 OFFSET :p;
+  ]], 'NODE_TABLE', self.table_name))
 
-  self.get_code_by_name_stmt = db:prepare[[
-    SELECT code FROM nodes WHERE name = :name LIMIT 1;
-  ]]
+  self.get_code_by_name_stmt = db:prepare(gsub([[
+    SELECT code FROM NODE_TABLE WHERE name = :name LIMIT 1;
+  ]], 'NODE_TABLE', self.table_name))
 
-  self.get_node_count_with_filter_stmt = db:prepare[[
-    SELECT COUNT(*) FROM nodes WHERE keywords LIKE :filter;
-  ]]
+  self.get_node_count_with_filter_stmt = db:prepare(gsub([[
+    SELECT COUNT(*) FROM NODE_TABLE WHERE keywords LIKE :filter;
+  ]], 'NODE_TABLE', self.table_name))
 
   ------------------------------------------------------------  WRITE nodes
-  self.add_node_stmt = db:prepare[[
-    INSERT INTO nodes VALUES (NULL, :name, :path, :code, :keywords);
-  ]]
+  self.add_node_stmt = db:prepare(gsub([[
+    INSERT INTO NODE_TABLE VALUES (NULL, :name, :path, :code, :keywords);
+  ]], 'NODE_TABLE', self.table_name))
 end
 
 function private:addNode(lib_name, filepath)

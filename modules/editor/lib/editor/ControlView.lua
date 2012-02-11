@@ -66,16 +66,24 @@ function lib:update(changes)
     else
       -- create
       local typ = def.type
-      -- TODO: we could try to retrieve from _G but this would
-      -- allow arbitrary code execution on the GUI.... Not sure we want this...
-      if typ == 'mimas.Slider' then
-        local widget = mimas.Slider(def.orientation or mimas.Vertical)
+      local ctor = _ctrl
+      local parts = lk.split(typ, '.')
+      for _,part in ipairs(parts) do
+        ctor = ctor[part]
+        if not ctor then
+          print('ERROR: unknown control', typ)
+          break
+        end
+      end
+
+      if ctor then
+        local widget = ctor(def)
         widget.id = id
         widgets[id] = widget
         self:addWidget(widget)
-        private.setupConnections(self, widget)
         private.placeWidget(self, widget, def)
         private.connectWidget(self, widget, def)
+        widget:show()
       end
     end
   end
@@ -109,15 +117,14 @@ end
 
 function private:connectWidget(widget, def)
   local connect = def.connect or {}
-  for dir, connections in pairs(connect) do
-    local connector = private.getConnector(widget, dir)
-    private.updateConnections(self, connector, connections)
+  for dir, connection in pairs(connect) do
+    local connector = widget:connector(dir)
+    if connector then
+      private.updateConnection(self, connector, connection)
+    else
+      printf("Invalid connector name '%s' for widget '%s' of type '%s'", dir, widget.id, widget.type)
+    end
   end
-end
-
-function private:setupConnections(widget)
-  widget.connections = {}
-  widget.sliderChanged = private.sliderChanged
 end
 
 --=============================================== 
@@ -183,76 +190,21 @@ function private:setValue(value)
   end
 end
 
-function private:updateConnections(connector, connections)
-  for target, opt in pairs(connections) do
-    local conn = connector.connections[target]
-    if opt == false then
-      -- Delete.
-      if conn then
-        connector.connections[target] = nil
-        private.disconnectFromNode(self, conn)
-      end
-    elseif conn then
-      printf("ALREADY CONNECTED '%s': %s", target, yaml.dump(opt))
-      -- Update (min, max, etc)
-      if opt.min then
-        conn.connector:setRange(opt.min, opt.max)
-      end
-    else
-      -- Create new connection.
-      if type(opt) ~= 'table' then
-        opt = {}
-      end
-      -- Takes a target link like '/a/metro/_/tempo'
-      -- /[process]/[node](/[sub-node])/_/[param name]
-      local parts = lk.split(target, '/')
-      -- Remove '' element.
-      table.remove(parts, 1)
-      local process_name = parts[1]
+function private:updateConnection(connector, opt)
+  if opt == false then
+    -- Delete.
+    -- FIXME
+    -- connector.connections[target] = nil
+    -- private.disconnectFromNode(self, conn)
+  else
+    local url = opt.url
+    if url then
+      local process_name = string.match(url, '^([^/])/')
       local process = self.zone:findProcess(process_name)
-      -- Remove process name.
-      table.remove(parts, 1)
-      local param_name = parts[#parts]
-      -- Remove param name.
-      table.remove(parts, #parts)
-      -- Remove '_' (param indicator).
-      table.remove(parts, #parts)
-      -- Build msg template.
-      local msg = {nodes = {}}
-      local path = msg.nodes
-      for i, part in ipairs(parts) do
-        path[part] = {}
-        path = path[part]
-      end
-      path._ = {}
-
-      printf("CREATE NEW CONNECTION '%s' (%s)", target, (process.online and 'on') or 'off')
-      -- Create new connection.
-      local conn = {
-        view       = self,
-        process    = process,
-        set        = private.setValue,
-        -- self during set
-        connector  = connector,
-        -- params to send to process
-        param_name = param_name,
-        param_list = path._,
-        msg        = msg,
-        -- To reconnect
-        parts      = parts,
-      }
-      if opt.min then
-        connector:setRange(opt.min, opt.max)
-      end
-      -- Just to avoid connection GC.
-      connector.connections[target] = conn
-      if process.online then
-        -- Set connection from editor.Node to widget.
-        private.connectToNode(self, conn)
-      else
-        self:disconnect(conn)
-      end
+      connector:connect(process, url)
     end
+    -- Set options
+    connector:set(opt)
   end
 end
 

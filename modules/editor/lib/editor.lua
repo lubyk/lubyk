@@ -3,7 +3,8 @@
   editor
   ------
 
-  FIXME: description for module 'editor'
+  The editor module contains all the code for the Lubyk
+  graphical interface.
 
 --]]------------------------------------------------------
 editor = Autoload('editor')

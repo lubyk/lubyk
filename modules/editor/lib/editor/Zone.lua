@@ -298,10 +298,14 @@ end
 
 --=============================================== PRIVATE
 function private.setupLibrary(self)
-  -- delegate in Library is used by LibraryView for drag&drop operations.
-  self.library = editor.Library(nil, self)
+  -- Prototypes library
+  self.library = editor.Library('prototype')
   -- Update library
   self.library:sync()
+  -- Controls library
+  self.ctrl_library = editor.Library('control')
+  -- Update library
+  self.ctrl_library:sync()
 end
 
 function private.setupProcessWatch(self, process_watch)

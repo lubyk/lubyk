@@ -24,7 +24,7 @@
 -- MyWidget = lk.SubClass(mimas, 'Widget', ...)
 function lk.SubClass(mod, class_name, ...)
   local constr   = assert(mod[class_name])
-  local super_mt = assert(mod[class_name .. '_'])
+  local super_mt = rawget(mod,class_name .. '_') or mod[class_name]
   local defaults = {...}
 
   function super_mt.__call(lib, ...)

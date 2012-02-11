@@ -24,9 +24,9 @@ local MousePress,       MouseRelease,       DoubleClick =
       mimas.MousePress, mimas.MouseRelease, mimas.DoubleClick
 
 --=============================================== PUBLIC
-function lib:init(library)
+function lib:init(library, zone)
   self.library = library
-  self.zone    = library.zone
+  self.zone    = zone
   self.vbox    = mimas.VBoxLayout(self)
 
   --=============================== Search field

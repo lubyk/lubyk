@@ -45,17 +45,15 @@ end})
 function lib.__newindex(self, k, value)
   local env = self.env
   -- param.foo = 45.5
-  -- This is also used in lk.Node.
-  local inlet = self.inlets[k]
-  if inlet then
-    inlet.receive(value)
-  else
+  -- This is used from inside lk.Node.
+  local old = env[k]
+  if old ~= value then
     env[k] = value
+    -- Notify
+    self.param_list._ = {
+      [k] = env[k],
+    }
+    self.node.process:notify(self.msg) 
   end
-  -- Notify
-  self.param_list._ = {
-    [k] = env[k],
-  }
-  self.node.process:notify(self.msg) 
 end
 
