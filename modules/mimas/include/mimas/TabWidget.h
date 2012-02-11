@@ -59,17 +59,31 @@ public:
   /** Add a tab to the view at the given position.
    */
   int insertTab(int pos, QWidget *page, const char *name) {
+    pos = pos - 1;
     if (pos < 0) {
       // -1 = add after last, -2 = add after element before last
       pos = count() + 1 + pos;
     }
-    return QTabWidget::insertTab(pos, page, QString(name));
+    return QTabWidget::insertTab(pos, page, QString(name)) + 1;
   }
 
   /** Add a tab to the view.
    */
   int addTab(QWidget *page, const char *name) {
-    return QTabWidget::addTab(page, QString(name));
+    return QTabWidget::addTab(page, QString(name)) + 1;
+  }
+
+  /** Returns the current widget index.
+   * @return nil if there is no widget.
+   */
+  LuaStackSize currentIndex(lua_State *L) {
+    int idx = QTabWidget::currentIndex();
+    if (idx == -1) {
+      return 0;
+    } else {
+      lua_pushnumber(idx + 1);
+      return 1;
+    }
   }
 
   QString cssClass() const {

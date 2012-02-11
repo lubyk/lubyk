@@ -26,6 +26,7 @@ local MousePress,       MouseRelease,       DoubleClick =
 --=============================================== PUBLIC
 function lib:init(library, zone)
   self.library = library
+  self.table_name = library.table_name
   self.zone    = zone
   self.vbox    = mimas.VBoxLayout(self)
 
@@ -58,56 +59,26 @@ end
 
 --=============================================== PRIVATE
 
-function private.clickInList(self, node_def, x, y, type, btn, mod)
-  if type == MousePress and node_def then
+function private:clickInList(info, x, y, type, btn, mod)
+  if type == MousePress and info then
     -- store position but only start drag when moved START_DRAG_DIST away
     self.click_position = {
       x        = x,
       y        = y,
-      node_def = node_def,
     }
-
+    self.selected_obj = info
   elseif type == DoubleClick then
     -- noop
   elseif type == MouseRelease then
     if self.dragging then
-      -- drop
-      self.ghost:openEditor(function(abort)
-        if not abort then
-          local node_def = self.click_position.node_def
-          node_def.name = self.ghost.name
-          node_def.code = self.ghost.code or node_def.code
-          local process_view = self.zone.process_view_under
-          if process_view then
-            local process = process_view.process
-            -- create node
-            -- target:change {}
-            local vx, vy = process_view:globalPosition()
-            local x = self.ghost.gx - vx
-            local y = self.ghost.gy - vy
-            process:newNode {
-              x = self.ghost.gx - vx,
-              y = self.ghost.gy - vy,
-              code = node_def.code,
-              name = node_def.name,
-              hue  = process.hue,
-            }
-            process_view:update()
-          end
-        end
-
-        -- clear
-        self.zone.process_view_under = nil
-        self.ghost:delete()
-        self.ghost = nil
-        self.click_position = nil
-        self.dragging = nil
-      end)
+      --=============================================== DROP OBJECT
+      private[self.table_name].drop(self)
     else
       -- select row ?
     end
   end
-  return false -- Pass to normal list selection and click handling
+  -- Pass to normal list selection and click handling
+  return true 
 end
 
 function private.manhattanDist(a, b)
@@ -119,8 +90,7 @@ function private:mouseInList(x, y)
     -- start drag operation: self becomes ghost
     self.dragging = true
     self.gx, self.gy = self.list_view:globalPosition()
-    -- mock a node for NodeView
-    self.ghost = editor.Node.makeGhost(self.click_position.node_def, self.zone)
+    private[self.table_name].drag(self)
   end
 
   local ghost = self.ghost
@@ -175,7 +145,8 @@ function private:setupListView()
   end
 
   function view:click(x, y, type, btn, mod)
-    local row_i, node_def = self:indexAt(x, y)
+    local row_i = self:indexAt(x, y)
+    local node_def
     if row_i then
       node_def = library:node(lv.filter, row_i)
     end
@@ -204,3 +175,77 @@ function private:setupListView()
     private.mouseInList(self.lib_view, x, y)
   end
 end
+
+--=============================================== Prototype
+private.prototype = {}
+
+function private.prototype:drag()
+  -- mock a node for NodeView
+  self.ghost = editor.Node.makeGhost(self.selected_obj, self.zone)
+end
+
+function private.prototype:drop()
+  self.ghost:openEditor(function(abort)
+    if not abort then
+      local node_def = self.selected_obj
+      node_def.name = self.ghost.name
+      node_def.code = self.ghost.code or node_def.code
+      local process_view = self.zone.process_view_under
+      if process_view then
+        local process = process_view.process
+        -- create node
+        -- target:change {}
+        local vx, vy = process_view:globalPosition()
+        local x = self.ghost.gx - vx
+        local y = self.ghost.gy - vy
+        process:newNode {
+          x = self.ghost.gx - vx,
+          y = self.ghost.gy - vy,
+          code = node_def.code,
+          name = node_def.name,
+          hue  = process.hue,
+        }
+        process_view:update()
+      end
+    end
+
+    -- clear
+    self.zone.process_view_under = nil
+    self.ghost:delete()
+    self.ghost = nil
+    self.click_position = nil
+    self.dragging = nil
+  end)
+end
+
+--=============================================== Control
+private.control = {}
+local ctorFinder = editor.Control.getControl
+
+function private.control:drag()
+  local obj  = self.selected_obj
+  local ctor = ctorFinder(obj.name)
+  if ctor then
+    self.ghost = ctor()
+    -- Add to currently selected view
+    self.zone.view.control_tabs:currentWidget():addWidget(self.ghost)
+    self.ghost:show()
+  end
+end
+
+function private.control:drop()
+  local view = self.zone.view.control_tabs:currentWidget()
+  local typ  = self.selected_obj.name
+  local def = {
+    id   = view:nextName(typ),
+    type = typ,
+    x    = self.ghost:x(),
+    y    = self.ghost:y(),
+  }
+  -- TODO: add def to view
+  -- clear
+  self.ghost = nil
+  self.click_position = nil
+  self.dragging = nil
+end
+

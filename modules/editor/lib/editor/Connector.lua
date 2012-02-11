@@ -32,6 +32,7 @@ setmetatable(lib, {
 local UPDATE_URL = lubyk.update_url
 
 function lib:connect(process, url)
+  self.url = url
   -- Takes a target link like '/a/metro/_/tempo'
   -- /[process]/[node](/[sub-node])/_/[param name]
   local parts = lk.split(url, '/')
@@ -40,6 +41,7 @@ function lib:connect(process, url)
   -- Remove process name.
   table.remove(parts, 1)
   local param_name = parts[#parts]
+  self.param_name = param_name
   -- Remove param name.
   table.remove(parts, #parts)
   -- Remove '_' (param indicator).
@@ -47,9 +49,13 @@ function lib:connect(process, url)
   -- Build msg template.
   local msg = {nodes = {}}
   local path = msg.nodes
+  local node = process
   for i, part in ipairs(parts) do
     path[part] = {}
     path = path[part]
+    -- This cannot fail because 'findNode' creates pending nodes
+    -- when needed.
+    node = node:findNode(part)
   end
   path._ = {}
 
@@ -60,6 +66,22 @@ function lib:connect(process, url)
       process.push:send(UPDATE_URL, msg)
     end
   end
+
+  self.node = node
+  node:connectControl(self)
+  self:setEnabled(node.online)
+end
+
+function lib:setEnabled(enabled)
+  -- TODO: mark view as on/off
+end
+
+function lib:disconnect()
+  self.change = lib.change
+  if self.node then
+    self.node:disconnectControl(self)
+  end
+  self.node   = nil
 end
 
 function lib:change()

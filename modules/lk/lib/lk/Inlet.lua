@@ -19,7 +19,10 @@ setmetatable(lib, {
  __call = function(lib, node, name, ...)
   local self
   if type(node) == 'string' then
-    self = {name = node}
+    self = {
+      name       = node,
+      target_url = name,
+    }
     -- pending inlet
     setmetatable(self, lib)
   else
@@ -27,6 +30,7 @@ setmetatable(lib, {
     if not self then
       self = node.pending_inlets[name]
       if self then
+        self.target_url = nil
         node.pending_inlets[name] = nil
       else
         self = {name = name}
@@ -67,7 +71,7 @@ end
 
 function lib:url()
   if self.target_url then
-    -- remote
+    -- remote or pending
     return self.target_url
   else
     -- local

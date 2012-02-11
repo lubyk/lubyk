@@ -336,27 +336,39 @@ function private:setParams(def)
     local list = self.controls[k]
     if list then
       for _, conn in ipairs(list) do
-        --- TODO: we need to detect an error value for unknown parameters
-        -- so that we can mark the widget as "error". ERROR_VALUE ?
-        conn:set(v)
+        conn.changed(v)
       end
-    else
-      printf("NO controls for %s.", k)
     end
   end
 end
 
 function lib:delete()
   self:deleteView()
-  self:disconnectControls()
-end
-
--- Node has been deleted or process is going offline.
-function lib:disconnectControls()
   -- Disconnect controls.
   for k, list in pairs(self.controls) do
     for _, conn in ipairs(list) do
-      conn.view:disconnect(conn)
+      conn.node = nil
+      conn:disconnect()
+    end
+  end
+end
+
+-- Process came online.
+function lib:connect()
+  self.online = true
+  for k, list in pairs(self.controls) do
+    for _, conn in ipairs(list) do
+      conn:setEnabled(true)
+    end
+  end
+end
+
+-- Process going offline.
+function lib:disconnect()
+  self.online = false
+  for k, list in pairs(self.controls) do
+    for _, conn in ipairs(list) do
+      conn:setEnabled(false)
     end
   end
 end
@@ -370,24 +382,24 @@ function lib:connectControl(conn)
   end
   table.insert(list, conn)
   -- Avoid list GC before last connection.
-  conn.list = list
+  conn.node_conn_list = list
   local value = self.params[param_name]
   if value then
-    conn:set(value)
+    conn.changed(value)
   end
 end
 
+-- This is called by connector.
 function lib:disconnectControl(conn)
   local list = self.controls[param_name]
-  if not list then
-    list = {}
-    self.controls[param_name] = list
+  if list then
+    for i, c in ipairs(list) do
+      if c == conn then
+        table.remove(list, i)
+        break
+      end
+    end
   end
-  table.insert(list, conn)
-  -- Avoid list GC before last connection.
-  conn.list = list
-  local value = self.params[param_name]
-  if value then
-    conn:set(value)
-  end
+  conn.node_conn_list = nil
 end
+

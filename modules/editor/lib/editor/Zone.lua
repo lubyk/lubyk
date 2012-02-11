@@ -207,10 +207,6 @@ function lib:processConnected(remote_process)
   local process = self:findProcess(name, remote_process.ip)
   process:connect(remote_process, self)
 
-  for _, view in pairs(self.views) do
-    view:processConnected(process)
-  end
-
   -- Trigger connection callbacks
   local list = self.on_process_connected
   for i=#list,1,-1 do
@@ -299,11 +295,16 @@ end
 --=============================================== PRIVATE
 function private.setupLibrary(self)
   -- Prototypes library
-  self.library = editor.Library('prototype')
+  self.library = editor.Library {
+    table_name = 'prototype',
+  }
   -- Update library
   self.library:sync()
   -- Controls library
-  self.ctrl_library = editor.Library('control')
+  self.ctrl_library = editor.Library {
+    table_name  = 'control',
+    ignore_code = true,
+  }
   -- Update library
   self.ctrl_library:sync()
 end

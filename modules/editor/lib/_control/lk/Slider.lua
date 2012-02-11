@@ -9,6 +9,9 @@
 local lib = lk.SubClass(editor, 'Control')
 _control.lk.Slider = lib
 
+-- default slider size
+local DEFAULT = {w = 30, h = 80}
+
 function lib:init(name)
   self.name     = name
   self.s        = 0
@@ -17,6 +20,7 @@ function lib:init(name)
   self:setupConnectors {
     s = 'Slider value',
   }
+  self:resize(DEFAULT.w, DEFAULT.h)
 end
 
 function lib:changed(key, s)

@@ -104,8 +104,8 @@ end
 
 --- Create a pending inlet from an url relative to this process (nearly the same
 -- as editor.Process.pendingInlet).
-function lib:pendingInlet(inlet_url)
-  local inlet_url = lk.absToRel(inlet_url, self:url())
+function lib:pendingInlet(inlet_abs_url)
+  local inlet_url = lk.absToRel(inlet_abs_url, self:url())
   -- inlet_url example:
   --   node/in/slot
   local parts = lk.split(inlet_url, '/')
@@ -131,7 +131,8 @@ function lib:pendingInlet(inlet_url)
     end
     inlet = pending_node[inlet_name]
     if not inlet then
-      inlet = lk.Inlet(inlet_name)
+      -- We pass absolute url so that the inlet can answer 'url()' requests.
+      inlet = lk.Inlet(inlet_name, inlet_abs_url)
       pending_node[inlet_name] = inlet
     end
   end

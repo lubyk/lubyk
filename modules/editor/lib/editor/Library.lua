@@ -19,15 +19,16 @@ setmetatable(lib, {
   -- link. If the process view is not shown, the LinkView is not
   -- created.
   -- 'table_name' can be 'prototypes' or 'controls'
- __call = function(lib, table_name, db)
-   table_name = table_name or 'prototype'
+ __call = function(lib, opts)
+   opts = opts or {table_name = 'prototype'}
   local self = {
     -- Dir patterns to glob for files.
     sources = {},
     -- This is the name of the table containing the objects in the
     -- database. It is also used to get the sources from editor
     -- Settings.
-    table_name = table_name,
+    table_name  = opts.table_name,
+    ignore_code = opts.ignore_code,
   }
   if db then
     self.db = db
@@ -180,13 +181,16 @@ end
 function private:addNode(lib_name, filepath)
   local name = lib_name .. '.' .. string.match(filepath, '([^%./]+)%.lua$')
   local stmt = self.add_node_stmt
-  local code = lk.readall(filepath)
+  local code
+  if not self.ignore_code then
+    code = lk.readall(filepath)
+  end
   -- TODO: extract information from first comment such as
   -- 'keywords', 'hue', 'author', 'help', etc.
   stmt:bind_names {
     name = name,
     path = filepath,
-    code = lk.readall(filepath),
+    code = code,
     keywords = lib_name ..'.'.. name,
   }
   stmt:step()

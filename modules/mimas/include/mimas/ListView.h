@@ -244,7 +244,7 @@ class ListView : public QListView, public ThreadedLuaObject {
   }
 
   /** Return the index of the model at the given x,y position.
-   * @return x, y
+   * @return row, col
    */
   LuaStackSize indexAt(float x, float y, lua_State *L) {
     // indexAt calls "data" method in data_source_ (don't ask why...)

@@ -117,7 +117,7 @@ static int QWidget_addAction(lua_State *L) {
 
 
 /** int mimas::TabWidget::addTab(QWidget *page, const char *name)
- * include/mimas/TabWidget.h:71
+ * include/mimas/TabWidget.h:72
  */
 static int TabWidget_addTab(lua_State *L) {
   try {
@@ -218,7 +218,7 @@ static int QTabWidget_count(lua_State *L) {
 
 
 /** QString mimas::TabWidget::cssClass() const 
- * include/mimas/TabWidget.h:75
+ * include/mimas/TabWidget.h:89
  */
 static int TabWidget_cssClass(lua_State *L) {
   try {
@@ -231,6 +231,26 @@ static int TabWidget_cssClass(lua_State *L) {
     lua_pushfstring(L, "cssClass: %s", e.what());
   } catch (...) {
     lua_pushfstring(L, "cssClass: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** LuaStackSize mimas::TabWidget::currentIndex(lua_State *L)
+ * include/mimas/TabWidget.h:79
+ */
+static int TabWidget_currentIndex(lua_State *L) {
+  try {
+    TabWidget *self = *((TabWidget**)dubL_checksdata(L, 1, "mimas.TabWidget"));
+    if (!self) throw dub::Exception("Using deleted mimas.TabWidget in currentIndex");
+    
+    LuaStackSize  retval__ = self->currentIndex(L);
+    return retval__;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "currentIndex: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "currentIndex: Unknown exception");
   }
   return lua_error(L);
 }
@@ -994,6 +1014,7 @@ static const struct luaL_Reg TabWidget_member_methods[] = {
   {"close"             , QWidget_close},
   {"count"             , QTabWidget_count},
   {"cssClass"          , TabWidget_cssClass},
+  {"currentIndex"      , TabWidget_currentIndex},
   {"currentIndex"      , QTabWidget_currentIndex},
   {"globalMove"        , QWidget_globalMove},
   {"globalPosition"    , QWidget_globalPosition},

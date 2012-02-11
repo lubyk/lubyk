@@ -11,6 +11,12 @@ local mt      = mimas_core.TabWidget_
 mimas.TabWidget_   = mt
 mimas.TabWidget    = constr
 
+function mimas.TabWidget(...)
+  local self = constr(...)
+  self.tabs = {}
+  return self
+end
+
 local function styleFix(self)
   -- FIXME: why doesn't the rule QTabBar::tab:first work with a
   -- single element ?
@@ -36,14 +42,23 @@ local addTab    = mt.addTab
 local insertTab = mt.insertTab
 function mt:addTab(widget, label)
   local pos = addTab(self, widget:widget(), label)
+  self.tabs[pos] = widget
   styleFix(self)
   return pos
 end
 
 function mt:insertTab(pos, widget, label)
   local pos = insertTab(self, pos, widget:widget(), label)
+  self.tabs[pos] = widget
   styleFix(self)
   return pos
+end
+
+function mt:currentWidget()
+  local idx = self.super:currentIndex()
+  if idx then
+    return self.tabs[idx]
+  end
 end
 
 mt.selectTab = mt.setCurrentIndex

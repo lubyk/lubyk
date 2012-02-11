@@ -20,16 +20,15 @@ setmetatable(lib, {
   -- new method
  __call = function(lib, name, zone)
   local self = {
-    name           = name,
-    zone           = zone,
-    x              = 100,
-    y              = 100,
-    nodes          = {},
-    pending_inlets = {},
-    -- List of controls connected to this process
-    controls       = {},
-    -- Nodes connected to controls but not yet online
-    pending_nodes  = {},
+    name             = name,
+    zone             = zone,
+    x                = 100,
+    y                = 100,
+    nodes            = {},
+    pending_inlets   = {},
+    -- List of nodes not notified by process but needed by links
+    -- or controls.
+    pending_nodes    = {},
   }
 
   setmetatable(self, lib)
@@ -61,7 +60,7 @@ local function setNodes(self, nodes_def)
       else
         node = editor.Node(self, node_name, node_def)
       end
-      node.online = true
+      node:connect()
       nodes[node_name] = node
     end
   end
@@ -282,6 +281,10 @@ function lib:connect(remote_process, zone)
   self:sync()
 
   self.online = true
+  for _, node in pairs(self.nodes) do
+    node:connect()
+  end
+
   if self.tab then
     self.tab:setHue(self.hue)
   end
@@ -313,7 +316,7 @@ function lib:disconnect()
     self.tab:setHue(self.hue)
   end
   for _, node in pairs(self.nodes) do
-    node:disconnectControls()
+    node:disconnect()
   end
 end
 
@@ -326,7 +329,6 @@ function lib:findNode(node_name)
   local node = self.nodes[node_name]
   if not node then
     node = editor.Node(self, node_name, {})
-    printf("MAKE PENDING NODE '%s' IN '%s'", node_name, self.name)
     self.pending_nodes[node_name] = node
     node.online = false
   end

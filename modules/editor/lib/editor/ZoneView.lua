@@ -137,7 +137,7 @@ function private:setupMenus()
   private.setupShowAction(self, menu, 'Library', 'Ctrl+L', show.Library,     self.library_view)
   private.setupShowAction(self, menu, 'Patch',   'Ctrl+E', show.Patch,       self.patch_view)
   private.setupShowAction(self, menu, 'View',    'Ctrl+I', show.View,        self.control_tabs)
-  private.setupShowAction(self, menu, 'Controls','Ctrl+O', show.CtrlLibrary, self.ctrl_library_view)
+  private.setupShowAction(self, menu, 'Controls', 'Ctrl+O', show.Controls, self.ctrl_library_view)
 
   --=============================================== Special
   local menu = self.menu_bar:addMenu('Special')
