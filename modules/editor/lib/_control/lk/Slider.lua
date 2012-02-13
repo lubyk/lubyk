@@ -12,8 +12,8 @@ _control.lk.Slider = lib
 -- default slider size
 local DEFAULT = {w = 40, h = 100}
 
-function lib:init(name)
-  self:initControl(name)
+function lib:init(id, view)
+  self:initControl(id, view)
   self.s        = 0
   self.remote_s = 0
   self:setupConnectors {
@@ -27,15 +27,7 @@ function lib:changed(key, s)
   self:update()
 end
 
-function lib:resized(w, h)
-  self.w = w
-  self.h = h
-end
-
-function lib:mouse(x, y)
-  if not self.enabled then
-    return
-  end
+function lib:control(x, y)
   local h = self.h
   local s = (h - y) / h
   if s < 0 then
@@ -48,15 +40,10 @@ function lib:mouse(x, y)
   self.conn_s.change(s)
 end
 
-lib.click = lib.mouse
-
 local noBrush = mimas.EmptyBrush
 local noPen   = mimas.EmptyPen
 
-function lib:paint(p, w, h)
-  if self.is_ghost then
-    return self:paintGhost(p, w, h)
-  end
+function lib:paintControl(p, w, h)
   -- remote value
   local s = self.remote_s * h
   p:fillRect(0, h-s, w, s, self.fill_color)

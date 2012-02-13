@@ -10,14 +10,29 @@ local lib = lk.SubClass(mimas, 'Widget')
 editor.Control = lib
 
 local private = {}
+local DRAG_CORNER = 20
 
---=============================================== PUBLIC
-function lib:init(name)
-  self:initControl(name)
+--=============================================== METHODS TO REIMPLEMENT
+
+-- Handle mouse event on the control.
+function lib:control(x, y)
 end
 
-function lib:initControl(name)
-  self.name = name
+-- Paint control.
+function lib:paintControl(p, w, h)
+end
+--=============================================== PUBLIC
+function lib:init(id, view)
+  self:initControl(id, view)
+end
+
+function lib:initControl(id, view)
+  self.id   = id
+  self.view = view
+  self.connectors = {}
+  if view then
+    self.zone = view.zone
+  end
   self:setHue(math.random())
 end
 
@@ -25,9 +40,9 @@ function lib:connector(key)
   return self['conn_'..key]
 end
 
-function lib:set(def, zone)
+function lib:set(def)
   private.setPosition(self, def)
-  private.setConnections(self, def, zone)
+  private.setConnections(self, def)
 end
 
 --=============================================== Class methods
@@ -47,11 +62,23 @@ function lib.getControl(name)
   return ctor
 end
 
+function lib:delete()
+  self:hide()
+  for _, conn in pairs(self.connectors) do
+    conn:disconnect()
+  end
+end
 --=============================================== PROTECTED
+
 function lib:setupConnectors(def)
-  local conn = self
+  local connectors = self.connectors
   for key, info in pairs(def) do
-    conn['conn_'..key] = editor.Connector(key, self, info)
+    local c = editor.Connector(key, self, info)
+    -- This is to enable faster connector access in controls with
+    -- conn_x, conn_y...
+    self['conn_'..key] = c
+    -- This is to enable disconnection on control delete.
+    connectors[key] = c
   end
 end
 
@@ -78,9 +105,92 @@ function lib:setEnabled(key, enabled)
   self:setHue()
 end
 
+--=============================================== Widget callbacks
+function lib:resized(w, h)
+  self.w = w
+  self.h = h
+end
+
+local ControlModifier = mimas.ControlModifier
+local RightButton     = mimas.RightButton
+
+function lib:click(x, y, op, btn, mod)
+  if self.meta_op then
+    local m = self.meta_op
+    self.meta_op = nil
+    if m.op == 'drag' then
+      -- end drag
+      self:change {
+        x = self:x(),
+        y = self:y(),
+      }
+    elseif m.op == 'resize' then
+      -- end drag
+      self:change {
+        w = self.w,
+        h = self.h,
+      }
+    end
+  elseif btn == RightButton or
+     mod == mimas.MetaModifier then
+    local sx, sy = self:globalPosition()
+    private.showContextMenu(self, sx + x, sy + y)
+  elseif mod == mimas.ControlModifier then
+    local meta = {
+      x = x,
+      y = y,
+    }
+    if x > self.w - DRAG_CORNER and y > self.h - DRAG_CORNER then
+      -- resize
+      meta.op = 'resize'
+    else
+      -- drag
+      meta.op = 'drag'
+    end
+    self.meta_op = meta
+  elseif op == MousePress then
+    self:control(x, y)
+  end
+end
+
+-- Push GUI change to morph.
+function lib:change(def)
+  self.view:change {
+    [self.id] = def
+  }
+end
+
+function lib:mouse(x, y)
+  if self.meta_op then
+    local m = self.meta_op
+    if m.op == 'drag' then
+      self:move(
+        self:x() + x - m.x,
+        self:y() + y - m.y
+      )
+    else
+      local w = self.w + x - m.x
+      local h = self.h + y - m.y
+      m.x = x
+      m.y = y
+      self:resize(w, h)
+    end
+  elseif self.enabled then
+    self:control(x, y)
+  end
+end
+
 local ghost_color = mimas.Color(0, 0, 0.7, 0.5)
 function lib:paintGhost(p, w, h)
   p:fillRect(0, 0, w, h, ghost_color)
+end
+
+function lib:paint(p, w, h)
+  if self.is_ghost then
+    self:paintGhost(p, w, h)
+  else
+    self:paintControl(p, w, h)
+  end
 end
 
 --=============================================== PRIVATE
@@ -102,7 +212,8 @@ function private:setPosition(def)
   end
 end
 
-function private:setConnections(def, zone)
+function private:setConnections(def)
+  local zone = self.zone
   local connect = def.connect or {}
   for dir, opt in pairs(connect) do
     local connector = self:connector(dir)
@@ -126,4 +237,21 @@ function private:setConnections(def, zone)
   end
 end
 
+function private:showContextMenu(gx, gy)
+  if self.is_ghost then
+    return false
+  end
+
+  local menu = mimas.Menu('')
+  if self.menu and not menu:deleted() then
+    self.menu:hide()
+  end
+  self.menu = menu
+
+  menu:addAction('Remove', '', function()
+    self:change(false)
+  end)
+
+  menu:popup(gx - 5, gy - 5)
+end
 

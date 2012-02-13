@@ -60,10 +60,10 @@ function lib:update(changes)
   for id, def in pairs(changes) do
     private.triggerUpdateCallbacks(self, id, def)
     local widget = widgets[id]
-    if v == false then
+    if def == false then
       if widget then
         -- remove widget
-        widget:__gc()
+        widget:delete()
         widgets[id] = nil
       end
     elseif not widget then
@@ -71,11 +71,9 @@ function lib:update(changes)
       local ctor = getControl(def.type)
 
       if ctor then
-        widget = ctor()
-        widget.id = id
+        widget = ctor(id, self)
         widgets[id] = widget
-        -- zone is needed to create/update connections
-        widget:set(def, self.zone)
+        widget:set(def)
         self:addWidget(widget)
         widget:show()
       end
