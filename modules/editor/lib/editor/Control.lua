@@ -29,6 +29,7 @@ end
 function lib:initControl(id, view)
   self.id   = id
   self.view = view
+  -- Sorted list of connectors
   self.connectors = {}
   if view then
     self.zone = view.zone
@@ -64,7 +65,7 @@ end
 
 function lib:delete()
   self:hide()
-  for _, conn in pairs(self.connectors) do
+  for _, conn in ipairs(self.connectors) do
     conn:disconnect()
   end
 end
@@ -73,12 +74,17 @@ end
 function lib:setupConnectors(def)
   local connectors = self.connectors
   for key, info in pairs(def) do
-    local c = editor.Connector(key, self, info)
+    local conn = editor.Connector(self, key, info)
     -- This is to enable faster connector access in controls with
     -- conn_x, conn_y...
-    self['conn_'..key] = c
-    -- This is to enable disconnection on control delete.
-    connectors[key] = c
+    self['conn_'..key] = conn
+
+    -- Keep connectors list sorted
+    local i = 1
+    while connectors[i] and key >= connectors[i].name do
+      i = i + 1
+    end
+    table.insert(connectors, i, conn)
   end
 end
 
@@ -113,6 +119,7 @@ end
 
 local ControlModifier = mimas.ControlModifier
 local RightButton     = mimas.RightButton
+local MousePress      = mimas.MousePress
 
 function lib:click(x, y, op, btn, mod)
   if self.meta_op then
@@ -149,7 +156,10 @@ function lib:click(x, y, op, btn, mod)
     end
     self.meta_op = meta
   elseif op == MousePress then
+    self.show_thumb = true
     self:control(x, y)
+  else
+    self.show_thumb = false
   end
 end
 
@@ -176,6 +186,7 @@ function lib:mouse(x, y)
       self:resize(w, h)
     end
   elseif self.enabled then
+    self.show_thumb = true
     self:control(x, y)
   end
 end
@@ -222,14 +233,7 @@ function private:setConnections(def)
         -- Remove connection.
         connector:disconnect()
       else
-        local url = opt.url
-        if url then
-          local process_name = string.match(url, '^([^/])/')
-          local process = zone:findProcess(process_name)
-          connector:connect(process, url)
-        end
-        -- Set options
-        connector:set(opt)
+        connector:set(opt, zone)
       end
     else
       printf("Invalid connector name '%s' for widget '%s' of type '%s'", dir, self.id, self.type)
@@ -248,10 +252,27 @@ function private:showContextMenu(gx, gy)
   end
   self.menu = menu
 
+  for _, conn in ipairs(self.connectors) do
+    menu:addAction('link '..conn.name, '', function()
+      private.startLink(self, conn)
+    end)
+  end
+  menu:addSeparator()
   menu:addAction('Remove', '', function()
     self:change(false)
   end)
 
   menu:popup(gx - 5, gy - 5)
 end
+
+function private:startLink(conn)
+  local ghost = editor.CtrlLinkView(conn, self.zone)
+
+  self.meta_op = {
+    op    = 'link',
+    conn  = conn,
+    ghost = ghost,
+  }
+end
+
 

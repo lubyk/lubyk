@@ -68,7 +68,6 @@ function lib:removeProcess(process)
 end
 
 function lib:change(def)
-  print('CHANGING', yaml.dump(def))
   self.push:send(lubyk.update_url, def)
 end
 

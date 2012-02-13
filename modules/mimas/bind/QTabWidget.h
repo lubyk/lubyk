@@ -9,17 +9,10 @@ namespace mimas {
  */
 class QTabWidget {
  public:
-   /** Get the index of the currently selected tab.
-    */
-   int currentIndex();
-
    /** Get the number of tabs.
     */
    int count();
 
-   /** Select a tab by position.
-    */
-   void setCurrentIndex(int pos);
 };
 
 } // mimas

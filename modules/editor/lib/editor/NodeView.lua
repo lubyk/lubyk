@@ -63,7 +63,7 @@ local function placeElements(self)
     -- start y
     PAD,
     -- max x
-    self.width - SLOTW - PAD
+    self.w - SLOTW - PAD
   )
 
   placeSlots(self,
@@ -71,9 +71,9 @@ local function placeElements(self)
     -- start x
     PAD + TEXT_HPADDING,
     -- start y
-    self.height - PAD - SLOTH,
+    self.h - PAD - SLOTH,
     -- max x
-    self.width - SLOTW - PAD
+    self.w - SLOTW - PAD
   )
 end
 
@@ -84,7 +84,7 @@ function lib:init(node, parent_view)
   self:setName(node.name)
   if parent_view then
     -- If we do not cache these, they endup wrong (resized callback?)
-    local w, h = self.width, self.height
+    local w, h = self.w, self.h
     parent_view:addWidget(self)
     self:resize(w, h)
     self:show()
@@ -109,9 +109,9 @@ end
 function lib:setName(name)
   self.name  = name
   local w, h = self.super:textSize(name)
-  self.width = math.max(w + 2 * TEXT_HPADDING + 2*PAD, MINW)
-  self.height = h + 2 * TEXT_VPADDING + 2*PAD
-  self:setSizeHint(self.width, self.height)
+  self.w = math.max(w + 2 * TEXT_HPADDING + 2*PAD, MINW)
+  self.h = h + 2 * TEXT_VPADDING + 2*PAD
+  self:setSizeHint(self.w, self.h)
   self:setSizePolicy(mimas.Minimum, mimas.Fixed)
   self:update()
 end
@@ -137,8 +137,8 @@ end
 -- end
 
 function lib:resized(w, h)
-  self.width  = w
-  self.height = h
+  self.w = w
+  self.h = h
   placeElements(self)
 end
 

@@ -198,7 +198,7 @@ static int QWidget_close(lua_State *L) {
 
 
 /** int mimas::QTabWidget::count()
- * mimas/bind/QTabWidget.h:18
+ * mimas/bind/QTabWidget.h:14
  */
 static int QTabWidget_count(lua_State *L) {
   try {
@@ -218,7 +218,7 @@ static int QTabWidget_count(lua_State *L) {
 
 
 /** QString mimas::TabWidget::cssClass() const 
- * include/mimas/TabWidget.h:89
+ * include/mimas/TabWidget.h:102
  */
 static int TabWidget_cssClass(lua_State *L) {
   try {
@@ -247,26 +247,6 @@ static int TabWidget_currentIndex(lua_State *L) {
     
     LuaStackSize  retval__ = self->currentIndex(L);
     return retval__;
-  } catch (std::exception &e) {
-    lua_pushfstring(L, "currentIndex: %s", e.what());
-  } catch (...) {
-    lua_pushfstring(L, "currentIndex: Unknown exception");
-  }
-  return lua_error(L);
-}
-
-
-
-/** int mimas::QTabWidget::currentIndex()
- * mimas/bind/QTabWidget.h:14
- */
-static int QTabWidget_currentIndex(lua_State *L) {
-  try {
-    TabWidget *self = *((TabWidget**)dubL_checksdata(L, 1, "mimas.TabWidget"));
-    if (!self) throw dub::Exception("Using deleted mimas.TabWidget in currentIndex");
-    int  retval__ = self->currentIndex();
-    lua_pushnumber(L, retval__);
-    return 1;
   } catch (std::exception &e) {
     lua_pushfstring(L, "currentIndex: %s", e.what());
   } catch (...) {
@@ -564,15 +544,15 @@ static int QWidget_resize(lua_State *L) {
 
 
 
-/** void mimas::QTabWidget::setCurrentIndex(int pos)
- * mimas/bind/QTabWidget.h:22
+/** void mimas::TabWidget::setCurrentIndex(int idx)
+ * include/mimas/TabWidget.h:91
  */
-static int QTabWidget_setCurrentIndex(lua_State *L) {
+static int TabWidget_setCurrentIndex(lua_State *L) {
   try {
     TabWidget *self = *((TabWidget**)dubL_checksdata(L, 1, "mimas.TabWidget"));
     if (!self) throw dub::Exception("Using deleted mimas.TabWidget in setCurrentIndex");
-    int pos = dubL_checkint(L, 2);
-    self->setCurrentIndex(pos);
+    int idx = dubL_checkint(L, 2);
+    self->setCurrentIndex(idx);
     return 0;
   } catch (std::exception &e) {
     lua_pushfstring(L, "setCurrentIndex: %s", e.what());
@@ -1015,7 +995,6 @@ static const struct luaL_Reg TabWidget_member_methods[] = {
   {"count"             , QTabWidget_count},
   {"cssClass"          , TabWidget_cssClass},
   {"currentIndex"      , TabWidget_currentIndex},
-  {"currentIndex"      , QTabWidget_currentIndex},
   {"globalMove"        , QWidget_globalMove},
   {"globalPosition"    , QWidget_globalPosition},
   {"height"            , QWidget_height},
@@ -1030,7 +1009,7 @@ static const struct luaL_Reg TabWidget_member_methods[] = {
   {"position"          , QWidget_position},
   {"raise"             , QWidget_raise},
   {"resize"            , QWidget_resize},
-  {"setCurrentIndex"   , QTabWidget_setCurrentIndex},
+  {"setCurrentIndex"   , TabWidget_setCurrentIndex},
   {"setMinimumSize"    , QWidget_setMinimumSize},
   {"setMouseTracking"  , QWidget_setMouseTracking},
   {"setName"           , QObject_setName},

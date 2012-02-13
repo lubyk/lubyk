@@ -23,6 +23,16 @@ function lib.new(def)
   end
   -- Can we suspend execution until dialog ends ?
   self:resize(self:minimumSize())
+  if def.flag == mimas.WidgetFlag then
+    -- FIXME: do this properly...
+    -- fix missing background
+    function self:paint(p, w, h)
+      p:setPen(1, mimas.Color(0, 0, 0.5, 0.5))
+      p:setBrush(mimas.Color(0, 0, 0.2))
+      p:drawRect(0, 0, w, h)
+    end
+  end
+
   return self
 end
 

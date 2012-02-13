@@ -69,15 +69,9 @@ function mt:keyboard(key, on, chr, mod)
   -- FIXME: Why can't we capture ControlModifier with arrows ?
   if not on and bit.band(mod, Modifier) ~= 0 then
     if key == Key_Right then
-      local selected = self:currentIndex()
-      local count = self:count()
-      self:selectTab((selected+1) % count)
-      return
+      return self:selectTab(self:currentIndex() + 1)
     elseif key == Key_Left then
-      local selected = self:currentIndex()
-      local count = self:count()
-      self:selectTab((selected+count-1) % count)
-      return
+      return self:selectTab(self:currentIndex() - 1)
     end
   end
   -- Continue processing

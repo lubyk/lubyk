@@ -57,11 +57,14 @@ public:
   }
 
   /** Add a tab to the view at the given position.
+   * We can use negative indices here:
+   *  0 = add after last
+   * -1 = add before last
+   * -2 = add before element before last
    */
   int insertTab(int pos, QWidget *page, const char *name) {
     pos = pos - 1;
     if (pos < 0) {
-      // -1 = add after last, -2 = add after element before last
       pos = count() + 1 + pos;
     }
     return QTabWidget::insertTab(pos, page, QString(name)) + 1;
@@ -81,9 +84,22 @@ public:
     if (idx == -1) {
       return 0;
     } else {
-      lua_pushnumber(idx + 1);
+      lua_pushnumber(L, idx + 1);
       return 1;
     }
+  }
+
+  /** Select a tab by position.
+   */
+  void setCurrentIndex(int idx) {
+    int sz = count();
+    if (!sz) return;
+    if (idx <= 0) {
+      idx = sz + idx;
+    } else {
+      idx = idx - 1;
+    }
+    QTabWidget::setCurrentIndex(idx % sz);
   }
 
   QString cssClass() const {

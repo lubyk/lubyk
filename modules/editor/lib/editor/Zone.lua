@@ -142,6 +142,33 @@ function lib:processViewAtGlobal(gx, gy)
   return nil
 end
 
+local function distanceToNode(gx, gy, view)
+  local vx, vy = view:globalPosition()
+  vx = gx - vx - view.w/2
+  vy = gy - vy - view.h/2
+  return math.sqrt(vx*vx + vy*vy)
+end
+
+-- Find the closest node
+function lib:closestNodeAtGlobal(gx, gy)
+  local best_node, best_dist
+  for _, process in pairs(self.found_processes) do
+    if process.type == 'editor.Process' then
+      for _, node in pairs(process.nodes) do
+        local view = node.view
+        if view then
+          local dist = distanceToNode(gx, gy, view)
+          if (not best_node or dist < best_dist) then
+            best_dist = dist
+            best_node = node
+          end
+        end
+      end
+    end
+  end
+  return best_node, best_dist
+end
+
 --- Find the closest slotView in all processes from the global
 -- x and global y coordinates.
 -- @return closest slot and distance to center of slot.

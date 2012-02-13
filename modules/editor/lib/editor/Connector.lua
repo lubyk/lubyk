@@ -20,19 +20,93 @@ setmetatable(lib, {
       name = name,
       info = info,
     }
-    local changed = ctrl.changed
-    -- ! No 'self' here.
-    self.changed = function(...)
-      changed(ctrl, name, ...)
-    end
     return setmetatable(self, lib)
   end,
 })
 
 local UPDATE_URL = lubyk.update_url
 
-function lib:connect(process, url)
+function lib:set(def, zone)
+  local url = def.url
+  local connecting
+  if url and url ~= self.url then
+    connecting = true
+    local process_name = string.match(url, '^/([^/]+)/')
+    self.process = zone:findProcess(process_name)
+    private.connect(self, self.process, url)
+  end
+
+  -- Set options
+  local min = tonumber(def.min) or 0
+  self.min = min
+  local max = tonumber(def.max) or 1
+  self.max = max
+  local range = max - min
+  if min == 0 and max == 1 or range == 0 then
+    range = nil
+  end
+  self.range = range
+
+  -- upvalues
+  local name       = self.name
+  local param_name = self.param_name
+  local msg        = self.msg
+  local process    = self.process
+  local setter     = self.setter
+  local ctrl       = self.ctrl
+  local changed    = self.ctrl.changed
+
+  if not range then
+    function self.change(value)
+      if process.online then
+        setter[param_name] = value
+        process.push:send(UPDATE_URL, msg)
+      end
+    end
+    -- ! No 'self' here.
+    function self.changed(value)
+      changed(ctrl, name, value)
+    end
+  else
+    function self.change(value)
+      if process.online then
+        setter[param_name] = min + value * range
+        process.push:send(UPDATE_URL, msg)
+      end
+    end
+    -- ! No 'self' here.
+    function self.changed(value)
+      changed(ctrl, name, (value-min) / range)
+    end
+  end
+
+  if connecting then
+    -- We do this last, when change/changed callbacks are set.
+    self.node:connectControl(self)
+  end
+end
+
+function lib:setEnabled(enabled)
+  self.ctrl:setEnabled(self.name, enabled)
+end
+
+function lib:disconnect()
+  self.change = lib.change
+  if self.node then
+    self.node:disconnectControl(self)
+  end
+  self.node   = nil
+end
+
+function lib:change()
+  -- Not connected yet. The control should disable controls instead
+  -- of having this called...
+  -- noop
+end
+
+function private:connect(process, url)
   self.url = url
+
   -- Takes a target link like '/a/metro/_/tempo'
   -- /[process]/[node](/[sub-node])/_/[param name]
   local parts = lk.split(url, '/')
@@ -59,33 +133,10 @@ function lib:connect(process, url)
   end
   path._ = {}
 
-  local setter = path._
-  function self.change(value)
-    if process.online then
-      setter[param_name] = value
-      process.push:send(UPDATE_URL, msg)
-    end
-  end
-
-  self.node = node
-  node:connectControl(self)
+  self.param_name = param_name
+  self.setter = path._
+  self.msg    = msg
+  self.node   = node
   self:setEnabled(node.online)
 end
 
-function lib:setEnabled(enabled)
-  self.ctrl:setEnabled(self.name, enabled)
-end
-
-function lib:disconnect()
-  self.change = lib.change
-  if self.node then
-    self.node:disconnectControl(self)
-  end
-  self.node   = nil
-end
-
-function lib:change()
-  -- Not connected yet. The control should disable controls instead
-  -- of having this called...
-  -- noop
-end

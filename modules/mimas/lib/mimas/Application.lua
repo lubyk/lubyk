@@ -32,7 +32,20 @@ function mimas.Application(type)
       padding:0;
     }
     .menu {
+      border:1px solid #777;
       font-size:13px;
+      background:#222;
+    }
+    .menu::separator {
+      height: 2px;
+      background: #444;
+    }
+    .menu::item {
+      padding:2px 5px;
+      border-top:1px solid #444;
+    }
+    .menu::item:first {
+      border-top:0;
     }
     .menu::item:selected {
       background: rgb(55,55,55);

@@ -96,6 +96,26 @@ static int QWidget_activateWindow(lua_State *L) {
 
 
 
+/** void mimas::QMenu::addAction(Action *action)
+ * mimas/bind/QMenu.h:12
+ */
+static int QMenu_addAction(lua_State *L) {
+  try {
+    Menu *self = *((Menu**)dubL_checksdata(L, 1, "mimas.Menu"));
+    if (!self) throw dub::Exception("Using deleted mimas.Menu in addAction");
+    Action *action = *((Action **)dubL_checksdata(L, 2, "mimas.Action"));
+    self->addAction(action);
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "addAction: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "addAction: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
 /** void mimas::QWidget::addAction(Action *action)
  * mimas/bind/QWidget.h:35
  */
@@ -116,20 +136,19 @@ static int QWidget_addAction(lua_State *L) {
 
 
 
-/** void mimas::QMenu::addAction(Action *action)
- * mimas/bind/QMenu.h:12
+/** void mimas::QMenu::addSeparator()
+ * mimas/bind/QMenu.h:13
  */
-static int QMenu_addAction(lua_State *L) {
+static int QMenu_addSeparator(lua_State *L) {
   try {
     Menu *self = *((Menu**)dubL_checksdata(L, 1, "mimas.Menu"));
-    if (!self) throw dub::Exception("Using deleted mimas.Menu in addAction");
-    Action *action = *((Action **)dubL_checksdata(L, 2, "mimas.Action"));
-    self->addAction(action);
+    if (!self) throw dub::Exception("Using deleted mimas.Menu in addSeparator");
+    self->addSeparator();
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "addAction: %s", e.what());
+    lua_pushfstring(L, "addSeparator: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "addAction: Unknown exception");
+    lua_pushfstring(L, "addSeparator: Unknown exception");
   }
   return lua_error(L);
 }
@@ -176,7 +195,7 @@ static int QWidget_adjustSize(lua_State *L) {
 
 
 /** void mimas::QMenu::clear()
- * mimas/bind/QMenu.h:15
+ * mimas/bind/QMenu.h:16
  */
 static int QMenu_clear(lua_State *L) {
   try {
@@ -942,8 +961,9 @@ static int QWidget_y(lua_State *L) {
 
 static const struct luaL_Reg Menu_member_methods[] = {
   {"activateWindow"    , QWidget_activateWindow},
-  {"addAction"         , QWidget_addAction},
   {"addAction"         , QMenu_addAction},
+  {"addAction"         , QWidget_addAction},
+  {"addSeparator"      , QMenu_addSeparator},
   {"addWidget"         , QWidget_addWidget},
   {"adjustSize"        , QWidget_adjustSize},
   {"clear"             , QMenu_clear},

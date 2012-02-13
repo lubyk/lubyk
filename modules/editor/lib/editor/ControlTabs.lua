@@ -19,9 +19,9 @@ end
 
 function lib:addView(name, def)
   local view = editor.ControlView(name, def, self.zone)
-  self:insertTab(-2, view, name)
+  self:insertTab(-1, view, name)
   if self:count() == 2 then
-    self:selectTab(0)
+    self:selectTab(1)
   end
   return view
 end

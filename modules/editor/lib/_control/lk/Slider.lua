@@ -27,9 +27,21 @@ function lib:changed(key, s)
   self:update()
 end
 
+function lib:resized(w, h)
+  self.w = w
+  self.h = h
+  self.is_horizontal = w > h
+end
+
 function lib:control(x, y)
-  local h = self.h
-  local s = (h - y) / h
+  local s
+  if self.is_horizontal then
+    local w = self.w
+    s = x / w
+  else
+    local h = self.h
+    s = (h - y) / h
+  end
   if s < 0 then
     s = 0
   elseif s > 1 then
@@ -45,13 +57,26 @@ local noPen   = mimas.EmptyPen
 
 function lib:paintControl(p, w, h)
   -- remote value
-  local s = self.remote_s * h
-  p:fillRect(0, h-s, w, s, self.fill_color)
+  if self.is_horizontal then
+    local s = self.remote_s * w
+    p:fillRect(0, 0, s, h, self.fill_color)
+    if self.show_thumb then
+      -- thumb
+      local t = self.s * w
+      local half_thumb = w / 20
+      p:fillRect(t-half_thumb, 0, 2*half_thumb, h, self.thumb_color)
+    end
+  else
+    local s = self.remote_s * h
+    p:fillRect(0, h-s, w, s, self.fill_color)
+    if self.show_thumb then
+      -- thumb
+      local t = (1 - self.s) * h
+      local half_thumb = h / 20
+      p:fillRect(0, t-half_thumb, w, 2*half_thumb, self.thumb_color)
+    end
+  end
 
-  -- thumb
-  local t = (1 - self.s) * h
-  local half_thumb = h / 20
-  p:fillRect(0, t-half_thumb, w, 2*half_thumb, self.thumb_color)
 
   -- border
   p:setPen(self.pen)

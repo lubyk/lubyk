@@ -10,6 +10,7 @@ namespace mimas {
 class QMenu {
  public:
   void addAction(Action *action);
+  void addSeparator();
   /** Remove all actions.
    */
   void clear();
