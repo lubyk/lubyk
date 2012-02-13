@@ -16,6 +16,12 @@ function lib:init(name, def, zone)
   self.cache = {}
   self.name = name
   self.zone = zone
+  self.morph= zone.morph
+  -- Contains a list of callbacks to trigger on view
+  -- update. The callbacks are called with the changed parameters
+  -- before the changes are applied and are removed before trigger.
+  self.on_update_callbacks = {}
+
   -- List of widgets by id.
   self.widgets = {}
   -- Update view from definition.
@@ -32,6 +38,7 @@ end
 -- When new widgets are created, provide a free
 -- name.
 function lib:nextName(typ)
+  local typ  = string.lower(string.match(typ, '%.([^%.]+)$') or typ)
   local fmt  = string.format
   local base = string.sub(typ, 1, 1)
   local widgets = self.widgets
@@ -44,10 +51,14 @@ function lib:nextName(typ)
   return key
 end
 
+local getControl = editor.Control.getControl
+
+-- This is a callback when the view is remotely changed.
 function lib:update(changes)
   lk.deepMerge(self, 'cache', changes)
   local widgets = self.widgets
   for id, def in pairs(changes) do
+    private.triggerUpdateCallbacks(self, id, def)
     local widget = widgets[id]
     if v == false then
       if widget then
@@ -55,43 +66,53 @@ function lib:update(changes)
         widget:__gc()
         widgets[id] = nil
       end
-      return
-    elseif widget then
-      -- update
-    else
-      -- create
-      local ctor = editor.Control.getConstructor(def.type)
+    elseif not widget then
+      -- new
+      local ctor = getControl(def.type)
 
       if ctor then
-        local widget = ctor()
+        widget = ctor()
         widget.id = id
         widgets[id] = widget
+        -- zone is needed to create/update connections
         widget:set(def, self.zone)
         self:addWidget(widget)
         widget:show()
       end
+    else
+      -- update
+      -- zone is needed to create/update connections
+      widget:set(def, self.zone)
     end
   end
 end
 
-function lib:disconnect(conn)
-  if not conn.remove then
-    table.insert(self.disconnected, conn)
+function lib:onUpdate(id, callback)
+  local list = self.on_update_callbacks[id]
+  if not list then
+    list = {}
+    self.on_update_callbacks[id] = list
   end
-  conn.node = nil
-  -- TODO: mark connector as disabled
-  -- connection.connector:disable()
+  table.insert(list, callback)
 end
 
---=============================================== 
------- THESE METHODS SHOULD EXIST IN THE CONTROLS (mimas.Slider, etc)
-function private:connectToNode(conn)
-  local node = conn.process
-  for i, part in ipairs(conn.parts) do
-    node = node:findNode(part)
+function private:triggerUpdateCallbacks(id, changes)
+  local list = self.on_update_callbacks[id]
+  if list then
+    self.on_update_callbacks[id] = nil
+    for _, clbk in ipairs(list) do
+      clbk(changes)
+    end
   end
-  conn.node = node
-  node:connectControl(conn)
+end
+
+-- This is called by the GUI when user updates controls in the view.
+function lib:change(def)
+  self.morph:change {
+    _views = {
+      [self.name] = def,
+    },
+  }
 end
 
 function lib:paint(p, w, h)

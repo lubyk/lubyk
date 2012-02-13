@@ -220,13 +220,14 @@ end
 
 --=============================================== Control
 private.control = {}
-local ctorFinder = editor.Control.getControl
+local getControl = editor.Control.getControl
 
 function private.control:drag()
   local obj  = self.selected_obj
-  local ctor = ctorFinder(obj.name)
+  local ctor = getControl(obj.name)
   if ctor then
     self.ghost = ctor()
+    self.ghost.is_ghost = true
     -- Add to currently selected view
     self.zone.view.control_tabs:currentWidget():addWidget(self.ghost)
     self.ghost:show()
@@ -234,17 +235,24 @@ function private.control:drag()
 end
 
 function private.control:drop()
-  local view = self.zone.view.control_tabs:currentWidget()
-  local typ  = self.selected_obj.name
-  local def = {
-    id   = view:nextName(typ),
-    type = typ,
-    x    = self.ghost:x(),
-    y    = self.ghost:y(),
+  local view  = self.zone.view.control_tabs:currentWidget()
+  local typ   = self.selected_obj.name
+  local id    = view:nextName(typ)
+  local ghost = self.ghost
+  -- On id update callback
+  view:onUpdate(id, function()
+    ghost:hide()
+  end)
+  view:change {
+    [id] = {
+      type = typ,
+      x    = self.ghost:x(),
+      y    = self.ghost:y(),
+      hue  = self.ghost.hue,
+    },
   }
-  -- TODO: add def to view
+
   -- clear
-  self.ghost = nil
   self.click_position = nil
   self.dragging = nil
 end

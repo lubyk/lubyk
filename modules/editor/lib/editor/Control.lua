@@ -13,8 +13,12 @@ local private = {}
 
 --=============================================== PUBLIC
 function lib:init(name)
+  self:initControl(name)
+end
+
+function lib:initControl(name)
   self.name = name
-  self.connectors = {}
+  self:setHue(math.random())
 end
 
 function lib:connector(key)
@@ -23,7 +27,7 @@ end
 
 function lib:set(def, zone)
   private.setPosition(self, def)
-  process.setConnections(self, def, zone)
+  private.setConnections(self, def, zone)
 end
 
 --=============================================== Class methods
@@ -51,13 +55,41 @@ function lib:setupConnectors(def)
   end
 end
 
+function lib:setHue(h)
+  if h then
+    self.hue = h
+  else
+    h = self.hue
+  end
+  if self.enabled then
+    self.fill_color = mimas.Color(h, 0.5, 0.5)
+    self.pen = mimas.Pen(4, mimas.Color(h, 0.7, 0.7))
+  else
+    self.fill_color = mimas.Color(0, 0, 0.5)
+    self.pen = mimas.Pen(4, mimas.Color(0, 0, 0.7))
+  end
+  self.thumb_color = mimas.Color(h, 0, 1, 0.5)
+end
+
+function lib:setEnabled(key, enabled)
+  -- Should be overwritten when there are more then one
+  -- connectors.
+  self.enabled = enabled
+  self:setHue()
+end
+
+local ghost_color = mimas.Color(0, 0, 0.7, 0.5)
+function lib:paintGhost(p, w, h)
+  p:fillRect(0, 0, w, h, ghost_color)
+end
+
 --=============================================== PRIVATE
  
 function private:setPosition(def)
   if def.x or def.y then
     local x = def.x or widget:x()
     local y = def.y or widget:y()
-    self:move(x + 120, y)
+    self:move(x, y)
   end
 
   if def.w or def.h then

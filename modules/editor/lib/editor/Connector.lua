@@ -73,7 +73,7 @@ function lib:connect(process, url)
 end
 
 function lib:setEnabled(enabled)
-  -- TODO: mark view as on/off
+  self.ctrl:setEnabled(self.name, enabled)
 end
 
 function lib:disconnect()

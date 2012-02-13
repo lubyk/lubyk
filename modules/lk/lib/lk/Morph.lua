@@ -24,8 +24,8 @@ lk.Morph    = lib
 local private = {
   -- Actions triggered on a 'set' operation (while reading project).
   set     = {},
-  -- Actions triggered on a 'change' operation (update from GUI).
-  change  = {},
+  -- Actions triggered on an 'update' operation (update from GUI).
+  update = {},
   -- Actions triggered on a (partial) 'dump' operation.
   dump    = {},
   -- Actions related to process handling.
@@ -108,9 +108,10 @@ function lib:get(url)
   return resource:body()
 end
 
-function lib:change(definitions)
+function lib:update(definitions)
+  local upd = private.update
   for k, v in pairs(definitions) do
-    local func = private.change[k]
+    local func = upd[k]
     if func then
       func(self, v)
     end
@@ -145,7 +146,7 @@ function lib:callback(url, ...)
     return self:dump()
   elseif url == lubyk.update_url then
     -- async call, no return value
-    self:change(...)
+    self:update(...)
     local p = self:partialDump(...)
     self.service:notify(p)
   elseif url == lubyk.get_url then
@@ -294,10 +295,10 @@ function private.set:processes(processes)
   end
 end
 
---=============================================== CHANGE
+--=============================================== UPDATE
 
 --- Change processes: create, delete or change machine assignment.
-function private.change:processes(data)
+function private.update:processes(data)
   for name, def in pairs(data) do
     if def == false then
       private.removeProcess(self, name)
@@ -340,27 +341,6 @@ function private:removeProcess(name)
   end
 end
 
-
---- Change views (we do a deep parsing to detect what to create/delete/update).
-function private.change:views(data)
-  printf("private.change.views: %s", yaml.dump(data))
-  local views = self.views
-  for name, def in pairs(data) do
-    local view = views[name]
-    if def == false then
-      if view then
-        view.file:delete()
-      end
-    elseif not view then
-      private.view.add(self, name, def)
-    else
-      local view_changed = lk.deepMerge(views, name, def)
-      if view_changed then
-        -- write view to filesystem
-      end
-    end
-  end
-end
 
 --=============================================== DUMP
 
@@ -609,6 +589,29 @@ function private.node.updateCallback(process, node_name, resource)
 end
 
 --=============================================== VIEW
+
+--- Change views (we do a deep parsing to detect what to create/delete/update).
+function private.update:_views(data)
+  local views = self.views
+  for name, def in pairs(data) do
+    local view = views[name]
+    if def == false then
+      if view then
+        view.file:delete()
+      end
+    elseif not view then
+      private.view.add(self, name, def)
+    else
+      -- update
+      local view_changed = lk.deepMerge(view, name, def)
+      if view_changed then
+        -- write view to filesystem
+        private.view.writeFile(view)
+      end
+    end
+  end
+end
+
 -- When reading a view file 'reading_lkv' is set so we know that we must not
 -- write to lkv file.
 function private.view.add(self, name, info, reading_lkv)

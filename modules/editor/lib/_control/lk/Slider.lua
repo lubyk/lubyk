@@ -10,13 +10,12 @@ local lib = lk.SubClass(editor, 'Control')
 _control.lk.Slider = lib
 
 -- default slider size
-local DEFAULT = {w = 30, h = 80}
+local DEFAULT = {w = 40, h = 100}
 
 function lib:init(name)
-  self.name     = name
+  self:initControl(name)
   self.s        = 0
   self.remote_s = 0
-  self:setHue(math.random())
   self:setupConnectors {
     s = 'Slider value',
   }
@@ -33,13 +32,10 @@ function lib:resized(w, h)
   self.h = h
 end
 
-function lib:setHue(h)
-  self.fill_color = mimas.Color(h, 0.5, 0.5)
-  self.pen = mimas.Pen(4, mimas.Color(h, 1.0, 1.0))
-  self.thumb_color = mimas.Color(h, 0, 1, 0.5)
-end
-
 function lib:mouse(x, y)
+  if not self.enabled then
+    return
+  end
   local h = self.h
   local s = (h - y) / h
   if s < 0 then
@@ -58,6 +54,9 @@ local noBrush = mimas.EmptyBrush
 local noPen   = mimas.EmptyPen
 
 function lib:paint(p, w, h)
+  if self.is_ghost then
+    return self:paintGhost(p, w, h)
+  end
   -- remote value
   local s = self.remote_s * h
   p:fillRect(0, h-s, w, s, self.fill_color)
