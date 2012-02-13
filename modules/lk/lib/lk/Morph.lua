@@ -603,11 +603,16 @@ function private.update:_views(data)
       private.view.add(self, name, def)
     else
       -- update
-      local view_changed = lk.deepMerge(view, name, def)
-      if view_changed then
-        -- write view to filesystem
-        private.view.writeFile(view)
+      for id, opt in pairs(def) do
+        if not opt then
+          view[id] = nil
+        else
+          print(id, yaml.dump(opt))
+          lk.deepMerge(view.cache, id, opt)
+        end
       end
+      -- write view to filesystem
+      private.view.writeFile(view)
     end
   end
 end

@@ -19,9 +19,9 @@ function mimas.Application(type)
   local self = constr(type)
   self:setQuitOnLastWindowClosed(mimas.Settings.quit_on_close)
   self:setStyleSheet [[
-    .window, .main_window, .widget, .table, .list, .menu, .tab_widget::pane, .label {
+    .window, .main_window, .widget, .table, .list, .menu, .tab_widget::pane, .label, .control {
       background:#151515;
-      color:rgb(180,180,180);
+      color:#B4B4B4;
     }
     .table {
       alternate-background-color:rgb(52, 52, 52);
@@ -58,7 +58,7 @@ function mimas.Application(type)
     }
     .list::item:selected {
         border: 0;
-        color: rgb(180,180,180);
+        color: #B4B4B4;
         background:#6E4E24;
         padding:0px;
      }
@@ -100,15 +100,14 @@ function mimas.Application(type)
       background:#262626;
       border-bottom:0;
       margin-top:5px;
-      color:rgb(180,180,180);
+      color:#B4B4B4;
     }
     /* end TabWidget */
-    .slider { qproperty-border:2;
-      background:transparent;
-      color:hsva(80,255,255,75%);
-      alternate-background-color:hsv(80,255,255);
-      selection-color:rgba(255,255,255,80);
+    .control {
+      font-size:10px;
     }
+
+
     #test_name { color: hsva(20, 255, 255, 80%); }
     #test_name.slider { color:hsv(30,200,200); }
   ]]

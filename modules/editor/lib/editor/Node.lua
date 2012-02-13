@@ -296,7 +296,7 @@ function lib.makeGhost(node_def, zone)
     self.edit = edit
     edit:selectAll()
     zone.view:addWidget(edit)
-    edit:resize(math.max(self.width, MINW), self.height)
+    edit:resize(math.max(self.w, MINW), self.h)
     edit:globalMove(self:globalPosition())
     edit:show()
     edit:setFocus()

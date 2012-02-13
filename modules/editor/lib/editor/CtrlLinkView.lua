@@ -177,10 +177,10 @@ function private:editDialog(param)
     'Edit link',
     {
       'vbox', box = true,
-      'Minimal value',
-      {'input', 'min', conn.min or 0},
       'Maximal value',
       {'input', 'max', conn.max or 1},
+      'Minimal value',
+      {'input', 'min', conn.min or 0},
     },
     {
       'hbox', {},

@@ -33,7 +33,7 @@ function lib:init(zone)
 
   --=============================================== Patch view
   self.patch_view = editor.PatchView(self)
-  self.layout:addWidget(self.patch_view, 2)
+  self.layout:addWidget(self.patch_view, 1)
   self.layout:setSpacing(PADDING)
   self.layout:setContentsMargins(0, 0, 0, 0)
 
@@ -189,7 +189,7 @@ function private.dialog:newProject()
   else
     base = os.getenv('HOME')
   end
-  --self.doit = lk.Thread(function()
+  self:hideDialog()
   self.dlg = mimas.SimpleDialog {
     parent = self,
     'Create a new lubyk project.',
@@ -217,13 +217,10 @@ function private.dialog:newProject()
       end
       app:openFile(path)
     end
-    dlg:hide()
-    self.dlg = nil
-    --self.doit = nil
+    self:hideDialog()
   end
   self.dlg:resize(400,200)
   self.dlg:show()
-  --end)
 end
 
 function private.dialog:openProject()
@@ -306,10 +303,7 @@ function private.dialog:start()
       private.dialog.openProject(self)
     elseif #settings.open_recent > 0 then
       app:openFile(settings.open_recent[1])
-      lk.Thread(function()
-        -- delete later
-        self:hideDialog()
-      end)
+      self:hideDialog()
     end
   end
 
@@ -317,10 +311,7 @@ function private.dialog:start()
   function dlg.list(dlg, path)
     if path then
       app:openFile(path)
-      lk.Thread(function()
-        -- delete later
-        self:hideDialog()
-      end)
+      self:hideDialog()
     end
   end
   dlg.widgets.lay:setContentsMargins(15,15,15,15)

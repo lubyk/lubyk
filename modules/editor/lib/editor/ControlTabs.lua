@@ -51,6 +51,7 @@ function lib:addPlusView()
   self.add_tab = add
   add.lay = mimas.VBoxLayout(add)
   add.dlg = mimas.SimpleDialog {
+    flag = mimas.WidgetFlag,
     'Create a new view',
     {'vbox', box=true, style='background: #222',
       'view name',
@@ -63,17 +64,16 @@ function lib:addPlusView()
     },
   }
   add.lay:addWidget(add.dlg, 0, mimas.AlignCenter)
-  function add.dlg:btn(name)
-    printf("add_tab:btn %s / %s", name, self.form.name)
-    if name == 'OK' then
+  function add.dlg:btn(btn_name)
+    if btn_name == 'OK' then
       -- create view
       local morph = zone.morph
       if morph then
-        morph.push:send(lubyk.update_url, {
-          views = {
+        morph:change {
+          _views = {
             [self.form.name] = {},
-          }
-        })
+          },
+        }
       end
     else
       -- do nothing

@@ -24,6 +24,11 @@ end
 --=============================================== PUBLIC
 function lib:init(id, view)
   self:initControl(id, view)
+  self:setCssClass('control')
+end
+
+function lib:changed(key, value)
+  self:update()
 end
 
 function lib:initControl(id, view)

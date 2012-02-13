@@ -141,7 +141,7 @@ function lib:openFile(path)
         end
       end
       table.insert(s.open_recent, 1, path)
-      while #s.open_recent > s.open_recent_max and s.open_recent > 0 do
+      while #s.open_recent > s.open_recent_max and #s.open_recent > 0 do
         table.remove(s.open_recent, #s.open_recent)
       end
     end

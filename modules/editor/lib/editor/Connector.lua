@@ -19,8 +19,10 @@ setmetatable(lib, {
       ctrl  = ctrl,
       name  = name,
       info  = info,
-      -- Value as notified by remote end.
+      -- Scaled remote value.
       remote_value = 0,
+      -- Unscaled remote value.
+      raw_remote_value = 0,
       -- Value set by GUI (0-1 scale).
       value = 0,
     }
@@ -41,17 +43,22 @@ function lib:set(def, zone)
   end
 
   -- Set options
-  local min = tonumber(def.min) or 0
-  self.min = min
-  local max = tonumber(def.max) or 1
-  self.max = max
-  local range = max - min
-  if min == 0 and max == 1 or range == 0 then
-    range = nil
+  local min = self.min
+  local max = self.max
+  local range = self.range
+  if def.min or def.max then
+    min = tonumber(def.min) or 0
+    max = tonumber(def.max) or 1
+    range = max - min
+    self.min = min
+    self.max = max
+    self.range = range
+
+    self.inverted = min > max
   end
-  self.range = range
 
   -- upvalues
+  local inverted   = self.inverted
   local name       = self.name
   local param_name = self.param_name
   local msg        = self.msg
@@ -61,6 +68,8 @@ function lib:set(def, zone)
   local changed    = self.ctrl.changed
 
   if not range then
+    --=============================================== Raw value
+    -- not a number value
     function self.change(value)
       self.value = value
       if process.online then
@@ -71,20 +80,55 @@ function lib:set(def, zone)
     -- ! No 'self' here.
     function self.changed(value)
       self.remote_value = value
+      self.raw_remote_value = value
       changed(ctrl, name, value)
     end
-  else
+
+
+  elseif self.min == 0 and self.max == 1 then
+    --=============================================== Number, no scaling
     function self.change(value)
+      if value < min then
+        value = min
+      elseif value > max then
+        value = max
+      end
       self.value = value
       if process.online then
-        setter[param_name] = min + value * range
+        setter[param_name] = value
         process.push:send(UPDATE_URL, msg)
       end
     end
     -- ! No 'self' here.
     function self.changed(value)
+      self.raw_remote_value = value
       self.remote_value = value
-      changed(ctrl, name, (value-min) / range)
+      changed(ctrl, name, value)
+    end
+
+
+  else
+    --=============================================== Number, with scaling
+    function self.change(value)
+      if value < 0 then
+        value = 0
+      elseif value > 1 then
+        value = 1
+      end
+      self.value = value
+      value = min + value * range
+      if process.online then
+        setter[param_name] = value
+        process.push:send(UPDATE_URL, msg)
+      end
+    end
+    -- ! No 'self' here.
+    function self.changed(value)
+      -- value before scaling
+      self.raw_remote_value = value
+      value = (value - min) / range
+      self.remote_value = value
+      changed(ctrl, name, value)
     end
   end
 
@@ -114,7 +158,7 @@ end
 
 -- Text representation of value
 function lib:printValue()
-  local v = self.remote_value
+  local v = self.raw_remote_value
   if v > 10 then
     return string.format('%i', v)
   else

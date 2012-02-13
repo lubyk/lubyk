@@ -56,6 +56,9 @@ class Widget : public QWidget, public ThreadedLuaObject {
   Q_PROPERTY(QString class READ cssClass)
   Q_PROPERTY(float hue READ hue WRITE setHue)
 
+  /** Class name to use when matching stylesheets.
+   */
+  QString css_class_;
 public:
   Widget(int window_flags) :
     QWidget(NULL, (Qt::WindowFlags)window_flags) {
@@ -74,7 +77,16 @@ public:
   }
 
   QString cssClass() const {
-    return parent() ? QString("window") : QString("widget");
+    if (css_class_.isNull()) {
+      return parent() ? QString("window") : QString("widget");
+    } else {
+      return css_class_;
+    }
+  }
+
+  void setCssClass(const char *name) {
+    css_class_ = name;
+    update();
   }
 
   /** Is this used ???

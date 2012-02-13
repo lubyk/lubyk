@@ -117,7 +117,7 @@ static int QWidget_addAction(lua_State *L) {
 
 
 /** int mimas::TabWidget::addTab(QWidget *page, const char *name)
- * include/mimas/TabWidget.h:72
+ * include/mimas/TabWidget.h:75
  */
 static int TabWidget_addTab(lua_State *L) {
   try {
@@ -218,7 +218,7 @@ static int QTabWidget_count(lua_State *L) {
 
 
 /** QString mimas::TabWidget::cssClass() const 
- * include/mimas/TabWidget.h:102
+ * include/mimas/TabWidget.h:105
  */
 static int TabWidget_cssClass(lua_State *L) {
   try {
@@ -238,7 +238,7 @@ static int TabWidget_cssClass(lua_State *L) {
 
 
 /** LuaStackSize mimas::TabWidget::currentIndex(lua_State *L)
- * include/mimas/TabWidget.h:79
+ * include/mimas/TabWidget.h:82
  */
 static int TabWidget_currentIndex(lua_State *L) {
   try {
@@ -343,7 +343,7 @@ static int QWidget_hide(lua_State *L) {
 
 
 /** int mimas::TabWidget::insertTab(int pos, QWidget *page, const char *name)
- * include/mimas/TabWidget.h:61
+ * include/mimas/TabWidget.h:65
  */
 static int TabWidget_insertTab(lua_State *L) {
   try {
@@ -545,7 +545,7 @@ static int QWidget_resize(lua_State *L) {
 
 
 /** void mimas::TabWidget::setCurrentIndex(int idx)
- * include/mimas/TabWidget.h:91
+ * include/mimas/TabWidget.h:94
  */
 static int TabWidget_setCurrentIndex(lua_State *L) {
   try {
