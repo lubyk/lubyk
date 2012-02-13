@@ -11,6 +11,7 @@ _control.lk.Slider = lib
 
 -- default slider size
 local DEFAULT = {w = 40, h = 100}
+local TEXT_PADDING = 5
 
 function lib:init(id, view)
   self:initControl(id, view)
@@ -56,8 +57,11 @@ local noBrush = mimas.EmptyBrush
 local noPen   = mimas.EmptyPen
 
 function lib:paintControl(p, w, h)
+  local conn = self.conn_s
   -- remote value
+  local v = conn.value
   if self.is_horizontal then
+    --=============================================== HORIZONTAL
     local s = self.remote_s * w
     p:fillRect(0, 0, s, h, self.fill_color)
     if self.show_thumb then
@@ -65,8 +69,11 @@ function lib:paintControl(p, w, h)
       local t = self.s * w
       local half_thumb = w / 20
       p:fillRect(t-half_thumb, 0, 2*half_thumb, h, self.thumb_color)
+      -- show current value
+      p:drawText(TEXT_PADDING, 0, w - TEXT_PADDING, h, mimas.AlignLeft + mimas.AlignVCenter, self.conn_s:printValue())
     end
   else
+    --=============================================== VERTICAL
     local s = self.remote_s * h
     p:fillRect(0, h-s, w, s, self.fill_color)
     if self.show_thumb then
@@ -74,6 +81,8 @@ function lib:paintControl(p, w, h)
       local t = (1 - self.s) * h
       local half_thumb = h / 20
       p:fillRect(0, t-half_thumb, w, 2*half_thumb, self.thumb_color)
+      -- show current value
+      p:drawText(0, h - TEXT_PADDING - 20, w, 20, mimas.AlignCenter, self.conn_s:printValue())
     end
   end
 

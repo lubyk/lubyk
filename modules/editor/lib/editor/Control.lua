@@ -160,6 +160,7 @@ function lib:click(x, y, op, btn, mod)
     self:control(x, y)
   else
     self.show_thumb = false
+    self:update()
   end
 end
 

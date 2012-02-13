@@ -16,9 +16,13 @@ local private    = {}
 setmetatable(lib, {
   __call = function(lib, ctrl, name, info)
     local self = {
-      ctrl = ctrl,
-      name = name,
-      info = info,
+      ctrl  = ctrl,
+      name  = name,
+      info  = info,
+      -- Value as notified by remote end.
+      remote_value = 0,
+      -- Value set by GUI (0-1 scale).
+      value = 0,
     }
     return setmetatable(self, lib)
   end,
@@ -58,6 +62,7 @@ function lib:set(def, zone)
 
   if not range then
     function self.change(value)
+      self.value = value
       if process.online then
         setter[param_name] = value
         process.push:send(UPDATE_URL, msg)
@@ -65,10 +70,12 @@ function lib:set(def, zone)
     end
     -- ! No 'self' here.
     function self.changed(value)
+      self.remote_value = value
       changed(ctrl, name, value)
     end
   else
     function self.change(value)
+      self.value = value
       if process.online then
         setter[param_name] = min + value * range
         process.push:send(UPDATE_URL, msg)
@@ -76,6 +83,7 @@ function lib:set(def, zone)
     end
     -- ! No 'self' here.
     function self.changed(value)
+      self.remote_value = value
       changed(ctrl, name, (value-min) / range)
     end
   end
@@ -104,6 +112,17 @@ function lib:change()
   -- noop
 end
 
+-- Text representation of value
+function lib:printValue()
+  local v = self.remote_value
+  if v > 10 then
+    return string.format('%i', v)
+  else
+    return string.format('%.2f', v)
+  end
+end
+
+--=============================================== PRIVATE
 function private:connect(process, url)
   self.url = url
 
