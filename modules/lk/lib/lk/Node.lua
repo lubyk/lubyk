@@ -22,12 +22,14 @@ setmetatable(lib, {
   local env  = {}
   -- new node
   local self = {
-    -- inlets not in sorted_inlets are removed on gc
+    -- inlets not in slots.inlets are removed on gc
     inlets         = setmetatable({}, {__mode = 'v'}),
-    sorted_inlets  = {},
     -- outlets not in sorted_outlets are removed on gc
     outlets        = setmetatable({}, {__mode = 'v'}),
-    sorted_outlets = {},
+    slots = {
+      inlets  = {},
+      outlets = {},
+    },
     env            = env,
     errors         = {},
     name           = name,
@@ -77,25 +79,27 @@ end
 
 -- function to reload code
 function lib:eval(code_str)
-  -- hold to all current outlets
-  local old_outlets = self.sorted_outlets
-  local old_inlets  = self.sorted_inlets
-  self.sorted_outlets = {}
-  self.sorted_inlets  = {}
-
   local code, err = loadstring(code_str)
   if not code then
-    self.sorted_outlets = old_outlets
-    self.sorted_inlets  = old_inlets
     self:error(err)
     return
   end
+
+  -- Hold to all current slots
+  local gc_protect = {self.inlets, self.outlets}
+
+  -- In case of error, we rollback
+  local old_slots  = self.slots
+  self.slots = {
+    inlets  = {},
+    outlets = {},
+  }
+
   -- code will execute in node's environment
   setfenv(code, self.env)
-  local ok, err = sched:pcall(code)
+  local ok, err = pcall(code)
   if not ok then
-    self.sorted_outlets = old_outlets
-    self.sorted_inlets  = old_inlets
+    self.slots = old_slots
     self:error(err)
   else
     self.code = code_str
@@ -234,8 +238,8 @@ function lib:dump()
     code = self.code,
     --- Params
     _    = private.dumpParams(self, true),
-    inlets  = dumpSlots(self.sorted_inlets),
-    outlets = dumpSlots(self.sorted_outlets),
+    inlets  = dumpSlots(self.slots.inlets),
+    outlets = dumpSlots(self.slots.outlets),
   }
 end
 
@@ -252,9 +256,10 @@ function lib:partialDump(data)
 
   if data.code or data.links then
     -- code changes can alter slots: dump them
+
     res.has_all_slots = true
-    res.inlets  = dumpSlots(self.sorted_inlets)
-    res.outlets = dumpSlots(self.sorted_outlets, data.links)
+    res.inlets  = dumpSlots(self.slots.inlets)
+    res.outlets = dumpSlots(self.slots.outlets, data.links)
     res._       = private.dumpParams(self, true)
   end
   return res

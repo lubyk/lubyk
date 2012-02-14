@@ -15,25 +15,19 @@ setmetatable(lib, {
   -- lk.Outlet(node)
   -- Create a new outlet and insert it into
   -- node.
- __call = function(lib, node, name, ...)
-  local instance = node.outlets[name]
-  if not instance then
-    instance = {node = node, connections = {}}
-    setmetatable(instance, lib)
-    node.outlets[name] = instance
-  end
-  table.insert(node.sorted_outlets, instance)
-  function instance.send(...)
-    lib.send(instance, ...)
-  end
-  instance:set(name, ...)
-  return instance.send
-end})
+ __call = function(lib, name, node)
+  local self = {
+    name = name,
+    node = node,
+    connections = {},
+  }
 
-function lib:set(name, info)
-  self.name = name
-  self.info = info
-end
+  function self.send(...)
+    self.send(self, ...)
+  end
+
+  return setmetatable(self, lib)
+end})
 
 function lib:send(...)
   for _,slot in ipairs(self.connections) do
@@ -41,7 +35,13 @@ function lib:send(...)
   end
 end
 
--- TODO: performance compile new 'instance.send' method
+function lib:set(opts)
+  -- noop for the moment. We could change the type of zmq
+  -- operation (work distribution).
+end
+
+-- TODO: performance compile new 'instance.send' method by
+-- generating lua code and evaluating the code with upvalues.
 function lib:connect(inlet)
   for _,slot in ipairs(self.connections) do
     if slot == inlet then

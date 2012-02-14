@@ -15,20 +15,22 @@ setmetatable(lib, {
   -- new method
  __call = function(lib, node)
   -- Create outlet() method/accessor for a given node
-  local self = {_node = node, _outlets = {}}
-  setmetatable(self, lib)
-  return self
+  local self = {node = node}
+  return setmetatable(self, lib)
 end})
 
-function lib:__index(key)
-  return self._node.outlets[key]
-end
-
-function lib:__call(...)
-  local name = ...
-  -- outlet(name, info)
-  -- Declare a new outlet
-  local outlet = lk.Outlet(self._node, ...)
-  self._node.env[name] = outlet
+function lib:__call(name, opts)
+  local node = self.node
+  -- Declare or update an outlet.
+  local oultet = node.outlets[name]
+  if not oultet then
+    outlet = lk.Outlet(name, self.node)
+    node.outlets[name] = outlet
+  end
+  if opts then
+    outlet:set(opts)
+  end
+  table.insert(node.slots.outlets, outlet)
+  node.env[name] = outlet.send
   return outlet
 end

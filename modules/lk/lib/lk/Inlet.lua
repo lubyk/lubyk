@@ -10,53 +10,25 @@ local lib   = {type='lk.Inlet'}
 lib.__index = lib
 lk.Inlet    = lib
 
----------------------------------------------------------- PRIVATE
-
----------------------------------------------------------- PUBLIC
 setmetatable(lib, {
   -- lk.Inlet(node)
   -- Create a new inlet
- __call = function(lib, node, name, ...)
+ __call = function(lib, name, node)
   local self
   if type(node) == 'string' then
+    -- Pending inlet.
     self = {
-      name       = node,
-      target_url = name,
+      name       = name,
+      target_url = node,
     }
-    -- pending inlet
-    setmetatable(self, lib)
   else
-    self = node.inlets[name]
-    if not self then
-      self = node.pending_inlets[name]
-      if self then
-        self.target_url = nil
-        node.pending_inlets[name] = nil
-      else
-        self = {name = name}
-        setmetatable(self, lib)
-      end
-      -- set node
-      self.node = node
-      node.inlets[name] = self
-    end
-    table.insert(node.sorted_inlets, self)
-    self:set(name, ...)
+    self = {
+      name = name,
+    }
   end
 
-  if not self.receive then
-    -- temporary dummy method
-    function self.receive(...)
-      print(string.format("'function inlet.%s' not defined.", self.name))
-    end
-  end
-  return self
+  return setmetatable(self, lib)
 end})
-
-function lib:set(name, info)
-  self.name = name
-  self.info = info
-end
 
 function lib.receive(...)
   print('Inlet function not set.')
@@ -65,7 +37,6 @@ end
 function lib:dump()
   return {
     name = self.name,
-    info = self.info
   }
 end
 

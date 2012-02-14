@@ -21,19 +21,26 @@ setmetatable(lib, {
   return instance
 end})
 
-function lib.__call(self, ...)
-  -- inlet(name, info)
-  -- Declare a new inlet
-  return lk.Inlet(self.node, ...)
-end
-
 function lib.__newindex(self, name, func)
   -- inlet.foo(xxx)
   -- Set an inlet callback
-  local inlet = self.node.inlets[name]
+  local node = self.node
+  local inlet = node.inlets[name]
   if not inlet then
-    error(string.format("Inlet '%s' not declared.", name))
+    inlet = node.pending_inlets[name]
+    if inlet then
+      inlet.target_url = nil
+      node.pending_inlets[name] = nil
+    else
+      -- New inlet
+      inlet = lk.Inlet(name, node)
+    end
+    -- set node
+    inlet.node = node
+    node.inlets[name] = inlet
   end
+  -- Each time we redeclare an inlet, we add it.
+  table.insert(node.slots.inlets, inlet)
 
   -- Protection with pcall
   inlet.receive = function(...)

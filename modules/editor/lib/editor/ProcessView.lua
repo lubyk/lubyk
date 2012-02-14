@@ -136,7 +136,7 @@ local function clickOnLink(self, x, y, type, btn, mod)
     if process.view then
       -- Only test if links are shown
       for _, node in pairs(process.nodes) do
-        for _, outlet in ipairs(node.sorted_outlets) do
+        for _, outlet in ipairs(node.slots.outlets) do
           for _, link in ipairs(outlet.links) do
             local link_view = link.view
             if link_view then
@@ -283,16 +283,16 @@ function lib:closestSlotView(gx, gy, for_type, skip_node)
   gx = gx - SLOTW/2
   gy = gy - SLOTH/2
   -- find the closest slot
-  local d, view, list_name = nil
+  local d, view, list_name
   if for_type == 'editor.Outlet' then
-    list_name = 'sorted_inlets'
+    list_name = 'inlets'
   else
-    list_name = 'sorted_outlets'
+    list_name = 'outlets'
   end
 
   for _, node in pairs(self.process.nodes) do
     if node ~= skip_node then
-      for _, slot in ipairs(node[list_name]) do
+      for _, slot in ipairs(node.slots[list_name]) do
         local di = distanceToSlot(gx, gy, slot.view)
         if not d or di < d then
           d = di

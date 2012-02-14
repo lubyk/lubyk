@@ -247,8 +247,7 @@ function lib:newNode(definition)
   if not definition.class then
     definition.code = definition.code or [=[
 --[[
-inlet('input', 'Information on input [type].')
-outlet('output', 'Information on output [type].')
+outlet 'output'
 
 function inlet.input(val)
   -- print and pass through

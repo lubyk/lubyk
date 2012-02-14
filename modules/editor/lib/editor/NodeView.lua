@@ -58,7 +58,7 @@ end
 local function placeElements(self)
   -- inlets
   placeSlots(self,
-    self.node.sorted_inlets,
+    self.node.slots.inlets,
     -- start x
     PAD + TEXT_HPADDING,
     -- start y
@@ -68,7 +68,7 @@ local function placeElements(self)
   )
 
   placeSlots(self,
-    self.node.sorted_outlets,
+    self.node.slots.outlets,
     -- start x
     PAD + TEXT_HPADDING,
     -- start y
@@ -100,8 +100,8 @@ function lib:updateView()
   if not self.is_ghost then
     self:move(node.x, node.y)
   end
-  updateSlotViews(node.sorted_inlets)
-  updateSlotViews(node.sorted_outlets)
+  updateSlotViews(node.slots.inlets)
+  updateSlotViews(node.slots.outlets)
   placeElements(self)
   -- forces redraw
   self:update()
@@ -235,7 +235,7 @@ function lib:click(x, y, op, btn, mod)
         }
         ---- Update all incoming links
         local old_process_len = string.len(old_process:url())
-        for _, inlet in ipairs(self.node.sorted_inlets) do
+        for _, inlet in ipairs(self.node.slots.inlets) do
           local url = process:url() .. string.sub(inlet:url(), old_process_len + 1)
           for _,link in ipairs(inlet.links) do
             local node = link.source.node

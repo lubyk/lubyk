@@ -34,9 +34,12 @@ setmetatable(lib, {
     x              = 100,
     y              = 100,
     inlets         = setmetatable({}, WeakTable),
-    sorted_inlets  = {},
     outlets        = setmetatable({}, WeakTable),
-    sorted_outlets = {},
+    -- Sorted slots.
+    slots = {
+      inlets  = {},
+      outlets = {},
+    },
     process        = process,
     parent         = process,
     zone           = process.zone,
@@ -93,11 +96,11 @@ function lib:set(def)
   self:setHue(def.hue or self.hue)
 
   if def.inlets then
-    self:setInlets(def.inlets, def.has_all_slots)
+    private.setSlots(self, 'inlets', def.inlets, def.has_all_slots)
   end
 
   if def.outlets then
-    self:setOutlets(def.outlets, def.has_all_slots)
+    private.setSlots(self, 'outlets', def.outlets, def.has_all_slots)
   end
 
   if view_update and self.process.view then
@@ -117,7 +120,7 @@ end
 -- process to another)
 function lib:dump()
   local res = {name = self.name, hue = self.hue, code = self.code}
-  res.links = dumpSlots(self.sorted_outlets)
+  res.links = dumpSlots(self.slots.outlets)
   res._ = self.params
 
   return res
@@ -148,67 +151,11 @@ function lib:setHue(hue)
   self.bg_color = mimas.Color(self.hue, 0.2, 0.2)
 end
 
---- Create inlets from a list of defined slots.
-function lib:setInlets(list, has_all_slots)
-  local sorted_inlets = self.sorted_inlets
-  local inlets        = self.inlets
-  -- Garbage collection protection during inlet parsing.
-  local gc = sorted_inlets
-  if has_all_slots then
-    self.sorted_inlets = {}
-    sorted_inlets = self.sorted_inlets
-  end
-
-  for _, def in ipairs(list) do
-    local name = def.name
-    if inlets[name] then
-      -- update ?
-      inlets[name]:set(def)
-      if has_all_slots then
-        -- OK, we keep this inlet
-        table.insert(sorted_inlets, inlet)
-      end
-    else
-      -- Add a new inlet
-      local inlet = editor.Inlet(self, name, def)
-      table.insert(sorted_inlets, inlet)
-      inlets[name] = inlet
-    end
-  end
-end
-
 -- The process is going offline, we need to transform connected
 -- inlets from other processes to pending_inlets.
 function lib:disconnectProcess(process)
-  for _, outlet in ipairs(self.sorted_outlets) do
+  for _, outlet in ipairs(self.slots.outlets) do
     outlet:disconnectProcess(process)
-  end
-end
-
---- Create outlets from a list of defined slots.
-function lib:setOutlets(list)
-  local sorted_outlets = self.sorted_outlets
-  local outlets        = self.outlets
-  -- Garbage collection protection during outlet parsing.
-  local gc = sorted_outlets
-  if has_all_slots then
-    self.sorted_outlets = {}
-    sorted_outlets = self.sorted_outlets
-  end
-
-  for _, def in ipairs(list) do
-    local name = def.name
-    if outlets[name] then
-      -- update ?
-      outlets[name]:set(def)
-      if has_all_slots then
-        table.insert(sorted_outlets, outlet)
-      end
-    else
-      local outlet = editor.Outlet(self, name, def)
-      table.insert(sorted_outlets, outlet)
-      outlets[name] = outlet
-    end
   end
 end
 
@@ -263,12 +210,10 @@ function lib:deleteView()
     self.ghost = nil
   end
 
-  for _, slot in ipairs(self.sorted_outlets) do
-    slot:deleteViews()
-  end
-
-  for _, slot in ipairs(self.sorted_inlets) do
-    slot:deleteViews()
+  for _, list in pairs(self.slots) do
+    for _, slot in ipairs(list) do
+      slot:deleteViews()
+    end
   end
 end
 
@@ -285,8 +230,10 @@ function lib.makeGhost(node_def, zone)
     name           = node_def.name,
     x              = 0,
     y              = 0,
-    sorted_inlets  = {},
-    sorted_outlets = {},
+    slots = {
+      inlets  = {},
+      outlets = {},
+    },
     zone       = zone,
   }
   editor.Node.setHue(node, node_def.hue or 0.2)
@@ -419,3 +366,53 @@ function lib:disconnectConnector(conn)
   conn.node = nil
 end
 
+--=============================================== PRIVATE
+
+function private:setSlots(key, list, has_all_slots)
+  local slots = self.slots[key]
+  -- Unique key to mark updated slot.
+  local mark          = {}
+  local slot_by_name  = self[key]
+  -- Garbage collection protection during slot parsing.
+  local gc = slots
+  if has_all_slots then
+    -- clear
+    slots = {}
+    self.slots[key] = slots
+  end
+
+  for _, def in ipairs(list) do
+    local name = def.name
+    local slot = slot_by_name[name]
+    if slot then
+      slot:set(def)
+      if has_all_slots then
+        -- Add slot back.
+        table.insert(slots, slot)
+      end
+    else
+      -- Add a new inlet/outlet.
+      if key == 'inlets' then
+        slot = editor.Inlet(self, name, def)
+      else
+        slot = editor.Outlet(self, name, def)
+      end
+      table.insert(slots, slot)
+      slot_by_name[name] = slot
+    end
+    if has_all_slots then
+      slot.mark = mark
+    end
+  end
+
+  if has_all_slots then
+    for name, slot in pairs(slot_by_name) do
+      if slot.mark ~= mark then
+        slot_by_name[name] = nil
+        if slot.view then
+          slot.view:hide()
+        end
+      end
+    end
+  end
+end
