@@ -398,13 +398,16 @@ end
 
 -- This is called by connector.
 function lib:disconnectConnector(conn)
-  local list = self.controls[param_name]
+  local list = self.controls[conn.param_name]
   if list then
     for i, c in ipairs(list) do
       if c == conn then
         table.remove(list, i)
         break
       end
+    end
+    if #list == 0 then
+      self.controls[conn.param_name] = nil
     end
   end
   conn.node_conn_list = nil

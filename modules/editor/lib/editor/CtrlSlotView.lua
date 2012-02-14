@@ -8,15 +8,14 @@
 --]]------------------------------------------------------
 local lib = lk.SubClass(mimas, 'Widget')
 editor.CtrlSlotView = lib
+lib.stype = 'ctrl'
 local private = {}
 
 --=============================================== CONSTANTS
 local HPEN_WIDTH = 1
-local CONNECT_DIST = 150
 
-function lib:init(conn, ctrl_link_view)
-  self.ctrl_link_view = ctrl_link_view
-  self.zone  = ctrl_link_view.zone
+function lib:init(conn, link_editor)
+  self.link_editor = link_editor
   self.conn  = conn
   self.name  = conn.name
   self:setTitle(conn.name)
@@ -29,18 +28,30 @@ function lib:connected()
   return self.conn.node and true
 end
 
+function lib:select(selected)
+  self.selected = selected
+  self:setHue(self.hue)
+  self:update()
+end
+
 function lib:setHue(hue)
   if hue then
     self.hue = hue
+  else
+    hue = self.hue
   end
 
-  if self:connected() then
+  self.pen   = mimas.Pen(HPEN_WIDTH * 2, mimas.Color(hue, 0.3, 0.8, 0.8))
+
+  if self.selected then
+    -- selected
+    self.brush = mimas.Brush(mimas.Color(hue, 0.3, 0.8, 0.8))
+  elseif self:connected() then
     -- connected
-    self.pen   = mimas.Pen(HPEN_WIDTH * 2, mimas.Color(hue, 0.3, 0.8, 0.8))
     self.brush = mimas.Brush(mimas.Color(hue, 0.3, 0.3, 0.8))
   else
     -- not connected
-    self.pen   = mimas.Pen(HPEN_WIDTH * 2, mimas.Color(hue, 0, 0.8, 0.8))
+    self.pen   = mimas.Pen(HPEN_WIDTH * 2, mimas.Color(hue, 0, 0.5, 0.8))
     self.brush = mimas.Brush(mimas.Color(hue, 0, 0.3, 0.8))
   end
 end
@@ -50,7 +61,6 @@ lib.paint        = editor.ProcessTab.paint
 lib.setAlignment = editor.ProcessTab.setAlignment
 
 --=============================================== Widget callbacks
-
 
 function lib:resized(w, h)
   self.w = w
@@ -62,42 +72,26 @@ local MouseRelease = mimas.MouseRelease
 
 function lib:click(x, y, op)
   if op == MousePress then
-    self.drag = {
-      x = x,
-      y = y,
-    }
-    local gx, gy = self:globalPosition()
-    self.gx = gx
-    self.gy = gy
+    self.link_editor:selectSource(self)
+    self.gx, self.gy = self:globalPosition()
   elseif op == MouseRelease then
     -- Create link and/or clear dragged path.
-    self.ctrl_link_view:endDrag(self)
+    self.link_editor:endDrag(self.stype)
   end
 end
 
 function lib:mouse(x, y)
-  local view = self.ctrl_link_view
+  local link_editor = self.link_editor
   local gx, gy = self.gx, self.gy
-  local drag = self.drag
-  drag.x = gx + x
-  drag.y = gy + y
+  x = gx + x
+  y = gy + y
 
-  local zone = self.zone
-  local node, dist = zone:closestNodeAtGlobal(self.gx + x, self.gy + y)
-  -- highlight node and show connection options
-  if dist < CONNECT_DIST and node then
-    zone:selectNodeView(node.view)
-    view:setNode(node)
-  else
-    zone:selectNodeView(nil)
-    view:setNode(nil)
-  end
+  link_editor:selectClosestSlot(self.stype, x, y)
 
-  view:setPath(
+  link_editor:setPath(
     self,
-    drag.x,
-    drag.y,
-    gx,
-    gy + self.h/2
+    x,
+    y,
+    'drag'
   )
 end

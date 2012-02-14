@@ -163,4 +163,7 @@ function private.set:_views(data)
       views[name] = self.zone.control_tabs:addView(name, info)
     end
   end
+  if self.zone.view.link_editor then
+    self.zone.view.link_editor:rebuildPaths()
+  end
 end

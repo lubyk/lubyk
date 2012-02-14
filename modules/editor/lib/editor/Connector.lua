@@ -168,6 +168,13 @@ end
 
 --=============================================== PRIVATE
 function private:connect(process, url)
+  if self.url then
+    -- disconnect
+    if self.node then
+      self.node:disconnectConnector(self)
+    end
+  end
+
   self.url = url
 
   -- Takes a target link like '/a/metro/_/tempo'

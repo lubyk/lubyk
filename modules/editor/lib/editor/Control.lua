@@ -271,13 +271,9 @@ function private:showContextMenu(gx, gy)
 end
 
 function private:startLink()
-  local ghost = editor.CtrlLinkView(self.zone)
-  ghost:setCtrl(self)
-
-  self.meta_op = {
-    op    = 'link',
-    ghost = ghost,
-  }
+  local link_editor = editor.LinkEditor(self.zone)
+  self.zone.view.link_editor = link_editor
+  link_editor:setCtrl(self)
 end
 
 
