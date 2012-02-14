@@ -134,20 +134,20 @@ function lib:set(def, zone)
 
   if connecting then
     -- We do this last, when change/changed callbacks are set.
-    self.node:connectControl(self)
+    self.node:connectConnector(self)
   end
 end
 
 function lib:setEnabled(enabled)
+  self.enabled = enabled
   self.ctrl:setEnabled(self.name, enabled)
 end
 
 function lib:disconnect()
   self.change = lib.change
   if self.node then
-    self.node:disconnectControl(self)
+    self.node:disconnectConnector(self)
   end
-  self.node   = nil
 end
 
 function lib:change()

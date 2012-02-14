@@ -10,7 +10,10 @@ local lib = lk.SubClass(editor, 'Control')
 _control.lk.Pad = lib
 
 -- default slider size
-local DEFAULT = {w = 100, h = 100}
+function lib:init(id, view)
+  self:initControl(id, view)
+end
+local const = _control.lk.Slider.const
 local TEXT_PADDING = 5
 
 function lib:init(id, view)
@@ -19,7 +22,7 @@ function lib:init(id, view)
     x = 'Pad x value',
     y = 'Pad y value',
   }
-  self:resize(DEFAULT.w, DEFAULT.h)
+  self:resize(const.DEFAULT.h, const.DEFAULT.h)
 end
 
 function lib:resized(w, h)
@@ -56,13 +59,20 @@ function lib:paintControl(p, w, h)
   if self.show_thumb then
     -- thumb
     local tx, ty = cx.value * w, (1 - cy.value) * h
-    local half_thumb = math.min(w, h) / 20
+    local half_thumb = math.min(math.min(w, h) / const.THUMB_RATIO, const.THUMB_MAX)
 
     p:setBrush(self.thumb_color)
     p:drawEllipse(tx - half_thumb, ty - half_thumb, 2 * half_thumb, 2 * half_thumb)
     -- show current value
     local txt = string.format('%s / %s', cx:printValue(), cy:printValue())
-    p:drawText(TEXT_PADDING, 0, w - TEXT_PADDING, h - TEXT_PADDING, mimas.AlignLeft + mimas.AlignBottom, txt)
+    p:drawText(
+      const.TEXT_PADDING,
+      0,
+      w - const.TEXT_PADDING,
+      h - const.TEXT_PADDING,
+      mimas.AlignLeft + mimas.AlignBottom,
+      txt
+    )
   end
   
   -- border

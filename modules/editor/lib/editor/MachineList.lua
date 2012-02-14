@@ -20,7 +20,7 @@ function lib:init(zone_view)
   self.zone_view = zone_view
   self.zone = zone_view.zone
   self.vbox = mimas.VBoxLayout(self)
-  self.vbox:setContentsMargins(0,40,0,0)
+  self.vbox:setContentsMargins(0,0,0,20)
   self.vbox:setSpacing(PADDING)
   self.machines = {}
   self.machine_view_list = {}
@@ -82,19 +82,21 @@ end
 function lib:updatePosition()
   local main = self.zone_view
   local w, h = self.vbox:minimumSize()
+  local _, gy = main:globalPosition()
+  local gy = gy + main:height() - h
   self:resize(w, h)
   if self.patch_visible and self.controls_visible then
     -- center in the middle
-    local gx, gy = main.control_tabs:globalPosition()
+    local gx, _ = main.control_tabs:globalPosition()
     self:globalMove(gx - w/2, gy)
   elseif self.patch_visible then
     -- align right
-    local gx, gy = main.patch_view:globalPosition()
+    local gx, _ = main.patch_view:globalPosition()
     local pw = main.patch_view.w or main.patch_view:width()
     self:globalMove(gx + pw - w, gy)
   elseif self.controls_visible then
     -- align left
-    local gx, gy = main.patch_view:globalPosition()
+    local gx, _ = main.patch_view:globalPosition()
     self:globalMove(gx, gy)
   else
     -- none visible ?
@@ -108,5 +110,4 @@ function private:machineLayoutChanged()
     machine.view:layoutChanged(self.patch_visible, self.controls_visible)
   end
 end
-
 

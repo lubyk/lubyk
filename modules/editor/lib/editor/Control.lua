@@ -13,6 +13,11 @@ local private = {}
 local DRAG_CORNER = 20
 
 --=============================================== METHODS TO REIMPLEMENT
+-- Initialize control
+function lib:init(id, view)
+  -- MUST call this method first.
+  self:initControl(id, view)
+end
 
 -- Handle mouse event on the control.
 function lib:control(x, y)
@@ -22,10 +27,6 @@ end
 function lib:paintControl(p, w, h)
 end
 --=============================================== PUBLIC
-function lib:init(id, view)
-  self:initControl(id, view)
-  self:setCssClass('control')
-end
 
 function lib:changed(key, value)
   self:update()
@@ -39,6 +40,7 @@ function lib:initControl(id, view)
   if view then
     self.zone = view.zone
   end
+  self:setCssClass('control')
   self:setHue(math.random())
 end
 
@@ -258,12 +260,9 @@ function private:showContextMenu(gx, gy)
   end
   self.menu = menu
 
-  for _, conn in ipairs(self.connectors) do
-    menu:addAction('link '..conn.name, '', function()
-      private.startLink(self, conn)
-    end)
-  end
-  menu:addSeparator()
+  menu:addAction('Link', '', function()
+    private.startLink(self)
+  end)
   menu:addAction('Remove', '', function()
     self:change(false)
   end)
@@ -271,12 +270,12 @@ function private:showContextMenu(gx, gy)
   menu:popup(gx - 5, gy - 5)
 end
 
-function private:startLink(conn)
-  local ghost = editor.CtrlLinkView(conn, self.zone)
+function private:startLink()
+  local ghost = editor.CtrlLinkView(self.zone)
+  ghost:setCtrl(self)
 
   self.meta_op = {
     op    = 'link',
-    conn  = conn,
     ghost = ghost,
   }
 end

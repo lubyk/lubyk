@@ -326,7 +326,7 @@ end
 
 -- Returns an existing editor.Node or creates a pending node
 function lib:findNode(node_name)
-  local node = self.nodes[node_name]
+  local node = self.nodes[node_name] or self.pending_nodes[node_name]
   if not node then
     node = editor.Node(self, node_name, {})
     self.pending_nodes[node_name] = node

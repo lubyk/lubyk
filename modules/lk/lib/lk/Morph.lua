@@ -607,7 +607,6 @@ function private.update:_views(data)
         if not opt then
           view[id] = nil
         else
-          print(id, yaml.dump(opt))
           lk.deepMerge(view.cache, id, opt)
         end
       end

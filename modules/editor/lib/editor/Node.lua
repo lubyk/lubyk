@@ -152,6 +152,8 @@ end
 function lib:setInlets(list, has_all_slots)
   local sorted_inlets = self.sorted_inlets
   local inlets        = self.inlets
+  -- Garbage collection protection during inlet parsing.
+  local gc = sorted_inlets
   if has_all_slots then
     self.sorted_inlets = {}
     sorted_inlets = self.sorted_inlets
@@ -163,9 +165,11 @@ function lib:setInlets(list, has_all_slots)
       -- update ?
       inlets[name]:set(def)
       if has_all_slots then
+        -- OK, we keep this inlet
         table.insert(sorted_inlets, inlet)
       end
     else
+      -- Add a new inlet
       local inlet = editor.Inlet(self, name, def)
       table.insert(sorted_inlets, inlet)
       inlets[name] = inlet
@@ -185,6 +189,8 @@ end
 function lib:setOutlets(list)
   local sorted_outlets = self.sorted_outlets
   local outlets        = self.outlets
+  -- Garbage collection protection during outlet parsing.
+  local gc = sorted_outlets
   if has_all_slots then
     self.sorted_outlets = {}
     sorted_outlets = self.sorted_outlets
@@ -348,6 +354,7 @@ function lib:delete()
   for k, list in pairs(self.controls) do
     for _, conn in ipairs(list) do
       conn.node = nil
+      conn.node_conn_list = nil
       conn:disconnect()
     end
   end
@@ -373,7 +380,7 @@ function lib:disconnect()
   end
 end
 
-function lib:connectControl(conn)
+function lib:connectConnector(conn)
   local param_name = conn.param_name
   local list = self.controls[param_name]
   if not list then
@@ -390,7 +397,7 @@ function lib:connectControl(conn)
 end
 
 -- This is called by connector.
-function lib:disconnectControl(conn)
+function lib:disconnectConnector(conn)
   local list = self.controls[param_name]
   if list then
     for i, c in ipairs(list) do
@@ -401,5 +408,6 @@ function lib:disconnectControl(conn)
     end
   end
   conn.node_conn_list = nil
+  conn.node = nil
 end
 

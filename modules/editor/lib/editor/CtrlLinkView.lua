@@ -14,113 +14,153 @@ editor.CtrlLinkView = lib
 local HPEN_WIDTH = 1
 -- Link pen width
 local TEXT_PADDING = 3
-local CONNECT_DIST = 90
 local PLUG_HEIGHT = 20
 local ARC_RADIUS = 8
 local VECV  = 80      -- force vertical start/end
 local private = {}
 
-function lib:init(conn, zone)
+function lib:init(zone)
+  self.zone  = zone
+  self.paths = {}
+  self.slots = {}
+
   local view = zone.view
-  local ctrl = conn.ctrl
   view:addWidget(self)
-
-  self.conn = conn
-  self.zone = zone
-  self:setConnLabel(conn.name)
-  self:setHue(ctrl.hue)
-
   self:move(0,0)
+
   local vx, vy = view:globalPosition()
   self.gx = vx
   self.gy = vy
-  local cx, cy = ctrl:globalPosition()
-  self.w = cx - vx
+
+  self.w = view:width()
   self.h = view:height()
   self:resize(self.w, self.h)
-  -- Top of control in our coordinates.
-  self.cy = cy - vy
-  self:setMouseTracking(true)
-  self.path = mimas.Path()
+  self.back_color = mimas.Color(0, 0, 0.1, 0.5)
   self:show()
 end
 
-function lib:setConnLabel(name)
-  self.conn_lbl_w = self:textSize(name) + 4 * TEXT_PADDING + 2 * HPEN_WIDTH
-  self.conn_lbl = name
-end
-
-function lib:setHue(hue)
-  self.pen   = mimas.Pen(HPEN_WIDTH * 2, mimas.Color(hue, 0.3, 0.8, 0.8))
-  self.brush = mimas.Brush(mimas.Color(hue, 0.3, 0.3, 0.8))
-end
-
---=============================================== Widget callbacks
-
-function lib:mouse(x, y)
-  if self.dlg then
+function lib:setCtrl(ctrl)
+  if self.slots.ctrl then
+    self.slots.ctrl:hide()
+  end
+  if not ctrl then
+    self.slots.ctrl = nil
+    self.ctrl = nil
     return
   end
-  local zone = self.zone
-  private.makePath(self, x, y)
-  local node, dist = zone:closestNodeAtGlobal(self.gx + x, self.gy + y)
-  -- highlight node and show connection options
-  if dist < CONNECT_DIST and node then
-    zone:selectNodeView(node.view)
-  else
-    zone:selectNodeView(nil)
+  self.ctrl = ctrl
+
+  local slots = mimas.Widget()
+  self.slots.ctrl = slots
+  slots:setSizePolicy(mimas.Minimum, mimas.Fixed)
+  self.pen  = mimas.Pen(2, mimas.Color(ctrl.hue, 0.3, 0.8, 0.8))
+  slots.pen = self.pen
+  function slots:paint(p, w, h)
+    p:setPen(self.pen)
+    p:drawLine(w - 2, 0, w - 2, h)
   end
+
+  local vbox = mimas.VBoxLayout(slots)
+  vbox:setContentsMargins(0,8,3,8)
+  vbox:setSpacing(5)
+  slots.vbox = vbox
+  -- list of CtrlSlotViews.
+  slots.list = {}
+
+  for name, conn in ipairs(ctrl.connectors) do
+    local view = editor.CtrlSlotView(conn, self)
+    vbox:addWidget(view, 0, mimas.AlignRight)
+    slots.list[conn] = view
+    if conn.node and conn.node.view then
+      -- FIXME
+      -- draw path
+    end
+  end
+
+  self:addWidget(slots)
+  slots:show()
+  local w, h = vbox:minimumSize()
+  slots:resize(w, h)
+  local cx, cy = ctrl:globalPosition()
+  slots:globalMove(cx - w, cy)
+end
+
+function lib:setNode(node)
+  if self.slots.node then
+    self.slots.node:hide()
+  end
+  if not node then
+    self.slots.node = nil
+    self.node = nil
+    return
+  end
+
+  self.node = node
+  local slots = mimas.Widget()
+  self.slots.node = slots
+  slots:setSizePolicy(mimas.Minimum, mimas.Fixed)
+  self.pen  = mimas.Pen(2, mimas.Color(node.hue, 0.3, 0.8, 0.8))
+  slots.pen = self.pen
+  function slots:paint(p, w, h)
+    p:setPen(self.pen)
+    p:drawLine(1, 0, 1, h)
+  end
+
+  local vbox = mimas.VBoxLayout(slots)
+  vbox:setContentsMargins(2,8,0,8)
+  vbox:setSpacing(5)
+  slots.vbox = vbox
+  -- list of ParamSlotViews.
+  slots.list = {}
+
+  local list = {}
+  for key, val in pairs(node.params) do
+    -- Sorted params list
+    local i = 1
+    while list[i] and key >= list[i] do
+      i = i + 1
+    end
+    table.insert(list, i, key)
+  end
+
+  for _, name in ipairs(list) do
+    local view = editor.ParamSlotView(name, node, self)
+    vbox:addWidget(view, 0, mimas.AlignLeft)
+    slots.list[name] = view
+    if false then
+      -- FIXME
+      -- draw path
+    end
+  end
+
+  self:addWidget(slots)
+  slots:show()
+  local w, h = vbox:minimumSize()
+  slots:resize(w, h)
+  local nx, ny = node.view:globalPosition()
+  slots:globalMove(nx + node.view:width(), ny)
+end
+
+function lib:closestSlot(key, gx, gy)
+  local list = self.slots[key]
+  -- self.slots.ctrl.list
+  list = list and list.list
+  if list then
+  end
+end
+
+function lib:endDrag(key)
+  if self.node and self.ctrl then
+    -- make link to closest slot
+  end
+  self.paths[key] = nil
   self:update()
 end
 
-local noBrush = mimas.EmptyBrush
-
-function lib:click(x, y, op, btn, mod)
-  if op == mimas.MousePress then
-    -- Find node under click
-    local node_view
-    for _, view in pairs(self.zone.selected_node_views) do
-      node_view = view
-      break
-    end
-    if node_view then
-      private.showContextMenu(self, node_view.node, self.gx + x, self.gy + y)
-    else
-      private.cleanup(self)
-    end
-  end
-end
-
-local noBrush = mimas.EmptyBrush
-
--- custom paint
-function lib:paint(p, w, h)
-  p:setBrush(self.brush)
-  p:setPen(self.pen)
-  local lbl_w = self.conn_lbl_w
-  local bx, by = self.w - lbl_w, self.cy + HPEN_WIDTH
-  p:drawRoundedRect(bx, by, lbl_w + ARC_RADIUS + 10, PLUG_HEIGHT, ARC_RADIUS)
-
-  p:setPen(mimas.Pen(1, mimas.Color(0, 0, 1)))
-  p:drawText(bx + 2 * TEXT_PADDING, by + TEXT_PADDING, lbl_w - 4*TEXT_PADDING, PLUG_HEIGHT - 2*TEXT_PADDING, mimas.AlignRight + mimas.AlignVCenter, self.conn.name)
-
-  p:setBrush(noBrush)
-  p:setPen(self.pen)
-  p:drawPath(self.path)
-end
-
---=============================================== PRIVATE
-
--- x1,y1 = mouse
-function private:makePath(x1, y1)
-  local x2, y2 = self.w - self.conn_lbl_w, self.cy + PLUG_HEIGHT/2
+function lib:setPath(key, x1, y1, x2, y2)
   local path = mimas.Path()
-  if x1 > x2 then
-    -- no path
-    self.path = path
-    return
-  end
-
+  x1, x2 = x1 - self.gx, x2 - self.gx
+  y1, y2 = y1 - self.gy, y2 - self.gy
 
   path:moveTo(x1, y1)
   local vect = math.min(VECV, math.abs(y2 - y1)*0.3 + VECV*0.1);
@@ -131,8 +171,27 @@ function private:makePath(x1, y1)
     x2 - vect, y2,
     x2, y2
   )
-  self.path = path
+  self.paths[key] = path
+  self:update()
 end
+--=============================================== Widget callbacks
+
+local noBrush = mimas.EmptyBrush
+
+-- Draw links ?
+function lib:paint(p, w, h)
+  p:fillRect(0, 0, w, h, self.back_color)
+  p:setBrush(noBrush)
+  p:setPen(self.pen)
+  for _, path in pairs(self.paths) do
+    p:drawPath(path)
+  end
+end
+
+function lib:click()
+  private.cleanup(self)
+end
+--=============================================== PRIVATE
 
 -- Show node params editor menu
 function private:showContextMenu(node, gx, gy)
@@ -216,5 +275,6 @@ end
 function private:cleanup()
   self:hide()
   self.zone:selectNodeView(nil)
-  self.conn.ctrl.meta_op = nil
+  self.ctrl.meta_op = nil
 end
+
