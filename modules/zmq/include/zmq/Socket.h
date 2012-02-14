@@ -34,6 +34,7 @@
 #include "lubyk/time_ref.h"
 
 #include "lubyk.h"
+#include "lua_cpp_helper.h"
 
 #include <stdlib.h> // rand()
 #include <time.h>   // time()
@@ -233,23 +234,30 @@ public:
    * We pass the lua_State to avoid mixing thread contexts.
    */
   LuaStackSize recv(lua_State *L) {
-    zmq_msg_t msg;
-    zmq_msg_init(&msg);
+    zmq_msg_t recv_msg;
+    zmq_msg_init(&recv_msg);
 
-    if (zmq_recv(socket_, &msg, ZMQ_NOBLOCK)) {
-      zmq_msg_close(&msg);
+    if (zmq_recv(socket_, &recv_msg, ZMQ_NOBLOCK)) {
+      zmq_msg_close(&recv_msg);
       // We always waitRead before we arrive here, so we should never get
       // EAGAIN.
       throw_recv_error(errno);
     }
 
-    int arg_size = msgpack_bin_to_lua(L, zmq_msg_data(&msg), zmq_msg_size(&msg));
-    zmq_msg_close(&msg);
+    int arg_size;
+    try {
+      arg_size = msgpack_bin_to_lua(L, zmq_msg_data(&recv_msg), zmq_msg_size(&recv_msg));
+    } catch (dub::Exception e) {
+      zmq_msg_close(&recv_msg);
+      throw;
+    }
+    zmq_msg_close(&recv_msg);
     return arg_size;
   }
 
   /** Send a message packed with msgpack.
    * Varying parameters.
+   * Can throw a dub::Exception.
    * @return false in case the send buffer is full.
    */
   bool send(lua_State *L) {
@@ -288,6 +296,7 @@ public:
   }
 
   /** Request = remote call. Can be used by multiple threads.
+   * Can throw dub::Exception.
    */
   LuaStackSize request(lua_State *L) {
     bool timed_out = false;
@@ -350,7 +359,13 @@ public:
       lua_pushnil(L);
       return 1;
     } else {
-      int arg_size = msgpack_bin_to_lua(L, zmq_msg_data(&recv_msg), zmq_msg_size(&recv_msg));
+      int arg_size;
+      try {
+        arg_size = msgpack_bin_to_lua(L, zmq_msg_data(&recv_msg), zmq_msg_size(&recv_msg));
+      } catch (dub::Exception e) {
+        zmq_msg_close(&recv_msg);
+        throw;
+      }
       zmq_msg_close(&recv_msg);
       return arg_size;
     }

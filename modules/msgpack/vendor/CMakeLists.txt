@@ -6,7 +6,7 @@
 include_directories(src)
 
 file(GLOB MSGPACK_SOURCES src/*.c)
-build_sub_module("vendor" lubyk.c ${MSGPACK_SOURCES})
+build_sub_module("vendor" lubyk.cpp ${MSGPACK_SOURCES})
 
 # ----------------------------------------------------------------------------------
 #  [/lubyk]

@@ -41,12 +41,12 @@ extern "C" {
   	char* data;
   	size_t alloc;
   } msgpack_sbuffer;
-
-  void msgpack_lua_to_bin(lua_State *L, msgpack_sbuffer **buffer, int skip_index = 0);
-  int  msgpack_bin_to_lua(lua_State *L, void *msg, size_t msg_len);
-  void free_msgpack_msg(void *data, void *buffer);
-
 }
+
+bool msgpack_lua_to_bin(lua_State *L, msgpack_sbuffer **buffer, int skip_index = 0);
+int  msgpack_bin_to_lua(lua_State *L, void *msg, size_t msg_len);
+void free_msgpack_msg(void *data, void *buffer);
+
 
 
 #endif // LUBYK_INCLUDE_LUBYK_MSGPACK_H_
