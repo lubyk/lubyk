@@ -13,7 +13,12 @@ mimas.SimpleDialog = lib
 local private = {}
 --============================================= PUBLIC
 function lib.new(def)
-  local self = mimas.Widget(def.parent, def.flag or mimas.SheetFlag)  
+  local self
+  if def.parent then
+    self = mimas.Widget(def.parent, def.flag or mimas.SheetFlag)  
+  else
+    self = mimas.Widget()
+  end
   setmetatable(self, lib)
 
   self.widgets = {lay = mimas.VBoxLayout(self)}
@@ -21,7 +26,6 @@ function lib.new(def)
   for _,elem in ipairs(def) do
     private.makeWidget(self, self.widgets.lay, elem)
   end
-  -- Can we suspend execution until dialog ends ?
   self:resize(self:minimumSize())
   if def.flag == mimas.WidgetFlag then
     -- FIXME: do this properly...

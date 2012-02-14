@@ -36,6 +36,7 @@ function lib:init(machine)
   self.title = mimas.Widget()
   self.title:setSizePolicy(mimas.Minimum, mimas.Fixed)
   self.lay:addWidget(self.title)
+  self.title:show()
   self.vbox = mimas.VBoxLayout()
   self.lay:addWidget(self.vbox)
 
@@ -79,9 +80,11 @@ function lib:addProcess(service)
     -- add at end
     table.insert(self.process_list, view)
     self.vbox:insertWidget(-1, view, 0, mimas.AlignRight)
+    view:show()
   else
     table.insert(self.process_list, add_pos, view)
     self.vbox:insertWidget(add_pos-1, view, 0, mimas.AlignRight)
+    view:show()
   end
   self.machine_list:updatePosition()
 end

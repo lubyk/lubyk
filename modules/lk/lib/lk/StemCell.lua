@@ -20,6 +20,8 @@ setmetatable(lib, {
   local self = {
     -- Machine name
     name = Lubyk.host,
+    -- List of pids in case we must restart a process.
+    processes = {},
   }
   setmetatable(self, lib)
 
@@ -27,50 +29,33 @@ setmetatable(lib, {
   return self
 end})
 
-function lib:openFile(filepath)
-  self:close()
-  local base, name = lk.directory(filepath)
-  if not lk.exist(filepath) then
-    lk.makePath(base)
-    lk.writeall(filepath, '')
-  end
-  self.root     = lk.FileResource(base)
-  self.lkp_file = lk.FileResource('/' .. name, self.root)
-  private.readFile(self)
-end
-
-function lib:close()
-  -- TODO: close all processes in same zone
-  -- clear
-  self.processes = {}
-  self.root = nil
-end
-
---- Return the content of the file at the given path in the
--- current project.
-function lib:get(url)
-  local resource = lk.FileResource(url, self.root)
-  if not resource then
-    return nil
-  end
-  return resource:body()
-end
 --============================================= lk.Service delegate
 
---- Answering requests to Morph.
 function lib:callback(url, ...)
   if url == lubyk.execute_url then
     return private.execute(self, ...)
   elseif url == lubyk.quit_url then
-    sched:quit()
+    self:quit()
   else
     -- ignore
     printf("Bad message '%s' to lk.Morph", url)
   end
 end
 
+-- The stem cell is the parent of the following processes, it cannot die
+-- before them.
+function lib:quit()
+  for name, pid in pairs(self.processes) do
+    private.kill(pid)
+  end
+
+  return sched:quit()
+end
+
 --=============================================== PRIVATE
 --- Start service.
+private.actions = {}
+
 function private:start()
   local srv_opts = {
     callback = function(...)
@@ -80,6 +65,9 @@ function private:start()
       private.registrationCallback(self, service)
     end,
     type = 'lk.StemCell',
+    quit = function()
+      self:quit()
+    end,
   }
   self.service = lk.Service(Lubyk.zone .. ':@' .. self.name , srv_opts)
 end
@@ -88,23 +76,25 @@ function private:registrationCallback(service)
   if (Lubyk.zone .. ':@' .. self.name) ~= service.name then
     -- We do not want to have two stem cells with the same name running
     printf("Another stem cell with name '%s' exists in zone '%s'. Quit.", self.name, Lubyk.zone)
-    sched:quit()
+    self:quit()
   end
 end
 
 function private:execute(action, ...)
-  if action == 'spawn' then
-    -- start a new process
-    private.spawn(self, ...)
+  local func = private.actions[action]
+  if func then
+    func(self, ...)
   else
     printf("Unknown action '%s'.", action)
   end
 end
 
+--=============================================== ACTIONS
+
 -- Spawn a new process that will callback to get data (yml definition, assets).
-function private:spawn(name)
-  -- spawn Process
-  local pid = worker:spawn([[
+function private.actions:spawn(name)
+  -- Spawn Process. If a process dies, the stem cell will restart it.
+  self.processes[name] = worker:spawn([[
   require 'lubyk'
   process = lk.Process(%s)
   run()
@@ -112,3 +102,16 @@ function private:spawn(name)
   -- the process will find the morph's ip/port by it's own service discovery
 end
 
+-- Restart a given process (kill and let morph restart).
+function private.actions:kill(name)
+  local pid = self.processes[name]
+  -- kill
+  if pid then
+    private.kill(pid)
+  end
+  -- The process will be restarted.
+end
+
+function private.kill(pid)
+  os.execute(string.format('kill -9 %i', pid))
+end

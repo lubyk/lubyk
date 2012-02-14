@@ -64,6 +64,7 @@ function lib:getMachine(name_or_ip)
     -- is updated.
     machine.view.machine_list = self
     self.vbox:insertWidget(-1, machine.view)
+    machine.view:show()
     table.insert(self.machine_view_list, machine.view)
   end
   return machine

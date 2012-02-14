@@ -35,7 +35,6 @@ function lib:connect(service)
   self.davport = service.info.davport
   self.req     = service.req
   self.push    = service.push
-  self.machine = self.zone.machine_list:getMachine(service.ip)
   -- Receive changes from morph
   self.sub = zmq.SimpleSub(function(...)
     -- we receive notifications, update content
@@ -43,6 +42,9 @@ function lib:connect(service)
   end)
   self.sub:connect(service.sub_url)
   self.online = true
+  if self.tab then
+    self.tab:setHue()
+  end
   self.zone.control_tabs:addPlusView()
   private.mountDav(self)
   private.sync(self)
@@ -52,6 +54,15 @@ function lib:disconnect(remote)
   -- noop
   self.zone.control_tabs:removePlusView()
   self.online = false
+
+  if self.tab then
+    self.tab:setHue(self.hue)
+  end
+end
+
+function lib:quit()
+  -- Morph will quit all running processes except the stem cells.
+  self.push:send(lubyk.quit_url)
 end
 
 function lib:createProcess(def)
@@ -64,6 +75,12 @@ function lib:removeProcess(process)
   process.removed = true
   self.push:send(lubyk.update_url, {
     processes = { [process.name] = false },
+  })
+end
+
+function lib:restartProcess(name)
+  self.push:send(lubyk.update_url, {
+    processes = { [name] = 'restart'},
   })
 end
 
@@ -80,8 +97,10 @@ function private:mountDav()
   -- option -S == do not prompt when server goes offline
   local cmd = string.format('mount_webdav -S %s %s', self.dav_url, work_path)
   self.mount_fd = worker:execute(cmd)
+  -- Automatic disconnection. If we do not do this, we have lots
+  -- of dangling server problems.
   self.mount_fin = lk.Finalizer(function()
-    worker:execute(string.format('umount %s', work_path))
+     worker:execute(string.format('umount %s', work_path))
   end)
 end
 
@@ -94,6 +113,10 @@ end
 --- We receive change information from lk.Morph.
 function private:changed(changes)
   local set = private.set
+  -- start with host
+  if changes.host then
+    self.host = changes.host
+  end
   for k, v in pairs(changes) do
     local func = set[k]
     if func then
@@ -133,7 +156,7 @@ function private.set:processes(data)
 
       if host == '' then
         -- local to morph
-        host = self.machine.name
+        host = self.host
       end
       -- Declare
       process = self.zone:findProcess(name, host)

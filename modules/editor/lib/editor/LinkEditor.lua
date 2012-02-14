@@ -236,9 +236,11 @@ function lib:selectSource(slot)
   if self.source_slot and self.source_slot ~= slot then
     self.source_slot:select(false)
   end
-  slot:select(true)
+  if slot then
+    slot:select(true)
+    self.source = slot.conn or slot.node
+  end
   self.source_slot = slot
-  self.srouce = slot.conn or slot.node
   self:rebuildPaths()
 end
 
@@ -370,6 +372,58 @@ function lib:setPath(slot, x, y, key)
   end
   self:update()
 end
+
+-- Show edit connector dialog
+function lib:editDialog(conn, gx, gy)
+  local node = conn.node
+
+  local dlg = mimas.SimpleDialog {
+    parent = self,
+    flag   = mimas.WidgetFlag,
+    'Edit link',
+    {
+      'vbox', box = true,
+      'Maximal value',
+      {'input', 'max', conn.max or 1},
+      'Minimal value',
+      {'input', 'min', conn.min or 0},
+    },
+    {
+      'hbox', {},
+      {'btn', 'Remove'},
+      {'btn', 'OK', default = true},
+    },
+  }
+
+  self:addWidget(dlg)
+  dlg:globalMove(gx - 5, gy - 5)
+  self.dlg = dlg
+  
+  function dlg.btn(dlg, btn_name)
+    if btn_name == 'OK' then
+      local opt = {
+        min = tonumber(dlg.form.min) or 0,
+        max = tonumber(dlg.form.max) or 1,
+      }
+      conn.ctrl:change {
+        connect = {
+          [conn.name] = opt,
+        },
+      }
+    else
+      conn.ctrl:change {
+        connect = {
+          [conn.name] = false,
+        },
+      }
+    end
+
+    self:selectSource(nil)
+    dlg:hide()
+  end
+  dlg:show()
+end
+
 --=============================================== Widget callbacks
 
 local noBrush = mimas.EmptyBrush
@@ -388,79 +442,6 @@ function lib:click()
   private.cleanup(self)
 end
 --=============================================== PRIVATE
-
--- Show node params editor menu
-function private:showContextMenu(node, gx, gy)
-  local menu = mimas.Menu('')
-  self.node = node
-  if self.menu and not menu:deleted() then
-    self.menu:hide()
-  end
-  self.menu = menu
-
-  local params = node.params
-  local list = {}
-  -- sorted params list
-  for key, val in pairs(params) do
-    -- Keep connectors list sorted
-    local i = 1
-    while list[i] and key >= list[i] do
-      i = i + 1
-    end
-    table.insert(list, i, key)
-  end
-
-  for _, param in ipairs(list) do
-    menu:addAction('link '..param, '', function()
-      private.editDialog(self, param)
-    end)
-  end
-  menu:addSeparator()
-  menu:addAction('Cancel', '', function()
-    private.cleanup(self)
-  end)
-
-  menu:popup(gx - 5, gy - 5)
-end
-
--- Show edit connector dialog
-function private:editDialog(node, param, conn)
-  local dlg = mimas.SimpleDialog {
-    parent = self,
-    flag   = mimas.WidgetFlag,
-    'Edit link',
-    {
-      'vbox', box = true,
-      'Maximal value',
-      {'input', 'max', conn.max or 1},
-      'Minimal value',
-      {'input', 'min', conn.min or 0},
-    },
-    {
-      'hbox', {},
-      {'btn', 'Cancel'},
-      {'btn', 'OK', default = true},
-    },
-  }
-
-  self:addWidget(dlg)
-  local gx, gy = self.target_slot:globalPosition()
-  dlg:globalMove(gx + self.target_slot:width() + 10, gy)
-  self.dlg = dlg
-  
-  function dlg.btn(dlg, btn_name)
-    if btn_name == 'OK' then
-      local opt = {
-        min = tonumber(dlg.form.min) or 0,
-        max = tonumber(dlg.form.max) or 1,
-      }
-      private.link(self, node, param, conn, opt)
-    end
-
-    self.dlg:hide()
-  end
-  dlg:show()
-end
 
 function private:link(node, param, conn, opts)
   -- absolute url

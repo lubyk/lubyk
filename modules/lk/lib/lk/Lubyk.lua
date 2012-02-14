@@ -31,6 +31,8 @@ local defaults = {
 }
 
 Lubyk = lk.Settings('lk', defaults)
+-- Cannot be changed, no need for copy on write.
+Lubyk.version = defaults.version
 
 -- Default host name
 local function getMachineName()

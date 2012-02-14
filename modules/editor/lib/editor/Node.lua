@@ -283,7 +283,6 @@ function lib.makeGhost(node_def, zone)
 end
 
 function private:setParams(def)
-  print(self.name, yaml.dump(def))
   local params = self.params
   for k, v in pairs(def) do
     params[k] = v

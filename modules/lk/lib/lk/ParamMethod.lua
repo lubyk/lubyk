@@ -44,16 +44,24 @@ end})
 
 function lib.__newindex(self, k, value)
   local env = self.env
-  -- param.foo = 45.5
-  -- This is used from inside lk.Node.
-  local old = env[k]
-  if old ~= value then
-    env[k] = value
-    -- Notify
-    self.param_list._ = {
-      [k] = env[k],
+  if type(value) == 'function' then
+    -- Create an accessor for parameter 'k'
+    self.node.accessors[k] = {
+      receive = value,
     }
-    self.node.process:notify(self.msg) 
+  else
+    -- Change parameter 'k' and notify.
+    -- param.foo = 45.5
+    -- This is used from inside lk.Node.
+    local old = env[k]
+    if old ~= value then
+      env[k] = value
+      -- Notify
+      self.param_list._ = {
+        [k] = env[k],
+      }
+      self.node.process:notify(self.msg) 
+    end
   end
 end
 

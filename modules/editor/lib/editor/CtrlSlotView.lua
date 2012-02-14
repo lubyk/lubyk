@@ -13,6 +13,7 @@ local private = {}
 
 --=============================================== CONSTANTS
 local HPEN_WIDTH = 1
+local DRAG_START = 20
 
 function lib:init(conn, link_editor)
   self.link_editor = link_editor
@@ -41,7 +42,8 @@ function lib:setHue(hue)
     hue = self.hue
   end
 
-  self.pen   = mimas.Pen(HPEN_WIDTH * 2, mimas.Color(hue, 0.3, 0.8, 0.8))
+  self.pen = mimas.Pen(HPEN_WIDTH * 2, mimas.Color(hue, 0.3, 0.8, 0.8))
+  self.text_pen = mimas.Pen(1, mimas.Color(0, 0, 1))
 
   if self.selected then
     -- selected
@@ -69,29 +71,53 @@ end
 
 local MousePress   = mimas.MousePress
 local MouseRelease = mimas.MouseRelease
+local DoubleClick  = mimas.DoubleClick
 
 function lib:click(x, y, op)
   if op == MousePress then
     self.link_editor:selectSource(self)
     self.gx, self.gy = self:globalPosition()
+    self.drag = {
+      x = x,
+      y = y,
+    }
+  elseif  op == DoubleClick or
+         (op == MouseRelease and not self.drag.started) then
+    if self.stype == 'ctrl' and self.conn.node then
+      local gx, gy = self:globalPosition()
+      gx = gx + x
+      gy = gy + y
+      self.link_editor:editDialog(self.conn, gx, gy)
+    end
   elseif op == MouseRelease then
-    -- Create link and/or clear dragged path.
-    self.link_editor:endDrag(self.stype)
+    if self.drag.started then
+      -- Create link and/or clear dragged path.
+      self.link_editor:endDrag(self.stype)
+    end
+    self.drag = nil
   end
 end
 
 function lib:mouse(x, y)
-  local link_editor = self.link_editor
-  local gx, gy = self.gx, self.gy
-  x = gx + x
-  y = gy + y
+  local drag = self.drag
+  if not drag.started and
+     math.abs(x - drag.x) + math.abs(y - drag.y) > DRAG_START then
+    drag.started = true
+  end
 
-  link_editor:selectClosestSlot(self.stype, x, y)
+  if drag.started then
+    local link_editor = self.link_editor
+    local gx, gy = self.gx, self.gy
+    x = gx + x
+    y = gy + y
 
-  link_editor:setPath(
+    link_editor:selectClosestSlot(self.stype, x, y)
+
+    link_editor:setPath(
     self,
     x,
     y,
     'drag'
-  )
+    )
+  end
 end

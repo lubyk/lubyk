@@ -27,7 +27,7 @@ local defaults = {
   -- Absolute paths (user setings)
   prototype_src = {},
   -- Number of files to keep in open recent list
-  open_recent_max = 5,
+  open_recent_max = 4,
 
   -- Default size and position for main window
   main_view = {

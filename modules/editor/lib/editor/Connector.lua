@@ -144,6 +144,7 @@ function lib:setEnabled(enabled)
 end
 
 function lib:disconnect()
+  self.url = nil
   self.change = lib.change
   self:setEnabled(false)
   if self.node then

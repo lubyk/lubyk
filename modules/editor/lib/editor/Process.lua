@@ -102,12 +102,19 @@ end
 
 --- Restart process.
 function lib:restart()
+  local morph = self.zone.morph
+  if not morph then
+    return
+  end
+
   local view = self.view
   if view then
     view:animate(8000)
 
     -- Remove ghost on process connection
-    self.zone:onProcessDisconnected(name, function()
+    print('onProcessDisconnected', self.name)
+    self.zone:onProcessDisconnected(self.name, function()
+      print("DISCONNECTED", self.name)
       if view.thread then
         view.thread:kill()
       end
@@ -115,7 +122,7 @@ function lib:restart()
     end)
   end
 
-  --self.push:send(lubyk.execute_url, 'restart')
+  morph:restartProcess(self.name)
 end
 
 --- Remove (delete) process from patch.
@@ -247,7 +254,8 @@ function lib:newNode(definition)
   if not definition.class then
     definition.code = definition.code or [=[
 --[[
-outlet 'output'
+inlet('input', 'Information on input [type].')
+outlet('output', 'Information on output [type].')
 
 function inlet.input(val)
   -- print and pass through

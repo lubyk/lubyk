@@ -33,6 +33,7 @@ function lib:init(process)
 end
 
 function lib:setHue(hue)
+  self.text_pen = mimas.Pen(1, mimas.Color(0, 0, 1))
   if self.process.online then
     self.pen   = mimas.Pen(HPEN_WIDTH * 2, mimas.Color(self.process.hue, 0.3, 0.8, 0.8))
     self.brush = mimas.Brush(mimas.Color(self.process.hue, 0.3, 0.3, 0.8))
@@ -62,16 +63,16 @@ function lib:paint(p, w, h)
   p:setPen(self.pen)
   if self.align == mimas.AlignRight then
     p:drawRoundedRect(bp, bp, w + arc_radius + bp, h - 2 * bp, arc_radius)
-    p:setPen(mimas.Pen(1, mimas.Color(0, 0, 1)))
+    p:setPen(self.text_pen)
     p:drawText(2 * TEXT_PADDING, TEXT_PADDING, w - 4*TEXT_PADDING, h - 2*TEXT_PADDING, mimas.AlignRight + mimas.AlignVCenter, self.title)
   elseif self.align == mimas.AlignLeft then
     p:drawRoundedRect(-bp-arc_radius, bp, w + arc_radius, h - 2 * bp, arc_radius)
-    p:setPen(mimas.Pen(1, mimas.Color(0, 0, 1)))
+    p:setPen(self.text_pen)
     p:drawText(2 * TEXT_PADDING, TEXT_PADDING, w - 4*TEXT_PADDING, h - 2*TEXT_PADDING, mimas.AlignLeft + mimas.AlignVCenter, self.title)
   else
     -- center
     p:drawRoundedRect(bp, bp, w - 2 * bp, h - 2 * bp, arc_radius)
-    p:setPen(mimas.Pen(1, mimas.Color(0, 0, 1)))
+    p:setPen(self.text_pen)
     p:drawText(2 * TEXT_PADDING, TEXT_PADDING, w - 4*TEXT_PADDING, h - 2*TEXT_PADDING, mimas.AlignCenter + mimas.AlignVCenter, self.title)
   end
 end

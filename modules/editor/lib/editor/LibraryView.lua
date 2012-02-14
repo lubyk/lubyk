@@ -162,13 +162,13 @@ function private:setupListView()
     local tw, th = view.super:textSize(base)
     if base then
       p:setPen(mimas.Pen(1, mimas.Color(0, 0, 0.4)))
-      p:drawText(x+6, y+2, tw+2, th+2, align, base)
-      x = x + 4 + tw
+      p:drawText(x+6, y+2, tw+3, th+2, align, base)
+      x = x + 7 + tw
     end
 
     p:setPen(mimas.Pen(1, mimas.Color(0, 0, 0.8)))
     local tw, th = view.super:textSize(name)
-    p:drawText(x+2, y+2, tw+2, th+2, align, name)
+    p:drawText(x+2, y+2, tw+5, th+2, align, name)
   end
 
   function view:mouse(x, y)

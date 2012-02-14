@@ -299,7 +299,7 @@ function lib:processDisconnected(remote_process)
   end
 
   -- Trigger disconnection callbacks
-  local list = self.on_process_connected
+  local list = self.on_process_disconnected
   for i=#list,1,-1 do
     local clbk = list[i]
     if clbk.name == name then

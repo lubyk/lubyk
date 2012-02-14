@@ -38,8 +38,6 @@ setmetatable(lib, {
   self.pub = zmq.Pub()
   self.info.pub = self.pub:port()
 
-  --======================================= REP server (sync)
-  -- FIXME: REMOVE (risk of hanging)
   function self.do_callback(...)
     local url = ...
     if url == lubyk.info_url then
@@ -47,7 +45,11 @@ setmetatable(lib, {
       return self.info
     elseif url == lubyk.quit_url then
       -- quit
-      return sched:quit()
+      if opts.quit then
+        return opts.quit()
+      else
+        return sched:quit()
+      end
     else
       -- handle requests here. Maybe we need two different callbacks
       -- for reply and pull...
@@ -55,6 +57,8 @@ setmetatable(lib, {
     end
   end
 
+  --======================================= REP server (sync)
+  -- FIXME: REMOVE (risk of hanging)
   self.rep = zmq.SimpleRep(function(...)
     return self.do_callback(...)
   end)

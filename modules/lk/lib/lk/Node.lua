@@ -30,6 +30,7 @@ setmetatable(lib, {
       inlets  = {},
       outlets = {},
     },
+    accessors      = {},
     env            = env,
     errors         = {},
     name           = name,
@@ -95,11 +96,17 @@ function lib:eval(code_str)
     outlets = {},
   }
 
+  local old_accessors = self.accessors
+  self.accessors = {}
+
   -- code will execute in node's environment
   setfenv(code, self.env)
-  local ok, err = pcall(code)
+  -- We use sched pcall to enable yield during code eval (to
+  -- launch mimas for example).
+  local ok, err = sched:pcall(code)
   if not ok then
     self.slots = old_slots
+    self.accessors = old_accessors
     self:error(err)
   else
     self.code = code_str
@@ -293,6 +300,7 @@ function private:setParams(params)
   self.pdump_params = params
   local env      = self.env
   local inlets   = self.inlets
+  local accessors= self.accessors
   local defaults = self.defaults or {}
   if params == true then
     -- Query asked for a dump of the params.
@@ -306,7 +314,7 @@ function private:setParams(params)
         pdump[k] = {}
       else
         -- This is also used in ParamMethod.
-        local inlet = inlets[k]
+        local inlet = inlets[k] or accessors[k]
         if inlet then
           inlet.receive(value)
         else

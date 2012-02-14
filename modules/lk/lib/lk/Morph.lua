@@ -74,6 +74,9 @@ function lib:start(opts)
     end,
     type = 'lk.Morph',
     info = opts.info,
+    quit = function()
+      self:quit()
+    end,
   }
   self.service = lk.Service(Lubyk.zone .. ':', srv_opts)
 end
@@ -120,6 +123,9 @@ end
 
 function lib:dump()
   return self:partialDump {
+    -- This is to give the future host on unconnected processes in
+    -- the editor.
+    host      = true,
     name      = true,
     processes = true,
     _views    = true,
@@ -160,6 +166,13 @@ function lib:callback(url, ...)
 end
 
 function lib:quit()
+  -- FIXME: quit all processes.
+  self.quitting = true
+  for k, process in pairs(self.processes) do
+    if process.online then
+      process.push:send(lubyk.quit_url)
+    end
+  end
   self.service:quit()
 end
 
@@ -182,8 +195,13 @@ function lib:processConnected(remote_process)
       -- start pending processes
       for name, process in pairs(self.processes) do
         if not process.online and process.host == stem_name then
-          -- START
-          private.process.start(self, process)
+          if process.on_stem == 'restart' then
+            process.on_stem = nil
+            private.process.restart(self, process)
+          else
+            -- START
+            private.process.start(self, process)
+          end
         end
       end
     else
@@ -195,8 +213,10 @@ end
 function lib:processDisconnected(service)
   local name    = service.name
   local process = self.processes[name]
-  if process then
-    private.process.disconnect(self, process)
+  if process and not self.quitting then
+    -- Restart process
+    process.online = false
+    private.process.start(self, process)
   elseif self.stem_cells[name] then
     self.stem_cells[name] = nil
   end
@@ -240,7 +260,8 @@ function private:writeFile()
   local dump = self:dump()
   -- not saved in this file
   dump._views = nil
-  dump.lubyk = self.lubyk
+  dump.name   = nil
+  dump.lubyk  = self.lubyk
   self.lkp_file:update(yaml.dump(dump))
 end
 
@@ -273,6 +294,7 @@ end
 
 -- Parse Lubyk version information.
 function private.set:lubyk(lubyk)
+  -- We could check for version compatibility here.
   if lubyk and lubyk.version then
     self.lubyk = lubyk
   else  
@@ -304,6 +326,8 @@ function private.update:processes(data)
       private.removeProcess(self, name)
     elseif not self.processes[name] then
       private.createProcess(self, def)
+    elseif def == 'restart' then
+      private.process.restart(self, self.processes[name])
     else
       -- Change machine assignation. Other changes are notified by
       -- process.
@@ -337,7 +361,7 @@ function private:removeProcess(name)
     end
   else
     -- ERROR
-    printf("Cannot create existing process '%s'.", name)
+    printf("Cannot remove unknown process '%s'.", name)
   end
 end
 
@@ -349,6 +373,10 @@ end
 function private.dump:name()
   local path = self.root.name .. '/' .. self.lkp_file.name 
   return string.format('"%s" @ %s', path, Lubyk.host)
+end
+
+function private.dump:host()
+  return Lubyk.host
 end
 
 --- Dump Lubyk version information.
@@ -563,12 +591,39 @@ end
 --- Try to start a process by calling the corresponding stem cell.
 function private.process:start(process)
   local stem = self.stem_cells[process.host]
-  if not stem then
+  if not stem or not stem.push then
     -- will start as soon as the stem cell appears on the network
     return
   end
-  assert(not process.online)
   stem.push:send(lubyk.execute_url, 'spawn', process.name)
+end
+
+--- Kill and restart process.
+function private.process:restart(process)
+  if not process.online then
+    private.process.start(self, process)
+  else
+    local stem = self.stem_cells[process.host]
+    if not stem then
+      -- will restart as soon as the stem cell appears on the network
+      process.on_stem = 'restart'
+    else
+      stem.push:send(lubyk.execute_url, 'kill', process.name)
+    end
+  end
+end
+
+function private:restartProcess(name)
+  local process = self.processes[name]
+  if process then
+    if process.online then
+      process.push:send(lubyk.quit_url)
+      -- The process will restart automatically.
+    end
+  else
+    -- ERROR
+    printf("Cannot restart unknown process '%s'.", name)
+  end
 end
 
 --=============================================== NODE

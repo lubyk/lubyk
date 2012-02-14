@@ -11,6 +11,7 @@
 --]]------------------------------------------------------
 local lib = lk.SubClass(mimas, 'Widget')
 editor.StemTab = lib
+local private = {}
 
 -- CONSTANTS
 local MousePress, MouseRelease = mimas.MousePress, mimas.MouseRelease
@@ -26,9 +27,10 @@ function lib:init(stem)
   self:setTitle(stem.title)
   self.machine = stem.machine
   self.machine:setStem(stem)
-  self.zone    = self.machine.zone
+  self.zone = self.machine.zone
 
-  self.pen   = mimas.Pen(PEN_WIDTH, mimas.Color(0.3, 0.3, 0.8, 0.5), mimas.DotLine)
+  self.text_pen = mimas.Pen(1, mimas.Color(0, 0, 1))
+  self.pen = mimas.Pen(PEN_WIDTH, mimas.Color(0.3, 0.3, 0.8, 0.5), mimas.DotLine)
   self.brush = mimas.Brush(mimas.Color(0.3, 0.3, 0.3, 0.5))
 end
 
@@ -36,8 +38,15 @@ lib.setTitle     = editor.ProcessTab.setTitle
 lib.paint        = editor.ProcessTab.paint
 lib.setAlignment = editor.ProcessTab.setAlignment
 
+local RightButton  = mimas.RightButton
+local MetaModifier = mimas.MetaModifier
+
 function lib:click(x, y, op, btn, mod)
-  if op == MousePress then
+  if op == MousePress and
+     (btn == RightButton or mod == MetaModifier) then
+    local sx, sy = self:globalPosition()
+    private.showContextMenu(self, sx + x, sy + y)
+  elseif op == MousePress then
     self.click_position = {x=x,y=y}
     local gx, gy = self:globalPosition()
     self.base_pos = {gx = gx, gy = gy}
@@ -139,5 +148,18 @@ function lib:mouse(x, y)
     local gy = self.base_pos.gy + y - self.click_position.y
     self.ghost:globalMove(gx, gy)
   end
+end
+
+function private:showContextMenu(gx, gy)
+  local menu = mimas.Menu('')
+  if self.menu and not menu:deleted() then
+    self.menu:hide()
+  end
+  self.menu = menu
+
+  menu:addAction('Stop', '', function()
+    self.stem:quit()
+  end)
+  menu:popup(gx - 5, gy - 5)
 end
 

@@ -27,12 +27,19 @@ end})
 
 
 function lib:connect(remote)
+  self.push = remote.push
   self.online = true
   -- noop
 end
 
 function lib:disconnect(remote)
+  self.push = nil
   self.online = false
   -- noop
 end
 
+function lib:quit()
+  if self.online then
+    self.push:send(lubyk.quit_url)
+  end
+end

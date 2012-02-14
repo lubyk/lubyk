@@ -142,11 +142,7 @@ function private:setupMenus()
   --=============================================== Special
   local menu = self.menu_bar:addMenu('Special')
   action = menu:addAction('Stop', 'Ctrl+Shift+K', function()
-    for k, process in pairs(self.zone.process_watch.processes) do
-      if process.online then
-        process.push:send(lubyk.quit_url)
-      end
-    end
+    self.zone.morph:quit()
   end)
   action = menu:addAction('Start Stem Cell', 'Ctrl+Shift+C', function()
     self.zone:startStemCell()
