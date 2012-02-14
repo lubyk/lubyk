@@ -109,6 +109,7 @@ function lib:setHue(h)
     self.pen = mimas.Pen(4, mimas.Color(0, 0, 0.7))
   end
   self.thumb_color = mimas.Color(h, 0, 1, 0.5)
+  self:update()
 end
 
 function lib:setEnabled(key, enabled)
@@ -147,8 +148,10 @@ function lib:click(x, y, op, btn, mod)
     end
   elseif btn == RightButton or
      mod == mimas.MetaModifier then
-    local sx, sy = self:globalPosition()
-    private.showContextMenu(self, sx + x, sy + y)
+    if op == MousePress then
+      local sx, sy = self:globalPosition()
+      private.showContextMenu(self, sx + x, sy + y)
+    end
   elseif mod == mimas.ControlModifier then
     local meta = {
       x = x,
@@ -261,7 +264,9 @@ function private:showContextMenu(gx, gy)
   self.menu = menu
 
   menu:addAction('Link', '', function()
-    private.startLink(self)
+    local link_editor = editor.LinkEditor(self.zone)
+    self.zone.view.link_editor = link_editor
+    link_editor:setCtrl(self)
   end)
   menu:addAction('Remove', '', function()
     self:change(false)
@@ -269,11 +274,4 @@ function private:showContextMenu(gx, gy)
 
   menu:popup(gx - 5, gy - 5)
 end
-
-function private:startLink()
-  local link_editor = editor.LinkEditor(self.zone)
-  self.zone.view.link_editor = link_editor
-  link_editor:setCtrl(self)
-end
-
 

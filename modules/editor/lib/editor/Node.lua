@@ -336,6 +336,7 @@ function lib.makeGhost(node_def, zone)
 end
 
 function private:setParams(def)
+  print(self.name, yaml.dump(def))
   local params = self.params
   for k, v in pairs(def) do
     params[k] = v
@@ -355,7 +356,11 @@ function lib:delete()
     for _, conn in ipairs(list) do
       conn.node = nil
       conn.node_conn_list = nil
-      conn:disconnect()
+      conn.ctrl:change {
+        connect = {
+          [conn.name] = false,
+        }
+      }
     end
   end
 end

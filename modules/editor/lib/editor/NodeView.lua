@@ -8,6 +8,7 @@
 --]]------------------------------------------------------
 local lib = lk.SubClass(mimas, 'Widget')
 editor.NodeView = lib
+local private = {}
 
 --============================================= PRIVATE
 -- constants
@@ -172,6 +173,8 @@ end
 local MousePress,       MouseRelease,       DoubleClick =
       mimas.MousePress, mimas.MouseRelease, mimas.DoubleClick
 
+local RightButton = mimas.RightButton
+
 local function makeGhost(self)
   local node = self.node
   -- create a ghost
@@ -183,16 +186,23 @@ local function makeGhost(self)
   ghost:raise()
 end
 
-function lib:click(x, y, type, btn, mod)
+function lib:click(x, y, op, btn, mod)
   local node = self.node
-  if type == MousePress then
+  if btn == RightButton or
+     mod == mimas.MetaModifier then
+    if op == MousePress then
+      -- Show contextual menu
+      local sx, sy = self:globalPosition()
+      private.showContextMenu(self, sx + x, sy + y)
+    end
+  elseif op == MousePress then
     -- store position but only start drag when moved START_DRAG_DIST away
     self.click_position = {x = x, y = y}
-  elseif type == DoubleClick then
+  elseif op == DoubleClick then
     -- open external editor
     node:edit()
     self.zone:selectNodeView(self)
-  elseif type == MouseRelease then
+  elseif op == MouseRelease then
     if node.dragging then
       local zone = self.node.process.zone
       -- drop
@@ -341,4 +351,30 @@ function lib:delete()
     self.zone:selectNodeView(self)
   end
   self.super:__gc()
+end
+
+--=============================================== PRIVATE
+
+function private:showContextMenu(gx, gy)
+  if self.is_ghost then
+    return false
+  end
+
+  local menu = mimas.Menu('')
+  if self.menu and not menu:deleted() then
+    self.menu:hide()
+  end
+  self.menu = menu
+
+  menu:addAction('Link', '', function()
+    local link_editor = editor.LinkEditor(self.zone)
+    self.zone.view.link_editor = link_editor
+    link_editor:setNode(self.node)
+  end)
+
+  menu:addAction('Remove', '', function()
+    self.node:change(false)
+  end)
+
+  menu:popup(gx - 5, gy - 5)
 end

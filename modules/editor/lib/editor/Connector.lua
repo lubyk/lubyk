@@ -145,6 +145,7 @@ end
 
 function lib:disconnect()
   self.change = lib.change
+  self:setEnabled(false)
   if self.node then
     self.node:disconnectConnector(self)
   end

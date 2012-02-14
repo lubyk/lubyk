@@ -197,7 +197,7 @@ function lib:rebuildPaths()
         -- Update hue (changes on connection state) state.
         slot:setHue()
         local node = slot.conn.node
-        if node then
+        if node and node.view then
           if node == self.node then
             -- link to slot
             local param_name = slot.conn.param_name
@@ -467,6 +467,10 @@ function private:link(node, param, conn, opts)
   local url = node:url() .. '/_/' .. param
   local def = opts or {}
   def.url = url
+  if type(node.params[param]) == 'number' then
+    def.min = def.min or 0
+    def.max = def.max or 1
+  end
   conn.ctrl:change {
     connect = {
       [conn.name] = def,

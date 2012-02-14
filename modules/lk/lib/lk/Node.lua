@@ -255,6 +255,7 @@ function lib:partialDump(data)
     res.has_all_slots = true
     res.inlets  = dumpSlots(self.sorted_inlets)
     res.outlets = dumpSlots(self.sorted_outlets, data.links)
+    res._       = private.dumpParams(self, true)
   end
   return res
 end
