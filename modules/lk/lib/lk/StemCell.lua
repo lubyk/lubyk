@@ -31,15 +31,23 @@ end})
 
 --============================================= lk.Service delegate
 
+local execute_url,        quit_url = 
+      lubyk.execute_url,  lubyk.quit_url
+
 function lib:callback(url, ...)
-  if url == lubyk.execute_url then
+  if url == execute_url then
     return private.execute(self, ...)
-  elseif url == lubyk.quit_url then
+  elseif url == quit_url then
     self:quit()
   else
     -- ignore
-    printf("Bad message '%s' to lk.Morph", url)
+    self:error("Invalid url '%s'.", url)
   end
+end
+
+function lib:error(...)
+  -- TODO: notify errors.
+  printf(...)
 end
 
 -- The stem cell is the parent of the following processes, it cannot die
@@ -49,7 +57,7 @@ function lib:quit()
     private.kill(pid)
   end
 
-  return sched:quit()
+  sched:quit()
 end
 
 --=============================================== PRIVATE

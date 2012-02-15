@@ -229,7 +229,6 @@ end
 
 --=============================================== lk.ProcessWatch delegate
 function lib:processConnected(remote_process)
-  self.view:hideDialog()
   local name = remote_process.name
   local process = self:findProcess(name, remote_process.ip)
   process:connect(remote_process, self)

@@ -146,34 +146,41 @@ end
 
 --============================================= lk.Service delegate
 
+local dump_url,        update_url,       get_url,       quit_url =
+      lubyk.dump_url,  lubyk.update_url, lubyk.get_url, lubyk.quit_url
+
 --- Answering requests to Morph.
 function lib:callback(url, ...)
-  if url == lubyk.dump_url then
+  if url == dump_url then
     return self:dump()
-  elseif url == lubyk.update_url then
+  elseif url == update_url then
     -- async call, no return value
     self:update(...)
     local p = self:partialDump(...)
     self.service:notify(p)
-  elseif url == lubyk.get_url then
+  elseif url == get_url then
     return self:get(...)
-  elseif url == lubyk.quit_url then
+  elseif url == quit_url then
     self:quit()
   else
     -- ignore
-    printf("Bad message '%s' to lk.Morph.", url)
+    self:error("Invalid url '%s'.", url)
   end
 end
 
+function lib:error(...)
+  -- TODO: notify errors.
+  print(msg)
+end
+
 function lib:quit()
-  -- FIXME: quit all processes.
   self.quitting = true
   for k, process in pairs(self.processes) do
     if process.online then
       process.push:send(lubyk.quit_url)
     end
   end
-  self.service:quit()
+  sched:quit()
 end
 
 --=============================================== lk.ProcessWatch delegate
@@ -204,8 +211,9 @@ function lib:processConnected(remote_process)
           end
         end
       end
-    else
-      -- FIXME: invalid process... Kill ?
+    elseif remote_process.name ~= '' then
+      -- Invalid process. Kill.
+      remote_process.push:send(lubyk.quit_url)
     end
   end
 end

@@ -66,11 +66,16 @@ function lib:set(def, zone)
   local setter     = self.setter
   local ctrl       = self.ctrl
   local changed    = self.ctrl.changed
+  -- last notification: We do not send changes before receiving
+  -- notification of last change or waiting 100 ms.
+  -- WE HAVE COMMENTED CODE WITH AN EXPERIMENTAL SYSTEM TO AVOID
+  -- CONTROL OVERFLOW AT END OF THIS FILE.
 
   if not range then
     --=============================================== Raw value
     -- not a number value
     function self.change(value)
+      local now = worker:now()
       self.value = value
       if process.online then
         setter[param_name] = value
@@ -116,9 +121,8 @@ function lib:set(def, zone)
         value = 1
       end
       self.value = value
-      value = min + value * range
       if process.online then
-        setter[param_name] = value
+        setter[param_name] = min + value * range
         process.push:send(UPDATE_URL, msg)
       end
     end
@@ -140,7 +144,9 @@ end
 
 function lib:setEnabled(enabled)
   self.enabled = enabled
-  self.ctrl:setEnabled(self.name, enabled)
+  if not self.ctrl:deleted() then
+    self.ctrl:setEnabled(self.name, enabled)
+  end
 end
 
 function lib:disconnect()
@@ -212,3 +218,113 @@ function private:connect(process, url)
   self:setEnabled(node.online)
 end
 
+--[[
+--EXPERIMENTAL CONTROL BUFFER OVERFLOW PROTECTION.
+  local last_not   = worker:now()
+  local last_send  = 0
+  local WAIT_RETRY = 100 -- ms
+  local to_send
+
+  if not range then
+    --=============================================== Raw value
+    -- not a number value
+    function self.change(value)
+      local now = worker:now()
+      self.value = value
+      if process.online then
+        if last_send < last_not or
+           now > last_send + WAIT_RETRY then
+          last_send = now
+          setter[param_name] = value
+          process.push:send(UPDATE_URL, msg)
+        else
+          to_send = value
+        end
+      end
+    end
+    -- ! No 'self' here.
+    function self.changed(value)
+      last_not = worker:now()
+      self.remote_value = value
+      self.raw_remote_value = value
+      changed(ctrl, name, value)
+      local ts = to_send
+      if ts then
+        to_send = nil
+        self.change(ts)
+      end
+    end
+
+
+  elseif self.min == 0 and self.max == 1 then
+    --=============================================== Number, no scaling
+    function self.change(value)
+      local now = worker:now()
+      if value < min then
+        value = min
+      elseif value > max then
+        value = max
+      end
+      self.value = value
+      if process.online then
+        if last_send < last_not or
+           now > last_send + WAIT_RETRY then
+          last_send = now
+          setter[param_name] = value
+          process.push:send(UPDATE_URL, msg)
+        else
+          to_send = value
+        end
+      end
+    end
+    -- ! No 'self' here.
+    function self.changed(value)
+      last_not = worker:now()
+      self.raw_remote_value = value
+      self.remote_value = value
+      changed(ctrl, name, value)
+      local ts = to_send
+      if ts then
+        to_send = nil
+        self.change(ts)
+      end
+    end
+
+
+  else
+    --=============================================== Number, with scaling
+    function self.change(value)
+      local now = worker:now()
+      if value < 0 then
+        value = 0
+      elseif value > 1 then
+        value = 1
+      end
+      self.value = value
+      if process.online then
+        if last_send < last_not or
+           now > last_send + WAIT_RETRY then
+          last_send = now
+          setter[param_name] = min + value * range
+          process.push:send(UPDATE_URL, msg)
+        else
+          to_send = value
+        end
+      end
+    end
+    -- ! No 'self' here.
+    function self.changed(value)
+      last_not = worker:now()
+      -- value before scaling
+      self.raw_remote_value = value
+      value = (value - min) / range
+      self.remote_value = value
+      changed(ctrl, name, value)
+      local ts = to_send
+      if ts then
+        to_send = nil
+        self.change(ts)
+      end
+    end
+  end
+--]]

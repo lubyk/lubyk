@@ -71,7 +71,7 @@ static int ListView__tostring(lua_State *L) {
 
 
 /** bool mimas::ListView::close()
- * include/mimas/ListView.h:176
+ * include/mimas/ListView.h:180
  */
 static int ListView_close(lua_State *L) {
   try {
@@ -111,7 +111,7 @@ static int ListView_cssClass(lua_State *L) {
 
 
 /** void mimas::ListView::enablePaintItem(bool enable)
- * include/mimas/ListView.h:298
+ * include/mimas/ListView.h:302
  */
 static int ListView_enablePaintItem(lua_State *L) {
   try {
@@ -131,7 +131,7 @@ static int ListView_enablePaintItem(lua_State *L) {
 
 
 /** void mimas::ListView::globalMove(float x, float y)
- * include/mimas/ListView.h:204
+ * include/mimas/ListView.h:208
  */
 static int ListView_globalMove(lua_State *L) {
   try {
@@ -152,7 +152,7 @@ static int ListView_globalMove(lua_State *L) {
 
 
 /** LuaStackSize mimas::ListView::globalPosition(lua_State *L)
- * include/mimas/ListView.h:195
+ * include/mimas/ListView.h:199
  */
 static int ListView_globalPosition(lua_State *L) {
   try {
@@ -192,7 +192,7 @@ static int ListView_height(lua_State *L) {
 
 
 /** void mimas::ListView::hide()
- * include/mimas/ListView.h:188
+ * include/mimas/ListView.h:192
  */
 static int ListView_hide(lua_State *L) {
   try {
@@ -211,7 +211,7 @@ static int ListView_hide(lua_State *L) {
 
 
 /** float mimas::ListView::hue()
- * include/mimas/ListView.h:132
+ * include/mimas/ListView.h:136
  */
 static int ListView_hue(lua_State *L) {
   try {
@@ -231,7 +231,7 @@ static int ListView_hue(lua_State *L) {
 
 
 /** LuaStackSize mimas::ListView::indexAt(float x, float y, lua_State *L)
- * include/mimas/ListView.h:249
+ * include/mimas/ListView.h:253
  */
 static int ListView_indexAt(lua_State *L) {
   try {
@@ -253,7 +253,7 @@ static int ListView_indexAt(lua_State *L) {
 
 
 /** bool mimas::ListView::isVisible() const 
- * include/mimas/ListView.h:180
+ * include/mimas/ListView.h:184
  */
 static int ListView_isVisible(lua_State *L) {
   try {
@@ -273,7 +273,7 @@ static int ListView_isVisible(lua_State *L) {
 
 
 /** void mimas::ListView::lower()
- * include/mimas/ListView.h:210
+ * include/mimas/ListView.h:214
  */
 static int ListView_lower(lua_State *L) {
   try {
@@ -353,7 +353,7 @@ static int ListView_object(lua_State *L) {
 
 
 /** void mimas::ListView::raise()
- * include/mimas/ListView.h:216
+ * include/mimas/ListView.h:220
  */
 static int ListView_raise(lua_State *L) {
   try {
@@ -393,7 +393,7 @@ static int ListView_resize(lua_State *L) {
 
 
 /** void mimas::ListView::selectRow(int row)
- * include/mimas/ListView.h:261
+ * include/mimas/ListView.h:265
  */
 static int ListView_selectRow(lua_State *L) {
   try {
@@ -413,7 +413,7 @@ static int ListView_selectRow(lua_State *L) {
 
 
 /** LuaStackSize mimas::ListView::selectedIndexes(lua_State *L)
- * include/mimas/ListView.h:226
+ * include/mimas/ListView.h:230
  */
 static int ListView_selectedIndexes(lua_State *L) {
   try {
@@ -432,8 +432,27 @@ static int ListView_selectedIndexes(lua_State *L) {
 
 
 
+/** void mimas::ListView::setFocus()
+ * include/mimas/ListView.h:123
+ */
+static int ListView_setFocus(lua_State *L) {
+  try {
+    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
+    if (!self) throw dub::Exception("Using deleted mimas.ListView in setFocus");
+    self->setFocus();
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "setFocus: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "setFocus: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
 /** void mimas::ListView::setHue(float hue)
- * include/mimas/ListView.h:127
+ * include/mimas/ListView.h:131
  */
 static int ListView_setHue(lua_State *L) {
   try {
@@ -453,7 +472,7 @@ static int ListView_setHue(lua_State *L) {
 
 
 /** void mimas::ListView::setMinimumSize(float w, float h)
- * include/mimas/ListView.h:164
+ * include/mimas/ListView.h:168
  */
 static int ListView_setMinimumSize(lua_State *L) {
   try {
@@ -474,7 +493,7 @@ static int ListView_setMinimumSize(lua_State *L) {
 
 
 /** void mimas::ListView::setModel(DataSource *model)
- * include/mimas/ListView.h:269
+ * include/mimas/ListView.h:273
  */
 static int ListView_setModel(lua_State *L) {
   try {
@@ -494,7 +513,7 @@ static int ListView_setModel(lua_State *L) {
 
 
 /** void mimas::ListView::setMouseTracking(bool enable)
- * include/mimas/ListView.h:170
+ * include/mimas/ListView.h:174
  */
 static int ListView_setMouseTracking(lua_State *L) {
   try {
@@ -534,7 +553,7 @@ static int ListView_setName(lua_State *L) {
 
 
 /** void mimas::ListView::setSizeHint(float w, float h)
- * include/mimas/ListView.h:151
+ * include/mimas/ListView.h:155
  */
 static int ListView_setSizeHint(lua_State *L) {
   try {
@@ -555,7 +574,7 @@ static int ListView_setSizeHint(lua_State *L) {
 
 
 /** void mimas::ListView::setSizePolicy(int horizontal, int vertical)
- * include/mimas/ListView.h:158
+ * include/mimas/ListView.h:162
  */
 static int ListView_setSizePolicy(lua_State *L) {
   try {
@@ -596,7 +615,7 @@ static int ListView_setStyle(lua_State *L) {
 
 
 /** void mimas::ListView::setStyleSheet(const char *text)
- * include/mimas/ListView.h:123
+ * include/mimas/ListView.h:127
  */
 static int ListView_setStyleSheet(lua_State *L) {
   try {
@@ -616,7 +635,7 @@ static int ListView_setStyleSheet(lua_State *L) {
 
 
 /** void mimas::ListView::show()
- * include/mimas/ListView.h:184
+ * include/mimas/ListView.h:188
  */
 static int ListView_show(lua_State *L) {
   try {
@@ -635,7 +654,7 @@ static int ListView_show(lua_State *L) {
 
 
 /** LuaStackSize mimas::ListView::textSize(const char *text, lua_State *L)
- * include/mimas/ListView.h:142
+ * include/mimas/ListView.h:146
  */
 static int ListView_textSize(lua_State *L) {
   try {
@@ -656,7 +675,7 @@ static int ListView_textSize(lua_State *L) {
 
 
 /** void mimas::ListView::update()
- * include/mimas/ListView.h:136
+ * include/mimas/ListView.h:140
  */
 static int ListView_update(lua_State *L) {
   try {
@@ -777,6 +796,7 @@ static const struct luaL_Reg ListView_member_methods[] = {
   {"resize"            , ListView_resize},
   {"selectRow"         , ListView_selectRow},
   {"selectedIndexes"   , ListView_selectedIndexes},
+  {"setFocus"          , ListView_setFocus},
   {"setHue"            , ListView_setHue},
   {"setMinimumSize"    , ListView_setMinimumSize},
   {"setModel"          , ListView_setModel},

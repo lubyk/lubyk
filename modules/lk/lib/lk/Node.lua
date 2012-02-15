@@ -274,9 +274,9 @@ end
 
 --- Node has been removed from patch, remove links and gc.
 function lib:remove()
-  --self.fin = lk.Finalizer(function()
-  --  print('******************* DELETED', self.name)
-  --end)
+  -- self.fin = lk.Finalizer(function()
+  --   print('******************* DELETED', self.name)
+  -- end)
   self.env = nil
   self.process.need_cleanup = true
 end
@@ -309,9 +309,7 @@ function private:setParams(params)
     for k, value in pairs(params) do
       if not defaults[k] then
         -- Error notification: Invalid param.
-        -- TODO: ERROR_VALUE
-        --printf("Cannot set parameter '%s' in node '%s'.", k, self.name)
-        pdump[k] = {}
+        self:error("Trying to set invalid parameter '%s'.", k)
       else
         -- This is also used in ParamMethod.
         local inlet = inlets[k] or accessors[k]

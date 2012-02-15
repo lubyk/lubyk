@@ -120,6 +120,10 @@ class ListView : public QListView, public ThreadedLuaObject {
     QWidget::setStyleSheet(QString(".%1 { %2 }").arg(cssClass()).arg(text));
   }
 
+  void setFocus() {
+    QWidget::setFocus(Qt::OtherFocusReason);
+  }
+
   void setStyleSheet(const char *text) {
     QWidget::setStyleSheet(text);
   }

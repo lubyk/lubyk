@@ -39,10 +39,13 @@ bool ListView::click(QMouseEvent *event, int type) {
   if (pushLuaCallback("select")) {
     // ... <select> <self>
     if (type == MousePress) {
+      // normal click processing
+      lua_pop(L, 2);
+      return false;
+    } else {
+      // select
       QModelIndex idx = QListView::indexAt(QPoint(event->x(), event->y()));
       return select(idx, event);
-    } else {
-      lua_pop(L, 2);
     }
   }
   return Widget::click(this, event, type);

@@ -292,8 +292,8 @@ end
 
 --=========================================================== Process
 
-local update_url,       dump_url = 
-      lubyk.update_url, lubyk.dump_url
+local update_url,       dump_url,        quit_url = 
+      lubyk.update_url, lubyk.dump_url,  lubyk.quit_url
 
 --- Answering requests to Process.
 function lib:callback(url, ...)
@@ -306,18 +306,22 @@ function lib:callback(url, ...)
     self:set(data)
     local pdump = self:partialDump(data)
     self:notify(pdump)
+  elseif url == quit_url then
+    sched:quit()
   else
     -- Inter process communication
     local inlet = self:get(url)
     if inlet then
-      -- FIXME: how to catch errors here ? Maybe we could mark the
-      -- current thread with an error function that would be used
-      -- by the scheduler's runThread...
       inlet.receive(...)
     else
-      print('Received calls on missing inlet', url)
+      self:error("Received calls on missing inlet '%s'", url)
     end
   end
+end
+
+function lib:error(...)
+  -- TODO: notify error
+  printf(...)
 end
 
 --- Inform listening editors that something changed.

@@ -21,6 +21,10 @@ lua:
     lua_pushnumber(L, rect.height());
     return 2;
 
+  setFocus: |
+    self->setFocus(Qt::OtherFocusReason);
+    return 0;
+
   setStyle: |
     self->setStyleSheet(QString(".%1 { %2 }").arg(self->cssClass()).arg(text));
 

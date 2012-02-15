@@ -157,6 +157,7 @@ local function makeWidget(main, parent, def)
   elseif t == 'list' then
     ---------------------------- List
     elem = mimas.ListView()
+    main.widgets.list = elem
     local data = def[2]
     if data.type ~= 'mimas.DataSource' then
       function elem:rowCount()
@@ -173,14 +174,18 @@ local function makeWidget(main, parent, def)
       end
 
       function elem:select(i)
-        main:list(data[i])
+        local r = main:list(data[i])
+        if r == nil then
+          -- continue list selection
+          return true
+        else
+          return r
+        end
       end
 
       function elem:keyboard(key, on)
         if on and (key == mimas.Key_Enter or key == mimas.Key_Return) then
-          print("ON")
           local selected = elem:selectedIndexes()
-          print(yaml.dump(selected))
           if selected[1] then
             main:list(data[selected[1][1]])
           else

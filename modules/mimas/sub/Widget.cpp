@@ -13,7 +13,7 @@ using namespace mimas;
 
 
 /** mimas::Widget::Widget(int window_flags)
- * include/mimas/Widget.h:61
+ * include/mimas/Widget.h:64
  */
 static int Widget_Widget1(lua_State *L) {
   try {
@@ -31,7 +31,7 @@ static int Widget_Widget1(lua_State *L) {
 
 
 /** mimas::Widget::Widget(QWidget *parent=0, int window_flags=0)
- * include/mimas/Widget.h:67
+ * include/mimas/Widget.h:70
  */
 static int Widget_Widget2(lua_State *L) {
   try {
@@ -120,7 +120,7 @@ static int Widget__tostring(lua_State *L) {
 
 
 /** void mimas::QWidget::activateWindow()
- * mimas/bind/QWidget.h:33
+ * mimas/bind/QWidget.h:34
  */
 static int QWidget_activateWindow(lua_State *L) {
   try {
@@ -139,7 +139,7 @@ static int QWidget_activateWindow(lua_State *L) {
 
 
 /** void mimas::QWidget::addAction(Action *action)
- * mimas/bind/QWidget.h:35
+ * mimas/bind/QWidget.h:36
  */
 static int QWidget_addAction(lua_State *L) {
   try {
@@ -159,7 +159,7 @@ static int QWidget_addAction(lua_State *L) {
 
 
 /** void mimas::QWidget::addWidget(QWidget *widget)
- * mimas/bind/QWidget.h:45
+ * mimas/bind/QWidget.h:46
  */
 static int QWidget_addWidget(lua_State *L) {
   try {
@@ -198,7 +198,7 @@ static int QWidget_adjustSize(lua_State *L) {
 
 
 /** bool mimas::QWidget::close()
- * mimas/bind/QWidget.h:27
+ * mimas/bind/QWidget.h:28
  */
 static int QWidget_close(lua_State *L) {
   try {
@@ -218,7 +218,7 @@ static int QWidget_close(lua_State *L) {
 
 
 /** QString mimas::Widget::cssClass() const 
- * include/mimas/Widget.h:76
+ * include/mimas/Widget.h:79
  */
 static int Widget_cssClass(lua_State *L) {
   try {
@@ -238,7 +238,7 @@ static int Widget_cssClass(lua_State *L) {
 
 
 /** LuaStackSize mimas::Widget::getExistingDirectory(const char *caption, const char *base_dir, int options, lua_State *L)
- * include/mimas/Widget.h:109
+ * include/mimas/Widget.h:112
  */
 static int Widget_getExistingDirectory(lua_State *L) {
   try {
@@ -261,7 +261,7 @@ static int Widget_getExistingDirectory(lua_State *L) {
 
 
 /** LuaStackSize mimas::Widget::getOpenFileName(const char *caption, const char *base_dir, const char *filter, int options, lua_State *L)
- * include/mimas/Widget.h:106
+ * include/mimas/Widget.h:109
  */
 static int Widget_getOpenFileName(lua_State *L) {
   try {
@@ -285,7 +285,7 @@ static int Widget_getOpenFileName(lua_State *L) {
 
 
 /** void mimas::QWidget::globalMove(float x, float y)
- * mimas/bind/QWidget.h:84
+ * mimas/bind/QWidget.h:85
  */
 static int QWidget_globalMove(lua_State *L) {
   try {
@@ -310,7 +310,7 @@ static int QWidget_globalMove(lua_State *L) {
 
 
 /** LuaStackSize mimas::QWidget::globalPosition()
- * mimas/bind/QWidget.h:75
+ * mimas/bind/QWidget.h:76
  */
 static int QWidget_globalPosition(lua_State *L) {
   try {
@@ -351,7 +351,7 @@ static int QWidget_height(lua_State *L) {
 
 
 /** void mimas::QWidget::hide()
- * mimas/bind/QWidget.h:30
+ * mimas/bind/QWidget.h:31
  */
 static int QWidget_hide(lua_State *L) {
   try {
@@ -370,7 +370,7 @@ static int QWidget_hide(lua_State *L) {
 
 
 /** float mimas::Widget::hue()
- * include/mimas/Widget.h:96
+ * include/mimas/Widget.h:99
  */
 static int Widget_hue(lua_State *L) {
   try {
@@ -390,7 +390,7 @@ static int Widget_hue(lua_State *L) {
 
 
 /** bool mimas::QWidget::isFullScreen()
- * mimas/bind/QWidget.h:34
+ * mimas/bind/QWidget.h:35
  */
 static int QWidget_isFullScreen(lua_State *L) {
   try {
@@ -410,7 +410,7 @@ static int QWidget_isFullScreen(lua_State *L) {
 
 
 /** bool mimas::QWidget::isVisible()
- * mimas/bind/QWidget.h:28
+ * mimas/bind/QWidget.h:29
  */
 static int QWidget_isVisible(lua_State *L) {
   try {
@@ -430,7 +430,7 @@ static int QWidget_isVisible(lua_State *L) {
 
 
 /** void mimas::QWidget::lower()
- * mimas/bind/QWidget.h:31
+ * mimas/bind/QWidget.h:32
  */
 static int QWidget_lower(lua_State *L) {
   try {
@@ -449,7 +449,7 @@ static int QWidget_lower(lua_State *L) {
 
 
 /** static bool mimas::Widget::mouse(ThreadedLuaObject *obj, QMouseEvent *event)
- * include/mimas/Widget.h:114
+ * include/mimas/Widget.h:117
  */
 static int Widget_mouse(lua_State *L) {
   try {
@@ -529,7 +529,7 @@ static int QObject_object(lua_State *L) {
 
 
 /** LuaStackSize mimas::QWidget::position()
- * mimas/bind/QWidget.h:80
+ * mimas/bind/QWidget.h:81
  */
 static int QWidget_position(lua_State *L) {
   try {
@@ -549,7 +549,7 @@ static int QWidget_position(lua_State *L) {
 
 
 /** void mimas::QWidget::raise()
- * mimas/bind/QWidget.h:32
+ * mimas/bind/QWidget.h:33
  */
 static int QWidget_raise(lua_State *L) {
   try {
@@ -589,7 +589,7 @@ static int QWidget_resize(lua_State *L) {
 
 
 /** void mimas::Widget::setCssClass(const char *name)
- * include/mimas/Widget.h:84
+ * include/mimas/Widget.h:87
  */
 static int Widget_setCssClass(lua_State *L) {
   try {
@@ -608,8 +608,27 @@ static int Widget_setCssClass(lua_State *L) {
 
 
 
+/** void mimas::QWidget::setFocus()
+ * mimas/bind/QWidget.h:22
+ */
+static int QWidget_setFocus(lua_State *L) {
+  try {
+    Widget *self = *((Widget**)dubL_checksdata(L, 1, "mimas.Widget"));
+    if (!self) throw dub::Exception("Using deleted mimas.Widget in setFocus");
+    self->setFocus(Qt::OtherFocusReason);
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "setFocus: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "setFocus: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
 /** void mimas::Widget::setHue(float hue)
- * include/mimas/Widget.h:91
+ * include/mimas/Widget.h:94
  */
 static int Widget_setHue(lua_State *L) {
   try {
@@ -629,7 +648,7 @@ static int Widget_setHue(lua_State *L) {
 
 
 /** void mimas::QWidget::setMinimumSize(float w, float h)
- * mimas/bind/QWidget.h:23
+ * mimas/bind/QWidget.h:24
  */
 static int QWidget_setMinimumSize(lua_State *L) {
   try {
@@ -650,7 +669,7 @@ static int QWidget_setMinimumSize(lua_State *L) {
 
 
 /** void mimas::QWidget::setMouseTracking(bool enable)
- * mimas/bind/QWidget.h:26
+ * mimas/bind/QWidget.h:27
  */
 static int QWidget_setMouseTracking(lua_State *L) {
   try {
@@ -710,7 +729,7 @@ static int QWidget_setParent(lua_State *L) {
 
 
 /** void mimas::QWidget::setSizeHint(float w, float h)
- * mimas/bind/QWidget.h:61
+ * mimas/bind/QWidget.h:62
  */
 static int QWidget_setSizeHint(lua_State *L) {
   try {
@@ -732,7 +751,7 @@ static int QWidget_setSizeHint(lua_State *L) {
 
 
 /** void mimas::QWidget::setSizePolicy(int horizontal, int vertical)
- * mimas/bind/QWidget.h:65
+ * mimas/bind/QWidget.h:66
  */
 static int QWidget_setSizePolicy(lua_State *L) {
   try {
@@ -754,7 +773,7 @@ static int QWidget_setSizePolicy(lua_State *L) {
 
 
 /** void mimas::QWidget::setStyle(const char *text)
- * mimas/bind/QWidget.h:53
+ * mimas/bind/QWidget.h:54
  */
 static int QWidget_setStyle(lua_State *L) {
   try {
@@ -774,7 +793,7 @@ static int QWidget_setStyle(lua_State *L) {
 
 
 /** void mimas::QWidget::setStyleSheet(const char *text)
- * mimas/bind/QWidget.h:54
+ * mimas/bind/QWidget.h:55
  */
 static int QWidget_setStyleSheet(lua_State *L) {
   try {
@@ -794,7 +813,7 @@ static int QWidget_setStyleSheet(lua_State *L) {
 
 
 /** void mimas::QWidget::setWindowTitle(const char *text)
- * mimas/bind/QWidget.h:38
+ * mimas/bind/QWidget.h:39
  */
 static int QWidget_setWindowTitle(lua_State *L) {
   try {
@@ -814,7 +833,7 @@ static int QWidget_setWindowTitle(lua_State *L) {
 
 
 /** void mimas::QWidget::show()
- * mimas/bind/QWidget.h:29
+ * mimas/bind/QWidget.h:30
  */
 static int QWidget_show(lua_State *L) {
   try {
@@ -833,7 +852,7 @@ static int QWidget_show(lua_State *L) {
 
 
 /** void mimas::QWidget::showFullScreen(bool enable=true)
- * mimas/bind/QWidget.h:67
+ * mimas/bind/QWidget.h:68
  */
 static int QWidget_showFullScreen(lua_State *L) {
   try {
@@ -863,7 +882,7 @@ static int QWidget_showFullScreen(lua_State *L) {
 
 
 /** static void mimas::Widget::showHide(ThreadedLuaObject *obj, bool shown)
- * include/mimas/Widget.h:120
+ * include/mimas/Widget.h:123
  */
 static int Widget_showHide(lua_State *L) {
   try {
@@ -882,7 +901,7 @@ static int Widget_showHide(lua_State *L) {
 
 
 /** LuaStackSize mimas::QWidget::size()
- * mimas/bind/QWidget.h:52
+ * mimas/bind/QWidget.h:53
  */
 static int QWidget_size(lua_State *L) {
   try {
@@ -903,7 +922,7 @@ static int QWidget_size(lua_State *L) {
 
 
 /** void mimas::QWidget::swapFullScreen()
- * mimas/bind/QWidget.h:71
+ * mimas/bind/QWidget.h:72
  */
 static int QWidget_swapFullScreen(lua_State *L) {
   try {
@@ -926,7 +945,7 @@ static int QWidget_swapFullScreen(lua_State *L) {
 
 
 /** void mimas::QWidget::textSize(const char *text)
- * mimas/bind/QWidget.h:57
+ * mimas/bind/QWidget.h:58
  */
 static int QWidget_textSize(lua_State *L) {
   try {
@@ -966,7 +985,7 @@ static int QWidget_update(lua_State *L) {
 
 
 /** void mimas::QWidget::widget()
- * mimas/bind/QWidget.h:44
+ * mimas/bind/QWidget.h:45
  */
 static int QWidget_widget(lua_State *L) {
   try {
@@ -1006,7 +1025,7 @@ static int QWidget_width(lua_State *L) {
 
 
 /** LuaStackSize mimas::QWidget::windowTitle()
- * mimas/bind/QWidget.h:48
+ * mimas/bind/QWidget.h:49
  */
 static int QWidget_windowTitle(lua_State *L) {
   try {
@@ -1092,6 +1111,7 @@ static const struct luaL_Reg Widget_member_methods[] = {
   {"raise"             , QWidget_raise},
   {"resize"            , QWidget_resize},
   {"setCssClass"       , Widget_setCssClass},
+  {"setFocus"          , QWidget_setFocus},
   {"setHue"            , Widget_setHue},
   {"setMinimumSize"    , QWidget_setMinimumSize},
   {"setMouseTracking"  , QWidget_setMouseTracking},

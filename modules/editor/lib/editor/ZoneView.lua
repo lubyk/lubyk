@@ -56,7 +56,7 @@ function lib:init(zone)
   private.setupMenus(self)
   -- Display open recent / create new dialog until something appears on the
   -- network.
-  private.dialog.start(self)
+  self:showSplash()
 end
 
 function lib:moved(x, y)
@@ -99,8 +99,6 @@ function lib:hideDialog()
     dlg:hide()
     dlg:__gc()
     self.dlg = nil
-  else
-    self.dlg_hidden = true
   end
 end
 --=============================================== Menu setup
@@ -213,7 +211,6 @@ function private.dialog:newProject()
       end
       app:openFile(path)
     end
-    self:hideDialog()
   end
   self.dlg:resize(400,200)
   self.dlg:show()
@@ -232,6 +229,7 @@ function private.dialog:openProject()
 end
 
 function private.dialog:addView()
+  self:hideDialog()
   local dlg = mimas.SimpleDialog {
     'Create a new view',
     {'vbox', box=true, style='background: #222',
@@ -270,17 +268,17 @@ function private.dialog:addView()
   dlg:show()
 end
 
-function private.dialog:start()
-  if self.dlg_hidden then
-    -- Do not show
-    self.dlg_hidden = nil
-    return
+function lib:showSplash()
+  local data = {}
+  -- Copy so that the list does not change.
+  for k, v in pairs(settings.open_recent) do
+    data[k] = v
   end
-
+  self:hideDialog()
   local dlg = mimas.SimpleDialog {
     flag = mimas.WidgetFlag,
     'Start or create a project',
-    {'list', settings.open_recent},
+    {'list', data},
     {'hbox',
       {}, -- stretch
       {'space', 120},
@@ -297,17 +295,24 @@ function private.dialog:start()
       private.dialog.newProject(self)
     elseif btn_name == 'Open...' then
       private.dialog.openProject(self)
-    elseif #settings.open_recent > 0 then
-      app:openFile(settings.open_recent[1])
+    elseif #data > 0 then
+      app:openFile(data[1])
+    end
+    dlg.btn  = function()
       self:hideDialog()
     end
+    dlg.list = dlg.btn
   end
 
   dlg.max_list_len = 30
   function dlg.list(dlg, path)
     if path then
       app:openFile(path)
-      self:hideDialog()
+      -- disable selecting again
+      dlg.btn  = function()
+        self:hideDialog()
+      end
+      dlg.list = dlg.btn
     end
   end
   dlg.widgets.lay:setContentsMargins(15,15,15,15)
@@ -316,6 +321,9 @@ function private.dialog:start()
     p:setPen(3, mimas.Color(0.2, 0.8, 0.3))
     p:drawRoundedRect(4, 4, w-8, h-8, 10)
   end
+  dlg.widgets.list:selectRow(1)
+  dlg:show()
+  dlg.widgets.list:setFocus()
   private.centerDlg(self)
 end
 

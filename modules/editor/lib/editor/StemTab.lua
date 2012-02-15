@@ -38,8 +38,8 @@ lib.setTitle     = editor.ProcessTab.setTitle
 lib.paint        = editor.ProcessTab.paint
 lib.setAlignment = editor.ProcessTab.setAlignment
 
-local RightButton  = mimas.RightButton
-local MetaModifier = mimas.MetaModifier
+local       RightButton,       MetaModifier  = 
+      mimas.RightButton, mimas.MetaModifier
 
 function lib:click(x, y, op, btn, mod)
   if op == MousePress and

@@ -12,6 +12,7 @@
 --]]------------------------------------------------------
 local lib = lk.SubClass(mimas, 'Widget')
 editor.MorphTab = lib
+local private = {}
 
 -- CONSTANTS
 local HPEN_WIDTH = 1
@@ -40,4 +41,28 @@ function lib:setHue(hue)
   self.brush = mimas.Brush(mimas.Color(0, 0, 0.3, 0.5))
 
   self:update()
+end
+
+local       RightButton,       MousePress,       MetaModifier =
+      mimas.RightButton, mimas.MousePress, mimas.MetaModifier
+
+function lib:click(x, y, op, btn, mod)
+  if op == MousePress and
+     (btn == RightButton or mod == MetaModifier) then
+    local sx, sy = self:globalPosition()
+    private.showContextMenu(self, sx + x, sy + y)
+  end
+end
+
+function private:showContextMenu(gx, gy)
+  local menu = mimas.Menu('')
+  if self.menu and not menu:deleted() then
+    self.menu:hide()
+  end
+  self.menu = menu
+
+  menu:addAction('Stop', '', function()
+    self.morph:quit()
+  end)
+  menu:popup(gx - 5, gy - 5)
 end

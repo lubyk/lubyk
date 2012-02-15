@@ -46,11 +46,13 @@ function lib:connect(service)
     self.tab:setHue()
   end
   self.zone.control_tabs:addPlusView()
+  self.zone.view:hideDialog()
+
   private.mountDav(self)
   private.sync(self)
 end
 
-function lib:disconnect(remote)
+function lib:disconnect()
   -- noop
   self.zone.control_tabs:removePlusView()
   self.online = false
@@ -58,6 +60,21 @@ function lib:disconnect(remote)
   if self.tab then
     self.tab:setHue(self.hue)
   end
+
+  -- Remove all views
+  local views = self.zone.views
+  for name, view in pairs(views) do
+    view:remove()
+    views[name] = nil
+  end
+
+  if self.zone.view.link_editor then
+    self.zone.view.link_editor:hide()
+    self.zone.view.link_editor = nil
+  end
+
+  -- Show splash
+  self.zone.view:showSplash()
 end
 
 function lib:quit()
