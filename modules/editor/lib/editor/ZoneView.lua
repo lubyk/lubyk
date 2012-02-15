@@ -97,7 +97,6 @@ function lib:hideDialog()
   local dlg = self.dlg
   if dlg then
     dlg:hide()
-    dlg:__gc()
     self.dlg = nil
   end
 end
@@ -185,6 +184,7 @@ function private.dialog:newProject()
   end
   self:hideDialog()
   self.dlg = mimas.SimpleDialog {
+    flag   = mimas.WidgetFlag,
     parent = self,
     'Create a new lubyk project.',
     { 
@@ -290,13 +290,31 @@ function lib:showSplash()
   self.dlg = dlg
   self:addWidget(dlg)
 
+  local function openFile(path)
+    if path then
+      app:openFile(path)
+      self:hideDialog()
+      dlg = mimas.SimpleDialog {
+        'Loading...',
+        {
+          'vbox', box=true,
+          path,
+        },
+      }
+      self:addWidget(dlg)
+      self.dlg = dlg
+      dlg:show()
+      private.centerDlg(self)
+    end
+  end
+
   function dlg.btn(dlg, btn_name)
     if btn_name == 'New...' then
       private.dialog.newProject(self)
     elseif btn_name == 'Open...' then
       private.dialog.openProject(self)
     elseif #data > 0 then
-      app:openFile(data[1])
+      openFile(data[1])
     end
     dlg.btn  = function()
       self:hideDialog()
@@ -306,14 +324,7 @@ function lib:showSplash()
 
   dlg.max_list_len = 30
   function dlg.list(dlg, path)
-    if path then
-      app:openFile(path)
-      -- disable selecting again
-      dlg.btn  = function()
-        self:hideDialog()
-      end
-      dlg.list = dlg.btn
-    end
+    openFile(path)
   end
   dlg.widgets.lay:setContentsMargins(15,15,15,15)
   function dlg:paint(p, w, h)

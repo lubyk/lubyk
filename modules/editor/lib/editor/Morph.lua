@@ -68,6 +68,8 @@ function lib:disconnect()
     views[name] = nil
   end
 
+  private.unmountDav(self)
+
   if self.zone.view.link_editor then
     self.zone.view.link_editor:hide()
     self.zone.view.link_editor = nil
@@ -114,11 +116,16 @@ function private:mountDav()
   -- option -S == do not prompt when server goes offline
   local cmd = string.format('mount_webdav -S %s %s', self.dav_url, work_path)
   self.mount_fd = worker:execute(cmd)
-  -- Automatic disconnection. If we do not do this, we have lots
-  -- of dangling server problems.
-  self.mount_fin = lk.Finalizer(function()
-     worker:execute(string.format('umount %s', work_path))
-  end)
+end
+
+function private:unmountDav()
+  if self.mount_fd then
+    local work_path = self.zone:workPath()
+    -- Automatic disconnection. If we do not do this, we have lots
+    -- of dangling server problems.
+    self.mount_fd = nil
+    worker:execute(string.format('umount %s', work_path))
+  end
 end
 
 function private:sync()

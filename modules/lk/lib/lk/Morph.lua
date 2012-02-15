@@ -212,6 +212,7 @@ function lib:processConnected(remote_process)
         end
       end
     elseif remote_process.name ~= '' then
+      printf("Invalid process '%s'. Kill", remote_process.name)
       -- Invalid process. Kill.
       remote_process.push:send(lubyk.quit_url)
     end
@@ -290,12 +291,21 @@ function private.findOrMakeResource(self, url, is_dir)
   end
   return resource
 end
+
 function private:startStemCell()
-  worker:spawn([[
-  require 'lubyk'
-  stem = lk.StemCell()
-  run()
-  ]])
+  -- This is ugly, but we want to make sure this stem cell is not
+  -- started before we see if there is any on the network.
+  sleep(1000)
+  if not self.stem_cells[Lubyk.host] then
+    print("CREATE STEM")
+    worker:spawn([[
+    require 'lubyk'
+    stem = lk.StemCell()
+    run()
+    ]])
+  else
+    print("IGNORE STEM")
+  end
 end
 
 --=============================================== SET

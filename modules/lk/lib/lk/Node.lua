@@ -165,9 +165,8 @@ function lib:set(definition)
 end
 
 
-function lib:error(msg)
-  print(msg)
---  table.insert(self.errors, string.format(...))
+function lib:error(...)
+  printf(...)
 end
 
 function lib:makeAbsoluteUrl(url)

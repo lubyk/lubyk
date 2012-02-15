@@ -20,23 +20,7 @@ function lib.new(def)
     self = mimas.Widget()
   end
   setmetatable(self, lib)
-
-  self.widgets = {lay = mimas.VBoxLayout(self)}
-  self.form    = {}
-  for _,elem in ipairs(def) do
-    private.makeWidget(self, self.widgets.lay, elem)
-  end
-  self:resize(self:minimumSize())
-  if def.flag == mimas.WidgetFlag then
-    -- FIXME: do this properly...
-    -- fix missing background
-    function self:paint(p, w, h)
-      p:setPen(1, mimas.Color(0, 0, 0.5, 0.5))
-      p:setBrush(mimas.Color(0, 0, 0.2))
-      p:drawRect(0, 0, w, h)
-    end
-  end
-
+  self:set(def)
   return self
 end
 
@@ -47,6 +31,34 @@ end
 function lib:minimumSize()
   return self.widgets.lay:minimumSize()
 end
+
+function lib:show()
+  self.super:show()
+  self:resize(self:minimumSize())
+end
+
+-- FIXME: Set does not resize correctly...
+function lib:set(def)
+  if self.widgets then
+    -- Delete layout
+    self.widgets.lay:__gc()
+  end
+  self.widgets = {lay = mimas.VBoxLayout(self)}
+  self.form    = {}
+  for _,elem in ipairs(def) do
+    private.makeWidget(self, self.widgets.lay, elem)
+  end
+  if def.flag == mimas.WidgetFlag then
+    -- FIXME: do this properly...
+    -- fix missing background
+    function self:paint(p, w, h)
+      p:setPen(1, mimas.Color(0, 0, 0.5, 0.5))
+      p:setBrush(mimas.Color(0, 0, 0.2))
+      p:drawRect(0, 0, w, h)
+    end
+  end
+end
+
 
 --=============================================== PRIVATE
 local function makeWidget(main, parent, def)
