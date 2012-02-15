@@ -113,6 +113,10 @@ function lib:paint(p, w, h)
 end
 
 function lib:layoutChanged(patch_visible, controls_visible)
+  if self.vbox:deleted() then
+    return
+  end
+
   local align = 0
   if controls_visible then
     align = 1

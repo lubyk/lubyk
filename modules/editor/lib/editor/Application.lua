@@ -36,21 +36,6 @@ function lib:init()
   self.host_list = {'localhost'}
 
   self:selectZone(Lubyk.zone)
-  
-  if false then
-    -- splash screen, etc: later
-    -- Start listening for processes and zones on the network
-    self.process_watch = lk.ProcessWatch():addDelegate(self)
-
-    -- Data source for zones
-    self.zone_data = mimas.DataSource(self.zone_list)
-
-    -- Data source for hosts
-    self.host_data = mimas.DataSource(self.host_list)
-
-    self.splash_view = editor.SplashScreen(self)
-    self.splash_view:show()
-  end
 end
 
 --=============================================== ProcessWatch delegate
@@ -89,14 +74,7 @@ function lib:hostsDataSource()
 end
 
 function lib:selectZone(zone_name)
-  if not self.zones[zone_name] then
-    local zone = editor.Zone(self.process_watch, zone_name)
-    self.zones[zone_name] = zone
-    if self.splash_view then
-      self.splash_view:close()
-      self.splash_view = nil
-    end
-  end
+  self.zone = editor.Zone(self.process_watch, zone_name)
 end
 
 function lib:removeZone(zone_name)
@@ -111,9 +89,6 @@ function lib:startZone(opts)
   morph = lk.DavMorph(%s)
   run()
   ]], opts)
-
-  -- Maybe we should make sure it started ok before selecting the zone.
-  self:selectZone(Lubyk.zone)
 end
 
 --=============================================== Receive an openFile event
@@ -125,7 +100,7 @@ function lib:openFile(path)
     if self.morph then
       -- kill it
       self.morph.push:send(lubyk.quit_url)
-      self.morph     = nil
+      self.morph = nil
     end
 
     -- Manage recent files
@@ -147,7 +122,12 @@ function lib:openFile(path)
     end
     s:save()
 
-    self:startZone {path = path, start_stem = true}
+    -- If we have a local stem, do not create a new one.
+    local stem = self.zone.found_processes['@'..Lubyk.host]
+    self:startZone {
+      path = path,
+      start_stem = not stem,
+    }
   end
 end
 

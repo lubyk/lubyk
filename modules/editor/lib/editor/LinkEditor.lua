@@ -450,7 +450,7 @@ function private:link(node, param, conn, opts)
   def.url = url
   if type(node.params[param]) == 'number' then
     def.min = def.min or conn.min or 0
-    def.max = def.max or conn.max or 0
+    def.max = def.max or conn.max or 1
   end
   conn.ctrl:change {
     connect = {

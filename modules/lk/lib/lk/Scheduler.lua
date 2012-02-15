@@ -97,7 +97,6 @@ function lib:run(func)
     app:exec()
   end
   private.finalize(self)
-  print("Bye...")
 end
 
 function lib:loop()

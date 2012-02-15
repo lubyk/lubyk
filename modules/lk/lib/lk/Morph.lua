@@ -180,6 +180,13 @@ function lib:quit()
       process.push:send(lubyk.quit_url)
     end
   end
+  if self.stem_fd then
+    -- Kill the stem cell that we created.
+    local stem = self.stem_cells[Lubyk.host]
+    if stem then
+      stem.push:send(lubyk.quit_url)
+    end
+  end
   sched:quit()
 end
 
@@ -295,16 +302,12 @@ end
 function private:startStemCell()
   -- This is ugly, but we want to make sure this stem cell is not
   -- started before we see if there is any on the network.
-  sleep(1000)
   if not self.stem_cells[Lubyk.host] then
-    print("CREATE STEM")
-    worker:spawn([[
+    self.stem_fd = worker:spawn([[
     require 'lubyk'
     stem = lk.StemCell()
     run()
     ]])
-  else
-    print("IGNORE STEM")
   end
 end
 
