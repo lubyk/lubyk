@@ -18,12 +18,17 @@ local app          = app
 local private      = {}
 
 -- We transform mimas.Application into an editor.Application.
-function lib.new()
+function lib.new(args)
   local self = app
   setmetatable(self, lib)
   self.start = lk.Thread(function()
     self:init()
   end)
+  for k,arg in pairs(args) do
+    if arg == '--install' then
+      self.need_install = true
+    end
+  end
   return self
 end
 
@@ -35,7 +40,35 @@ function lib:init()
   -- hosts
   self.host_list = {'localhost'}
 
-  self:selectZone(Lubyk.zone)
+  if self.need_install then
+    local dlg = mimas.SimpleDialog {
+      'Installation needed',
+      {
+        'hbox',
+        {},
+        {'btn', 'Quit'},
+        {'btn', 'Install', default=true},
+      },
+    }
+    self.dlg = dlg
+
+    function dlg:btn(btn)
+      if btn == 'Quit' then
+        dlg:close()
+      else
+        -- Install
+        if Lubyk.plat == 'macosx' then
+          os.execute('open "/Applications/Lubyk/lib/lubyk/Install Lubyk.app"')
+          dlg:close()
+        end
+      end
+    end
+
+    dlg:resize(dlg:minimumSize())
+    dlg:show()
+  else
+    self:selectZone(Lubyk.zone)
+  end
 end
 
 --=============================================== ProcessWatch delegate

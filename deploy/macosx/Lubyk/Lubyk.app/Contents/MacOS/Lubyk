@@ -1,8 +1,28 @@
 #!/bin/sh
+
 # MacOS
 f=`dirname "$0"`
 # Resources
 r="$f/../Resources"
-lua="$r/lua"
+lubyk="$r/lubyk"
+
+INSTALL=''
+# Check if lubyk is installed
+INSTALLED=`/usr/local/bin/lubyk -v 2>&1`
+CURRENT=`$lubyk -v 2>&1`
+if [ "$INSTALLED" != "$CURRENT" ] 
+then
+  # We need to install
+  echo "NEED app install '$INSTALLED' '$CURRENT'"
+  INSTALL="--install"
+else
+  if [ ! -f /usr/local/share/lua/5.1/lubyk.lua ]
+  then
+    echo "NEED trig install"
+    INSTALL="--install"
+  fi
+fi
+
 app="$r/app.lua"
-exec "$lua" "$app" "$f/../../../lib" "$1"
+
+exec "$lubyk" "$app" "$f/../../../lib" "$INSTALL" "$1"

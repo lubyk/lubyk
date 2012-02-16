@@ -4,5 +4,5 @@ if arg[1] then
   package.cpath = arg[1] .. '/?.so;'  .. package.cpath
 end
 require 'lubyk'
-app = editor.Application()
+app = editor.Application(arg)
 run()

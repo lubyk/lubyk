@@ -23,3 +23,4 @@ Lubyk.plat = Lubyk.plat or 'macosx'
 package.path  = Lubyk.lib .. '/?.lua;' .. package.path
 package.cpath = Lubyk.lib .. '/?.so;'  .. package.cpath
 require 'lk'
+
