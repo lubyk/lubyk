@@ -38,6 +38,7 @@ extern "C" {
 #include <string.h>
 #include <stdio.h>
 
+#define MAX_DEPTH 10000
 static void pack_lua(lua_State *L, msgpack_packer *pk, int index);
 
 void free_msgpack_msg(void *data, void *buffer) {
@@ -82,6 +83,10 @@ static void pack_hash(lua_State *L, msgpack_packer *pk, int index) {
 }
 
 static void pack_table(lua_State *L, msgpack_packer *pk, int index) {
+  if (index > MAX_DEPTH) {
+    // ERROR
+    throw dub::Exception("Cannot send table (recursive or too large).");
+  }
   int sz = luaL_getn(L, index);
 
   if (sz > 0) {
