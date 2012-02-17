@@ -125,6 +125,7 @@ function lib:dump()
   return self:partialDump {
     -- This is to give the future host on unconnected processes in
     -- the editor.
+    lubyk     = true,
     host      = true,
     name      = true,
     processes = true,
@@ -590,6 +591,7 @@ end
 -- When reading a file 'reading_lkp' is set so we know that we must not
 -- write to lkp file.
 function private.process.add(self, name, info, reading_lkp)
+  -- Find or create process.
   local process = self.process_watch:process(name)
   self.processes[name] = process
   process.host = info.host

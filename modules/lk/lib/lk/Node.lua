@@ -148,7 +148,7 @@ function lib:set(definition)
       -- allowed params and inlets are defined).
       local params = definition._
       if params then
-        private.setParams(self, params)
+        self:setParams(params)
       end
     elseif k == 'source' or
            k == 'links' then
@@ -292,7 +292,7 @@ function private:defaults(hash)
 end
 
 --- Receive a control event: update setting.
-function private:setParams(params)
+function lib:setParams(params)
   -- Prepare for partial dump
   local pdump    = {}
   self.pdump     = pdump

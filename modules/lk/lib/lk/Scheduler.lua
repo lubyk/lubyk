@@ -156,14 +156,7 @@ function lib:loop()
           if thread then
             private.runThread(self, thread)
           else
-            -- if process then
-            --   print(process.name, ev_idx, '???')
-            -- elseif morph then
-            --   print('morph', ev_idx, '???')
-            -- else
-            --   print('???', ev_idx, '???')
-            -- end
-            poller:remove(ev_idx)
+            error(string.format("Unknown thread idx '%i' in poller", ev_idx))
           end
         end
       end
@@ -243,7 +236,7 @@ function lib:remove(thread)
       table.insert(self.garbage, thread)
     end
   end
-  --self:removeFd(thread)
+  self:removeFd(thread)
   thread.t.t = nil
 end
 
@@ -254,10 +247,10 @@ function lib:removeFd(thread)
   end
   if fd then
     self.poller:remove(thread.idx)
+    thread.fd  = nil
     self.fd_count = self.fd_count - 1
   end
   thread.idx = nil
-  thread.fd  = nil
 end
 
 function lib:pcall(f, errorHandler)

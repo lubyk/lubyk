@@ -44,9 +44,9 @@ function should.runMutlithreaded(t)
   -- should give us control back on 'accept'
   assertValueEqual('Hello Lubyk!', t.received)
   assertValueEqual({
+    'srv:thread',
     'cli:connect',
     'cli:send',
-    'srv:thread',
     'srv:accept',
     'srvi:recv',
     'srvi:close',

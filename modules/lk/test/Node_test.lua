@@ -20,9 +20,10 @@ end
 local function makeNode(patch, name)
   name = name or 'foo'
   return lk.Node(patch or makePatch(), name, [[
-    inlet('raw', 'Receive raw value [float].')
-    scaled = outlet('scaled', 'Sends scaled value [float].')
-    scale = scale or 1
+    outlet 'scaled'
+    defaults {
+      scale = 1,
+    }
 
     function inlet.raw(x)
       received = x
@@ -42,13 +43,13 @@ end
 
 function should.mergeParamsInEnv()
   local node = makeNode()
-  node:setParams{scale=2.0}
-  assertEqual(2.0, node.env.scale)
+  node:setParams{scale=2}
+  assertEqual(2, node.env.scale)
 end
 
 function should.set()
   local node = makeNode()
-  node:set{params={scale=2.0},x=10,y=30}
+  node:set{_ ={scale=2.0},x=10,y=30}
   assertEqual(2.0, node.env.scale)
   assertEqual(10, node.x)
   assertEqual(30, node.y)
@@ -149,7 +150,7 @@ function should.connectSlotsOnSet()
   local p = makePatch()
   local a = makeNode(p)
   -- pending links (relative url to parent/patch)
-  a:set{params={scale=3}, links={scaled={['b/in/raw']=true}}}
+  a:set{_={scale=3}, links={scaled={['b/in/raw']=true}}}
   -- should resolve links now
   local b = makeNode(p, 'b')
   a.inlets.raw.receive(5)

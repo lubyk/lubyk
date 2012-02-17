@@ -13,7 +13,9 @@ local should = test.Suite('lk.OutletMethod')
 local function mockNode()
   return {
     outlets        = {},
-    sorted_outlets = {},
+    slots = {
+      outlets = {},
+    },
     env            = {},
   }
 end
@@ -36,7 +38,7 @@ function should.createNewOutletOnCall()
   end)
   local bang = node.outlets.bang
   assertEqual('bang', bang.name)
-  assertEqual('Send bang.', bang.info)
+  assertEqual('Send bang.', bang.opts)
 end
 
 function should.createOutletFunction()
@@ -48,10 +50,4 @@ function should.createOutletFunction()
   assertType('function', node.env.draw)
 end
 
-function should.accessOutletOnIndex()
-  local node = mockNode()
-  local outlet = lk.OutletMethod(node)
-  outlet('doom')
-  assertEqual('lk.Outlet', outlet.doom.type)
-end
 test.all()

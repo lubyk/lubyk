@@ -96,7 +96,7 @@ public:
         used_count_(0),
         event_count_(0),
         interrupted_(false) {
-    if (reserve < 0) reserve = 10;
+    if (reserve <= 0) reserve = 10;
     pollitems_ = (zmq_pollitem_t*)calloc(reserve, sizeof(zmq_pollitem_t));
     if (pollitems_ == NULL) {
       throw Exception("Could not pre-allocate %i pollitems", reserve);
@@ -105,13 +105,16 @@ public:
     idx_to_pos_ = (int*)calloc(reserve, sizeof(int));
     if (idx_to_pos_ == NULL) {
       free(pollitems_);
+      pollitems_ = NULL;
       throw Exception("Could not pre-allocate %i pollitems", reserve);
     }
 
     pos_to_idx_ = (int*)calloc(reserve, sizeof(int));
     if (pos_to_idx_ == NULL) {
       free(pollitems_);
+      pollitems_ = NULL;
       free(idx_to_pos_);
+      idx_to_pos_ = NULL;
       throw Exception("Could not pre-allocate %i pollitems", reserve);
     }
     pollitems_size_ = reserve;
@@ -123,11 +126,9 @@ public:
   }
 
   ~Poller() {
-    if (pollitems_) {
-      free(pollitems_);
-      free(idx_to_pos_);
-      free(pos_to_idx_);
-    }
+    if (pollitems_) free(pollitems_);
+    if (idx_to_pos_) free(idx_to_pos_);
+    if (pos_to_idx_) free(pos_to_idx_);
   }
 
   /** Polls for new events and ensures that if we timeout, this is done
@@ -245,9 +246,16 @@ public:
   /** Remove an item by its id.
    */
   void remove(int idx) {
-    assert(idx < pollitems_size_ && idx >= 0);
+    if (idx < 0 || idx >= pollitems_size_) {
+      // Allready removed = bug.
+      throw dub::Exception("Invalid index '%i'.", idx);
+    }
     int last_pos = used_count_ - 1;
     int pos = idx_to_pos_[idx];
+    if (pos == -1) {
+      // Allready removed = bug.
+      throw dub::Exception("Element '%i' removed twice.", idx);
+    }
     idx_to_pos_[idx] = -1; // now free
     --used_count_;
     if (pos == last_pos) {

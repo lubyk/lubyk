@@ -11,6 +11,7 @@ local lib   = {type = 'lk.Outlet'}
 lib.__index = lib
 lk.Outlet   = lib
 
+local doSend
 setmetatable(lib, {
   -- lk.Outlet(node)
   -- Create a new outlet and insert it into
@@ -23,19 +24,20 @@ setmetatable(lib, {
   }
 
   function self.send(...)
-    self.send(self, ...)
+    doSend(self, ...)
   end
 
   return setmetatable(self, lib)
 end})
 
-function lib:send(...)
+function doSend(self, ...)
   for _,slot in ipairs(self.connections) do
     slot.receive(...)
   end
 end
 
 function lib:set(opts)
+  self.opts = opts
   -- noop for the moment. We could change the type of zmq
   -- operation (work distribution).
 end

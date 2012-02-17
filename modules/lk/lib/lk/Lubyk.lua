@@ -38,8 +38,8 @@ Lubyk.version = defaults.version
 local function getMachineName()
   local file = io.popen('hostname')
   local name = file:read()
-  local short_name = string.match(name, '^([^-.]+)')
-  return short_name or name
+  local short_name = string.match(name or '', '^([^-.]+)')
+  return short_name or name or 'unknown'
 end
 defaults.host = getMachineName()
 

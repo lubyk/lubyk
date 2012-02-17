@@ -1,5 +1,4 @@
-inlet('input', 'Passes input values to output.')
-out = outlet('output', 'Sends input values [?].')
+outlet 'out'
 
 function inlet.input(val)
   out(val)

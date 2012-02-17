@@ -24,6 +24,7 @@ setmetatable(lib, {
   else
     self = {
       name = name,
+      node = node,
     }
   end
 
@@ -32,6 +33,12 @@ end})
 
 function lib.receive(...)
   print('Inlet function not set.')
+end
+
+-- This is called when a pending inlet becomes real.
+function lib:setNode(node)
+  self.target_url = nil
+  self.node = node
 end
 
 function lib:dump()

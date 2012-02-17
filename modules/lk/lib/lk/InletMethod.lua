@@ -29,14 +29,13 @@ function lib.__newindex(self, name, func)
   if not inlet then
     inlet = node.pending_inlets[name]
     if inlet then
-      inlet.target_url = nil
       node.pending_inlets[name] = nil
+      -- Not pending anymore
+      inlet:setNode(node)
     else
       -- New inlet
       inlet = lk.Inlet(name, node)
     end
-    -- set node
-    inlet.node = node
     node.inlets[name] = inlet
   end
   -- Each time we redeclare an inlet, we add it.

@@ -5,7 +5,7 @@ nodes:
     y: 95
     links:
       sum: store/in/value
-    params:
+    _:
       val1: 0
       val2: 5
 

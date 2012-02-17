@@ -172,7 +172,13 @@ function lib.runSuite(suite)
       skip_count = skip_count + 1
     elseif not lib.only or lib.only == name then
       suite.setup(gc_protect[name])
+      if lib.verbose then
+        printf("%-12s Run %s", '['..suite._info.name..']', name)
+      end
       local ok, err = sched:pcall(pass_args)
+      if lib.verbose then
+        printf("%s %s", ok and 'OK' or 'FAIL', err or '')
+      end
       collectgarbage('collect')
       if not ok then
         fail_count = fail_count + 1

@@ -17,29 +17,28 @@ local function mockNode()
     pending_inlets = {},
     outlets        = {},
     sorted_outlets = {},
-    name           = 'foo'
+    name           = 'foo',
+    url            = function() return '/node/url' end,
   }
 end
 
 function should.createOutlet()
   local node = mockNode()
-  local bang = lk.Outlet(node, 'bang', 'Bangs on every beat.')
-  assertType('function', bang)
-  assertEqual('bang', node.outlets.bang.name)
-  assertEqual(bang, node.outlets.bang.send)
-  assertEqual('Bangs on every beat.', node.outlets.bang.info)
+  local bang = lk.Outlet('bang', node)
+  assertEqual('lk.Outlet', bang.type)
+  assertEqual('bang', bang.name)
+  assertType('function', bang.send)
 end
 
 function should.dump()
   local node = mockNode()
-  local bang = lk.Outlet(node, 'bang', 'Bangs on every beat.')
-  local beep = lk.Inlet(node, 'beep', 'Receives bangs.')
-  node.outlets.bang:connect(node.inlets.beep)
-  local dump = node.outlets.bang:dump()
+  local bang = lk.Outlet('bang', node)
+  local beep = lk.Inlet('beep', node)
+  bang:connect(beep)
+  local dump = bang:dump()
   assertEqual('bang', dump.name)
-  assertEqual('Bangs on every beat.', dump.info)
   assertType('table', dump.links)
-  assertTrue(dump.links['foo/in/beep'])
+  assertTrue(dump.links['/node/url/in/beep'])
 end
 
 function should.connectToInlets()
@@ -47,13 +46,13 @@ function should.connectToInlets()
   local bang = lk.Outlet(node, 'bang', 'Send bang.')
   local beep = lk.Inlet(node, 'beep', 'Receives bangs.')
   assertPass(function()
-    node.outlets.bang:connect(node.inlets.beep)
+    bang:connect(beep)
   end)
   local t = 0
   function beep.receive(value)
     t = value
   end
-  bang(120)
+  bang.send(120)
   assertEqual(120, t)
 end
 

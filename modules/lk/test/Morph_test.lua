@@ -15,10 +15,20 @@ local function makeMorph(t, filepath)
   morph.spawn = function(self, ...)
     t.spawn = ...
   end
+  morph.process_watch = {
+  }
+  function morph.process_watch:process(name)
+    return {}
+  end
   if filepath then
     morph:openFile(filepath)
   end
   return morph
+end
+
+function should.teardown()
+  -- clear _views
+  lk.rmTree(fixture.path('project/_views'))
 end
 
 function should.loadCode()
@@ -40,8 +50,6 @@ function should.readLkpFile(t)
   assertEqual(0, morph.lubyk.version.major)
   assertEqual(3, morph.lubyk.version.minor)
   assertEqual('saturn', morph.processes.foobar.host)
-  -- Started process name
-  assertEqual('inline', t.spawn)
 end
   
 function should.saveToFile(t)
@@ -80,7 +88,7 @@ end
 function should.dump(t)
   local lkp = fixture.path('project/example.lkp')
   local morph = makeMorph(t, lkp)
-  local data = morph.private.dumpAll(morph)
+  local data = morph:dump()
   assertEqual(0, data.lubyk.version.major)
   assertEqual(3, data.lubyk.version.minor)
   assertEqual('', data.processes.bang)
