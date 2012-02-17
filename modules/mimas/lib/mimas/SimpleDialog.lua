@@ -48,15 +48,6 @@ function lib:set(def)
   for _,elem in ipairs(def) do
     private.makeWidget(self, self.widgets.lay, elem)
   end
-  if def.flag == mimas.WidgetFlag then
-    -- FIXME: do this properly...
-    -- fix missing background
-    function self:paint(p, w, h)
-      p:setPen(1, mimas.Color(0, 0, 0.5, 0.5))
-      p:setBrush(mimas.Color(0, 0, 0.2))
-      p:drawRect(0, 0, w, h)
-    end
-  end
 end
 
 
@@ -234,7 +225,11 @@ local function makeWidget(main, parent, def)
     elseif def.style then
       elem:setStyle(def.style)
     end
-    parent:addWidget(elem)
+    if def.align or def.stretch then
+      parent:addWidget(elem, def.stretch or 0, def.align or mimas.AlignLeft)
+    else
+      parent:addWidget(elem)
+    end
     -- protect from gc
     table.insert(main.widgets, elem)
   end

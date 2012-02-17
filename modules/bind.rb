@@ -62,6 +62,10 @@ modules = {
     'const' => true,
   },
   'wii'   => %w{Browser Remote},
+  'kinect'=> {
+    'class' => %w{Context Skeleton},
+    'const' => true,
+  },
 }.each do |mod_name, opts|
   next unless modules_to_bind.empty? || modules_to_bind.include?(mod_name)
   puts "Binding #{mod_name}"
@@ -89,7 +93,7 @@ modules = {
       next
     end
     
-    if klass.ancestors.detect{|a| a =~ /LuaObject/}
+    if klass.opts[:destructor] == 'luaDestroy' || klass.ancestors.detect{|a| a =~ /LuaObject/}
       klass.opts[:init] = 'luaInit'
       klass.custom_destructor ||= klass[:luaDestroy] || Dub::Function.new(klass, 'luaDestroy', '<type>void</type>')        
     end

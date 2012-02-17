@@ -164,8 +164,6 @@ foreach (MODULE ${MODULES})
     #  module_lib
     # ----------------------------------------------------------------------------------
     if(EXISTS ${MODULE}/lib)
-      file (GLOB MODULE_SOURCES ${MODULE}/lib/*)
-
       add_custom_target("${MODULE_NAME}_lib" ALL
          COMMAND ${CMAKE_COMMAND} -E copy_directory ${MODULE}/lib ${LUBYK_LIB})
 

@@ -26,4 +26,6 @@ set_target_properties(luaexec PROPERTIES OUTPUT_NAME lua)
 
 # create luac link it
 add_executable(luac EXCLUDE_FROM_ALL luac.c print.c)
-target_link_libraries (luac lua readline)
+
+# We should only do this if we have a static readline.
+# target_link_libraries (luac lua readline)

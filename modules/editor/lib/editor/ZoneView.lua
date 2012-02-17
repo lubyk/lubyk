@@ -271,20 +271,24 @@ end
 function lib:showSplash()
   local data = {}
   -- Copy so that the list does not change.
-  for k, v in pairs(settings.open_recent) do
+  for k, v in pairs(settings.open_recent or {}) do
     data[k] = v
   end
   self:hideDialog()
   local dlg = mimas.SimpleDialog {
     flag = mimas.WidgetFlag,
-    'Start or create a project',
-    {'list', data},
-    {'hbox',
-      {}, -- stretch
-      {'space', 120},
-      {'btn', 'New...'},
-      {'btn', 'Open...'},
-      {'btn', 'Open Recent', default = true},
+    {'label', "<img src='"..settings.logo.."'/>", align=mimas.AlignCenter},
+    {
+      'vbox', box=true,
+      'Start or create a project',
+      {'list', data},
+      {'hbox',
+        {}, -- stretch
+        {'space', 120},
+        {'btn', 'New...'},
+        {'btn', 'Open...'},
+        {'btn', 'Open Recent', default = true},
+      },
     },
   }
   self.dlg = dlg
@@ -327,11 +331,7 @@ function lib:showSplash()
     openFile(path)
   end
   dlg.widgets.lay:setContentsMargins(15,15,15,15)
-  function dlg:paint(p, w, h)
-    p:setBrush(mimas.Color(0, 0, 0.2))
-    p:setPen(3, mimas.Color(0.2, 0.8, 0.3))
-    p:drawRoundedRect(4, 4, w-8, h-8, 10)
-  end
+
   dlg.widgets.list:selectRow(1)
   dlg:show()
   dlg.widgets.list:setFocus()

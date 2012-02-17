@@ -37,8 +37,8 @@ using namespace lubyk;
 #include "mimas/mimas.h"
 #include "mimas/Widget.h"
 
-#include <QGLWidget>
-#include <QGLContext>
+#include <QtOpenGL/QGLWidget>
+#include <QtOpenGL/QGLContext>
 
 #ifdef __macosx__
   //#include <OpenGL/gl.h>

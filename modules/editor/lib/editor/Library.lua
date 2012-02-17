@@ -30,12 +30,16 @@ setmetatable(lib, {
     table_name  = opts.table_name,
     ignore_code = opts.ignore_code,
   }
-  if db then
-    self.db = db
+  if opts.db then
+    self.db = opts.db
   else
     self.filepath = editor.Settings.db_path
     lk.makePath(lk.directory(self.filepath))
-    self.db = sqlite3.open(self.filepath)
+    if lk.exist(self.filepath) then
+      self.db = sqlite3.open(self.filepath)
+    else
+      self.db = sqlite3.open(self.filepath)
+    end
   end
   private.prepareDb(self)
   private.setupSources(self)

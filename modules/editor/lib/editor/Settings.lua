@@ -12,7 +12,10 @@ require 'lubyk'
 local defaults = {
   -- Which views to show on launch.
   show = {
+    Library = true,
     Patch = true,
+    View = true,
+    Controls = true,
   },
   -- Where the databases (prototypes, controls) lives
   db_path = Lubyk.lib .. '/Lubyk.db',
@@ -33,9 +36,10 @@ local defaults = {
   main_view = {
     x = 50,
     y = 50,
-    w = 600,
-    h = 400,
+    w = 787,
+    h = 611,
   },
+  logo = Lubyk.lib .. '/editor/img/logo.png',
 }
 
 editor.Settings = lk.Settings('editor', defaults)

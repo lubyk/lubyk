@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'VBoxLayout.h'
 **
-** Created: Thu Feb 9 12:13:50 2012
+** Created: Thu Feb 16 20:24:56 2012
 **      by: The Qt Meta Object Compiler version 63 (Qt 4.8.0)
 **
 ** WARNING! All changes made in this file will be lost!

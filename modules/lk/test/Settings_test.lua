@@ -42,6 +42,12 @@ function should.dumpChangedSettings()
   assertMatch('return {.*new_key = "Hop",', lk.Settings.dump(s))
 end
 
+function should.notDumpModuleName()
+  local s = lk.Settings('TestSettings', defaults)
+  s.new_key = 'Hop'
+  assertNotMatch('_module', lk.Settings.dump(s))
+end
+
 function should.dumpStringWithQuote()
   local s = lk.Settings('TestSettings', defaults)
   s.angle = '24"'
@@ -69,7 +75,7 @@ function should.copyOnWriteInSameTable()
 end
 
 function should.readSettingsFromFile()
-  lk.writeall(settings.module.path, [[
+  lk.writeall(settings._module.path, [[
   return {
     name = 'John',
     age  = 22,
@@ -86,10 +92,10 @@ function should.saveSettings()
   local s = lk.Settings('TestSettings', defaults)
   s.name = 'Fuzz'
   s.foo.ban = 'Boom'
-  assertFalse(lk.exist(settings.module.path))
+  assertFalse(lk.exist(settings._module.path))
   s:save()
-  assertTrue(lk.exist(settings.module.path))
-  local dump = lk.readall(settings.module.path)
+  assertTrue(lk.exist(settings._module.path))
+  local dump = lk.readall(settings._module.path)
   assertMatch('name = "Fuzz"', dump)
   assertMatch('foo = {.*ban = "Boom"', dump)
 end
@@ -99,7 +105,7 @@ function should.saveValidLua()
   s.name = 'Fuzz'
   s.foo.ban = 'Boom'
   s:save()
-  local t = loadfile(settings.module.path)()
+  local t = loadfile(settings._module.path)()
   assertEqual('Fuzz', t.name)
   assertEqual('Boom', t.foo.ban)
   assertEqual('Baz',  t.foo.bar)
@@ -110,13 +116,13 @@ function should.saveTrueFalse()
   s.name = true
   s.foo.ban = false
   s:save()
-  local t = loadfile(settings.module.path)()
+  local t = loadfile(settings._module.path)()
   assertEqual(true, t.name)
   assertEqual(false, t.foo.ban)
 end
 
 function should.teardown()
-  local path = settings.module.path
+  local path = settings._module.path
   if lk.exist(path) then
     lk.rmFile(path)
   end

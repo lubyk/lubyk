@@ -18,7 +18,7 @@ setmetatable(lib, {
   __call = function(lib, mod_name, defaults)
     local self, path = private.loadSettings(mod_name)
     defaults.save = lib.save
-    defaults.module = {name = mod_name, path = path}
+    defaults._module = {name = mod_name, path = path}
     defaults.__index = defaults
     private.prepareTables(self, defaults)
     return setmetatable(self, defaults)
@@ -30,22 +30,22 @@ function lib:save(later)
   if later then
     -- save in a few ms (do not repeatedly save during window
     -- move/resize)
-    local thread = self.module.thread
+    local thread = self._module.thread
     if thread then
       thread:kill()
     end
-    self.module.thread = lk.Thread(function()
-      self.module.thread = nil
+    self._module.thread = lk.Thread(function()
+      self._module.thread = nil
       self:save()
     end, worker:now() + 500)
   else
-    local path = self.module.path
+    local path = self._module.path
     lk.writeall(path, lib.dump(self))
   end
 end
 
 function lib:dump()
-  return string.format('return %s\n', private.dump(self, '  '))
+  return string.format('return %s\n', private.dump(self, '  ', true))
 end
 
 --=============================================== PRIVATE
@@ -53,7 +53,7 @@ function private.loadSettings(mod_name)
   local path = string.format('%s/.lubyk/%s.lua',
                  os.getenv('HOME'), mod_name)
   local code = loadfile(path)
-  local self 
+  local self
   if code then
     self = code()
   else
@@ -62,7 +62,7 @@ function private.loadSettings(mod_name)
   return self, path
 end
 
-local function dump(o, indent)
+local function dump(o, indent, is_root)
   if type(o) == 'table' then
     if o._placeholder then
       -- ignore
@@ -71,20 +71,24 @@ local function dump(o, indent)
     local first = true
     local s = '{'
     for k,v in pairs(o) do
-      local v = dump(v, indent .. '  ')
-      if v then
-        if first then
-          s = s .. '\n'
-          first = false
+      if is_root and k == '_module' then
+        -- ignore
+      else
+        local v = dump(v, indent .. '  ')
+        if v then
+          if first then
+            s = s .. '\n'
+            first = false
+          end
+          if type(k) == 'number' then
+            s = s .. indent .. '[' .. k .. ']'
+          elseif k:match('^[a-zA-Z_]+$') then
+            s = s .. indent .. k
+          else
+            s = s .. indent .. '["'.. k .. '"]'
+          end
+          s = s .. ' = ' .. v .. ',\n'
         end
-        if type(k) == 'number' then
-          s = s .. indent .. '[' .. k .. ']'
-        elseif k:match('^[a-zA-Z_]+$') then
-          s = s .. indent .. k 
-        else
-          s = s .. indent .. '["'.. k .. '"]'
-        end
-        s = s .. ' = ' .. v .. ',\n'
       end
     end
     return s .. '}'

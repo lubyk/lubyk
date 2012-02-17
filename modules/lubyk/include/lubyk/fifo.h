@@ -27,8 +27,8 @@
   ==============================================================================
 */
 
-#ifndef LUBYK_INCLUDE_LUBYK_PIPE_H_
-#define LUBYK_INCLUDE_LUBYK_PIPE_H_
+#ifndef LUBYK_INCLUDE_LUBYK_FIFO_H_
+#define LUBYK_INCLUDE_LUBYK_FIFO_H_
 #include <unistd.h> // pipe
 #include <fcntl.h>
 
@@ -59,7 +59,7 @@ class Fifo : private NonCopyable
    */
   static const int BUFFER_SIZE = 1024;
 
-  /** Heap allocated data (the sub-class should free elements on pop).
+  /** Heap allocated data.
    */
   T* volatile data_[BUFFER_SIZE];
 
@@ -151,6 +151,6 @@ protected:
 
 } // lubyk
 
-#endif // LUBYK_INCLUDE_LUBYK_RECURSIVE_MUTEX_H_
+#endif // LUBYK_INCLUDE_LUBYK_FIFO_H_
 
 
