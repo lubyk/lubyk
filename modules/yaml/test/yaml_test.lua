@@ -50,5 +50,19 @@ function should.dump()
   assertMatch('b: 4', yaml.dump {a = {b = 4}})
 end
 
+function should.dumpAndLoadAnchors()
+  local l = { x = 1 }
+  l.y = l
+  local res = yaml.load(yaml.dump(l))
+  assertEqual(res, res.y)
+end
+
+function should.disableAnchors()
+  local l = { x = 1 }
+  l.y = l
+  -- true == safe loading
+  local res = yaml.load(yaml.dump(l), true)
+  assertNil(res.y)
+end
 
 test.all()

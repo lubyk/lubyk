@@ -58,6 +58,11 @@ static char Load_Nulls_As_Nil = 0;
 
 struct lua_yaml_loader {
    lua_State *L;
+   /* Option to disable anchors in parsed data = safer
+      data parsing.
+      */
+   int no_anchor;
+
    int anchortable_index;
    int sequencemt_index;
    int mapmt_index;
@@ -150,7 +155,7 @@ static int load_node(struct lua_yaml_loader *loader);
 
 static void handle_anchor(struct lua_yaml_loader *loader) {
    const char *anchor = (char *)loader->event.data.scalar.anchor;
-   if (!anchor)
+   if (!anchor || loader->no_anchor)
       return;
 
    lua_pushstring(loader->L, anchor);
@@ -286,7 +291,11 @@ static int load_node(struct lua_yaml_loader *loader) {
          return 1;
 
       case YAML_ALIAS_EVENT:
-         load_alias(loader);
+         if (loader->no_anchor) {
+           lua_pushnil(loader->L);
+         } else {
+           load_alias(loader);
+         }
          return 1;
 
       case YAML_NO_EVENT:
@@ -326,9 +335,11 @@ static void load(struct lua_yaml_loader *loader) {
       if (loader->event.type != YAML_DOCUMENT_END_EVENT)
          RETURN_ERRMSG(loader, "expected DOCUMENT_END_EVENT");
 
-      /* reset anchor table */
-      lua_newtable(loader->L);
-      lua_replace(loader->L, loader->anchortable_index);
+      if (!loader->no_anchor) {
+        /* reset anchor table */
+        lua_newtable(loader->L);
+        lua_replace(loader->L, loader->anchortable_index);
+      }
    }
 }
 
@@ -339,6 +350,13 @@ static int l_load(lua_State *L) {
    luaL_argcheck(L, lua_isstring(L, 1), 1, "must provide a string argument");
 
    loader.L = L;
+   if (lua_toboolean(L, 2)) {
+     // safe loading
+     loader.no_anchor = 1;
+   } else {
+     loader.no_anchor = 0;
+   }
+
    loader.validevent = 0;
    loader.error = 0;
    loader.document_count = 0;
@@ -360,9 +378,11 @@ static int l_load(lua_State *L) {
       loader.mapmt_index = top + 2;
    }
 
-   /* create table used to track anchors */
-   lua_newtable(L);
-   loader.anchortable_index = lua_gettop(L);
+   if (!loader.no_anchor) {
+     /* create table used to track anchors */
+     lua_newtable(L);
+     loader.anchortable_index = lua_gettop(L);
+   }
 
    yaml_parser_initialize(&loader.parser);
    yaml_parser_set_input_string(&loader.parser,
