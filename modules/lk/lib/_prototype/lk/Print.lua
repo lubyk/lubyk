@@ -6,7 +6,6 @@
   Print incomming values.
 
 --]]------------------------------------------------------
-inlet('print', 'Print/dump incoming value [any].')
 
 function inlet.print(v)
   if type(v) == 'table' then

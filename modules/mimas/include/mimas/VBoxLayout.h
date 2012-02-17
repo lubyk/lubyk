@@ -65,7 +65,10 @@ public:
     if (pos < 0) {
       // -1 = add after last, -2 = add after element before last
       pos = count() + 1 + pos;
+    } else {
+      pos = pos - 1;
     }
+
     QBoxLayout::insertWidget(pos, widget, stretch, (Qt::Alignment)alignment);
   }
 
@@ -77,6 +80,8 @@ public:
     if (pos < 0) {
       // -1 = add after last, -2 = add after element before last
       pos = count() + 1 + pos;
+    } else {
+      pos = pos - 1;
     }
     QBoxLayout::insertLayout(pos, layout, stretch);
   }

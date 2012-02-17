@@ -263,7 +263,12 @@ public:
   bool send(lua_State *L) {
     msgpack_sbuffer *buffer;
 
-    msgpack_lua_to_bin(L, &buffer, 1);
+    try {
+      msgpack_lua_to_bin(L, &buffer, 1);
+    } catch (dub::Exception e) {
+      printf("WHAT ? %s\n", e.what());
+      throw;
+    }
 
     zmq_msg_t msg;
     zmq_msg_init_data(&msg, buffer->data, buffer->size, free_msgpack_msg, buffer);

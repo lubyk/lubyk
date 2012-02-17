@@ -256,7 +256,8 @@ end
 
 -- Reads and parses the content of the lkp file.
 function private:readFile()
-  local def = yaml.load(self.lkp_file:body())
+  -- Safe yaml loading (no alias = no recursion).
+  local def = yaml.load(self.lkp_file:body(), true)
   if type(def) ~= 'table' then
     def = {}
   end
@@ -572,7 +573,7 @@ end
 
 --- Read and parse process patch definition file.
 function private.process.readFile(self, process)
-  process.cache = yaml.load(process.patch:body()) or {}
+  process.cache = yaml.load(process.patch:body(), true) or {}
   if type(process.cache) ~= 'table' then
     process.cache = {}
   end
@@ -712,7 +713,7 @@ end
 
 --- Read and parse process view definition file.
 function private.view.readFile(self, view)
-  view.cache = yaml.load(view.file:body()) or {}
+  view.cache = yaml.load(view.file:body(), true) or {}
   if type(view.cache) ~= 'table' then
     view.cache = {}
   end

@@ -281,12 +281,56 @@ function lib:remove()
 end
 
 function private:defaults(hash)
-  self.defaults = hash
+  local defaults = {}
+  self.defaults = defaults
   local env = self.env
+  local inlets = self.inlets
+  local accessors = self.accessors
   for k, v in pairs(hash) do
-    if env[k] == nil then
-      -- Do not overwrite current values on script reload.
-      env[k] = v
+    if type(k) ~= 'string' then
+      error("Default keys must be strings.")
+    end
+    if type(v) == 'table' then
+      -- Transform foo = {x = 3} to
+      -- 'foo.x' => accessor
+      local base = env[k]
+      if not base then
+        base = {}
+        env[k] = base
+      end
+      -- Only one level deep.
+      for sk, sv in pairs(v) do
+        if type(sk) ~= 'string' then
+          error(string.format("Default in '%s' must be a string.", k))
+        end
+        local pname = k .. '.' .. sk
+        if not accessors[pname] then
+          accessors[pname] = {
+            receive = function(value)
+              local inlet = inlets[k] or accessors[k]
+              local rbase = env[k]
+              -- Set value before calling setter.
+              rbase[sk] = value
+              if inlet then
+                inlet.receive(rbase)
+              end
+              -- So that param dump sees this value.
+              env[pname] = rbase[sk]
+            end,
+          }
+        end
+        defaults[pname] = sv
+        env[pname] = sv
+        if base[sk] == nil then
+          base[sk] = sv
+        end
+      end
+    else
+      defaults[k] = v
+      if env[k] == nil then
+        -- Do not overwrite current values on script reload.
+        env[k] = v
+      end
     end
   end
 end

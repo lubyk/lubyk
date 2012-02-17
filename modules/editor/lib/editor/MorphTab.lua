@@ -12,6 +12,8 @@
 --]]------------------------------------------------------
 local lib = lk.SubClass(mimas, 'Widget')
 editor.MorphTab = lib
+-- Sort in MachineView
+lib.sort = 8 -- before last
 local private = {}
 
 -- CONSTANTS

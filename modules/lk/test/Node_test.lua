@@ -23,6 +23,10 @@ local function makeNode(patch, name)
     outlet 'scaled'
     defaults {
       scale = 1,
+      vect = {
+        x = 1,
+        y = 0,
+      },
     }
 
     function inlet.raw(x)
@@ -43,8 +47,13 @@ end
 
 function should.mergeParamsInEnv()
   local node = makeNode()
-  node:setParams{scale=2}
+  node:setParams {
+    scale = 2,
+    ['vect.y'] = 5
+  }
   assertEqual(2, node.env.scale)
+  assertEqual(1, node.env.vect.x)
+  assertEqual(5, node.env.vect.y)
 end
 
 function should.set()

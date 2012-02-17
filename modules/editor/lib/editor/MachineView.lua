@@ -68,22 +68,27 @@ function lib:addProcess(service)
     view = editor.ProcessTab(service)
   end
 
-  -- keep list sorted
+  -- keep list sorted (process on top, then morph, then stem)
   local add_pos = -1
   for i, elem in ipairs(self.process_list) do
-    if view.name < elem.name then
+    if view.sort < elem.sort then
       add_pos = i
       break
+    elseif view.sort == elem.sort then
+      if view.name < elem.name then
+        add_pos = i
+        break
+      end
     end
   end
   if add_pos == -1 then
     -- add at end
     table.insert(self.process_list, view)
-    self.vbox:insertWidget(-1, view, 0, mimas.AlignRight)
+    self.vbox:insertWidget(add_pos, view, 0, mimas.AlignRight)
     view:show()
   else
     table.insert(self.process_list, add_pos, view)
-    self.vbox:insertWidget(add_pos-1, view, 0, mimas.AlignRight)
+    self.vbox:insertWidget(add_pos, view, 0, mimas.AlignRight)
     view:show()
   end
   self.machine_list:updatePosition()

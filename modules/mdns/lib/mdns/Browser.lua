@@ -10,7 +10,7 @@
 
 --]]------------------------------------------------------
 require 'mdns.Browser_core'
-local mt = mdns.Browser_
+local lib = mdns.Browser_
 local constr = mdns.Browser
 local private = {}
 

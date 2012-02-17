@@ -11,6 +11,8 @@
 --]]------------------------------------------------------
 local lib = lk.SubClass(mimas, 'Widget')
 editor.StemTab = lib
+-- Sort in MachineView
+lib.sort = 10 -- last
 local private = {}
 
 -- CONSTANTS

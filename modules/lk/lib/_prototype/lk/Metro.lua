@@ -6,8 +6,7 @@
   Triggers regular bangs out of it's unique outlet.
 
 --]]------------------------------------------------------
-inlet('tempo', 'Set tempo [float: bpm].')
-outlet('bang', 'Sends a bang on every beat [true].')
+outlet 'bang'
 
 -- Public parameters.
 defaults {
