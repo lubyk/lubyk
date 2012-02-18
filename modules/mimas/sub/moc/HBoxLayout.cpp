@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'HBoxLayout.h'
 **
-** Created: Fri Feb 17 21:05:58 2012
+** Created: Sat Feb 18 08:38:23 2012
 **      by: The Qt Meta Object Compiler version 63 (Qt 4.8.0)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -68,8 +68,8 @@ void *mimas::HBoxLayout::qt_metacast(const char *_clname)
     if (!_clname) return 0;
     if (!strcmp(_clname, qt_meta_stringdata_mimas__HBoxLayout))
         return static_cast<void*>(const_cast< HBoxLayout*>(this));
-    if (!strcmp(_clname, "DeletableOutOfLua"))
-        return static_cast< DeletableOutOfLua*>(const_cast< HBoxLayout*>(this));
+    if (!strcmp(_clname, "LuaObject"))
+        return static_cast< LuaObject*>(const_cast< HBoxLayout*>(this));
     return QHBoxLayout::qt_metacast(_clname);
 }
 

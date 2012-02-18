@@ -133,6 +133,12 @@ public:
     QApplication::setStyleSheet(QString(text));
   }
 
+  LuaStackSize styleSheet(lua_State *L) {
+    QString style(QApplication::styleSheet());
+    lua_pushstring(L, style.toUtf8().data());
+    return 1;
+  }
+
   /** Return the size of the desktop as a pair (width, height).
    */
   LuaStackSize screenSize(lua_State *L) {

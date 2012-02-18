@@ -20,6 +20,9 @@ class QWidget {
   void update();
   void adjustSize();
   void setFocus();
+  void setFocusPolicy(int policy);
+  void setAttribute(int attr, bool enabled);
+
   // FIXME: maybe we can remove this and only use setSizeHint + setSizePolicy...
   void setMinimumSize(float w, float h);
   /** Receive mouse move events even if no button is pressed.

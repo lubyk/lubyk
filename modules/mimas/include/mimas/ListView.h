@@ -57,8 +57,7 @@ class ListView : public QListView, public ThreadedLuaObject {
   Q_PROPERTY(QString class READ cssClass)
   Q_PROPERTY(float hue READ hue WRITE setHue)
 
-  class ItemPaintDelegate;
-  ItemPaintDelegate *item_delegate_;
+  QAbstractItemDelegate *item_delegate_;
   QSize size_hint_;
  public:
   ListView();
@@ -296,10 +295,24 @@ class ListView : public QListView, public ThreadedLuaObject {
     return 1;
   }
 
+  void scrollToBottom() {
+    QListView::scrollToBottom();
+  }
+
+  void scrollToTop() {
+    QListView::scrollToTop();
+  }
+
+  
   /** Turning this option on will call the 'paintItem' callback to draw
    * each cell (with the text as parameter).
    */
   void enablePaintItem(bool enable);
+
+  /** Turning this option on will render html content in
+   * each cell.
+   */
+  void enableHtml(bool enable, const char *css = NULL);
       
 protected:
   //--=============================================== COMMON CALLBACKS

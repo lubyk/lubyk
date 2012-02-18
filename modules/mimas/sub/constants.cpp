@@ -54,6 +54,7 @@ static const struct lua_constants_Reg mimas_namespace_constants[] = {
   {"StrongFocus"                   , mimas::StrongFocus},
   {"WheelFocus"                    , mimas::WheelFocus},
   {"NoFocus"                       , mimas::NoFocus},
+  {"WA_MacAlwaysShowToolWindow"    , mimas::WA_MacAlwaysShowToolWindow},
   {"Fixed"                         , mimas::Fixed},
   {"Minimum"                       , mimas::Minimum},
   {"Maximum"                       , mimas::Maximum},

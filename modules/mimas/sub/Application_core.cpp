@@ -192,7 +192,7 @@ static int Application_quit(lua_State *L) {
 
 
 /** LuaStackSize mimas::Application::screenSize(lua_State *L)
- * include/mimas/Application.h:138
+ * include/mimas/Application.h:144
  */
 static int Application_screenSize(lua_State *L) {
   try {
@@ -272,7 +272,7 @@ static int Application_setStyleSheet(lua_State *L) {
 
 
 /** void mimas::Application::singleShot(int msec, QObject *receiver, const char *member)
- * include/mimas/Application.h:149
+ * include/mimas/Application.h:155
  */
 static int Application_singleShot(lua_State *L) {
   try {
@@ -287,6 +287,26 @@ static int Application_singleShot(lua_State *L) {
     lua_pushfstring(L, "singleShot: %s", e.what());
   } catch (...) {
     lua_pushfstring(L, "singleShot: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** LuaStackSize mimas::Application::styleSheet(lua_State *L)
+ * include/mimas/Application.h:136
+ */
+static int Application_styleSheet(lua_State *L) {
+  try {
+    Application *self = *((Application**)dubL_checksdata(L, 1, "mimas.Application"));
+    if (!self) throw dub::Exception("Using deleted mimas.Application in styleSheet");
+    
+    LuaStackSize  retval__ = self->styleSheet(L);
+    return retval__;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "styleSheet: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "styleSheet: Unknown exception");
   }
   return lua_error(L);
 }
@@ -327,6 +347,7 @@ static const struct luaL_Reg Application_member_methods[] = {
   {"setQuitOnLastWindowClosed", Application_setQuitOnLastWindowClosed},
   {"setStyleSheet"     , Application_setStyleSheet},
   {"singleShot"        , Application_singleShot},
+  {"styleSheet"        , Application_styleSheet},
   {"__tostring"        , Application__tostring},
   {"__gc"              , Application_destructor},
   {"deleted"           , Application_deleted},

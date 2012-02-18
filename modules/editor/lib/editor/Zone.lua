@@ -75,6 +75,13 @@ function lib:toggleView(process)
   end
 end
 
+function lib:log(msg)
+  local lv = self.view.log_view
+  if lv then
+    lv:addMessage(msg.url, msg.typ, msg.msg)
+  end
+end
+
 local basew_path = '/Volumes/Lubyk'
                   --(Lubyk.editor or {}).work_path or
                   --string.format('%s/tmp_lubyk/editor/tmp', os.getenv('HOME'))

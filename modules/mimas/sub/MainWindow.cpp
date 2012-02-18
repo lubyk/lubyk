@@ -71,7 +71,7 @@ static int MainWindow__tostring(lua_State *L) {
 
 
 /** void mimas::QWidget::activateWindow()
- * mimas/bind/QWidget.h:34
+ * mimas/bind/QWidget.h:37
  */
 static int QWidget_activateWindow(lua_State *L) {
   try {
@@ -90,7 +90,7 @@ static int QWidget_activateWindow(lua_State *L) {
 
 
 /** void mimas::QWidget::addAction(Action *action)
- * mimas/bind/QWidget.h:36
+ * mimas/bind/QWidget.h:39
  */
 static int QWidget_addAction(lua_State *L) {
   try {
@@ -110,7 +110,7 @@ static int QWidget_addAction(lua_State *L) {
 
 
 /** void mimas::QWidget::addWidget(QWidget *widget)
- * mimas/bind/QWidget.h:46
+ * mimas/bind/QWidget.h:49
  */
 static int QWidget_addWidget(lua_State *L) {
   try {
@@ -149,7 +149,7 @@ static int QWidget_adjustSize(lua_State *L) {
 
 
 /** bool mimas::QWidget::close()
- * mimas/bind/QWidget.h:28
+ * mimas/bind/QWidget.h:31
  */
 static int QWidget_close(lua_State *L) {
   try {
@@ -236,7 +236,7 @@ static int MainWindow_getOpenFileName(lua_State *L) {
 
 
 /** void mimas::QWidget::globalMove(float x, float y)
- * mimas/bind/QWidget.h:85
+ * mimas/bind/QWidget.h:88
  */
 static int QWidget_globalMove(lua_State *L) {
   try {
@@ -261,7 +261,7 @@ static int QWidget_globalMove(lua_State *L) {
 
 
 /** LuaStackSize mimas::QWidget::globalPosition()
- * mimas/bind/QWidget.h:76
+ * mimas/bind/QWidget.h:79
  */
 static int QWidget_globalPosition(lua_State *L) {
   try {
@@ -302,7 +302,7 @@ static int QWidget_height(lua_State *L) {
 
 
 /** void mimas::QWidget::hide()
- * mimas/bind/QWidget.h:31
+ * mimas/bind/QWidget.h:34
  */
 static int QWidget_hide(lua_State *L) {
   try {
@@ -321,7 +321,7 @@ static int QWidget_hide(lua_State *L) {
 
 
 /** bool mimas::QWidget::isFullScreen()
- * mimas/bind/QWidget.h:35
+ * mimas/bind/QWidget.h:38
  */
 static int QWidget_isFullScreen(lua_State *L) {
   try {
@@ -341,7 +341,7 @@ static int QWidget_isFullScreen(lua_State *L) {
 
 
 /** bool mimas::QWidget::isVisible()
- * mimas/bind/QWidget.h:29
+ * mimas/bind/QWidget.h:32
  */
 static int QWidget_isVisible(lua_State *L) {
   try {
@@ -361,7 +361,7 @@ static int QWidget_isVisible(lua_State *L) {
 
 
 /** void mimas::QWidget::lower()
- * mimas/bind/QWidget.h:32
+ * mimas/bind/QWidget.h:35
  */
 static int QWidget_lower(lua_State *L) {
   try {
@@ -440,7 +440,7 @@ static int QObject_object(lua_State *L) {
 
 
 /** LuaStackSize mimas::QWidget::position()
- * mimas/bind/QWidget.h:81
+ * mimas/bind/QWidget.h:84
  */
 static int QWidget_position(lua_State *L) {
   try {
@@ -460,7 +460,7 @@ static int QWidget_position(lua_State *L) {
 
 
 /** void mimas::QWidget::raise()
- * mimas/bind/QWidget.h:33
+ * mimas/bind/QWidget.h:36
  */
 static int QWidget_raise(lua_State *L) {
   try {
@@ -493,6 +493,27 @@ static int QWidget_resize(lua_State *L) {
     lua_pushfstring(L, "resize: %s", e.what());
   } catch (...) {
     lua_pushfstring(L, "resize: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** void mimas::QWidget::setAttribute(int attr, bool enabled)
+ * mimas/bind/QWidget.h:24
+ */
+static int QWidget_setAttribute(lua_State *L) {
+  try {
+    MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    if (!self) throw dub::Exception("Using deleted mimas.MainWindow in setAttribute");
+    int attr = dubL_checkint(L, 2);
+    bool enabled = lua_toboolean(L, 3);
+    self->setAttribute((Qt::WidgetAttribute)attr, enabled);
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "setAttribute: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "setAttribute: Unknown exception");
   }
   return lua_error(L);
 }
@@ -538,6 +559,26 @@ static int QWidget_setFocus(lua_State *L) {
 
 
 
+/** void mimas::QWidget::setFocusPolicy(int policy)
+ * mimas/bind/QWidget.h:23
+ */
+static int QWidget_setFocusPolicy(lua_State *L) {
+  try {
+    MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    if (!self) throw dub::Exception("Using deleted mimas.MainWindow in setFocusPolicy");
+    int policy = dubL_checkint(L, 2);
+    self->setFocusPolicy((Qt::FocusPolicy)policy);
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "setFocusPolicy: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "setFocusPolicy: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
 /** void mimas::QMainWindow::setMenuBar(MenuBar *bar)
  * mimas/bind/QMainWindow.h:12
  */
@@ -559,7 +600,7 @@ static int QMainWindow_setMenuBar(lua_State *L) {
 
 
 /** void mimas::QWidget::setMinimumSize(float w, float h)
- * mimas/bind/QWidget.h:24
+ * mimas/bind/QWidget.h:27
  */
 static int QWidget_setMinimumSize(lua_State *L) {
   try {
@@ -580,7 +621,7 @@ static int QWidget_setMinimumSize(lua_State *L) {
 
 
 /** void mimas::QWidget::setMouseTracking(bool enable)
- * mimas/bind/QWidget.h:27
+ * mimas/bind/QWidget.h:30
  */
 static int QWidget_setMouseTracking(lua_State *L) {
   try {
@@ -640,7 +681,7 @@ static int QWidget_setParent(lua_State *L) {
 
 
 /** void mimas::QWidget::setSizeHint(float w, float h)
- * mimas/bind/QWidget.h:62
+ * mimas/bind/QWidget.h:65
  */
 static int QWidget_setSizeHint(lua_State *L) {
   try {
@@ -662,7 +703,7 @@ static int QWidget_setSizeHint(lua_State *L) {
 
 
 /** void mimas::QWidget::setSizePolicy(int horizontal, int vertical)
- * mimas/bind/QWidget.h:66
+ * mimas/bind/QWidget.h:69
  */
 static int QWidget_setSizePolicy(lua_State *L) {
   try {
@@ -684,7 +725,7 @@ static int QWidget_setSizePolicy(lua_State *L) {
 
 
 /** void mimas::QWidget::setStyle(const char *text)
- * mimas/bind/QWidget.h:54
+ * mimas/bind/QWidget.h:57
  */
 static int QWidget_setStyle(lua_State *L) {
   try {
@@ -704,7 +745,7 @@ static int QWidget_setStyle(lua_State *L) {
 
 
 /** void mimas::QWidget::setStyleSheet(const char *text)
- * mimas/bind/QWidget.h:55
+ * mimas/bind/QWidget.h:58
  */
 static int QWidget_setStyleSheet(lua_State *L) {
   try {
@@ -724,7 +765,7 @@ static int QWidget_setStyleSheet(lua_State *L) {
 
 
 /** void mimas::QWidget::setWindowTitle(const char *text)
- * mimas/bind/QWidget.h:39
+ * mimas/bind/QWidget.h:42
  */
 static int QWidget_setWindowTitle(lua_State *L) {
   try {
@@ -744,7 +785,7 @@ static int QWidget_setWindowTitle(lua_State *L) {
 
 
 /** void mimas::QWidget::show()
- * mimas/bind/QWidget.h:30
+ * mimas/bind/QWidget.h:33
  */
 static int QWidget_show(lua_State *L) {
   try {
@@ -763,7 +804,7 @@ static int QWidget_show(lua_State *L) {
 
 
 /** void mimas::QWidget::showFullScreen(bool enable=true)
- * mimas/bind/QWidget.h:68
+ * mimas/bind/QWidget.h:71
  */
 static int QWidget_showFullScreen(lua_State *L) {
   try {
@@ -793,7 +834,7 @@ static int QWidget_showFullScreen(lua_State *L) {
 
 
 /** LuaStackSize mimas::QWidget::size()
- * mimas/bind/QWidget.h:53
+ * mimas/bind/QWidget.h:56
  */
 static int QWidget_size(lua_State *L) {
   try {
@@ -814,7 +855,7 @@ static int QWidget_size(lua_State *L) {
 
 
 /** void mimas::QWidget::swapFullScreen()
- * mimas/bind/QWidget.h:72
+ * mimas/bind/QWidget.h:75
  */
 static int QWidget_swapFullScreen(lua_State *L) {
   try {
@@ -858,7 +899,7 @@ static int MainWindow_testMenus(lua_State *L) {
 
 
 /** void mimas::QWidget::textSize(const char *text)
- * mimas/bind/QWidget.h:58
+ * mimas/bind/QWidget.h:61
  */
 static int QWidget_textSize(lua_State *L) {
   try {
@@ -898,7 +939,7 @@ static int QWidget_update(lua_State *L) {
 
 
 /** void mimas::QWidget::widget()
- * mimas/bind/QWidget.h:45
+ * mimas/bind/QWidget.h:48
  */
 static int QWidget_widget(lua_State *L) {
   try {
@@ -938,7 +979,7 @@ static int QWidget_width(lua_State *L) {
 
 
 /** LuaStackSize mimas::QWidget::windowTitle()
- * mimas/bind/QWidget.h:49
+ * mimas/bind/QWidget.h:52
  */
 static int QWidget_windowTitle(lua_State *L) {
   try {
@@ -1022,8 +1063,10 @@ static const struct luaL_Reg MainWindow_member_methods[] = {
   {"position"          , QWidget_position},
   {"raise"             , QWidget_raise},
   {"resize"            , QWidget_resize},
+  {"setAttribute"      , QWidget_setAttribute},
   {"setCentralWidget"  , QMainWindow_setCentralWidget},
   {"setFocus"          , QWidget_setFocus},
+  {"setFocusPolicy"    , QWidget_setFocusPolicy},
   {"setMenuBar"        , QMainWindow_setMenuBar},
   {"setMinimumSize"    , QWidget_setMinimumSize},
   {"setMouseTracking"  , QWidget_setMouseTracking},

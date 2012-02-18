@@ -30,8 +30,56 @@
 #include "mimas/ListView.h"
 #include "mimas/Painter.h"
 #include <QtGui/QStyledItemDelegate>
+#include <QtGui/QTextDocument>
+#include <QtCore/QUrl>
 
 namespace mimas {
+
+/** Simple delegate to draw html in list view. Enabled
+ * by setting ListView:enableHtml(true, 'extra css').
+ */
+class ItemHTMLDelegate : public QStyledItemDelegate {
+  ListView *master_;
+  QString style_;
+  QTextDocument doc_;
+public:
+  ItemHTMLDelegate(ListView *master, QString style)
+    : master_(master) 
+    , style_(style) {
+    }
+protected:
+
+  virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
+    QStyleOptionViewItemV4 options = option;
+    initStyleOption(&options, index);
+
+    painter->save();
+
+    QTextDocument doc;
+    doc.setDefaultStyleSheet(style_);
+    doc.setHtml(options.text);
+
+    options.text = "";
+    options.widget->style()->drawControl(QStyle::CE_ItemViewItem, &options, painter);
+
+    painter->translate(options.rect.left(), options.rect.top());
+    QRect clip(0, 0, options.rect.width(), options.rect.height());
+    doc.drawContents(painter, clip);
+    painter->restore();
+  }
+
+  virtual QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const {
+    QStyleOptionViewItemV4 options = option;
+    initStyleOption(&options, index);
+
+    QTextDocument doc;
+    doc.setDefaultStyleSheet(style_);
+    doc.setHtml(options.text);
+    doc.setTextWidth(options.rect.width());
+    return QSize(doc.idealWidth(), doc.size().height());
+  }
+};
+
 
 bool ListView::click(QMouseEvent *event, int type) {
   lua_State *L = lua_;
@@ -81,7 +129,7 @@ bool ListView::select(const QModelIndex &idx, QEvent *event) {
   return true;
 }
 
-class ListView::ItemPaintDelegate : public QStyledItemDelegate {
+class ItemPaintDelegate : public QStyledItemDelegate {
   ListView *master_;
 public:
   ItemPaintDelegate(ListView *master)
@@ -106,6 +154,21 @@ void ListView::enablePaintItem(bool enable) {
   }
 }
 
+void ListView::enableHtml(bool enable, const char *css) {
+  if (!enable) {
+    if (item_delegate_) {
+      delete item_delegate_;
+      item_delegate_ = NULL;
+      setItemDelegate(NULL);
+    }
+  } else {
+    if (!item_delegate_) {
+      item_delegate_ = new ItemHTMLDelegate(this, css ? QString(css) : QString());
+      setItemDelegate(item_delegate_);
+    }
+  }
+}
+
 
 ListView::ListView() : item_delegate_(NULL) {
   setAttribute(Qt::WA_DeleteOnClose);
@@ -121,7 +184,7 @@ ListView::~ListView() {
   MIMAS_DEBUG_GC
 }
 
-void ListView::ItemPaintDelegate::paint(
+void ItemPaintDelegate::paint(
     QPainter *painter,
     const QStyleOptionViewItem &option,
     const QModelIndex &index) const {

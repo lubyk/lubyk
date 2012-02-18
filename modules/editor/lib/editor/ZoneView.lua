@@ -134,7 +134,27 @@ function private:setupMenus()
   private.setupShowAction(self, menu, 'Library', 'Ctrl+L', show.Library,     self.library_view)
   private.setupShowAction(self, menu, 'Patch',   'Ctrl+E', show.Patch,       self.patch_view)
   private.setupShowAction(self, menu, 'View',    'Ctrl+I', show.View,        self.control_tabs)
-  private.setupShowAction(self, menu, 'Controls', 'Ctrl+O', show.Controls, self.ctrl_library_view)
+  private.setupShowAction(self, menu, 'Controls', 'Ctrl+O', show.Controls,   self.ctrl_library_view)
+
+  local action = menu:addAction('Log', 'Ctrl+G', function(action)
+    local shown = true
+    if self.log_view then
+      self.log_view:hide()
+      self.log_view = nil
+      shown = false
+    else
+      self.log_view = editor.LogView(self)
+      self.log_view:show()
+    end
+    settings.show.Log = shown
+    settings:save()
+    action:setChecked(show)
+  end)
+  action:setCheckable(true)
+  if settings.show.Log then
+    self.log_view = editor.LogView(self)
+    self.log_view:show()
+  end
 
   --=============================================== Special
   local menu = self.menu_bar:addMenu('Special')

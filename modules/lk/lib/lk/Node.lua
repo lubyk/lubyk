@@ -47,8 +47,17 @@ setmetatable(lib, {
   env.defaults = function(...)
     private.defaults(self, ...)
   end
-  -- metho to set a parameter and notify
+  -- method to set a parameter and notify
   env.param = lk.ParamMethod(self)
+
+  -- print, warn, error
+  env.print = function(...)
+    self:log('info', ...)
+  end
+
+  env.warn = function(...)
+    self:log('warn', ...)
+  end
 
   process.nodes[name] = self
   -- pending connection resolution
@@ -166,7 +175,35 @@ end
 
 
 function lib:error(...)
-  printf(...)
+  self:log('error', ...)
+end
+
+local fmt = string.format
+function lib:log(typ, ...)
+  local all = {...}
+  local f = all[1]
+  local msg = ''
+  if type(f) == 'table' then
+    msg = yaml.dump(f)
+  elseif #all > 1 then
+    for i, v in ipairs(all) do
+      if i == 1 then
+        msg = tostring(v)
+      else
+        msg = '\t'..tostring(v)
+      end
+    end
+  else
+    msg = tostring(f)
+  end
+  
+  self.process:notify {
+    log = {
+      url = self:url(),
+      msg = msg,
+      typ = typ,
+    }
+  }
 end
 
 function lib:makeAbsoluteUrl(url)
@@ -307,15 +344,12 @@ function private:defaults(hash)
         if not accessors[pname] then
           accessors[pname] = {
             receive = function(value)
-              local inlet = inlets[k] or accessors[k]
               local rbase = env[k]
-              -- Set value before calling setter.
-              rbase[sk] = value
-              if inlet then
-                inlet.receive(rbase)
+              if rbase then
+                rbase[sk] = value
+                -- So that param dump sees this value.
+                _pdump[pname] = rbase[sk]
               end
-              -- So that param dump sees this value.
-              env[pname] = rbase[sk]
             end,
           }
         end
@@ -342,6 +376,9 @@ function lib:setParams(params)
   self.pdump     = pdump
   self.pdump_params = params
   local env      = self.env
+  -- Special pos.x accessors need to register
+  -- set value in pdump directly.
+  env._pdump     = pdump
   local inlets   = self.inlets
   local accessors= self.accessors
   local defaults = self.defaults or {}
@@ -358,18 +395,20 @@ function lib:setParams(params)
         local inlet = inlets[k] or accessors[k]
         if inlet then
           inlet.receive(value)
+          -- 'receive' might set _pdump directly
+          pdump[k] = pdump[k] or env[k]
         else
           env[k] = value
-          -- Call 'paramChanged' function in env if
-          -- it exists.
-          local func = env.paramChanged
-          if func then
-            func(k)
-          end
+          pdump[k] = value
         end
-        pdump[k] = env[k]
       end
     end
+  end
+  -- Call 'param.changed' function in env if
+  -- it exists.
+  local func = accessors.changed
+  if func then
+    func(params)
   end
 end
 

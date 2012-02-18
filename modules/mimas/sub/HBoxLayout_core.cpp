@@ -12,7 +12,7 @@ using namespace mimas;
 /* ============================ Constructors     ====================== */
 
 /** mimas::HBoxLayout::HBoxLayout(QWidget *parent=NULL)
- * include/mimas/HBoxLayout.h:53
+ * include/mimas/HBoxLayout.h:52
  */
 static int HBoxLayout_HBoxLayout(lua_State *L) {
   try {
@@ -24,8 +24,7 @@ static int HBoxLayout_HBoxLayout(lua_State *L) {
       QWidget *parent = *((QWidget **)dubL_checksdata(L, 1, "mimas.QWidget"));
       retval__ = new HBoxLayout(parent);
     }
-    lua_pushclass2<HBoxLayout>(L, retval__, "mimas.HBoxLayout");
-    return 1;
+    return retval__->luaInit(L, retval__, "mimas.HBoxLayout");
   } catch (std::exception &e) {
     lua_pushfstring(L, "HBoxLayout: %s", e.what());
   } catch (...) {
@@ -79,7 +78,7 @@ static int HBoxLayout__tostring(lua_State *L) {
 
 
 /** void mimas::HBoxLayout::addLayout(QLayout *layout, int stretch=0)
- * include/mimas/HBoxLayout.h:73
+ * include/mimas/HBoxLayout.h:74
  */
 static int HBoxLayout_addLayout(lua_State *L) {
   try {
@@ -105,7 +104,7 @@ static int HBoxLayout_addLayout(lua_State *L) {
 
 
 /** void mimas::HBoxLayout::addSpacing(int size)
- * include/mimas/HBoxLayout.h:101
+ * include/mimas/HBoxLayout.h:104
  */
 static int HBoxLayout_addSpacing(lua_State *L) {
   try {
@@ -125,7 +124,7 @@ static int HBoxLayout_addSpacing(lua_State *L) {
 
 
 /** void mimas::HBoxLayout::addStretch(int stretch=1)
- * include/mimas/HBoxLayout.h:95
+ * include/mimas/HBoxLayout.h:98
  */
 static int HBoxLayout_addStretch(lua_State *L) {
   try {
@@ -150,7 +149,7 @@ static int HBoxLayout_addStretch(lua_State *L) {
 
 
 /** void mimas::HBoxLayout::addWidget(QWidget *widget, int stretch=0, int alignment=0)
- * include/mimas/HBoxLayout.h:61
+ * include/mimas/HBoxLayout.h:60
  */
 static int HBoxLayout_addWidget(lua_State *L) {
   try {
@@ -181,7 +180,7 @@ static int HBoxLayout_addWidget(lua_State *L) {
 
 
 /** void mimas::HBoxLayout::insertLayout(int pos, QLayout *layout, int stretch=0)
- * include/mimas/HBoxLayout.h:77
+ * include/mimas/HBoxLayout.h:78
  */
 static int HBoxLayout_insertLayout(lua_State *L) {
   try {
@@ -208,7 +207,7 @@ static int HBoxLayout_insertLayout(lua_State *L) {
 
 
 /** void mimas::HBoxLayout::insertWidget(int pos, QWidget *widget, int stretch=0, int alignment=0)
- * include/mimas/HBoxLayout.h:65
+ * include/mimas/HBoxLayout.h:64
  */
 static int HBoxLayout_insertWidget(lua_State *L) {
   try {
@@ -240,7 +239,7 @@ static int HBoxLayout_insertWidget(lua_State *L) {
 
 
 /** QLayout* mimas::HBoxLayout::layout()
- * include/mimas/HBoxLayout.h:122
+ * include/mimas/HBoxLayout.h:125
  */
 static int HBoxLayout_layout(lua_State *L) {
   try {
@@ -260,7 +259,7 @@ static int HBoxLayout_layout(lua_State *L) {
 
 
 /** LuaStackSize mimas::HBoxLayout::minimumSize(lua_State *L) const 
- * include/mimas/HBoxLayout.h:115
+ * include/mimas/HBoxLayout.h:118
  */
 static int HBoxLayout_minimumSize(lua_State *L) {
   try {
@@ -280,7 +279,7 @@ static int HBoxLayout_minimumSize(lua_State *L) {
 
 
 /** bool mimas::HBoxLayout::setAlignment(QWidget *w, int alignment)
- * include/mimas/HBoxLayout.h:89
+ * include/mimas/HBoxLayout.h:92
  */
 static int HBoxLayout_setAlignment(lua_State *L) {
   try {
@@ -302,7 +301,7 @@ static int HBoxLayout_setAlignment(lua_State *L) {
 
 
 /** void mimas::HBoxLayout::setContentsMargins(int left, int top, int right, int bottom)
- * include/mimas/HBoxLayout.h:111
+ * include/mimas/HBoxLayout.h:114
  */
 static int HBoxLayout_setContentsMargins(lua_State *L) {
   try {
@@ -325,7 +324,7 @@ static int HBoxLayout_setContentsMargins(lua_State *L) {
 
 
 /** void mimas::HBoxLayout::setSpacing(int space)
- * include/mimas/HBoxLayout.h:107
+ * include/mimas/HBoxLayout.h:110
  */
 static int HBoxLayout_setSpacing(lua_State *L) {
   try {

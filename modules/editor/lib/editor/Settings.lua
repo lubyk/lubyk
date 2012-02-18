@@ -39,6 +39,13 @@ local defaults = {
     w = 787,
     h = 611,
   },
+  -- Default size and position for log window
+  log_view = {
+    x = 50,
+    y = 50,
+    w = 120,
+    h = 200,
+  },
   logo = Lubyk.lib .. '/editor/img/logo.png',
 }
 

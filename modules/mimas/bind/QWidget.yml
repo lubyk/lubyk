@@ -25,6 +25,14 @@ lua:
     self->setFocus(Qt::OtherFocusReason);
     return 0;
 
+  setFocusPolicy: |
+    self->setFocusPolicy((Qt::FocusPolicy)policy);
+    return 0;
+
+  setAttribute: |
+    self->setAttribute((Qt::WidgetAttribute)attr, enabled);
+    return 0;
+
   setStyle: |
     self->setStyleSheet(QString(".%1 { %2 }").arg(self->cssClass()).arg(text));
 

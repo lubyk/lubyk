@@ -121,6 +121,11 @@ enum FocusPolicy {
   NoFocus     = Qt::NoFocus,
 };
 
+enum WidgetAttribute {
+  // TODO: add other attributes
+  WA_MacAlwaysShowToolWindow = Qt::WA_MacAlwaysShowToolWindow,
+};
+
 enum SizePolicy {
   Fixed            = QSizePolicy::Fixed,
   Minimum          = QSizePolicy::Minimum,

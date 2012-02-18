@@ -66,29 +66,6 @@ local function setNodes(self, nodes_def)
   end
 end
 
-local function doSet(self, definition)
-  for k, v in pairs(definition) do
-    if k == 'name' then
-      self.name = v
-      if self.view then
-        self.view:setName(v)
-      end
-    elseif k == 'nodes' then
-      setNodes(self, v)
-    elseif k == 'hue' then
-      self[k] = v
-      if self.tab then
-        self.tab:setHue(v)
-      end
-      if self.view then
-        self.view:setHue(v)
-      end
-    else
-      self[k] = v
-    end
-  end
-end
-
 -- Synchronize with remote process.
 function lib:sync()
   local definition = self.req:request(lubyk.dump_url)
@@ -112,9 +89,7 @@ function lib:restart()
     view:animate(8000)
 
     -- Remove ghost on process connection
-    print('onProcessDisconnected', self.name)
     self.zone:onProcessDisconnected(self.name, function()
-      print("DISCONNECTED", self.name)
       if view.thread then
         view.thread:kill()
       end
@@ -150,7 +125,7 @@ end
 -- If self.view is nil, only set the data without
 -- creating/changing views.
 function lib:set(definition)
-  doSet(self, definition)
+  private.set(self, definition)
   if self.view then
     self.view:processChanged()
     self:updateView()
@@ -341,3 +316,30 @@ function lib:findNode(node_name)
   end
   return node
 end
+
+--=============================================== PRIVATE
+function private.set(self, definition)
+  for k, v in pairs(definition) do
+    if k == 'name' then
+      self.name = v
+      if self.view then
+        self.view:setName(v)
+      end
+    elseif k == 'nodes' then
+      setNodes(self, v)
+    elseif k == 'hue' then
+      self[k] = v
+      if self.tab then
+        self.tab:setHue(v)
+      end
+      if self.view then
+        self.view:setHue(v)
+      end
+    elseif k == 'log' then
+      self.zone:log(v)
+    else
+      self[k] = v
+    end
+  end
+end
+

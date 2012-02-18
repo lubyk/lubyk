@@ -46,6 +46,7 @@ function lib.__newindex(self, k, value)
   local env = self.env
   if type(value) == 'function' then
     -- Create an accessor for parameter 'k'
+    -- or the special 'changed' callback.
     self.node.accessors[k] = {
       receive = value,
     }

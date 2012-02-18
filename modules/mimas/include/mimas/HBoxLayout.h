@@ -42,9 +42,8 @@ namespace mimas {
 /** HBoxLayout (arrange widgets horizontally).
  *
  * @dub lib_name:'HBoxLayout_core'
- *      destructor: 'luaDestroy'
  */
-class HBoxLayout : public QHBoxLayout, public DeletableOutOfLua
+class HBoxLayout : public QHBoxLayout, public LuaObject
 {
   Q_OBJECT
 

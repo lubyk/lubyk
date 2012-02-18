@@ -18,10 +18,10 @@ function mimas.DataSource(data)
     return 1
   end
   if data then
-    function self.rowCount()
+    function self:rowCount()
       return #data
     end
-    function self.data(row)
+    function self:data(row)
       return data[row]
     end
   end
