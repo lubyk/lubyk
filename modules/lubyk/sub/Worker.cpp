@@ -1,4 +1,4 @@
-#include "lubyk/Worker.h"
+#include "lubyk/worker.h"
 
 #include "lua_cpp_helper.h"
 

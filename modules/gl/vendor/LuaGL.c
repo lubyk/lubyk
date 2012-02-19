@@ -27,7 +27,7 @@
 #include <lua.h>
 #include <lauxlib.h>
 
-#include "luagl.h"
+#include "LuaGL.h"
 #include "luagl_util.h"
 
 

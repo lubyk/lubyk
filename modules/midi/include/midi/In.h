@@ -31,7 +31,7 @@
 
 #include "lubyk.h"
 #include "midi/midi.h"
-#include "lubyk/Fifo.h"
+#include "lubyk/fifo.h"
 #include <iostream>
 
 using namespace lubyk;
