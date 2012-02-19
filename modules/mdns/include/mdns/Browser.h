@@ -78,7 +78,6 @@ public:
       return 0;
     }
   }
-
 };
 } // mdns
 

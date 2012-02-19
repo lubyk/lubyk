@@ -51,28 +51,25 @@ typedef	int	pid_t;
 
 #include <dns_sd.h>     // zeroconf
 
+#include <queue>
+
 using namespace lubyk;
 
 namespace mdns {
 
-struct BrowsedDevice {
-  BrowsedDevice(AbstractBrowser *browser, const char *name, const char *host, DNSServiceFlags flags) :
-                name_(name), host_(host), master_(browser), flags_(flags) {}
-  std::string name_;
-  std::string host_;
-  AbstractBrowser *master_;
-  DNSServiceFlags flags_;
-};
-
 class AbstractBrowser::Implementation : public Thread {
   AbstractBrowser *master_;
   DNSServiceRef service_;
-  Service *found_service_;
+
+  /** Last detected services.
+   */
+  std::queue<Service*> found_services_;
   int fd_;
+  bool query_next_;
 public:
   Implementation(AbstractBrowser *master)
       : master_(master)
-      , found_service_(0)
+      , query_next_(true)
   {
     DNSServiceErrorType error;
 
@@ -93,9 +90,9 @@ public:
   }
 
   ~Implementation() {
-    if (found_service_) {
-      delete found_service_;
-      found_service_ = NULL;
+    while (!found_services_.empty()) {
+      delete found_services_.front();
+      found_services_.pop();
     }
 
     DNSServiceRefDeallocate(service_);
@@ -105,17 +102,27 @@ public:
     return fd_;
   }
 
-  // [2] found a service, return a new mdns::Service
+  // [2] Return found services. If this returns NULL, the calling app must
+  // waitRead on fd() before asking again.
   Service *getService() {
-    // calls sBrowseCallback
-    DNSServiceErrorType err = DNSServiceProcessResult(service_);
-    if (err) {
-      // An error occured. Halt.
-      fprintf(stderr, "DNSServiceProcessResult error (%d).\n", err);
-      return 0;
+    if (query_next_) {
+      // calls sBrowseCallback
+      DNSServiceErrorType err = DNSServiceProcessResult(service_);
+      if (err) {
+        // An error occured. Halt.
+        fprintf(stderr, "DNSServiceProcessResult error (%d).\n", err);
+        return 0;
+      }
+      query_next_ = false;
     }
-    Service *service = found_service_;
-    found_service_ = NULL;
+
+    if (found_services_.empty()) {
+      query_next_ = true;
+      return NULL;
+    }
+
+    Service *service = found_services_.front();
+    found_services_.pop();
     return service;
   }
 
@@ -134,14 +141,14 @@ public:
       return;
     }
     Implementation *impl = (Implementation*)context;
-    impl->found_service_ = new Service(
+    impl->found_services_.push(new Service(
         impl->master_->service_type_,
         name,
         interface_index,
         type,
         domain,
         flags & kDNSServiceFlagsAdd
-        );
+        ));
   }
 
 };

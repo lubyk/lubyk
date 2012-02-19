@@ -53,10 +53,6 @@ typedef	int	pid_t;
 
 namespace mdns {
 
-// Note: the select() implementation on Windows (Winsock2)
-//       fails with any timeout much larger than this
-#define LONG_TIME 100000000
-
 class AbstractRegistration::Implementation : public Thread {
   DNSServiceRef service_;
 public:

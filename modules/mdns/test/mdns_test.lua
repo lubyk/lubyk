@@ -12,7 +12,6 @@ require 'lubyk'
 local should = test.Suite('mdns')
 local timeout = 5000
 
-test.verbose = true
 function should.register()
   local continue = false
   -- register our service at port 12345
@@ -53,7 +52,6 @@ function should.browse(t)
   continue = 0
 
   local browser = mdns.Browser(lubyk.service_type, function(self, service)
-    print(yaml.dump(service))
     if service.op == should_op and
       (service.name == name1 or
       service.name == name2) then
@@ -91,7 +89,9 @@ function should.registerTxt(t)
   local registration = mdns.Registration(lubyk.service_type, 'Service3', 12345, {planet='Dune', name='Worm', pull=34}, function()
     continue = true
   end)
-  assertEqual(string.char(11) .. 'planet=Dune' .. string.char(9) .. 'name=Worm' .. string.char(7) .. 'pull=34', registration.txt)
+  assertMatch(string.char(11) .. 'planet=Dune', registration.txt)
+  assertMatch(string.char(9)  .. 'name=Worm',   registration.txt)
+  assertMatch(string.char(7)  .. 'pull=34',     registration.txt)
   t:timeout(3000, function(done)
     return done or continue
   end)

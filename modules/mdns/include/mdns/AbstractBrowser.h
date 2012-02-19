@@ -29,7 +29,6 @@
 
 #ifndef MDNS_INCLUDE_MDNS_ABSTRACT_BROWSER_H_
 #define MDNS_INCLUDE_MDNS_ABSTRACT_BROWSER_H_
-#include <queue>
 
 #include "mdns/location.h"
 #include "lubyk/mutex.h"
@@ -58,31 +57,19 @@ protected:
    */
   int fd_;
 
-  /** Last detected location.
-   */
-  Service *found_service_;
-
-  /** This is true for 'add' and false for 'remove'.
-   */
-  bool is_add_;
-
-  /** Once we have data in fd_, we must wait on the resolution file descriptor
-   * to get device info.
-   */
-  int resolveFd();
-
 public:
   AbstractBrowser(const char *service_type);
 
   virtual ~AbstractBrowser();
 
-protected:
-  void setProtocolFromServiceType();
-
   /** Once we have some data ready, we call this method to get the
    * new mdns::Service (caller is responsible for deallocation).
    */
   Service *getService();
+
+protected:
+  void setProtocolFromServiceType();
+
 };
 
 } // mdns

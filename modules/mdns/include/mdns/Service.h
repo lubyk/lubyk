@@ -131,6 +131,7 @@ class Service : public Location, public ThreadedLuaObject {
   // Callback from Implementation
   void set(const char *hostname, int port, std::string txt) {
     host_ = hostname;
+    ip_   = ip_from_hostname(hostname);
     port_ = port;
     txt_  = txt;
   }

@@ -26,14 +26,13 @@ function mdns.Browser(service_type, func)
   self.found = {}
 
   self.thread = lk.Thread(function()
-    print('Start browse thread')
     local fd = self:fd()
     while true do
       sched:waitRead(fd)
-      printf("Something on %i.", fd)
       local service = self:getService()
-      if service then
+      while service do
         private.notifyService(self, service)
+        service = self:getService()
       end
     end
   end)
@@ -59,7 +58,6 @@ function private:notifyService(service)
         while true do
           sched:waitRead(fd)
           local info = service:info()
-          print(info.op, info.name, info.host, info.port)
           if info then
             service.last_info = info
             -- only notify once for now
@@ -68,14 +66,12 @@ function private:notifyService(service)
               self:addDevice(info)
             else
               -- update
-              print('UPDATE', info.name, info.host, info.port)
             end
           end
         end
       end)
     end
   elseif self.found[name] then
-    print('REMOVE', name)
     -- only remove once
     local service = self.found[name]
     service.thread:kill()
