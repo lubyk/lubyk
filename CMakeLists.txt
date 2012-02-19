@@ -29,7 +29,8 @@ if(UNIX)
     # add_definitions(-DLUA_USE_MACOSX)
     add_definitions(-D__MACOSX_CORE__)
     # CoreFoundation needed by Midi and cannot be added in dylib
-    set(PLAT_LINK "-all_load -flat_namespace -lreadline -framework Accelerate -framework CoreFoundation -framework OpenGL -framework GLUT -framework Cocoa -lobjc") # -framework Cocoa -lobjc ===> planet_gui.mm
+#    set(PLAT_LINK "-all_load -flat_namespace -lreadline -framework Accelerate -framework CoreFoundation -framework OpenGL -framework GLUT -framework Cocoa -lobjc") # -framework Cocoa -lobjc ===> planet_gui.mm
+    set(PLAT_LINK "-all_load -flat_namespace -lreadline -framework Accelerate -framework CoreFoundation -framework OpenGL -framework GLUT -lobjc")
     set(PLAT_OBJ_FLAGS "-flat_namespace -undefined suppress -dynamic -bundle -fPIC")
 
     # set(CMAKE_CXX_FLAGS "-mmacosx-version-min=10.6 -g -Wall")
@@ -40,7 +41,7 @@ if(UNIX)
     set(PLAT "linux")
     set(LUBYK_LIB ${LUBYK_SOURCE_DIR}/deploy/linux/lib)
     add_definitions(-D__LINUX_ALSASEQ__)
-    set(PLAT_LINK "-lavahi-client -lrt -lreadline -lasound")
+#    set(PLAT_LINK "-lavahi-client -lrt -lreadline -lasound")
     set(PLAT_OBJ_FLAGS "${PLAT_LINK} -dynamic -fPIC")
   endif(APPLE)
 else(UNIX)
