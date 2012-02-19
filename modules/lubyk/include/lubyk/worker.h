@@ -43,6 +43,7 @@ Planet <>--- Worker
 #include "lubyk/rmutex.h"
 #include "lubyk/time_ref.h"
 
+#include <cstdlib>
 #include <sys/socket.h> // fd_set
 
 namespace lubyk {

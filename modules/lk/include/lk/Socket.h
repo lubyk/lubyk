@@ -39,6 +39,7 @@
 
 #include <errno.h>  // errno
 #include <string.h> // strerror
+#include <fcntl.h>
 
 #include <string>
 
