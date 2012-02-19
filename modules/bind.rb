@@ -51,7 +51,7 @@ modules = {
     'const' => true,
   },
   'lubyk' => %w{Worker},
-  'mdns'  => %w{Browser Registration},
+  'mdns'  => %w{Browser Registration Service},
   'midi'  => %w{In Out},
   'mimas' => {
     'class' => mimas_classes,

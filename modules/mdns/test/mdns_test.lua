@@ -12,6 +12,7 @@ require 'lubyk'
 local should = test.Suite('mdns')
 local timeout = 5000
 
+test.verbose = true
 function should.register()
   local continue = false
   -- register our service at port 12345
@@ -52,6 +53,7 @@ function should.browse(t)
   continue = 0
 
   local browser = mdns.Browser(lubyk.service_type, function(self, service)
+    print(yaml.dump(service))
     if service.op == should_op and
       (service.name == name1 or
       service.name == name2) then

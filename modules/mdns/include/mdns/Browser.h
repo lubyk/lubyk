@@ -31,6 +31,7 @@
 
 #include "lubyk.h"
 #include "mdns/AbstractBrowser.h"
+#include "mdns/Service.h"
 
 using namespace lubyk;
 
@@ -63,93 +64,21 @@ public:
     return fd_;
   }
 
-  /** Load found services (must be called after waitRead or it blocks).
+  /** We have some data: get the service. Must be called after waitRead on
+   * fd().
+   *
    */
-  bool getServices() {
-    return AbstractBrowser::getServices();
-  }
-
-  /** Get next found service. Must call getServices after scheduler waitRead
-   * and before nextService.
-   * @return nil if there is nothing left.
-   */
-  LuaStackSize nextService(lua_State *L) {
-    if (found_services_.empty()) {
+  LuaStackSize getService(lua_State *L) {
+    Service *service = AbstractBrowser::getService();
+    if (service) {
+      // Service is a LuaThreadedObject. We must push it with proper initialization
+      // on the stack. GC by Lua.
+      return service->luaInit(L, service, "mdns.Service");
+    } else {
       return 0;
     }
-    Service loc = found_services_.front();
-    found_services_.pop();
-
-    // create table {op = 'add/remove', name = 'x', host = '10.0.0.34', port = 7500, interface = 2}
-    lua_newtable(L);
-    // op = 'add/remove'
-    lua_pushstring(L, "op");
-    if (loc.is_add_) {
-      lua_pushstring(L, "add");
-    } else {
-      lua_pushstring(L, "remove");
-    }
-    lua_settable(L, -3);
-    // name = 'xxxx'
-    lua_pushstring(L, "name");
-    lua_pushstring(L, loc.name());
-    lua_settable(L, -3);
-    // host = 'gaspard.local' / '10.3.4.5'
-    lua_pushstring(L, "host");
-    lua_pushstring(L, loc.host());
-    lua_settable(L, -3);
-    // ip = '10.3.4.5' / 'localhost'
-    lua_pushstring(L, "ip");
-    lua_pushstring(L, loc.name_from_ip(loc.ip()).c_str());
-    lua_settable(L, -3);
-    // port = 7500
-    lua_pushstring(L, "port");
-    lua_pushnumber(L, loc.port());
-    lua_settable(L, -3);
-    // interface = 2
-    lua_pushstring(L, "interface");
-    lua_pushnumber(L, loc.interface());
-    lua_settable(L, -3);
-    // txt = {...}
-    lua_pushstring(L, "txt");
-    pushTxtRecord(L, loc.txt_);
-    lua_settable(L, -3);
-    return 1;
   }
 
-private:
-  void pushTxtRecord(lua_State *L, const std::string &txt) {
-    // [LEN] KEY ( EOF | '=' ) ( VALUE | EOF ) [LEN] ...
-    lua_newtable(L);
-    // ... <table>
-    if (txt == "") return;
-    size_t txt_len = txt.size();
-    size_t pos = 0;
-    while ( pos < txt_len ) {
-      size_t l = txt.at(pos);
-      ++pos;
-      if (!l) break;
-      std::string line = txt.substr(pos, l);
-      size_t sep = line.find('=');
-      if (sep == std::string::npos) {
-        // boolean true
-        lua_pushlstring(L, line.c_str(), line.size());
-        lua_pushboolean(L, true);
-      } else {
-        std::string key, value;
-        key   = line.substr(0, sep);
-        value = line.substr(sep + 1);
-        lua_pushlstring(L, key.c_str(), key.size());
-        if (value.find_first_not_of("0123456789") == std::string::npos) {
-          lua_pushnumber(L, atoi(value.c_str()));
-        } else {
-          lua_pushlstring(L, value.c_str(), value.size());
-        }
-      }
-      lua_settable(L, -3);
-      pos = pos + l;
-    }
-  }
 };
 } // mdns
 

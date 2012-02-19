@@ -42,6 +42,8 @@ class LuaObject
    */
   void **userdata_;
 public:
+  LuaObject() throw();
+
   /** Prepare tables to work with the table based self idion.
    * expects stack to be:
    * ... self
@@ -49,8 +51,6 @@ public:
    * Otherwise, a new table is created.
    * The method leaves "self" on top of the stack, with self.super = this.
    */
-  LuaObject() throw();
-  
   int luaInit(lua_State *L, void *ptr, const char *type_name) throw();
 
   virtual ~LuaObject();

@@ -12,7 +12,7 @@ using namespace mdns;
 /* ============================ Constructors     ====================== */
 
 /** mdns::Registration::Registration(const char *service_type, const char *name, uint port, const char *txt)
- * include/mdns/Registration.h:53
+ * include/mdns/Registration.h:50
  */
 static int Registration_Registration(lua_State *L) {
   try {
@@ -75,7 +75,7 @@ static int Registration__tostring(lua_State *L) {
 
 
 /** int mdns::Registration::fd()
- * include/mdns/Registration.h:59
+ * include/mdns/Registration.h:56
  */
 static int Registration_fd(lua_State *L) {
   try {
@@ -95,7 +95,7 @@ static int Registration_fd(lua_State *L) {
 
 
 /** LuaStackSize mdns::Registration::getService(lua_State *L)
- * include/mdns/Registration.h:66
+ * include/mdns/Registration.h:63
  */
 static int Registration_getService(lua_State *L) {
   try {

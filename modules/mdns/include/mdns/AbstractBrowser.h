@@ -36,28 +36,15 @@
 
 namespace mdns {
 
+class Service;
+
 /** This class let's you easily find applications providing a certain
  * service.
  */
-class AbstractBrowser : public lubyk::Mutex {
+class AbstractBrowser {
   class Implementation;
   Implementation *impl_;
 protected:
-  class Service : public Location {
-  public:
-    Service(const char *protocol,
-            const char *service_name,
-            const char *hostname,
-            uint port,
-            uint interface,
-            const std::string &txt,
-            bool is_add)
-        : Location(protocol, service_name, hostname, port, interface),
-          txt_(txt),
-          is_add_(is_add) {}
-    std::string txt_;
-    bool is_add_;
-  };
 
   /** Protocol used in communication (usually 'lubyk').
   */
@@ -71,18 +58,19 @@ protected:
    */
   int fd_;
 
-  /** Detected locations.
+  /** Last detected location.
    */
-  std::queue<Service> found_services_;
+  Service *found_service_;
 
   /** This is true for 'add' and false for 'remove'.
    */
   bool is_add_;
 
-  /** Once we have some data ready, we call this method to load the
-   * service information into location_.
+  /** Once we have data in fd_, we must wait on the resolution file descriptor
+   * to get device info.
    */
-  bool getServices();
+  int resolveFd();
+
 public:
   AbstractBrowser(const char *service_type);
 
@@ -91,6 +79,10 @@ public:
 protected:
   void setProtocolFromServiceType();
 
+  /** Once we have some data ready, we call this method to get the
+   * new mdns::Service (caller is responsible for deallocation).
+   */
+  Service *getService();
 };
 
 } // mdns

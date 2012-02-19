@@ -41,7 +41,7 @@ namespace mdns {
 /** This class let's you easily register an application as providing a certain type of
  *  service.
  */
-class AbstractRegistration : public Mutex {
+class AbstractRegistration {
  public:
   AbstractRegistration(const char *service_type, const char *name, uint port, const char *txt);
 

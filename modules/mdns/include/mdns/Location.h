@@ -154,7 +154,7 @@ public:
   static unsigned long ip_from_hostname(const char *hostname);
   static const std::string name_from_ip(unsigned long ip);
 
-private:
+protected:
   friend std::ostream &operator<<(std::ostream &out_stream, const Location &location);
   friend class Url;
   friend uint hashId(const Location &location);

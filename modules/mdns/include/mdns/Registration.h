@@ -43,8 +43,7 @@ namespace mdns {
  *      string_args:'(*userdata)->name()'
  *      lib_name:'Registration_core'
  */
-class Registration : public AbstractRegistration, public LuaObject
-{
+class Registration : public AbstractRegistration, public LuaObject {
 public:
 
   Registration(const char *service_type, const char *name, uint port, const char *txt)
@@ -85,6 +84,7 @@ public:
   }
 
 };
+
 } // mdns
 
 #endif // LUBYK_INCLUDE_MDNS_REGISTRATION_H_

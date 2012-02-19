@@ -12,7 +12,7 @@ using namespace mdns;
 /* ============================ Constructors     ====================== */
 
 /** mdns::Browser::Browser(const char *service_type)
- * include/mdns/Browser.h:50
+ * include/mdns/Browser.h:53
  */
 static int Browser_Browser(lua_State *L) {
   try {
@@ -72,7 +72,7 @@ static int Browser__tostring(lua_State *L) {
 
 
 /** int mdns::Browser::fd()
- * include/mdns/Browser.h:60
+ * include/mdns/Browser.h:63
  */
 static int Browser_fd(lua_State *L) {
   try {
@@ -91,40 +91,20 @@ static int Browser_fd(lua_State *L) {
 
 
 
-/** bool mdns::Browser::getServices()
- * include/mdns/Browser.h:66
+/** LuaStackSize mdns::Browser::getService(lua_State *L)
+ * include/mdns/Browser.h:71
  */
-static int Browser_getServices(lua_State *L) {
+static int Browser_getService(lua_State *L) {
   try {
     Browser *self = *((Browser**)dubL_checksdata(L, 1, "mdns.Browser"));
-    if (!self) throw dub::Exception("Using deleted mdns.Browser in getServices");
-    bool  retval__ = self->getServices();
-    lua_pushboolean(L, retval__);
-    return 1;
-  } catch (std::exception &e) {
-    lua_pushfstring(L, "getServices: %s", e.what());
-  } catch (...) {
-    lua_pushfstring(L, "getServices: Unknown exception");
-  }
-  return lua_error(L);
-}
-
-
-
-/** LuaStackSize mdns::Browser::nextService(lua_State *L)
- * include/mdns/Browser.h:74
- */
-static int Browser_nextService(lua_State *L) {
-  try {
-    Browser *self = *((Browser**)dubL_checksdata(L, 1, "mdns.Browser"));
-    if (!self) throw dub::Exception("Using deleted mdns.Browser in nextService");
+    if (!self) throw dub::Exception("Using deleted mdns.Browser in getService");
     
-    LuaStackSize  retval__ = self->nextService(L);
+    LuaStackSize  retval__ = self->getService(L);
     return retval__;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "nextService: %s", e.what());
+    lua_pushfstring(L, "getService: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "nextService: Unknown exception");
+    lua_pushfstring(L, "getService: Unknown exception");
   }
   return lua_error(L);
 }
@@ -132,7 +112,7 @@ static int Browser_nextService(lua_State *L) {
 
 
 /** const char* mdns::Browser::serviceType()
- * include/mdns/Browser.h:54
+ * include/mdns/Browser.h:57
  */
 static int Browser_serviceType(lua_State *L) {
   try {
@@ -157,8 +137,7 @@ static int Browser_serviceType(lua_State *L) {
 
 static const struct luaL_Reg Browser_member_methods[] = {
   {"fd"                , Browser_fd},
-  {"getServices"       , Browser_getServices},
-  {"nextService"       , Browser_nextService},
+  {"getService"        , Browser_getService},
   {"serviceType"       , Browser_serviceType},
   {"__tostring"        , Browser__tostring},
   {"__gc"              , Browser_destructor},
