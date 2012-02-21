@@ -140,7 +140,7 @@ function private:makeButtons()
   self.btn_lay:addWidget(unlock_btn)
   unlock_btn:hide()
   function unlock_btn.click()
-    private.unlock(self)
+    self:unlock()
   end
 end
 
@@ -225,7 +225,7 @@ function private:showUnlock()
   end
 end
 
-function private:unlock()
+function lib:unlock()
   self.unlock_btn:hide()
   self.locked = false
   private.filterChanged(self)

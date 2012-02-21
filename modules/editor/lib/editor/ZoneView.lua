@@ -125,7 +125,8 @@ function private:setupMenus()
   action:setMenuRole(mimas.PreferencesRole)         
   action = menu:addAction('Quit', 'Ctrl+Q', function()
     -- Show pref dialog
-    sched:quit()
+    sched.should_run = false
+    app:quit()
   end)
   action:setMenuRole(mimas.QuitRole)         
 

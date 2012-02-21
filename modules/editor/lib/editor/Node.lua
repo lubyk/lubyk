@@ -64,12 +64,6 @@ setmetatable(lib, {
   return self
 end})
 
-local function setCode(self, code)
-  if self.code ~= code then
-    self.code = code
-  end
-  self.changed_code = nil
-end
 
 --- Called when we receive a change notification from the
 -- remote. To actually change the remote Node, use "change".
@@ -80,7 +74,7 @@ function lib:set(def)
       -- setParams
       private.setParams(self, v)
     elseif k == 'code' then
-      setCode(self, v)
+      private.setCode(self, v)
     elseif k == 'hue' or
            k == 'inlets' or
            k == 'has_all_slots' or
@@ -175,17 +169,6 @@ end
 -- edit code in external editor
 function lib:edit()
   self.zone:editNode(self:url())
-end
-
-function lib:fileChanged(path)
-  local code = lk.readall(path)
-  if code ~= self.code and code ~= self.changed_code then
-    -- Sometimes, the os gives us 2 notifications for the same change
-    -- this is to avoid sending change notifications twice (reset on notification).
-    self.changed_code = code
-    -- send remote update
-    self:change {code = code}
-  end
 end
 
 function lib:deleteView()
@@ -401,6 +384,16 @@ function private:setSlots(key, list, has_all_slots)
           slot.view:hide()
         end
       end
+    end
+  end
+end
+
+function private:setCode(code)
+  if self.code ~= code then
+    self.code = code
+    local lv = self.zone.view.log_view
+    if lv and lv.selected and lv.selected.url == self:url() and lv.locked then
+      lv:unlock()
     end
   end
 end
