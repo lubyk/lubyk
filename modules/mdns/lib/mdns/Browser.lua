@@ -58,23 +58,27 @@ function private:notifyService(service)
         -- Resolve the service name
         while true do
           sched:waitRead(fd)
-          local info = service:info()
-          if info then
-            service.info = info
-            -- only notify once for now
-            self:addDevice(info)
-            break
+          if self.found[name] then
+            -- Hasn't been removed before resolution.
+            local info = service:info()
+            if info then
+              service.info = info
+              -- only notify once for now
+              self:addDevice(info)
+              break
+            end
           end
         end
-        service.thread = nil
+        -- The mdns.Service should be deleted as soon as possible now so that we free the
+        -- socket filedescriptor.
+        service:__gc()
+        self.found[name] = true
       end)
     end
   elseif self.found[name] then
     -- only remove once
-    local service = self.found[name]
-    service.thread:kill()
     self.found[name] = nil
-    self:removeDevice(service.last_info or {name = name})
+    self:removeDevice({name = name})
   end
 end
 

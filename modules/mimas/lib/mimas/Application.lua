@@ -24,12 +24,17 @@ function mimas.Application(type)
       color:#B4B4B4;
     }
     .table {
-      alternate-background-color:rgb(52, 52, 52);
+      alternate-background-color:#333;
       border:0;
     }
     .list, .menu {
       border:0;
       padding:0;
+    }
+    .list {
+      alternate-background-color:#333;
+      border:0;
+      min-height:90px;
     }
     .menu {
       border:1px solid #777;
@@ -137,7 +142,7 @@ function mimas.Application(type)
       height: 6px;
     }
     QCheckBox::indicator:checked {
-      background:#777;
+      background:#888;
     }
 
 

@@ -124,7 +124,7 @@ function lib:animate(typ, max_wait, timeout_clbk)
     hue = 0
     bsat = 1
   elseif typ == 'warn' then
-    hue = 0.2
+    hue = 0.1
   end
   if self.anim then
     self.anim:kill()
