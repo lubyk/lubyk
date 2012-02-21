@@ -1,4 +1,4 @@
-#include "mimas/ListView.h"
+#include "mimas/CheckBox.h"
 
 #include "lua_cpp_helper.h"
 
@@ -11,17 +11,29 @@ using namespace mimas;
 
 /* ============================ Constructors     ====================== */
 
-/** mimas::ListView::ListView()
- * include/mimas/ListView.h:67
+/** mimas::CheckBox::CheckBox(const char *title=NULL, QWidget *parent=NULL)
+ * include/mimas/CheckBox.h:59
  */
-static int ListView_ListView(lua_State *L) {
+static int CheckBox_CheckBox(lua_State *L) {
   try {
-    ListView * retval__ = new ListView();
-    return retval__->luaInit(L, retval__, "mimas.ListView");
+    int top__ = lua_gettop(L);
+    CheckBox * retval__;
+    if (top__ < 1) {
+      retval__ = new CheckBox();
+    } else {
+      const char *title = dubL_checkstring(L, 1);
+      if (top__ < 2) {
+        retval__ = new CheckBox(title);
+      } else {
+        QWidget *parent = *((QWidget **)dubL_checksdata(L, 2, "mimas.QWidget"));
+        retval__ = new CheckBox(title, parent);
+      }
+    }
+    return retval__->luaInit(L, retval__, "mimas.CheckBox");
   } catch (std::exception &e) {
-    lua_pushfstring(L, "ListView: %s", e.what());
+    lua_pushfstring(L, "CheckBox: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "ListView: Unknown exception");
+    lua_pushfstring(L, "CheckBox: Unknown exception");
   }
   return lua_error(L);
 }
@@ -30,12 +42,12 @@ static int ListView_ListView(lua_State *L) {
 
 /* ============================ Destructor       ====================== */
 
-static int ListView_destructor(lua_State *L) {
-  ListView **userdata = (ListView**)dubL_checksdata_n(L, 1, "mimas.ListView");
+static int CheckBox_destructor(lua_State *L) {
+  CheckBox **userdata = (CheckBox**)dubL_checksdata_n(L, 1, "mimas.CheckBox");
 
   
   // custom destructor
-  ListView *self = *userdata;
+  CheckBox *self = *userdata;
   if (self) self->luaDestroy();
   
   *userdata = NULL;
@@ -45,24 +57,24 @@ static int ListView_destructor(lua_State *L) {
 
 
 // test if class is deleted
-static int ListView_deleted(lua_State *L) {
-  ListView **userdata = (ListView**)dubL_checksdata_n(L, 1, "mimas.ListView");
+static int CheckBox_deleted(lua_State *L) {
+  CheckBox **userdata = (CheckBox**)dubL_checksdata_n(L, 1, "mimas.CheckBox");
   lua_pushboolean(L, *userdata == NULL);
   return 1;
 }
 
 /* ============================ tostring         ====================== */
 
-static int ListView__tostring(lua_State *L) {
-  ListView **userdata = (ListView**)dubL_checksdata_n(L, 1, "mimas.ListView");
+static int CheckBox__tostring(lua_State *L) {
+  CheckBox **userdata = (CheckBox**)dubL_checksdata_n(L, 1, "mimas.CheckBox");
   
   if (!*userdata) {
-    lua_pushstring(L, "<mimas.ListView: NULL>");
+    lua_pushstring(L, "<mimas.CheckBox: NULL>");
     return 1;
   }
   
   
-  lua_pushfstring(L, "<mimas.ListView: %p>", *userdata);
+  lua_pushfstring(L, "<mimas.CheckBox: %p>", *userdata);
   
   return 1;
 }
@@ -75,8 +87,8 @@ static int ListView__tostring(lua_State *L) {
  */
 static int QWidget_activateWindow(lua_State *L) {
   try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in activateWindow");
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in activateWindow");
     self->activateWindow();
     return 0;
   } catch (std::exception &e) {
@@ -94,8 +106,8 @@ static int QWidget_activateWindow(lua_State *L) {
  */
 static int QWidget_addAction(lua_State *L) {
   try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in addAction");
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in addAction");
     Action *action = *((Action **)dubL_checksdata(L, 2, "mimas.Action"));
     self->addAction(action);
     return 0;
@@ -114,8 +126,8 @@ static int QWidget_addAction(lua_State *L) {
  */
 static int QWidget_addWidget(lua_State *L) {
   try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in addWidget");
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in addWidget");
     QWidget *widget = *((QWidget **)dubL_checksdata(L, 2, "mimas.QWidget"));
     widget->setParent(self);
     return 0;
@@ -134,8 +146,8 @@ static int QWidget_addWidget(lua_State *L) {
  */
 static int QWidget_adjustSize(lua_State *L) {
   try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in adjustSize");
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in adjustSize");
     self->adjustSize();
     return 0;
   } catch (std::exception &e) {
@@ -153,8 +165,8 @@ static int QWidget_adjustSize(lua_State *L) {
  */
 static int QWidget_close(lua_State *L) {
   try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in close");
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in close");
     bool  retval__ = self->close();
     lua_pushboolean(L, retval__);
     return 1;
@@ -168,13 +180,13 @@ static int QWidget_close(lua_State *L) {
 
 
 
-/** QString mimas::ListView::cssClass() const 
- * include/mimas/ListView.h:71
+/** QString mimas::CheckBox::cssClass() const 
+ * include/mimas/CheckBox.h:69
  */
-static int ListView_cssClass(lua_State *L) {
+static int CheckBox_cssClass(lua_State *L) {
   try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in cssClass");
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in cssClass");
     QString  retval__ = self->cssClass();
     lua_pushclass<QString>(L, retval__, "mimas.QString");
     return 1;
@@ -188,59 +200,13 @@ static int ListView_cssClass(lua_State *L) {
 
 
 
-/** void mimas::ListView::enableHtml(bool enable, const char *css=NULL)
- * include/mimas/ListView.h:166
- */
-static int ListView_enableHtml(lua_State *L) {
-  try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in enableHtml");
-    int top__ = lua_gettop(L);
-    bool enable = lua_toboolean(L, 2);
-    if (top__ < 3) {
-      self->enableHtml(enable);
-    } else {
-      const char *css = dubL_checkstring(L, 3);
-      self->enableHtml(enable, css);
-    }
-    return 0;
-  } catch (std::exception &e) {
-    lua_pushfstring(L, "enableHtml: %s", e.what());
-  } catch (...) {
-    lua_pushfstring(L, "enableHtml: Unknown exception");
-  }
-  return lua_error(L);
-}
-
-
-
-/** void mimas::ListView::enablePaintItem(bool enable)
- * include/mimas/ListView.h:161
- */
-static int ListView_enablePaintItem(lua_State *L) {
-  try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in enablePaintItem");
-    bool enable = lua_toboolean(L, 2);
-    self->enablePaintItem(enable);
-    return 0;
-  } catch (std::exception &e) {
-    lua_pushfstring(L, "enablePaintItem: %s", e.what());
-  } catch (...) {
-    lua_pushfstring(L, "enablePaintItem: Unknown exception");
-  }
-  return lua_error(L);
-}
-
-
-
 /** void mimas::QWidget::globalMove(float x, float y)
  * mimas/bind/QWidget.h:88
  */
 static int QWidget_globalMove(lua_State *L) {
   try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in globalMove");
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in globalMove");
     float x = dubL_checknumber(L, 2);
     float y = dubL_checknumber(L, 3);
     self->move(
@@ -264,8 +230,8 @@ static int QWidget_globalMove(lua_State *L) {
  */
 static int QWidget_globalPosition(lua_State *L) {
   try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in globalPosition");
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in globalPosition");
     QPoint pt = self->mapToGlobal(QPoint(0, 0));
     lua_pushnumber(L, pt.x());
     lua_pushnumber(L, pt.y());
@@ -285,8 +251,8 @@ static int QWidget_globalPosition(lua_State *L) {
  */
 static int QWidget_height(lua_State *L) {
   try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in height");
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in height");
     int  retval__ = self->height();
     lua_pushnumber(L, retval__);
     return 1;
@@ -305,8 +271,8 @@ static int QWidget_height(lua_State *L) {
  */
 static int QWidget_hide(lua_State *L) {
   try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in hide");
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in hide");
     self->hide();
     return 0;
   } catch (std::exception &e) {
@@ -319,22 +285,60 @@ static int QWidget_hide(lua_State *L) {
 
 
 
-/** LuaStackSize mimas::ListView::indexAt(float x, float y, lua_State *L)
- * include/mimas/ListView.h:103
+/** float mimas::CheckBox::hue()
+ * include/mimas/CheckBox.h:84
  */
-static int ListView_indexAt(lua_State *L) {
+static int CheckBox_hue(lua_State *L) {
   try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in indexAt");
-    float x = dubL_checknumber(L, 2);
-    float y = dubL_checknumber(L, 3);
-    
-    LuaStackSize  retval__ = self->indexAt(x, y, L);
-    return retval__;
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in hue");
+    float  retval__ = self->hue();
+    lua_pushnumber(L, retval__);
+    return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "indexAt: %s", e.what());
+    lua_pushfstring(L, "hue: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "indexAt: Unknown exception");
+    lua_pushfstring(L, "hue: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** bool mimas::QCheckBox::isCheckable()
+ * mimas/bind/QCheckBox.h:12
+ */
+static int QCheckBox_isCheckable(lua_State *L) {
+  try {
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in isCheckable");
+    bool  retval__ = self->isCheckable();
+    lua_pushboolean(L, retval__);
+    return 1;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "isCheckable: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "isCheckable: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** bool mimas::QCheckBox::isChecked()
+ * mimas/bind/QCheckBox.h:15
+ */
+static int QCheckBox_isChecked(lua_State *L) {
+  try {
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in isChecked");
+    bool  retval__ = self->isChecked();
+    lua_pushboolean(L, retval__);
+    return 1;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "isChecked: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "isChecked: Unknown exception");
   }
   return lua_error(L);
 }
@@ -346,8 +350,8 @@ static int ListView_indexAt(lua_State *L) {
  */
 static int QWidget_isFullScreen(lua_State *L) {
   try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in isFullScreen");
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in isFullScreen");
     bool  retval__ = self->isFullScreen();
     lua_pushboolean(L, retval__);
     return 1;
@@ -366,8 +370,8 @@ static int QWidget_isFullScreen(lua_State *L) {
  */
 static int QWidget_isVisible(lua_State *L) {
   try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in isVisible");
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in isVisible");
     bool  retval__ = self->isVisible();
     lua_pushboolean(L, retval__);
     return 1;
@@ -386,8 +390,8 @@ static int QWidget_isVisible(lua_State *L) {
  */
 static int QWidget_lower(lua_State *L) {
   try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in lower");
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in lower");
     self->lower();
     return 0;
   } catch (std::exception &e) {
@@ -405,8 +409,8 @@ static int QWidget_lower(lua_State *L) {
  */
 static int QWidget_move(lua_State *L) {
   try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in move");
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in move");
     int x = dubL_checkint(L, 2);
     int y = dubL_checkint(L, 3);
     self->move(x, y);
@@ -426,8 +430,8 @@ static int QWidget_move(lua_State *L) {
  */
 static int QObject_name(lua_State *L) {
   try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in name");
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in name");
     lua_pushstring(L, self->objectName().toUtf8().data());
     return 1;
   } catch (std::exception &e) {
@@ -445,8 +449,8 @@ static int QObject_name(lua_State *L) {
  */
 static int QObject_object(lua_State *L) {
   try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in object");
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in object");
     QObject * retval__ = self;
     lua_pushclass<QObject>(L, retval__, "mimas.QObject");
     return 1;
@@ -465,8 +469,8 @@ static int QObject_object(lua_State *L) {
  */
 static int QWidget_position(lua_State *L) {
   try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in position");
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in position");
     lua_pushnumber(L, self->x());
     lua_pushnumber(L, self->y());
     return 2;
@@ -485,8 +489,8 @@ static int QWidget_position(lua_State *L) {
  */
 static int QWidget_raise(lua_State *L) {
   try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in raise");
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in raise");
     self->raise();
     return 0;
   } catch (std::exception &e) {
@@ -504,8 +508,8 @@ static int QWidget_raise(lua_State *L) {
  */
 static int QWidget_resize(lua_State *L) {
   try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in resize");
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in resize");
     int w = dubL_checkint(L, 2);
     int h = dubL_checkint(L, 3);
     self->resize(w, h);
@@ -520,91 +524,13 @@ static int QWidget_resize(lua_State *L) {
 
 
 
-/** void mimas::ListView::scrollToBottom()
- * include/mimas/ListView.h:149
- */
-static int ListView_scrollToBottom(lua_State *L) {
-  try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in scrollToBottom");
-    self->scrollToBottom();
-    return 0;
-  } catch (std::exception &e) {
-    lua_pushfstring(L, "scrollToBottom: %s", e.what());
-  } catch (...) {
-    lua_pushfstring(L, "scrollToBottom: Unknown exception");
-  }
-  return lua_error(L);
-}
-
-
-
-/** void mimas::ListView::scrollToTop()
- * include/mimas/ListView.h:153
- */
-static int ListView_scrollToTop(lua_State *L) {
-  try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in scrollToTop");
-    self->scrollToTop();
-    return 0;
-  } catch (std::exception &e) {
-    lua_pushfstring(L, "scrollToTop: %s", e.what());
-  } catch (...) {
-    lua_pushfstring(L, "scrollToTop: Unknown exception");
-  }
-  return lua_error(L);
-}
-
-
-
-/** void mimas::ListView::selectRow(int row)
- * include/mimas/ListView.h:115
- */
-static int ListView_selectRow(lua_State *L) {
-  try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in selectRow");
-    int row = dubL_checkint(L, 2);
-    self->selectRow(row);
-    return 0;
-  } catch (std::exception &e) {
-    lua_pushfstring(L, "selectRow: %s", e.what());
-  } catch (...) {
-    lua_pushfstring(L, "selectRow: Unknown exception");
-  }
-  return lua_error(L);
-}
-
-
-
-/** LuaStackSize mimas::ListView::selectedIndexes(lua_State *L)
- * include/mimas/ListView.h:80
- */
-static int ListView_selectedIndexes(lua_State *L) {
-  try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in selectedIndexes");
-    
-    LuaStackSize  retval__ = self->selectedIndexes(L);
-    return retval__;
-  } catch (std::exception &e) {
-    lua_pushfstring(L, "selectedIndexes: %s", e.what());
-  } catch (...) {
-    lua_pushfstring(L, "selectedIndexes: Unknown exception");
-  }
-  return lua_error(L);
-}
-
-
-
 /** void mimas::QWidget::setAttribute(int attr, bool enabled)
  * mimas/bind/QWidget.h:24
  */
 static int QWidget_setAttribute(lua_State *L) {
   try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in setAttribute");
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in setAttribute");
     int attr = dubL_checkint(L, 2);
     bool enabled = lua_toboolean(L, 3);
     self->setAttribute((Qt::WidgetAttribute)attr, enabled);
@@ -619,13 +545,53 @@ static int QWidget_setAttribute(lua_State *L) {
 
 
 
+/** void mimas::QCheckBox::setCheckable(bool check)
+ * mimas/bind/QCheckBox.h:13
+ */
+static int QCheckBox_setCheckable(lua_State *L) {
+  try {
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in setCheckable");
+    bool check = lua_toboolean(L, 2);
+    self->setCheckable(check);
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "setCheckable: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "setCheckable: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** void mimas::QCheckBox::setChecked(bool check)
+ * mimas/bind/QCheckBox.h:16
+ */
+static int QCheckBox_setChecked(lua_State *L) {
+  try {
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in setChecked");
+    bool check = lua_toboolean(L, 2);
+    self->setChecked(check);
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "setChecked: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "setChecked: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
 /** void mimas::QWidget::setFocus()
  * mimas/bind/QWidget.h:22
  */
 static int QWidget_setFocus(lua_State *L) {
   try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in setFocus");
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in setFocus");
     self->setFocus(Qt::OtherFocusReason);
     return 0;
   } catch (std::exception &e) {
@@ -643,8 +609,8 @@ static int QWidget_setFocus(lua_State *L) {
  */
 static int QWidget_setFocusPolicy(lua_State *L) {
   try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in setFocusPolicy");
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in setFocusPolicy");
     int policy = dubL_checkint(L, 2);
     self->setFocusPolicy((Qt::FocusPolicy)policy);
     return 0;
@@ -658,13 +624,33 @@ static int QWidget_setFocusPolicy(lua_State *L) {
 
 
 
+/** void mimas::CheckBox::setHue(float hue)
+ * include/mimas/CheckBox.h:75
+ */
+static int CheckBox_setHue(lua_State *L) {
+  try {
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in setHue");
+    float hue = dubL_checknumber(L, 2);
+    self->setHue(hue);
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "setHue: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "setHue: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
 /** void mimas::QWidget::setMinimumSize(float w, float h)
  * mimas/bind/QWidget.h:27
  */
 static int QWidget_setMinimumSize(lua_State *L) {
   try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in setMinimumSize");
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in setMinimumSize");
     float w = dubL_checknumber(L, 2);
     float h = dubL_checknumber(L, 3);
     self->setMinimumSize(w, h);
@@ -679,33 +665,13 @@ static int QWidget_setMinimumSize(lua_State *L) {
 
 
 
-/** void mimas::ListView::setModel(DataSource *model)
- * include/mimas/ListView.h:123
- */
-static int ListView_setModel(lua_State *L) {
-  try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in setModel");
-    DataSource *model = *((DataSource **)dubL_checksdata(L, 2, "mimas.DataSource"));
-    self->setModel(model);
-    return 0;
-  } catch (std::exception &e) {
-    lua_pushfstring(L, "setModel: %s", e.what());
-  } catch (...) {
-    lua_pushfstring(L, "setModel: Unknown exception");
-  }
-  return lua_error(L);
-}
-
-
-
 /** void mimas::QWidget::setMouseTracking(bool enable)
  * mimas/bind/QWidget.h:30
  */
 static int QWidget_setMouseTracking(lua_State *L) {
   try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in setMouseTracking");
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in setMouseTracking");
     bool enable = lua_toboolean(L, 2);
     self->setMouseTracking(enable);
     return 0;
@@ -724,8 +690,8 @@ static int QWidget_setMouseTracking(lua_State *L) {
  */
 static int QObject_setName(lua_State *L) {
   try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in setName");
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in setName");
     const char *name = dubL_checkstring(L, 2);
     self->setObjectName(QString(name));
     return 0;
@@ -744,8 +710,8 @@ static int QObject_setName(lua_State *L) {
  */
 static int QWidget_setParent(lua_State *L) {
   try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in setParent");
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in setParent");
     QWidget *parent = *((QWidget **)dubL_checksdata(L, 2, "mimas.QWidget"));
     self->setParent(parent);
     return 0;
@@ -764,8 +730,8 @@ static int QWidget_setParent(lua_State *L) {
  */
 static int QWidget_setSizeHint(lua_State *L) {
   try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in setSizeHint");
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in setSizeHint");
     float w = dubL_checknumber(L, 2);
     float h = dubL_checknumber(L, 3);
     self->size_hint_ = QSize(w, h);
@@ -786,8 +752,8 @@ static int QWidget_setSizeHint(lua_State *L) {
  */
 static int QWidget_setSizePolicy(lua_State *L) {
   try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in setSizePolicy");
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in setSizePolicy");
     int horizontal = dubL_checkint(L, 2);
     int vertical = dubL_checkint(L, 3);
     self->setSizePolicy((QSizePolicy::Policy)horizontal, (QSizePolicy::Policy)vertical);
@@ -808,8 +774,8 @@ static int QWidget_setSizePolicy(lua_State *L) {
  */
 static int QWidget_setStyle(lua_State *L) {
   try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in setStyle");
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in setStyle");
     const char *text = dubL_checkstring(L, 2);
     self->setStyleSheet(QString(".%1 { %2 }").arg(self->cssClass()).arg(text));
     return 0;
@@ -828,8 +794,8 @@ static int QWidget_setStyle(lua_State *L) {
  */
 static int QWidget_setStyleSheet(lua_State *L) {
   try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in setStyleSheet");
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in setStyleSheet");
     const char *text = dubL_checkstring(L, 2);
     self->setStyleSheet(text);
     return 0;
@@ -843,13 +809,33 @@ static int QWidget_setStyleSheet(lua_State *L) {
 
 
 
+/** void mimas::CheckBox::setText(const char *txt)
+ * include/mimas/CheckBox.h:80
+ */
+static int CheckBox_setText(lua_State *L) {
+  try {
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in setText");
+    const char *txt = dubL_checkstring(L, 2);
+    self->setText(txt);
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "setText: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "setText: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
 /** void mimas::QWidget::setWindowTitle(const char *text)
  * mimas/bind/QWidget.h:42
  */
 static int QWidget_setWindowTitle(lua_State *L) {
   try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in setWindowTitle");
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in setWindowTitle");
     const char *text = dubL_checkstring(L, 2);
     self->setWindowTitle(text);
     return 0;
@@ -868,8 +854,8 @@ static int QWidget_setWindowTitle(lua_State *L) {
  */
 static int QWidget_show(lua_State *L) {
   try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in show");
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in show");
     self->show();
     return 0;
   } catch (std::exception &e) {
@@ -887,8 +873,8 @@ static int QWidget_show(lua_State *L) {
  */
 static int QWidget_showFullScreen(lua_State *L) {
   try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in showFullScreen");
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in showFullScreen");
     int top__ = lua_gettop(L);
     bool enable;
     if (top__ >= 2) {
@@ -917,8 +903,8 @@ static int QWidget_showFullScreen(lua_State *L) {
  */
 static int QWidget_size(lua_State *L) {
   try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in size");
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in size");
     QRect rect = self->geometry();
     lua_pushnumber(L, rect.width());
     lua_pushnumber(L, rect.height());
@@ -938,8 +924,8 @@ static int QWidget_size(lua_State *L) {
  */
 static int QWidget_swapFullScreen(lua_State *L) {
   try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in swapFullScreen");
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in swapFullScreen");
     if (!self->isFullScreen()) {
       self->showFullScreen();
     } else {
@@ -961,8 +947,8 @@ static int QWidget_swapFullScreen(lua_State *L) {
  */
 static int QWidget_textSize(lua_State *L) {
   try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in textSize");
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in textSize");
     const char *text = dubL_checkstring(L, 2);
     lua_pushnumber(L, self->fontMetrics().width(text));
     lua_pushnumber(L, self->fontMetrics().height());
@@ -982,8 +968,8 @@ static int QWidget_textSize(lua_State *L) {
  */
 static int QWidget_update(lua_State *L) {
   try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in update");
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in update");
     self->update();
     return 0;
   } catch (std::exception &e) {
@@ -1001,8 +987,8 @@ static int QWidget_update(lua_State *L) {
  */
 static int QWidget_widget(lua_State *L) {
   try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in widget");
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in widget");
     QWidget* retval__ = self;
     lua_pushclass<QWidget>(L, retval__, "mimas.QWidget");
     return 1;
@@ -1021,8 +1007,8 @@ static int QWidget_widget(lua_State *L) {
  */
 static int QWidget_width(lua_State *L) {
   try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in width");
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in width");
     int  retval__ = self->width();
     lua_pushnumber(L, retval__);
     return 1;
@@ -1041,8 +1027,8 @@ static int QWidget_width(lua_State *L) {
  */
 static int QWidget_windowTitle(lua_State *L) {
   try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in windowTitle");
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in windowTitle");
     lua_pushstring(L, self->windowTitle().toUtf8());
     return 1;
   } catch (std::exception &e) {
@@ -1060,8 +1046,8 @@ static int QWidget_windowTitle(lua_State *L) {
  */
 static int QWidget_x(lua_State *L) {
   try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in x");
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in x");
     int  retval__ = self->x();
     lua_pushnumber(L, retval__);
     return 1;
@@ -1080,8 +1066,8 @@ static int QWidget_x(lua_State *L) {
  */
 static int QWidget_y(lua_State *L) {
   try {
-    ListView *self = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
-    if (!self) throw dub::Exception("Using deleted mimas.ListView in y");
+    CheckBox *self = *((CheckBox**)dubL_checksdata(L, 1, "mimas.CheckBox"));
+    if (!self) throw dub::Exception("Using deleted mimas.CheckBox in y");
     int  retval__ = self->y();
     lua_pushnumber(L, retval__);
     return 1;
@@ -1099,20 +1085,20 @@ static int QWidget_y(lua_State *L) {
 
 /* ============================ Lua Registration ====================== */
 
-static const struct luaL_Reg ListView_member_methods[] = {
+static const struct luaL_Reg CheckBox_member_methods[] = {
   {"activateWindow"    , QWidget_activateWindow},
   {"addAction"         , QWidget_addAction},
   {"addWidget"         , QWidget_addWidget},
   {"adjustSize"        , QWidget_adjustSize},
   {"close"             , QWidget_close},
-  {"cssClass"          , ListView_cssClass},
-  {"enableHtml"        , ListView_enableHtml},
-  {"enablePaintItem"   , ListView_enablePaintItem},
+  {"cssClass"          , CheckBox_cssClass},
   {"globalMove"        , QWidget_globalMove},
   {"globalPosition"    , QWidget_globalPosition},
   {"height"            , QWidget_height},
   {"hide"              , QWidget_hide},
-  {"indexAt"           , ListView_indexAt},
+  {"hue"               , CheckBox_hue},
+  {"isCheckable"       , QCheckBox_isCheckable},
+  {"isChecked"         , QCheckBox_isChecked},
   {"isFullScreen"      , QWidget_isFullScreen},
   {"isVisible"         , QWidget_isVisible},
   {"lower"             , QWidget_lower},
@@ -1122,15 +1108,13 @@ static const struct luaL_Reg ListView_member_methods[] = {
   {"position"          , QWidget_position},
   {"raise"             , QWidget_raise},
   {"resize"            , QWidget_resize},
-  {"scrollToBottom"    , ListView_scrollToBottom},
-  {"scrollToTop"       , ListView_scrollToTop},
-  {"selectRow"         , ListView_selectRow},
-  {"selectedIndexes"   , ListView_selectedIndexes},
   {"setAttribute"      , QWidget_setAttribute},
+  {"setCheckable"      , QCheckBox_setCheckable},
+  {"setChecked"        , QCheckBox_setChecked},
   {"setFocus"          , QWidget_setFocus},
   {"setFocusPolicy"    , QWidget_setFocusPolicy},
+  {"setHue"            , CheckBox_setHue},
   {"setMinimumSize"    , QWidget_setMinimumSize},
-  {"setModel"          , ListView_setModel},
   {"setMouseTracking"  , QWidget_setMouseTracking},
   {"setName"           , QObject_setName},
   {"setParent"         , QWidget_setParent},
@@ -1138,6 +1122,7 @@ static const struct luaL_Reg ListView_member_methods[] = {
   {"setSizePolicy"     , QWidget_setSizePolicy},
   {"setStyle"          , QWidget_setStyle},
   {"setStyleSheet"     , QWidget_setStyleSheet},
+  {"setText"           , CheckBox_setText},
   {"setWindowTitle"    , QWidget_setWindowTitle},
   {"show"              , QWidget_show},
   {"showFullScreen"    , QWidget_showFullScreen},
@@ -1150,38 +1135,38 @@ static const struct luaL_Reg ListView_member_methods[] = {
   {"windowTitle"       , QWidget_windowTitle},
   {"x"                 , QWidget_x},
   {"y"                 , QWidget_y},
-  {"__tostring"        , ListView__tostring},
-  {"__gc"              , ListView_destructor},
-  {"deleted"           , ListView_deleted},
+  {"__tostring"        , CheckBox__tostring},
+  {"__gc"              , CheckBox_destructor},
+  {"deleted"           , CheckBox_deleted},
   {NULL, NULL},
 };
 
-static const struct luaL_Reg ListView_namespace_methods[] = {
-  {"ListView"          , ListView_ListView},
+static const struct luaL_Reg CheckBox_namespace_methods[] = {
+  {"CheckBox"          , CheckBox_CheckBox},
   {NULL, NULL},
 };
 
 
 
 #ifdef DUB_LUA_NO_OPEN
-int luaload_mimas_ListView(lua_State *L) {
+int luaload_mimas_CheckBox_core(lua_State *L) {
 #else
-extern "C" int luaopen_mimas_ListView(lua_State *L) {
+extern "C" int luaopen_mimas_CheckBox_core(lua_State *L) {
 #endif
   // Create the metatable which will contain all the member methods
-  luaL_newmetatable(L, "mimas.ListView");
+  luaL_newmetatable(L, "mimas.CheckBox");
 
   // metatable.__index = metatable (find methods in the table itself)
   lua_pushvalue(L, -1);
   lua_setfield(L, -2, "__index");
 
   // register member methods
-  luaL_register(L, NULL, ListView_member_methods);
-  // save meta-table in mimas.ListView_
-  register_mt(L, "mimas", "ListView");
+  luaL_register(L, NULL, CheckBox_member_methods);
+  // save meta-table in mimas.CheckBox_
+  register_mt(L, "mimas", "CheckBox");
 
   // register class methods in a global namespace table
-  luaL_register(L, "mimas", ListView_namespace_methods);
+  luaL_register(L, "mimas", CheckBox_namespace_methods);
 
 
 	return 1;

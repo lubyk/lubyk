@@ -26,8 +26,8 @@
 
   ==============================================================================
 */
-#ifndef LUBYK_INCLUDE_MIMAS_BUTTON_H_
-#define LUBYK_INCLUDE_MIMAS_BUTTON_H_
+#ifndef LUBYK_INCLUDE_MIMAS_CHECK_BOX_H_
+#define LUBYK_INCLUDE_MIMAS_CHECK_BOX_H_
 
 #include "lubyk.h"
 using namespace lubyk;
@@ -36,38 +36,38 @@ using namespace lubyk;
 #include "mimas/constants.h"
 #include "mimas/Widget.h"
 
-#include <QtGui/QPushButton>
+#include <QtGui/QCheckBox>
 #include <QtGui/QMouseEvent>
 
 #include <iostream>
 
 namespace mimas {
 
-/** Button widget.
+/** CheckBox widget.
  *
- * @dub lib_name:'Button_core'
+ * @dub lib_name:'CheckBox_core'
  *      destructor: 'luaDestroy'
- *      super: 'QWidget'
+ *      super: 'QCheckBox'
  */
-class Button : public QPushButton, public ThreadedLuaObject {
+class CheckBox: public QCheckBox, public ThreadedLuaObject {
   Q_OBJECT
   Q_PROPERTY(QString class READ cssClass)
   Q_PROPERTY(float hue READ hue WRITE setHue)
 
 public:
-  Button(const char *title = NULL, QWidget *parent = NULL)
-      : QPushButton(title, parent) {
-    QObject::connect(this, SIGNAL(clicked()),
-                     this, SLOT(clickedSlot()));
+  CheckBox(const char *title = NULL, QWidget *parent = NULL)
+      : QCheckBox(title, parent) {
+    QObject::connect(this, SIGNAL(clicked(bool)),
+                     this, SLOT(clickedSlot(bool)));
     MIMAS_DEBUG_CC
   }
 
-  ~Button() {
+  ~CheckBox() {
     MIMAS_DEBUG_GC
   }
 
   QString cssClass() const {
-    return QString("button");
+    return QString("checkbox");
   }
 
   QSize size_hint_;
@@ -78,7 +78,7 @@ public:
   }
 
   void setText(const char *txt) {
-    QPushButton::setText(QString(txt));
+    QCheckBox::setText(QString(txt));
   }
 
   float hue() {
@@ -86,12 +86,13 @@ public:
   }
 
 private slots:
-  void clickedSlot() {
+  void clickedSlot(bool checked) {
     lua_State *L = lua_;
 
     if (!pushLuaCallback("click")) return;
-    // <func> <self>
-    int status = lua_pcall(L, 1, 0, 0);
+    lua_pushboolean(L, checked);
+    // <func> <self> <checked>
+    int status = lua_pcall(L, 2, 0, 0);
 
     if (status) {
       // cannot raise an error here...
@@ -103,4 +104,5 @@ private:
 };
 
 } // mimas
-#endif // LUBYK_INCLUDE_MIMAS_BUTTON_H_
+#endif // LUBYK_INCLUDE_MIMAS_CHECK_BOX_H_
+

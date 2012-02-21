@@ -32,6 +32,7 @@
 #include "mimas/mimas.h"
 #include "mimas/Action.h"
 #include <QtGui/QFileDialog>
+#include <QtGui/QAbstractSlider>
 
 #include "lubyk.h"
 
@@ -124,6 +125,7 @@ enum FocusPolicy {
 enum WidgetAttribute {
   // TODO: add other attributes
   WA_MacAlwaysShowToolWindow = Qt::WA_MacAlwaysShowToolWindow,
+  WA_MacShowFocusRect        = Qt::WA_MacShowFocusRect,
 };
 
 enum SizePolicy {
@@ -166,6 +168,17 @@ enum KeyboardModifiers {
 enum Orientation {
   Horizontal = Qt::Horizontal,
   Vertical   = Qt::Vertical,
+};
+
+enum SliderAction {
+  SliderNoAction      = QAbstractSlider::SliderNoAction,
+  SliderSingleStepAdd = QAbstractSlider::SliderSingleStepAdd,
+  SliderSingleStepSub = QAbstractSlider::SliderSingleStepSub,
+  SliderPageStepAdd   = QAbstractSlider::SliderPageStepAdd,
+  SliderPageStepSub   = QAbstractSlider::SliderPageStepSub,
+  SliderToMinimum     = QAbstractSlider::SliderToMinimum,
+  SliderToMaximum     = QAbstractSlider::SliderToMaximum,
+  SliderMove          = QAbstractSlider::SliderMove,
 };
 
 enum Key {

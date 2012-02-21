@@ -29,9 +29,11 @@
 
 #include "mimas/ListView.h"
 #include "mimas/Painter.h"
+#include <QtCore/QUrl>
+#include <QtGui/QApplication>
 #include <QtGui/QStyledItemDelegate>
 #include <QtGui/QTextDocument>
-#include <QtCore/QUrl>
+#include <QtGui/QScrollBar>
 
 namespace mimas {
 
@@ -60,7 +62,9 @@ protected:
     doc.setHtml(options.text);
 
     options.text = "";
-    options.widget->style()->drawControl(QStyle::CE_ItemViewItem, &options, painter);
+    // draw background
+    QStyle *style = options.widget ? options.widget->style() : QApplication::style();
+    style->drawControl(QStyle::CE_ItemViewItem, &options, painter, options.widget);
 
     painter->translate(options.rect.left(), options.rect.top());
     QRect clip(0, 0, options.rect.width(), options.rect.height());
@@ -89,6 +93,8 @@ bool ListView::click(QMouseEvent *event, int type) {
     if (type == MousePress) {
       // normal click processing
       lua_pop(L, 2);
+      // continue processing
+      update();
       return false;
     } else {
       // select
@@ -176,6 +182,14 @@ ListView::ListView() : item_delegate_(NULL) {
   // Not editable
   setEditTriggers(QAbstractItemView::NoEditTriggers);
 
+  QObject::connect(
+      verticalScrollBar(), SIGNAL(actionTriggered(int)),
+      this,                SLOT(sliderVActionTriggered(int)));
+
+  QObject::connect(
+      horizontalScrollBar(), SIGNAL(actionTriggered(int)),
+      this,                  SLOT(sliderHActionTriggered(int)));
+
   MIMAS_DEBUG_CC
 }
 
@@ -221,6 +235,20 @@ bool ListView::paintItem(
     lua_pop(L, 1);
   }
   return true;
+}
+
+
+void ListView::slider(int orientation, int action) {
+  lua_State *L = lua_;
+  if (!pushLuaCallback("slider")) return;
+  lua_pushnumber(L, orientation);
+  lua_pushnumber(L, action);
+  // <func> <self> <dir> <action>
+  int status = lua_pcall(L, 3, 0, 0);
+
+  if (status) {
+    fprintf(stderr, "Error in 'slider' callback: %s\n", lua_tostring(L, -1));
+  }
 }
 
 } // mimas

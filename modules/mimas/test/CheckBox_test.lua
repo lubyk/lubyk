@@ -1,14 +1,16 @@
 --[[------------------------------------------------------
 
-  mimas.Button test
-  -----------------
+  mimas.CheckBox test
+  -------------------
 
-  ...
+  This tests multi-threading and event posting / triggering.
+  We cannot trigger these tests with other tests because Qt
+  does not like beeing started and stopped multiple times.
 
 --]]------------------------------------------------------
 require 'lubyk'
 
-local should = test.Suite('mimas.Button')
+local should = test.Suite('mimas.CheckBox')
 local withUser = should:testWithUser()
 
 function withUser.should.connectToCallback(t)
@@ -16,12 +18,13 @@ function withUser.should.connectToCallback(t)
   t.win:move(100, 100)
   t.win:resize(200,200)
 
-  t.btn = mimas.Button("click me", t.win)
+  t.btn = mimas.CheckBox("click me", t.win)
   t.callback = mimas.Callback(function()
     t.continue = true
   end)
 
-  t.btn2 = mimas.Button('ignore me')
+  t.btn2 = mimas.CheckBox('ignore me')
+  t.btn2:setCheckable(false)
   t.win:addWidget(t.btn2)
   t.btn2:move(40,40)
   t.callback:connect(t.btn, 'clicked')
@@ -46,9 +49,10 @@ function withUser.should.createWithFunction(t)
   t.win:move(200, 200)
   t.win:resize(200,200)
   t.lay = mimas.HBoxLayout(t.win)
-  local btn = mimas.Button("click me too", function()
-    t.continue = true
+  local btn = mimas.CheckBox("click me too", function(b, state)
+    t.continue = not state
   end)
+  btn:setChecked(true)
   collectgarbage('collect')
   -- should not remove the callback because it is saved with
   -- the button's env
@@ -61,7 +65,7 @@ function withUser.should.createWithFunction(t)
   assertTrue(t.continue)
 end
 
-function should.styleButtons(t)
+function should.styleCheckBoxs(t)
   t.win = mimas.Window()
   t.win:move(100, 400)
   t.win:resize(200,200)
@@ -69,14 +73,14 @@ function should.styleButtons(t)
 
   -- can use rgb(), rgba(), hsv(), hsva() or #00FA88 (caps)
   local tests = {
-    '.button {color:#EAA844}',
-    '.button {border: 3px solid #EAA844; border-radius:5}',
-    '.button {background-color: hsva(80, 255, 255, 40%)}',
-    '.button:hover {background:#EAA844}'
+    '.checkbox {color:#EAA844}',
+    '.checkbox {border: 3px solid #EAA844; border-radius:5}',
+    '.checkbox {background-color: hsva(80, 255, 255, 40%)}',
+    '.checkbox:hover {background:#EAA844}'
   }
 
   for _, style_test in ipairs(tests) do
-    local lbl = mimas.Button(string.format("setStyle: %s", style_test))
+    local lbl = mimas.CheckBox(string.format("setStyle: %s", style_test))
     t.lay:addWidget(lbl)
     lbl:setStyleSheet(style_test)
     -- avoid GC
@@ -84,9 +88,10 @@ function should.styleButtons(t)
   end
   t.win:show()
   t.timeout = lk.Thread(function()
-    sleep(3000)
+    sleep(30000)
     t.win:close()
   end)
 end
 
 test.all()
+

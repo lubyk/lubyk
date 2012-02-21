@@ -19,7 +19,7 @@ function mimas.Application(type)
   local self = constr(type)
   self:setQuitOnLastWindowClosed(mimas.Settings.quit_on_close)
   self:setStyleSheet [[
-    .window, .main_window, .widget, .table, .list, .menu, .tab_widget::pane, .label, .control {
+    .window, .main_window, .widget, .table, .list, .menu, .tab_widget::pane, .label, .control, .checkbox {
       background:#151515;
       color:#B4B4B4;
     }
@@ -102,9 +102,42 @@ function mimas.Application(type)
       margin-top:5px;
       color:#B4B4B4;
     }
+    QScrollBar:horizontal{
+      background: #262626;
+      height: 8px;
+      margin:0;
+    }
+    QScrollBar:vertical {
+      background: #262626;
+      width: 8px;
+      margin:0;
+    }
+    QScrollBar::handle:horizontal {
+        background: #555;
+        min-width: 10px;
+    }
+    QScrollBar::handle:vertical {
+        background: #555;
+        min-height: 10px;
+    }
+    QScrollBar::add-line:horizontal,
+    QScrollBar::sub-line:horizontal,
+    QScrollBar::sub-line:vertical,
+    QScrollBar::add-line:vertical {
+        height: 0px;
+        width: 0px;
+    }
     /* end TabWidget */
     .control {
       font-size:10px;
+    }
+    QCheckBox::indicator {
+      border:1px solid #aaa;
+      width: 6px;
+      height: 6px;
+    }
+    QCheckBox::indicator:checked {
+      background:#777;
     }
 
 
