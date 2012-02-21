@@ -101,16 +101,33 @@ function lib:workPath()
 end
 
 local editor_cmd = editor.Settings.editor_cmd
+local editor_open_at = editor.Settings.editor_open_at
 
-function lib:editFile(filepath, node)
+function lib:editFile(filepath, line)
   if editor_cmd then
-    local cmd = string.format("%s '%s'", editor_cmd, filepath)
+    local cmd
+    if line and editor_open_at then
+      if string.match(editor_open_at, '%%i.*%%s') then
+        cmd = string.format(editor_open_at, line, filepath)
+      else
+        cmd = string.format(editor_open_at, filepath, line)
+      end
+    elseif string.match(editor_cmd, '%%s') then
+      cmd = string.format(editor_cmd, filepath)
+    else
+      cmd = string.format("%s '%s'", editor_cmd, filepath)
+    end
     worker:execute(cmd)
   else
     -- FIXME
     -- use internal editor ?
     worker:execute(string.format("open '%s'", filepath))
   end
+end
+
+function lib:editNode(url, line)
+  local filepath = self:workPath() .. url .. '.lua'
+  self:editFile(filepath, line)
 end
 
 function lib:pathChanged(path)

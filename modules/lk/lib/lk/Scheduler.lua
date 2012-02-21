@@ -17,6 +17,8 @@ setmetatable(lib, {
   __call = function()
     local self = {
       now        = 0,
+      -- This is used by widgets to detect volontary close vs
+      -- quit close.
       should_run = true,
       -- Ordered linked list of events by event time.
       at_next    = nil,

@@ -107,6 +107,13 @@ function should.splitChars()
   assertEqual(3, #list)
 end
 
+function should.strip()
+  assertEqual('hop hop', lk.strip(' \t\nhop hop '))
+  assertEqual('hop hop', lk.strip('hop hop '))
+  assertEqual('hop hop', lk.strip('  hop hop'))
+  assertEqual('hop hop', lk.strip('hop hop'))
+end
+
 function should.absToRel()
   assertEqual('play/in/trigger', lk.absToRel('/foo/play/in/trigger', '/foo'))
   assertEqual('/foo/bar', lk.absToRel('/foo/bar', '/foo/bar'))

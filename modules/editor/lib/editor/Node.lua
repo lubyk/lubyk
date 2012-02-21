@@ -67,7 +67,6 @@ end})
 local function setCode(self, code)
   if self.code ~= code then
     self.code = code
-    self.need_code_write = true
   end
   self.changed_code = nil
 end
@@ -175,17 +174,7 @@ end
 
 -- edit code in external editor
 function lib:edit()
-  local filepath = self:filepath()
-  if self.need_code_write then
-    -- write to file
-    lk.writeall(filepath, self.code)
-    self.need_code_write = false
-  end
-  self.zone:editFile(filepath, self)
-end
-
-function lib:filepath()
-  return self.zone:workPath() .. '/' .. self.process.name .. '/' .. self.name .. '.lua'
+  self.zone:editNode(self:url())
 end
 
 function lib:fileChanged(path)
@@ -283,7 +272,6 @@ function lib.makeGhost(node_def, zone)
 end
 
 function private:setParams(def)
-  print("setParams", yaml.dump(def))
   local params = self.params
   for k, v in pairs(def) do
     params[k] = v

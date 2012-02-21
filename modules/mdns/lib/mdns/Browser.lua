@@ -55,20 +55,18 @@ function private:notifyService(service)
       self.found[name] = service
       service.thread = lk.Thread(function()
         local fd = service:fd()
+        -- Resolve the service name
         while true do
           sched:waitRead(fd)
           local info = service:info()
           if info then
-            service.last_info = info
+            service.info = info
             -- only notify once for now
-            if not service.added then
-              service.added = true
-              self:addDevice(info)
-            else
-              -- update
-            end
+            self:addDevice(info)
+            break
           end
         end
+        service.thread = nil
       end)
     end
   elseif self.found[name] then

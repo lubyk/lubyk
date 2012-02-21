@@ -117,25 +117,40 @@ function lib:setName(name)
   self:update()
 end
 
--- function lib:addInlet(inlet)
---   addSlot(self.node.inlets, inlet)
---   placeElements(self)
--- end
---
--- function lib:removeInlet(inlet_name)
---   removeSlot(self.node.inlets, inlet_name)
---   placeElements(self)
--- end
---
--- function lib:addOutlet(outlet)
---   addSlot(self.node.outlets, outlet)
---   placeElements(self)
--- end
---
--- function lib:removeOutlet(outlet_name)
---   removeSlot(self.node.outlets, outlet_name)
---   placeElements(self)
--- end
+function lib:animate(typ, max_wait, timeout_clbk)
+  local bsat
+  local hue = self.node.hue
+  if typ == 'error' then
+    hue = 0
+    bsat = 1
+  elseif typ == 'warn' then
+    hue = 0.2
+  end
+  if self.anim then
+    self.anim:kill()
+  end
+  self.anim = lk.Thread(function()
+    local start_time = worker:now()
+    local t = 0
+    local i = 0
+    while t <= max_wait do
+      i = i + 1
+      sleep(50)
+      t = worker:now() - start_time
+      -- blink 
+      local sat = (0.75 + 0.2 * math.cos(t * math.pi / 750)) % 1.0
+      self.anim_back = mimas.Color(hue, bsat or sat, sat, 0.5)
+      if not self:deleted() then
+        self:update()
+      end
+    end
+    if timeout_clbk then
+      timeout_clbk()
+    end
+    self.anim_back = nil
+    self.anim = nil
+  end)
+end
 
 function lib:resized(w, h)
   self.w = w
@@ -145,19 +160,21 @@ end
 
 -- custom paint
 function lib:paint(p, w, h)
+  local back   = self.anim_back or self.node.bg_color
+  local border = self.node.color
   -- label width/height
   local path = mimas.Path()
 
   -- draw node surface
   if self.is_ghost then
-    p:setBrush(self.node.bg_color:colorWithAlpha(GHOST_ALPHA))
-    p:setPen(HPEN_WIDTH * 2, self.node.color:colorWithAlpha(GHOST_ALPHA))
+    p:setBrush(back:colorWithAlpha(GHOST_ALPHA))
+    p:setPen(HPEN_WIDTH * 2, border:colorWithAlpha(GHOST_ALPHA))
   elseif self.selected then
-    p:setBrush(self.node.bg_color:colorWithValue(SELECTED_COLOR_VALUE))
-    p:setPen(HPEN_WIDTH * 2, self.node.color)
+    p:setBrush(back:colorWithValue(SELECTED_COLOR_VALUE))
+    p:setPen(HPEN_WIDTH * 2, border)
   else
-    p:setBrush(self.node.bg_color)
-    p:setPen(HPEN_WIDTH * 2, self.node.color)
+    p:setBrush(back)
+    p:setPen(HPEN_WIDTH * 2, border)
   end
   p:drawRoundedRect(BP, BP, w - 2 * BP, h - 2 * BP, ARC_RADIUS / 2)
 

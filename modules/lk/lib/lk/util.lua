@@ -173,6 +173,12 @@ function lk.withDirectory(new_dir, func)
   assert(ok, string.format("%s (with current path '%s')", err or '', abs_path))
 end
 
+-------------------------------- lk.strip(string)
+-- Removes white spaces at the beginning and end of the string.
+function lk.strip(str)
+  return string.match(str, '^[ \t\n\r]*(.-)[ \t\n\r]*$')
+end
+
 -------------------------------- lk.split(string, sep)
 -- Split a string into elements.
 -- Compatibility: Lua-5.1

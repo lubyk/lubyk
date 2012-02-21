@@ -228,21 +228,34 @@ end
 function lib:newNode(definition)
   if not definition.class then
     definition.code = definition.code or [=[
---[[
-inlet('input', 'Information on input [type].')
-outlet('output', 'Information on output [type].')
+--[[------------------------------------------------------
 
-function inlet.input(val)
-  -- print and pass through
-  print(val)
-  output(val)
-end
+  NAME
+  --------
+
+  SHORT_DESCR
+
+  Inlets
+  --------------------------------------------------------
+  [INLET]    DESCR
+
+
+  Outlets
+  --------------------------------------------------------
+  [OUTLET]   DESCR
+
+  DESCRIPTION
+
 --]]
+
+defaults {
+}
 
 
 ]=]
   end
-  self:change {nodes = {[definition.name or 'new node'] = definition}}
+  definition.name = lk.strip(definition.name or 'new node')
+  self:change {nodes = {[definition.name] = definition}}
 end
 
 -- Process is coming online.
@@ -336,6 +349,22 @@ function private.set(self, definition)
         self.view:setHue(v)
       end
     elseif k == 'log' then
+      local url = v.url
+      local curr = self
+      local parts = lk.split(url, '/')
+      -- remove ''
+      table.remove(parts, 1)
+      -- remove process
+      table.remove(parts, 1)
+      for _, part in ipairs(parts) do
+        curr = curr:findNode(part)
+        if not curr then
+          break
+        end
+      end
+      if curr and curr.view then
+        curr.view:animate(v.typ, 400)
+      end
       self.zone:log(v)
     else
       self[k] = v

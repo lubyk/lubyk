@@ -13,15 +13,17 @@ local withUser = should:testWithUser()
 
 function withUser.should.displayWindow(t)
   local l = editor.LogView()
-  l:addMessage('/a/bob', 'error', [[
-stdin:1: attempt to index global 'yaml' (a nil value)
-stack traceback:
-	stdin:1: in main chunk
-	[C]: ?
-  Blah blah
-]])
-  l:addMessage('/a/bob', 'info', 'hello world')
-  l:addMessage('/a/bob', 'warn', 'warning')
+  for i=1,10 do
+    l:addMessage('/a/bob', 'error', [[
+    stdin:1: attempt to index global 'yaml' (a nil value)
+    stack traceback:
+    stdin:1: in main chunk
+    [C]: ?
+    Blah blah
+    ]])
+    l:addMessage('/a/bob', 'info', 'hello world')
+    l:addMessage('/a/bob', 'warn', 'warning')
+  end
   l:show()
 
   function l:closed()

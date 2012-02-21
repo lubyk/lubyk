@@ -46,6 +46,11 @@ local defaults = {
     w = 120,
     h = 200,
   },
+  log_show = {
+    info = true,
+    warn = true,
+    error = true,
+  },
   logo = Lubyk.lib .. '/editor/img/logo.png',
 }
 

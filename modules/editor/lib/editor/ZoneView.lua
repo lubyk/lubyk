@@ -53,7 +53,9 @@ function lib:init(zone)
   self.h = settings.main_view.h
   self:resize(self.w, self.h)
   self:move(settings.main_view.x, settings.main_view.y)
-  private.setupMenus(self)
+
+  self.default_menu = private.setupMenus(self)
+
   -- Display open recent / create new dialog until something appears on the
   -- network.
   self:showSplash()
@@ -100,12 +102,14 @@ function lib:hideDialog()
     self.dlg = nil
   end
 end
+
 --=============================================== Menu setup
 function private:setupMenus()
-  self.menu_bar = mimas.MenuBar(self)
+  -- No parent == default
+  local menu_bar = mimas.MenuBar()
 
   --=============================================== File
-  local menu = self.menu_bar:addMenu('File')
+  local menu = menu_bar:addMenu('File')
   local action
   action = menu:addAction('New...', 'Ctrl+N', function()
     -- Choose folder & name
@@ -119,9 +123,14 @@ function private:setupMenus()
     -- Show pref dialog
   end)
   action:setMenuRole(mimas.PreferencesRole)         
+  action = menu:addAction('Quit', 'Ctrl+Q', function()
+    -- Show pref dialog
+    sched:quit()
+  end)
+  action:setMenuRole(mimas.QuitRole)         
 
   --=============================================== Project
-  menu = self.menu_bar:addMenu('Project')
+  menu = menu_bar:addMenu('Project')
   action = menu:addAction('New view', 'Ctrl+Shift+I', function()
     private.dialog.addView(self)
   end)
@@ -130,20 +139,20 @@ function private:setupMenus()
 
   --=============================================== Show
   local show = settings.show
-  menu = self.menu_bar:addMenu('Show')
-  private.setupShowAction(self, menu, 'Library', 'Ctrl+L', show.Library,     self.library_view)
-  private.setupShowAction(self, menu, 'Patch',   'Ctrl+E', show.Patch,       self.patch_view)
-  private.setupShowAction(self, menu, 'View',    'Ctrl+I', show.View,        self.control_tabs)
-  private.setupShowAction(self, menu, 'Controls', 'Ctrl+O', show.Controls,   self.ctrl_library_view)
+  menu = menu_bar:addMenu('Show')
+  private.setupShowAction(self, menu, 'Library', 'Ctrl+U', show.Library,     self.library_view)
+  private.setupShowAction(self, menu, 'Patch',   'Ctrl+I', show.Patch,       self.patch_view)
+  private.setupShowAction(self, menu, 'View',    'Ctrl+O', show.View,        self.control_tabs)
+  private.setupShowAction(self, menu, 'Controls', 'Ctrl+P', show.Controls,   self.ctrl_library_view)
 
-  local action = menu:addAction('Log', 'Ctrl+G', function(action)
+  local action = menu:addAction('Log', 'Ctrl+L', function(action)
     local shown = true
     if self.log_view then
       self.log_view:hide()
       self.log_view = nil
       shown = false
     else
-      self.log_view = editor.LogView(self)
+      self.log_view = editor.LogView(self.zone)
       self.log_view:show()
     end
     settings.show.Log = shown
@@ -152,12 +161,12 @@ function private:setupMenus()
   end)
   action:setCheckable(true)
   if settings.show.Log then
-    self.log_view = editor.LogView(self)
+    self.log_view = editor.LogView(self.zone)
     self.log_view:show()
   end
 
   --=============================================== Special
-  local menu = self.menu_bar:addMenu('Special')
+  local menu = menu_bar:addMenu('Special')
   action = menu:addAction('Stop', 'Ctrl+Shift+K', function()
     self.zone.morph:quit()
   end)
@@ -165,7 +174,7 @@ function private:setupMenus()
     self.zone:startStemCell()
   end)
 
-  self:setMenuBar(self.menu_bar)
+  return menu_bar
 end  
 
 function private:setupShowAction(menu, title, shortcut, show, view)
