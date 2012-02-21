@@ -14,6 +14,7 @@
 --]]------------------------------------------------------
 local lib = lk.SubClass(mimas, 'Widget')
 editor.ProcessTab = lib
+lib.type = 'editor.ProcessTab'
 -- Sort in MachineView
 lib.sort = 1 -- top
 

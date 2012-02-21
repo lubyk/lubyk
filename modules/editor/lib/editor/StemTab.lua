@@ -11,6 +11,7 @@
 --]]------------------------------------------------------
 local lib = lk.SubClass(mimas, 'Widget')
 editor.StemTab = lib
+lib.type = 'editor.StemTab'
 -- Sort in MachineView
 lib.sort = 10 -- last
 local private = {}
@@ -24,11 +25,10 @@ local EDIT_PADDING = 3
 local MAX_WAIT_MS = 8000
 
 function lib:init(stem)
-  self.stem = stem
+  self.process = stem
   self.name = stem.name
   self:setTitle(stem.title)
   self.machine = stem.machine
-  self.machine:setStem(stem)
   self.zone = self.machine.zone
 
   self.text_pen = mimas.Pen(1, mimas.Color(0, 0, 1))
@@ -160,7 +160,7 @@ function private:showContextMenu(gx, gy)
   self.menu = menu
 
   menu:addAction('Stop', '', function()
-    self.stem:quit()
+    self.process:quit()
   end)
   menu:popup(gx - 5, gy - 5)
 end

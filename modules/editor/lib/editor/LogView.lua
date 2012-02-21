@@ -231,6 +231,12 @@ function lib:unlock()
   private.filterChanged(self)
 end
 
+function lib:click(x, y, op)
+  if op == mimas.DoubleClick then
+    private.clear(self)
+  end
+end
+
 function private:filterChanged()
   -- rebuild view data
   local data = self.data
@@ -265,3 +271,9 @@ function private:select(entry)
   self.selected = entry
 end
   
+function private:clear()
+  self.selected = nil
+  self.data = {sz = 0}
+  self.view_data = data
+  self:unlock()
+end

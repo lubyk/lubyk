@@ -53,7 +53,6 @@ function lib:connect(service)
 end
 
 function lib:disconnect()
-  -- noop
   self.zone.control_tabs:removePlusView()
   self.online = false
 
@@ -61,11 +60,17 @@ function lib:disconnect()
     self.tab:setHue(self.hue)
   end
 
-  -- Remove all views
+  -- Clear all control views.
   local views = self.zone.views
   for name, view in pairs(views) do
     view:remove()
     views[name] = nil
+  end
+
+  -- Morph does not know anything about the current processes.
+  for _, process in pairs(self.zone.found_processes) do
+    -- They will be removed on disconnect.
+    process.known_to_morph = false
   end
 
   private.unmountDav(self)
@@ -161,15 +166,15 @@ function private.set:name(name)
 end
 
 function private.set:processes(data)
-  local processes = self.zone.found_processes
   for name, info in pairs(data) do
-    local process = processes[name]
     if info == false then
+      -- Get directly in cache.
+      local process = self.zone.found_processes[name]
       -- removed process
       if process then
         process:remove(true)
       end
-    elseif not process then
+    else
       -- create disconnected processes in machine view
       local host
       if type(info) == 'string' then
@@ -183,10 +188,7 @@ function private.set:processes(data)
         host = self.host
       end
       -- Declare
-      process = self.zone:findProcess(name, host)
-      process.known_to_morph = true
-    else
-      -- Mark as known_to_morph
+      process = self.zone:findProcess(name, nil, host)
       process.known_to_morph = true
     end
   end

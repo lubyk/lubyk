@@ -190,7 +190,7 @@ function lib:log(typ, ...)
       if i == 1 then
         msg = tostring(v)
       else
-        msg = '\t'..tostring(v)
+        msg = msg .. '\t'..tostring(v)
       end
     end
   else
@@ -344,15 +344,17 @@ function private:defaults(hash)
         if not accessors[pname] then
           accessors[pname] = {
             receive = function(value)
+              -- This is executed during setParams.
               local rbase = env[k]
               if rbase then
                 rbase[sk] = value
                 -- So that param dump sees this value.
-                _pdump[pname] = rbase[sk]
+                env._pdump[pname] = rbase[sk]
               end
             end,
           }
         end
+        -- This is done just once to set default values.
         defaults[pname] = sv
         env[pname] = sv
         if base[sk] == nil then
@@ -408,7 +410,7 @@ function lib:setParams(params)
   -- it exists.
   local func = accessors.changed
   if func then
-    func(params)
+    func.receive(params)
   end
 end
 

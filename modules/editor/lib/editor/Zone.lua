@@ -212,39 +212,25 @@ function lib:closestSlotView(gx, gy, for_type, skip_node)
 end
 
 --=============================================== editor.Process delegate
-function lib:findProcess(name, host)
+
+-- Find (declare) a process.
+function lib:findProcess(name, ip, host)
   local process = self.found_processes[name]
   if not process then
     -- create
-    local machine
-    local stem_name = string.match(name, '^@(.+)$')
-    if host then
-      machine = self.machine_list:getMachine(host)
-    else
-      -- pending process without host nor ip
-      machine = self.machine_list:getMachine(stem_name or '???')
-    end
-
     if name == '' then
       -- found morph server
       process = editor.Morph(self)
       self.morph = process
-    elseif stem_name then
-      -- machine (stem cell)
-      process = editor.StemCell {
-        name      = name,
-        stem_name = stem_name,
-        machine   = machine,
-      }
     else
       -- process
       process = editor.Process(name, self)
-      process.machine = machine
+      process.host = host
     end
 
+    process.ip = ip or '-'
     self.found_processes[name] = process
-
-    machine:addProcess(process)
+    self.machine_list:addProcess(ip, process)
     self.view:update()
   end
 
@@ -254,8 +240,26 @@ end
 --=============================================== lk.ProcessWatch delegate
 function lib:processConnected(remote_process)
   local name = remote_process.name
-  local process = self:findProcess(name, remote_process.ip)
+  local stem_name = string.match(name, '^@(.+)$')
+  local process
+
+  if stem_name then
+    -- machine (stem cell)
+    local machine = self.machine_list:getMachine(stem_name, remote_process.ip)
+    process = editor.StemCell {
+      name = stem_name,
+      host = stem_name,
+    }
+    self.found_processes[name] = process
+    machine:setName(stem_name)
+  else
+    process = self:findProcess(name, remote_process.ip)
+  end
+
   process:connect(remote_process, self)
+  process.ip = remote_process.ip
+  -- ip, process
+  self.machine_list:addProcess(remote_process.ip, process)
 
   -- Trigger connection callbacks
   local list = self.on_process_connected
@@ -317,7 +321,7 @@ function lib:processDisconnected(remote_process)
   if clear_process then
     self.found_processes[name] = nil
     if self.machine_list then
-      self.machine_list:removeProcess(remote_process)
+      self.machine_list:removeProcess(process)
     end
   end
 

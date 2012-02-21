@@ -34,15 +34,8 @@ function lib:connect(remote)
   self.remote = remote
 end
 
-function lib:setStem(remote)
-  local stem_name = remote.stem_name
-  self.stem = remote
+function lib:setName(stem_name)
   self.name = stem_name
-  local machine_by_name = self.machine_list.machines[stem_name]
-  if machine_by_name ~= self then
-    -- FIXME: merge processes and remove view
-  end
-  self.machine_list.machines[stem_name] = self
   if self.view then
     self.view:setName(stem_name)
   end
@@ -50,13 +43,10 @@ end
 
 --- Ask morph to create a new process.
 function lib:createProcess(def)
-  local stem = self.stem
-  if stem then
-    local morph = self.zone.morph
-    if morph then
-      def.host = stem.stem_name
-      morph:createProcess(def)
-    end
+  local morph = self.zone.morph
+  if morph then
+    def.host = self.name
+    morph:createProcess(def)
   end
 end
 
@@ -64,6 +54,19 @@ end
 function lib:addProcess(service)
   if self.view then
     self.view:addProcess(service)
+  end
+end
+
+-- Return a list of processes referenced in this machine.
+function lib:processes()
+  if self.view then
+    return self.view:processes()
+  end
+end
+
+function lib:clear()
+  if self.view then
+    self.view:clear()
   end
 end
 

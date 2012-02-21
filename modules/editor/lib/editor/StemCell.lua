@@ -15,7 +15,6 @@ setmetatable(lib, {
   -- new method
  __call = function(lib, opts)
   local self = {
-    stem_name = opts.stem_name,
     name      = opts.name,
     title     = '+',
     machine   = opts.machine,

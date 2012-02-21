@@ -12,6 +12,7 @@
 --]]------------------------------------------------------
 local lib = lk.SubClass(mimas, 'Widget')
 editor.MorphTab = lib
+lib.type = 'editor.MorphTab'
 -- Sort in MachineView
 lib.sort = 8 -- before last
 local private = {}
@@ -20,7 +21,7 @@ local private = {}
 local HPEN_WIDTH = 1
 
 function lib:init(morph)
-  self.morph = morph
+  self.process = morph
   morph.tab  = self
   self.name  = morph.name
   self:setTitle(morph.title)
@@ -33,7 +34,7 @@ lib.setAlignment = editor.ProcessTab.setAlignment
 
 function lib:setHue(hue)
   local color
-  if self.morph.online then
+  if self.process.online then
     color = mimas.Color(0.3, 0.3, 1)
   else
     color = mimas.Color(0, 1, 1)
@@ -64,7 +65,7 @@ function private:showContextMenu(gx, gy)
   self.menu = menu
 
   menu:addAction('Stop', '', function()
-    self.morph:quit()
+    self.process:quit()
   end)
   menu:popup(gx - 5, gy - 5)
 end

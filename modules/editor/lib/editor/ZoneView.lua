@@ -52,9 +52,10 @@ function lib:init(zone)
   self.w = settings.main_view.w
   self.h = settings.main_view.h
   self:resize(self.w, self.h)
-  self:move(settings.main_view.x, settings.main_view.y)
 
   self.default_menu = private.setupMenus(self)
+
+  self:move(settings.main_view.x, settings.main_view.y)
 
   -- Display open recent / create new dialog until something appears on the
   -- network.
@@ -63,6 +64,12 @@ end
 
 function lib:moved(x, y)
   local v = settings.main_view
+  if y == v.y + 22 and x == v.x then
+    -- FIXME: HACK. we receive a notification with +22 on mac on create only.
+    -- move(0,0) --> moved(0, 22)
+    -- This looks like the height of the menu bar.
+    return
+  end
   v.x = x
   v.y = y
   settings:save(true)

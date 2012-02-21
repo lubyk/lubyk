@@ -57,11 +57,9 @@ end
 function lib:addProcess(service)
   local name = service.name
   local view
-  if name == '' then
-    -- morph
+  if service.type == 'editor.Morph' then
     view = editor.MorphTab(service)
-  elseif service.stem_name then
-    -- stem cell
+  elseif service.type == 'editor.StemCell' then
     view = editor.StemTab(service)
   else
     -- process
@@ -81,6 +79,7 @@ function lib:addProcess(service)
       end
     end
   end
+
   if add_pos == -1 then
     -- add at end
     table.insert(self.process_list, view)
@@ -91,7 +90,25 @@ function lib:addProcess(service)
     self.vbox:insertWidget(add_pos, view, 0, mimas.AlignRight)
     view:show()
   end
+  service.tab = view
   self.machine_list:updatePosition()
+end
+
+function lib:processes()
+  local list = {}
+  for i, view in ipairs(self.process_list) do
+    table.insert(list, view.process)
+  end
+  return list
+end
+
+function lib:clear()
+  for i, v in ipairs(self.process_list) do
+    v.process.tab = nil
+    v:hide()
+    v.super:__gc()
+  end
+  self.process_list = {}
 end
 
 function lib:removeProcess(service_name)
