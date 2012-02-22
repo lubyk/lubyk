@@ -34,7 +34,7 @@
 #include "lubyk.h"
 using namespace lubyk;
 
-#include "mdns/location.h"
+#include "mdns/Location.h"
 
 namespace mdns {
 

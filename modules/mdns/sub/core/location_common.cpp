@@ -27,7 +27,7 @@
   ==============================================================================
 */
 
-#include "mdns/location.h"
+#include "mdns/Location.h"
 
 #include <netdb.h>     // gethostbyname
 #include <arpa/inet.h> // inet_addr

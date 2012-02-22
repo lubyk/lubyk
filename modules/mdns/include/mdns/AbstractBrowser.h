@@ -30,7 +30,7 @@
 #ifndef MDNS_INCLUDE_MDNS_ABSTRACT_BROWSER_H_
 #define MDNS_INCLUDE_MDNS_ABSTRACT_BROWSER_H_
 
-#include "mdns/location.h"
+#include "mdns/Location.h"
 #include "lubyk/mutex.h"
 
 namespace mdns {

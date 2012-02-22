@@ -1,4 +1,4 @@
-#include "dummy/Dummy.h"
+#include "dummy/dummy.h"
 
 #include "lua_cpp_helper.h"
 

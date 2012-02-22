@@ -27,7 +27,7 @@
   ==============================================================================
 */
 
-#include "mdns/browser.h"
+#include "mdns/Browser.h"
 
 #include <stdio.h>
 
