@@ -36,6 +36,7 @@
 #include "lubyk.h"
 #include "lua_cpp_helper.h"
 
+#include <stdint.h>
 #include <stdlib.h> // rand()
 #include <time.h>   // time()
 #include <string>
