@@ -85,11 +85,15 @@ function lib:getMachine(name, ip)
 
   local machine = machine_by_name or machine_by_ip
   if not machine then
+    printf("new machine: %s %s", name or 'nil', ip or 'nil')
     local ref = name or ip or '-'
     -- Create machine
     machine = editor.Machine(ref, self)
     self.machines[ref] = machine
-    machine.ip = ip
+    if ip then
+      self.machines[ip] = machine
+      machine.ip = ip
+    end
     machine.view = editor.MachineView(machine)
     -- This is needed so that when a process is added, the list size
     -- is updated.

@@ -9,10 +9,6 @@
 local lib = lk.SubClass(editor, 'Control')
 _control.lk.Pad = lib
 
--- default slider size
-function lib:init(id, view)
-  self:initControl(id, view)
-end
 local const = _control.lk.Slider.const
 local TEXT_PADDING = 5
 

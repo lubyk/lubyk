@@ -47,9 +47,7 @@ function lib.__newindex(self, k, value)
   if type(value) == 'function' then
     -- Create an accessor for parameter 'k'
     -- or the special 'changed' callback.
-    self.node.accessors[k] = {
-      receive = value,
-    }
+    self.node.accessors[k] = value
   else
     -- Change parameter 'k' and notify.
     -- param.foo = 45.5

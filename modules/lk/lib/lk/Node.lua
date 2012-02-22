@@ -55,6 +55,11 @@ setmetatable(lib, {
     self:log('info', ...)
   end
 
+  -- print, warn, error
+  env.printf = function(...)
+    self:log('info', string.format(...))
+  end
+
   env.warn = function(...)
     self:log('warn', ...)
   end
@@ -342,17 +347,19 @@ function private:defaults(hash)
         end
         local pname = k .. '.' .. sk
         if not accessors[pname] then
-          accessors[pname] = {
-            receive = function(value)
-              -- This is executed during setParams.
-              local rbase = env[k]
-              if rbase then
-                rbase[sk] = value
-                -- So that param dump sees this value.
-                env._pdump[pname] = rbase[sk]
-              end
-            end,
-          }
+          accessors[pname] = function(value)
+            -- This is executed during setParams.
+            local rbase = env[k]
+            if rbase then
+              rbase[sk] = value
+              -- So that param dump sees this value.
+              env._pdump[pname] = rbase[sk]
+            end
+            local recv = accessors[k]
+            if recv then
+              recv(rbase)
+            end
+          end
         end
         -- This is done just once to set default values.
         defaults[pname] = sv
@@ -366,6 +373,10 @@ function private:defaults(hash)
       if env[k] == nil then
         -- Do not overwrite current values on script reload.
         env[k] = v
+        local recv = accessors[k]
+        if recv then
+          recv(v)
+        end
       end
     end
   end
@@ -393,14 +404,13 @@ function lib:setParams(params)
         -- Error notification: Invalid param.
         self:error("Trying to set invalid parameter '%s'.", k)
       else
-        -- This is also used in ParamMethod.
-        local inlet = inlets[k] or accessors[k]
-        if inlet then
-          inlet.receive(value)
+        env[k] = value
+        local recv = accessors[k]
+        if recv then
+          recv(value)
           -- 'receive' might set _pdump directly
           pdump[k] = pdump[k] or env[k]
         else
-          env[k] = value
           pdump[k] = value
         end
       end
@@ -410,7 +420,7 @@ function lib:setParams(params)
   -- it exists.
   local func = accessors.changed
   if func then
-    func.receive(params)
+    func(params)
   end
 end
 

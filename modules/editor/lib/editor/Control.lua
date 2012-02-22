@@ -168,9 +168,13 @@ function lib:click(x, y, op, btn, mod)
   elseif op == MousePress then
     if self.enabled then
       self.show_thumb = true
-      self:control(x, y)
+      self:control(x, y, 'mouse')
+      self:update()
     end
   else
+    if x > 0 and x < self.w and y > 0 and y < self.h then
+      self:control(x, y, 'click')
+    end
     self.show_thumb = false
     self:update()
   end
@@ -200,7 +204,7 @@ function lib:mouse(x, y)
     end
   elseif self.enabled then
     self.show_thumb = true
-    self:control(x, y)
+    self:control(x, y, 'mouse')
   end
 end
 

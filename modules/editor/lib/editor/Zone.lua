@@ -75,10 +75,19 @@ function lib:toggleView(process)
   end
 end
 
-function lib:log(msg)
+function lib:log(msg_or_url, typ, msg)
   local lv = self.view.log_view
-  if lv then
-    lv:addMessage(msg.url, msg.typ, msg.msg)
+  if not lv then
+    return
+  end
+  if type(msg_or_url) == 'string' then
+    if not msg then
+      msg = typ
+      typ = 'info'
+    end
+    lv:addMessage(msg_or_url, typ, msg)
+  else
+    lv:addMessage(msg_or_url.url, msg_or_url.typ, msg_or_url.msg)
   end
 end
 
