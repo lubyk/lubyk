@@ -34,7 +34,8 @@
 
 #include <stdlib.h> // rand()
 #include <time.h>   // time()
-#include <string>
+#include <assert.h> // assert()
+#include <signal.h> // signal(), SIG_DFL, ...
 
 #include "../vendor/include/zmq.h"
 #include "lubyk/msgpack.h"
@@ -99,14 +100,14 @@ public:
     if (reserve <= 0) reserve = 10;
     pollitems_ = (zmq_pollitem_t*)calloc(reserve, sizeof(zmq_pollitem_t));
     if (pollitems_ == NULL) {
-      throw Exception("Could not pre-allocate %i pollitems", reserve);
+      throw dub::Exception("Could not pre-allocate %i pollitems", reserve);
     }
 
     idx_to_pos_ = (int*)calloc(reserve, sizeof(int));
     if (idx_to_pos_ == NULL) {
       free(pollitems_);
       pollitems_ = NULL;
-      throw Exception("Could not pre-allocate %i pollitems", reserve);
+      throw dub::Exception("Could not pre-allocate %i pollitems", reserve);
     }
 
     pos_to_idx_ = (int*)calloc(reserve, sizeof(int));
@@ -115,7 +116,7 @@ public:
       pollitems_ = NULL;
       free(idx_to_pos_);
       idx_to_pos_ = NULL;
-      throw Exception("Could not pre-allocate %i pollitems", reserve);
+      throw dub::Exception("Could not pre-allocate %i pollitems", reserve);
     }
     pollitems_size_ = reserve;
 
@@ -154,7 +155,7 @@ public:
         // error or interruption
         event_count_ = 0;
         if (!interrupted_) {
-          throw Exception("An error occured during zmq_poll (%s)", zmq_strerror(zmq_errno()));
+          throw dub::Exception("An error occured during zmq_poll (%s)", zmq_strerror(zmq_errno()));
         } else {
           return false;
         }
@@ -171,7 +172,7 @@ public:
         // error or interruption
         event_count_ = 0;
         if (!interrupted_) {
-          throw Exception("An error occured during zmq_poll (%s)", zmq_strerror(zmq_errno()));
+          throw dub::Exception("An error occured during zmq_poll (%s)", zmq_strerror(zmq_errno()));
         } else {
           return false;
         }
@@ -184,7 +185,7 @@ public:
       // error or interruption
       event_count_ = 0;
       if (!interrupted_) {
-        throw Exception("An error occured during zmq_poll (%s)", zmq_strerror(zmq_errno()));
+        throw dub::Exception("An error occured during zmq_poll (%s)", zmq_strerror(zmq_errno()));
       } else {
         return false;
       }
@@ -320,18 +321,18 @@ private:
       // we need more space: realloc
       int *sptr = (int*)realloc(idx_to_pos_, pollitems_size_ * 2 * sizeof(int));
       if (!sptr) {
-        throw Exception("Could not reallocate %i pollitems.", pollitems_size_ * 2);
+        throw dub::Exception("Could not reallocate %i pollitems.", pollitems_size_ * 2);
       }
       idx_to_pos_ = sptr;
       sptr = NULL;
       sptr = (int*)realloc(pos_to_idx_, pollitems_size_ * 2 * sizeof(int));
       if (!sptr) {
-        throw Exception("Could not reallocate %i pollitems.", pollitems_size_ * 2);
+        throw dub::Exception("Could not reallocate %i pollitems.", pollitems_size_ * 2);
       }
       pos_to_idx_ = sptr;
       zmq_pollitem_t *ptr = (zmq_pollitem_t*)realloc(pollitems_, pollitems_size_ * 2 * sizeof(zmq_pollitem_t));
       if (!ptr) {
-        throw Exception("Could not reallocate %i pollitems.", pollitems_size_ * 2);
+        throw dub::Exception("Could not reallocate %i pollitems.", pollitems_size_ * 2);
       }
       pollitems_ = ptr;
       // clear new space (same size as pollitems_size_ because we double).

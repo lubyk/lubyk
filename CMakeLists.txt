@@ -56,7 +56,7 @@ MESSAGE("Platform is ${PLAT}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -Wall")
 if (RELEASE)
-  add_definitions(-O2)
+  add_definitions(-O2 -DNDEBUG)
 endif(RELEASE)
 add_definitions(-D__${PLAT}__ -DUSE_READLINE)
 

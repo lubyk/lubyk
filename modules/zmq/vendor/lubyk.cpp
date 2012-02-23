@@ -36,7 +36,7 @@ static const struct luaL_Reg lib_functions[] = {
   {NULL, NULL},
 };
 
-pthread_key_t zmq::Poller::sThisKey = NULL;
+pthread_key_t zmq::Poller::sThisKey = 0;
 
 extern "C" int luaopen_zmq_vendor(lua_State *L) {
   // create a key to find 'lua_State' in current thread (used to handle

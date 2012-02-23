@@ -29,12 +29,13 @@
 #ifndef LUBYK_INCLUDE_ZMQ_SOCKET_H_
 #define LUBYK_INCLUDE_ZMQ_SOCKET_H_
 
-#include "../vendor/include/zmq.h"
+#include "lubyk.h"
 #include "lubyk/msgpack.h"
 #include "lubyk/time_ref.h"
-
-#include "lubyk.h"
+#include "lubyk/worker.h"
 #include "lua_cpp_helper.h"
+
+#include "../vendor/include/zmq.h"
 
 #include <stdint.h>
 #include <stdlib.h> // rand()
@@ -64,6 +65,10 @@ class Socket : public LuaObject
   /** Timer used for timeout in request.
    */
   TimeRef time_ref_;
+
+  /** FIXME: Replace lubyk::Worker with a (lua ensured) zmq::Context singleton.
+   */
+  lubyk::Worker *worker_;
 public:
   /** The worker is not provided by LuaObject before luaInit is called.
    * This call happens after full object construction. We need the worker
@@ -72,6 +77,7 @@ public:
   Socket(int type, lubyk::Worker *worker)
       : type_(type)
       , send_flags_(0) 
+      , worker_(worker)
   {
 
     if (!worker->zmq_context_) {
@@ -89,12 +95,12 @@ public:
       }
       switch (errno) {
       case EINVAL:
-        throw Exception("Invalid socket type: %i).", type_);
+        throw dub::Exception("Invalid socket type: %i).", type_);
       case EMTHREAD:
-        throw Exception("The maximum number of sockets within this context has been exceeded.");
+        throw dub::Exception("The maximum number of sockets within this context has been exceeded.");
       case EFAULT: // continue
       default:
-        throw Exception("The provided context was not valid.");
+        throw dub::Exception("The provided context was not valid.");
       }
     }
   }
@@ -111,7 +117,7 @@ public:
     int fd;
     size_t fd_size = sizeof(fd);
     if (zmq_getsockopt(socket_, ZMQ_FD, &fd, &fd_size)) {
-      throw Exception("Error while getting file descriptor (%s).", zmq_strerror(zmq_errno()));
+      throw dub::Exception("Error while getting file descriptor (%s).", zmq_strerror(zmq_errno()));
     }
     return fd;
   }
@@ -167,12 +173,12 @@ public:
         status = zmq_setsockopt(socket_, type, str, sz);
         break;
       default:
-        throw Exception("Could not set socket option: unknown option %i.", type);
+        throw dub::Exception("Could not set socket option: unknown option %i.", type);
     }
 
 
     if (status) {
-      throw Exception("Could not set socket option %i (%s).", type, str, zmq_strerror(errno));
+      throw dub::Exception("Could not set socket option %i (%s).", type, str, zmq_strerror(errno));
     }
   }
 
@@ -205,14 +211,14 @@ public:
         throw_bind_error(errno, "*");
       }
     }
-    throw Exception("Could not bind to any port in range '%i-%i' (%i retries).", min_port, max_port, retries);
+    throw dub::Exception("Could not bind to any port in range '%i-%i' (%i retries).", min_port, max_port, retries);
   }
 
   /** Connect to a server.
    */
   void connect(const char *location) {
     if (zmq_connect(socket_, location))
-      throw Exception("Could not connect to '%s'.", location);
+      throw dub::Exception("Could not connect to '%s'.", location);
     location_ = location; // store last connection for info string
   }
 
@@ -224,7 +230,7 @@ public:
     uint32_t events;
     size_t ev_size = sizeof(events);
     if (zmq_getsockopt(socket_, ZMQ_EVENTS, &events, &ev_size)) {
-      throw Exception("Error while getting events (%s).", zmq_strerror(zmq_errno()));
+      throw dub::Exception("Error while getting events (%s).", zmq_strerror(zmq_errno()));
     }
     return events & event;
   }
@@ -386,7 +392,7 @@ public:
     if (pos != std::string::npos) {
       return atoi(location_.substr(pos + 1).c_str());
     } else {
-      throw Exception("Could not get port from localtion '%s'.", location_.c_str());
+      throw dub::Exception("Could not get port from localtion '%s'.", location_.c_str());
     }
   }
 
@@ -412,63 +418,63 @@ private:
   void throw_bind_error(int err, const char *location) {
     switch(err) {
     case EPROTONOSUPPORT:
-      throw Exception("The requested transport protocol is not supported (%s).", location);
+      throw dub::Exception("The requested transport protocol is not supported (%s).", location);
     case ENOCOMPATPROTO:
-      throw Exception("The requested transport protocol (%s) is not compatible with the socket type (%s).", location, type());
+      throw dub::Exception("The requested transport protocol (%s) is not compatible with the socket type (%s).", location, type());
     case EADDRINUSE:
-      throw Exception("The requested address is already in use (%s).", location);
+      throw dub::Exception("The requested address is already in use (%s).", location);
     case EADDRNOTAVAIL:
-      throw Exception("The requested address was not local (%s).", location);
+      throw dub::Exception("The requested address was not local (%s).", location);
     case ENODEV:
-      throw Exception("The requested address specifies a nonexistent interface (%s). Did you mean connect ?.", location);
+      throw dub::Exception("The requested address specifies a nonexistent interface (%s). Did you mean connect ?.", location);
     case ETERM:
-      throw Exception("The ZMQ context associated with the specified socket was terminated (%s).", location);
+      throw dub::Exception("The ZMQ context associated with the specified socket was terminated (%s).", location);
     case EFAULT: // continue
     default:
-      throw Exception("The provided socket was not valid (%s).", location);
+      throw dub::Exception("The provided socket was not valid (%s).", location);
     }
   }
 
   void throw_recv_error(int err) {
     switch(err) {
     case EAGAIN:
-      throw Exception("Non-blocking mode was requested and no messages are available at the moment.");
+      throw dub::Exception("Non-blocking mode was requested and no messages are available at the moment.");
     case ENOTSUP:
-      throw Exception("The zmq_recv() operation is not supported by this socket type (%s).", type());
+      throw dub::Exception("The zmq_recv() operation is not supported by this socket type (%s).", type());
     case EFSM:
-      throw Exception("The zmq_recv() operation cannot be performed on this socket at the moment due to the socket not being in the appropriate state. This error may occur with socket types that switch between several states, such as ZMQ_REP (%s).", type());
+      throw dub::Exception("The zmq_recv() operation cannot be performed on this socket at the moment due to the socket not being in the appropriate state. This error may occur with socket types that switch between several states, such as ZMQ_REP (%s).", type());
     case ETERM:
-      throw Exception("The ZMQ context associated with the specified socket was terminated.");
+      throw dub::Exception("The ZMQ context associated with the specified socket was terminated.");
     case EFAULT: // continue
     default:
-      throw Exception("The provided context was not valid (NULL).");
+      throw dub::Exception("The provided context was not valid (NULL).");
     }
   }
 
   void throw_poll_error(int err) {
     switch(err) {
     case ETERM:
-      throw Exception("At least one of the members of the items array refers to a socket whose associated ØMQ context was terminated.");
+      throw dub::Exception("At least one of the members of the items array refers to a socket whose associated ØMQ context was terminated.");
     case EFAULT:
-      throw Exception("At least one of the members of the items array refers to a socket belonging to a different application thread.");
+      throw dub::Exception("At least one of the members of the items array refers to a socket belonging to a different application thread.");
     default:
-      throw Exception("The provided context was not valid (NULL).");
+      throw dub::Exception("The provided context was not valid (NULL).");
     }
   }
 
   void throw_send_error(int err) {
     switch(err) {
     case EAGAIN:
-      throw Exception("Non-blocking mode was requested and the message cannot be sent at the moment.");
+      throw dub::Exception("Non-blocking mode was requested and the message cannot be sent at the moment.");
     case ENOTSUP:
-      throw Exception("The zmq_send() operation is not supported by this socket type (%s).", type());
+      throw dub::Exception("The zmq_send() operation is not supported by this socket type (%s).", type());
     case EFSM:
-      throw Exception("The zmq_send() operation cannot be performed on this socket at the moment due to the socket not being in the appropriate state. This error may occur with socket types that switch between several states, such as ZMQ_REP (%s).", type());
+      throw dub::Exception("The zmq_send() operation cannot be performed on this socket at the moment due to the socket not being in the appropriate state. This error may occur with socket types that switch between several states, such as ZMQ_REP (%s).", type());
     case ETERM:
-      throw Exception("The ZMQ context associated with the specified socket was terminated.");
+      throw dub::Exception("The ZMQ context associated with the specified socket was terminated.");
     case EFAULT: // continue
     default:
-      throw Exception("The provided context was not valid (NULL).");
+      throw dub::Exception("The provided context was not valid (NULL).");
     }
   }
 };
