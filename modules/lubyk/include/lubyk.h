@@ -27,9 +27,6 @@
   ==============================================================================
 */
 #include "lubyk/lua.h"
-#include "lubyk/worker.h"
 #include "lubyk/lua_object.h"
-#include "lubyk/exception.h"
 #include "lua_cpp_helper.h"
 
-typedef double Real;

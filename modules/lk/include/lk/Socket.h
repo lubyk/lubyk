@@ -162,7 +162,7 @@ public:
       int x;
       x = fcntl(socket_fd_, F_GETFL, 0);
       if (-1 == fcntl(socket_fd_, F_SETFL, x | O_NONBLOCK)) {
-        throw Exception("Could not set non-blocking (%s).", strerror(errno));
+        throw dub::Exception("Could not set non-blocking (%s).", strerror(errno));
       }
     }
   }
@@ -241,8 +241,6 @@ private:
   }
 
   static int get_port(int fd);
-
-  void run(Thread *runner);
 
   int recvLine(lua_State *L);
 

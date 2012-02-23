@@ -58,7 +58,7 @@ int lk::Socket::bind(const char *localhost, int port) {
   hints.ai_flags = AI_PASSIVE;
 
   if (getaddrinfo(NULL, port_str, &hints, &res)) {
-    throw Exception("Could not getaddrinfo for %s:%i.", local_host_.c_str(), port);
+    throw dub::Exception("Could not getaddrinfo for %s:%i.", local_host_.c_str(), port);
   }
 
   if (socket_fd_ != -1) {
@@ -70,13 +70,13 @@ int lk::Socket::bind(const char *localhost, int port) {
   socket_fd_ = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
   // printf("socket --> %i\n", socket_fd_);
   if (socket_fd_ == -1) {
-    throw Exception("Could not create socket for %s:%i (%s).", local_host_.c_str(), port, strerror(errno));
+    throw dub::Exception("Could not create socket for %s:%i (%s).", local_host_.c_str(), port, strerror(errno));
   }
   if (non_blocking_) setNonBlocking();
 
   // bind to port
   if (::bind(socket_fd_, res->ai_addr, res->ai_addrlen)) {
-    throw Exception("Could not bind socket to %s:%i (%s).", local_host_.c_str(), port, strerror(errno));
+    throw dub::Exception("Could not bind socket to %s:%i (%s).", local_host_.c_str(), port, strerror(errno));
   }
 
   if (port == 0) {
@@ -104,7 +104,7 @@ bool lk::Socket::connect(const char *host, int port) {
 
   int status;
   if ( (status = getaddrinfo(host, port_str, &hints, &res)) ) {
-    throw Exception("Could not getaddrinfo for %s:%i (%s).", host, port, gai_strerror(status));
+    throw dub::Exception("Could not getaddrinfo for %s:%i (%s).", host, port, gai_strerror(status));
   }
 
   if (socket_fd_ != -1) {
@@ -117,7 +117,7 @@ bool lk::Socket::connect(const char *host, int port) {
   socket_fd_ = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
   // printf("socket --> %i\n", socket_fd_);
   if (socket_fd_ == -1) {
-    throw Exception("Could not create socket for %s:%i (%s).", host, port, strerror(errno));
+    throw dub::Exception("Could not create socket for %s:%i (%s).", host, port, strerror(errno));
   }
   if (non_blocking_) setNonBlocking();
 
@@ -126,7 +126,7 @@ bool lk::Socket::connect(const char *host, int port) {
     if (errno == EINPROGRESS) {
       return false; // wait for 'write' and try again later
     }
-    throw Exception("Could not connect socket to %s:%i (%s).", host, port, strerror(errno));
+    throw dub::Exception("Could not connect socket to %s:%i (%s).", host, port, strerror(errno));
   }
 
   char info[INET6_ADDRSTRLEN];
@@ -146,7 +146,7 @@ bool lk::Socket::connect(const char *host, int port) {
 
 void lk::Socket::connectFinish() {
   if (socket_fd_ == -1) {
-    throw Exception("Should only be called after 'connect' (no socket).");
+    throw dub::Exception("Should only be called after 'connect' (no socket).");
   }
   // After select(2) indicates writability, use getsockopt(2) to read the 
   // SO_ERROR option at level SOL_SOCKET to determine whether connect() 
@@ -157,11 +157,11 @@ void lk::Socket::connectFinish() {
   int err;
   socklen_t len = sizeof(err);
   if (getsockopt(socket_fd_, SOL_SOCKET, SO_ERROR, &err, &len)) {
-    throw Exception("Could not finalize connection (%s).", strerror(errno));
+    throw dub::Exception("Could not finalize connection (%s).", strerror(errno));
   }
 
   if (err) {
-    throw Exception("Could not finalize connection (%s).", strerror(err));
+    throw dub::Exception("Could not finalize connection (%s).", strerror(err));
   }
 }
 
@@ -169,10 +169,10 @@ void lk::Socket::connectFinish() {
  */
 void lk::Socket::listen(int backlog) {
   if (local_port_ == -1)
-    throw Exception("Listen called before bind.");
+    throw dub::Exception("Listen called before bind.");
 
   if (::listen(socket_fd_, backlog)) {
-    throw Exception("Could not listen (%s).", strerror(errno));
+    throw dub::Exception("Could not listen (%s).", strerror(errno));
   }
 }
 
@@ -184,7 +184,7 @@ LuaStackSize lk::Socket::accept(lua_State *L) {
   lua_pop(L, 1);
 
   if (local_port_ == -1)
-    throw Exception("Accept called before bind.");
+    throw dub::Exception("Accept called before bind.");
 
   struct sockaddr sa;
   memset(&sa, 0, sizeof(struct sockaddr));
@@ -197,7 +197,7 @@ LuaStackSize lk::Socket::accept(lua_State *L) {
   //printf("[%p] accept(%i) --> %i\n", this, socket_fd_, fd);
   
   if (fd == -1) {
-    throw Exception("Error while accepting connection (%s).", strerror(errno));
+    throw dub::Exception("Error while accepting connection (%s).", strerror(errno));
   }
 
   // get remote name / port
@@ -211,7 +211,7 @@ LuaStackSize lk::Socket::accept(lua_State *L) {
   char remote_host[NI_MAXHOST];
 
   if (getnameinfo(&sa, sizeof(sa), remote_host, sizeof(remote_host), NULL, 0, 0)) {
-    throw Exception("Could not get remote host name (%s).", strerror(errno));
+    throw dub::Exception("Could not get remote host name (%s).", strerror(errno));
   }
 
   Socket *new_socket = new Socket(fd, local_host_.c_str(), remote_host, remote_port);
@@ -249,7 +249,7 @@ LuaStackSize lk::Socket::accept(lua_State *L) {
 //             return 0;
 //           } else if (buffer_length_ < 0) {
 //             buffer_length_ = 0;
-//             throw Exception("Could not receive (%s).", strerror(errno));
+//             throw dub::Exception("Could not receive (%s).", strerror(errno));
 //           }
 //           buffer_i_ = 0;
 //         }
@@ -260,7 +260,7 @@ LuaStackSize lk::Socket::accept(lua_State *L) {
 //       sz = ntohs(sz);
 //       // printf("Receiving %lu bytes...\n", sz);
 //       if (sz > SIZE_MAX) {
-//       throw Exception("Invalid message size (%lu bytes).", sz);
+//       throw dub::Exception("Invalid message size (%lu bytes).", sz);
 //     }
 // 
 //     char *recv_buffer = NULL;
@@ -280,7 +280,7 @@ LuaStackSize lk::Socket::accept(lua_State *L) {
 //       // printf("Using tmp buffer (%lu).\n", avail);
 //       tmp_buffer = (char*)malloc(sz);
 //       if (!tmp_buffer) {
-//         throw Exception("Could not allocate buffer (%lu bytes).", sz);
+//         throw dub::Exception("Could not allocate buffer (%lu bytes).", sz);
 //       }
 //       msg_buffer  = tmp_buffer;
 //       recv_buffer = msg_buffer + avail;
@@ -304,7 +304,7 @@ LuaStackSize lk::Socket::accept(lua_State *L) {
 //         return 0;
 //       } else if (received < 0) {
 //         if (tmp_buffer) free(tmp_buffer);
-//         throw Exception("Could not receive (%s).", strerror(errno));
+//         throw dub::Exception("Could not receive (%s).", strerror(errno));
 //       }
 //       done += received;
 //     }
@@ -334,7 +334,7 @@ LuaStackSize lk::Socket::recv(lua_State *L) {
     } else if (mode[0] == '*' && mode[1] == 'l') {
       return recvLine(L);
     } else {
-      throw Exception("Bad mode to recv (should be '*a' or '*l' but found '%s')", mode);
+      throw dub::Exception("Bad mode to recv (should be '*a' or '*l' but found '%s')", mode);
     }
   } 
   // receive a single line (not returning \r or \n).
@@ -357,7 +357,7 @@ int lk::Socket::send(lua_State *L) {
     if (errno == EAGAIN) {
       sent = 0;
     } else {
-      throw Exception("Could not send message (%s).", strerror(errno));
+      throw dub::Exception("Could not send message (%s).", strerror(errno));
     };
   }
   return sent;
@@ -370,17 +370,17 @@ int lk::Socket::send(lua_State *L) {
 //   msgpack_sbuffer* buffer;
 //   msgpack_lua_to_bin(L, &buffer, 1);
 //   if (buffer->size > SIZE_MAX) {
-//     throw Exception("Message too big to send in a single packet (%lu bytes).", buffer->size);
+//     throw dub::Exception("Message too big to send in a single packet (%lu bytes).", buffer->size);
 //   }
 //   // printf("Sending %lu bytes...\n", buffer->size);
 //   size_t sz = htons(buffer->size);
 // 
 //   if (::send(socket_fd_, (void*)&sz, SIZEOF_SIZE, 0) == -1) {
-//     throw Exception("Could not send message size (%s).", strerror(errno));
+//     throw dub::Exception("Could not send message size (%s).", strerror(errno));
 //   }
 // 
 //   if (::send(socket_fd_, buffer->data, buffer->size, 0) == -1) {
-//     throw Exception("Could not send message (%s).", strerror(errno));
+//     throw dub::Exception("Could not send message (%s).", strerror(errno));
 //   }
 //   free_msgpack_msg(NULL, buffer);
 // }
@@ -393,7 +393,7 @@ int lk::Socket::get_port(int fd) {
   // length has to be in a variable
   socklen_t sa_len = sizeof(sa);
   if (getsockname(fd, &sa, &sa_len)) {
-    throw Exception("Could not get bound port (%s).", strerror(errno));
+    throw dub::Exception("Could not get bound port (%s).", strerror(errno));
   }
   if (sa.sa_family == AF_INET) {
     return ntohs(((struct sockaddr_in *)&sa)->sin_port);
@@ -429,7 +429,7 @@ int lk::Socket::recvLine(lua_State *L) {
       return 0;
     } else if (buffer_length_ < 0) {
       buffer_length_ = 0;
-      throw Exception("Could not receive (%s).", strerror(errno));
+      throw dub::Exception("Could not receive (%s).", strerror(errno));
     }
     buffer_i_ = 0;
   }                             
@@ -465,7 +465,7 @@ int lk::Socket::recvBytes(lua_State *L, int sz) {
       return 0;
     } else if (buffer_length_ < 0) {
       buffer_length_ = 0;
-      throw Exception("Could not receive (%s).", strerror(errno));
+      throw dub::Exception("Could not receive (%s).", strerror(errno));
     }
     
     luaL_addlstring(&buffer, buffer_, buffer_length_);
@@ -498,7 +498,7 @@ int lk::Socket::recvAll(lua_State *L) {
       if (errno == EAGAIN) {
         break;
       } else {
-        throw Exception("Could not receive (%s).", strerror(errno));
+        throw dub::Exception("Could not receive (%s).", strerror(errno));
       }
     }
     luaL_addlstring(&buffer, buffer_, buffer_length_);
@@ -510,12 +510,12 @@ int lk::Socket::recvAll(lua_State *L) {
 
 void lk::Socket::setTimeout(int timeout, int opt_name) {
   if (socket_fd_ == -1) {
-    throw Exception("Cannot set timeout before bind or connect.");
+    throw dub::Exception("Cannot set timeout before bind or connect.");
   }
   struct timeval tv;
   tv.tv_sec = timeout/1000;
   tv.tv_usec = (timeout % 1000) * 1000;
   if (setsockopt(socket_fd_, SOL_SOCKET, opt_name, (char*)&tv, sizeof tv) == -1) {
-    throw Exception("Could not set timeout (%s).", strerror(errno));
+    throw dub::Exception("Could not set timeout (%s).", strerror(errno));
   }
 }

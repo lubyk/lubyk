@@ -465,7 +465,7 @@ static const struct luaL_Reg Socket_namespace_methods[] = {
 static const struct lua_constants_Reg Socket_namespace_constants[] = {
   {"TCP"               , lk::Socket::TCP},
   {"UDP"               , lk::Socket::UDP},
-  {NULL, NULL},
+  {NULL, 0},
 };
 
 

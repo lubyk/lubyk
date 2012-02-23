@@ -31,6 +31,8 @@
 
 #include "lubyk.h"
 
+#include <cstring> // strlen
+
 #define pushLuaCallback(s) pushLuaCallbackl(s, strlen(s))
 namespace lubyk {
 /** Calls a lua function back.
@@ -56,8 +58,6 @@ public:
   virtual ~LuaObject();
 
   void luaDestroy();
-
-  lubyk::Worker *worker_;
 
 protected:
   /** When using a custom destructor, this method must be called
