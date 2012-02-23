@@ -30,7 +30,7 @@
 #ifndef LUBYK_INCLUDE_LUBYK_THREAD_H_
 #define LUBYK_INCLUDE_LUBYK_THREAD_H_
 
-// TODO: refactor all this to move all thread specific code into 'cpp' file !
+// TODO: We do not need this anymore. Remove.
 #include <errno.h>   // errno
 #include <string.h>  // strerror
 #include <csignal>

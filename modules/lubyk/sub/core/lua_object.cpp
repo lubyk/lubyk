@@ -5,7 +5,6 @@ using namespace lubyk;
 
 LuaObject::LuaObject() throw ()
     : userdata_(NULL),
-      worker_(NULL),
       class_name_("??") {
 }
 
@@ -36,7 +35,6 @@ void LuaObject::luaCleanup() {
 }
 
 int LuaObject::luaInit(lua_State *L, void *ptr, const char *type_name) throw() {
-  worker_ = Worker::getWorker(L);
   // ... <self> or new table
   setupSuper(L, ptr); // creates self if there is no table (without a 'super' field)
   // ... <self>.super = userdata
@@ -49,7 +47,6 @@ int LuaObject::luaInit(lua_State *L, void *ptr, const char *type_name) throw() {
 }
 
 int ThreadedLuaObject::luaInit(lua_State *L, void *ptr, const char *type_name) throw() {
-  worker_ = Worker::getWorker(L);
   // create self
   setupSuper(L, ptr);
   // ... <self>.super = userdata

@@ -29,18 +29,8 @@
 
 #ifndef LUBYK_INCLUDE_LUBYK_WORKER_H_
 #define LUBYK_INCLUDE_LUBYK_WORKER_H_
-/*
-Structure of a running planet:
 
-The Planet is an oscit::Root:
-Root   <- Planet
-
-It contains a single Worker that is passed to subnodes as context
-Planet <>--- Worker
-*/
 #include "lubyk/lua.h"
-#include "lubyk/thread.h"
-#include "lubyk/rmutex.h"
 #include "lubyk/time_ref.h"
 
 #include <cstdlib>
@@ -54,8 +44,7 @@ namespace lubyk {
  * @dub string_format:'%%f'
  *      string_args:'(*userdata)->now()'
  */
-class Worker
-{
+class Worker {
 public:
   /** Time reference. All times are in milliseconds (as double) from this reference.
    * 0.0 = The worker's birthdate !
@@ -100,15 +89,6 @@ public:
   }
 
   static Worker *getWorker(lua_State *L);
-
- private:
-
-  void doExecute(Thread *runner) {
-    std::string cmd_ = (const char*)runner->parameter_;
-    runner->threadReady();
-    system(cmd_.c_str());
-    delete runner;
-  }
 };
 
 } // lubyk
