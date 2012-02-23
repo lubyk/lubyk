@@ -27,13 +27,15 @@
   ==============================================================================
 */
 #include "lubyk/worker.h"
-#include "lubyk/cocoa.h"
 #include "lubyk/lua.h"
 #include "lua_cpp_helper.h"
 
 using namespace lubyk;
 
-#include <mach-o/dyld.h> // _NSGetExecutablePath
+#include <unistd.h>   // readlink
+#include <errno.h>    // errno
+#include <string.h>   // strerror
+#include <sys/wait.h> // waitpid
 
 Worker::Worker()
     : zmq_context_(NULL)
@@ -53,46 +55,45 @@ Worker *Worker::getWorker(lua_State *L) {
 }
 
 Worker::~Worker() {
+  //delete impl_;
 }
 
 static char *getExecPath() {
-
-  // http://stackoverflow.com/questions/1023306/finding-current-executables-path-without-proc-self-exe
-  uint32_t bufsize = 200;
+  ssize_t bufsize = 200;
   char *buf = (char*)malloc(bufsize * sizeof(char));
-  if (_NSGetExecutablePath(buf, &bufsize)) {
+  if (!buf) {
+    throw dub::Exception("Could not allocate %i bytes.", bufsize);
+    return 0;
+  }
+  ssize_t sz = readlink("/proc/self/exe", buf, bufsize);
+  while (sz == bufsize) {
     // buffer too small
+    bufsize = bufsize * 2;
     char * nbuf = (char*)realloc(buf, bufsize * sizeof(char));
-    if (nbuf) {
-      if (_NSGetExecutablePath(nbuf, &bufsize)) {
-        // error again .... ?
-        free(nbuf);
-        return NULL;
-      } else {
-        return nbuf;
-      }
-    } else {
+    if (!nbuf) {
       // could not allocate memory
       free(buf);
-      return NULL;
+      throw dub::Exception("Could not allocate %i bytes.", bufsize);
+    } else {
+      buf = nbuf;
     }
-  } else {
-    // ok
-    return buf;
+    sz = readlink("/proc/self/exe", buf, bufsize);
   }
+
+  if (sz == -1) {
+    throw dub::Exception("Could not get path (%s).", strerror(errno));
+  }
+  return buf;
 }
+
 /** Get the current executable's path.
  */
 LuaStackSize Worker::execPath(lua_State *L)
 {
   char *path = getExecPath();
-  if (path) {
-    lua_pushstring(L, path);
-    free(path);
-    return 1;
-  } else {
-    return 0;
-  }
+  lua_pushstring(L, path);
+  free(path);
+  return 1;
 }
 
 extern "C" {
@@ -114,34 +115,29 @@ static void startProcess(const char *string) {
 
   lua_close(L);
 }
-#endif 
+#endif
 
 /** Start a new process with the given Lua script.
  */
 LuaStackSize Worker::spawn(const char *script, lua_State *L)
 {
   char *path = getExecPath();
-  if (path) {
-    char arg1[] = "-e";
-    char *argv[] = {path, arg1, const_cast<char*>(script), NULL};
+  char arg1[] = "-e";
+  char *argv[] = {path, arg1, const_cast<char*>(script), NULL};
 
-    int pid = fork();
-    if (pid == 0) {
-      // child process
-      execv(argv[0], argv);
-      //startProcess(script);
-      // unreachable
-      exit(0);
-      return 0;
-    } else {
-      // parent process
-      free(path);
-      lua_pushnumber(L, pid);
-      return 1;
-    }
-  } else {
-    // could not get executable path
+  int pid = fork();
+  if (pid == 0) {
+    // child process
+    execv(argv[0], argv);
+    //startProcess(script);
+    // unreachable
+    exit(0);
     return 0;
+  } else {
+    // parent process
+    free(path);
+    lua_pushnumber(L, pid);
+    return 1;
   }
 }
 
@@ -201,4 +197,5 @@ int Worker::waitpid(int pid) {
     return -1;
   }
 }
+
 

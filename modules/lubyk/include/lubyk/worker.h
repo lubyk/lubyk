@@ -43,6 +43,7 @@ namespace lubyk {
  *
  * @dub string_format:'%%f'
  *      string_args:'(*userdata)->now()'
+ *      lib_name:'core/Worker.cpp'
  */
 class Worker {
 public:
@@ -81,8 +82,6 @@ public:
   /** Get the current executable's path.
    */
   LuaStackSize execPath(lua_State *L);
-
-  void run();
 
   double now() {
     return time_ref_.elapsed();

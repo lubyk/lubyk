@@ -8,12 +8,12 @@
   renamed as lk.System...
 
 --]]------------------------------------------------------
-require 'lubyk.Worker'
+require 'lubyk.core'
 worker   = lubyk.Worker()
 local mt = lubyk.Worker_
 
 function lubyk.Worker()
-  error('Already one worker created (lives as \'worker\' in global namespace).')
+  return worker
 end
 
 local spawn = lubyk.Worker_.spawn

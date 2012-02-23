@@ -105,11 +105,21 @@ static const struct luaL_Reg lib_functions[] = {
   {NULL, NULL},
 };
 
+#include "lubyk/time_ref.h"
+
+extern "C" {
+int luaopen_lubyk_Worker(lua_State *L);
+}
+
 extern "C" int luaopen_lubyk_core(lua_State *L) {
+  printf("Loaded again lubyk.core.\n");
+  lubyk::TimeRef ref;
+  printf("---> %f\n", ref.elapsed());
   // initialize the global weak table to store functions that should
   // still be garbage collected.
 
   // register functions
   luaL_register(L, "lubyk", lib_functions);
+  luaopen_lubyk_Worker(L);
   return 0;
 }

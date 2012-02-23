@@ -63,6 +63,7 @@ macro(build_sub_module SUB_MODULE_NAME)
     PREFIX ""
     SUFFIX ".so"
   )
+  target_link_libraries("${MODULE_NAME}_${SUB_MODULE_NAME}" ${PLAT_LINK})
   add_dependencies(${MODULE_NAME} "${MODULE_NAME}_${SUB_MODULE_NAME}")
 endmacro(build_sub_module)
 

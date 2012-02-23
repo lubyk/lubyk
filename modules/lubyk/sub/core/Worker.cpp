@@ -133,24 +133,6 @@ static int Worker_now(lua_State *L) {
 
 
 
-/** void lubyk::Worker::run()
- * include/lubyk/worker.h:95
- */
-static int Worker_run(lua_State *L) {
-  try {
-    Worker *self = *((Worker**)dubL_checksdata(L, 1, "lubyk.Worker"));
-    self->run();
-    return 0;
-  } catch (std::exception &e) {
-    lua_pushfstring(L, "run: %s", e.what());
-  } catch (...) {
-    lua_pushfstring(L, "run: Unknown exception");
-  }
-  return lua_error(L);
-}
-
-
-
 /** LuaStackSize lubyk::Worker::spawn(const char *script, lua_State *L)
  * include/lubyk/worker.h:81
  */
@@ -199,7 +181,6 @@ static const struct luaL_Reg Worker_member_methods[] = {
   {"execPath"          , Worker_execPath},
   {"exit"              , Worker_exit},
   {"now"               , Worker_now},
-  {"run"               , Worker_run},
   {"spawn"             , Worker_spawn},
   {"waitpid"           , Worker_waitpid},
   {"__tostring"        , Worker__tostring},
