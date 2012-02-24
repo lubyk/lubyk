@@ -37,6 +37,8 @@ using namespace lubyk;
 
 #include <stdlib.h> // atoi
 
+class lk::SelectCallback;
+
 namespace mdns {
 
 /** Browse for devices matching a give service type. Call a lua function
@@ -46,7 +48,7 @@ namespace mdns {
  *      string_args:'(*userdata)->serviceType()'
  *      lib_name:'Browser_core'
  */
-class Browser : public AbstractBrowser, public LuaObject
+class Browser : public AbstractBrowser, public ThreadedLuaObject
 {
 public:
   Browser(const char *service_type)
@@ -78,6 +80,8 @@ public:
       return 0;
     }
   }
+
+  void addSelectCallback(lk::SelectCallback *clbk);
 };
 } // mdns
 

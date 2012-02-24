@@ -54,11 +54,21 @@ class Service : public Location, public ThreadedLuaObject {
    */
   int fd_;
 
+  /** @internal. Used by Linux.
+   */
+  int event_;
+
   class Implementation;
   Implementation *impl_;
  public:
 
+  /** @internal. Used by macosx.
+   */
   Service(std::string service_type, const char *name, int interface_index, const char *type, const char *domain, bool is_add);
+
+  /** @internal. Used by linux.
+   */
+  Service(int fd, int op);
 
   virtual ~Service();
 
