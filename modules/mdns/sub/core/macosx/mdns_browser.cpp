@@ -27,7 +27,8 @@
   ==============================================================================
 */
 
-#include "mdns/AbstractBrowser.h"
+#include "lk/SelectCallback.h"
+#include "mdns/Browser.h"
 #include "mdns/Service.h"
 
 #include <iostream>
@@ -57,8 +58,8 @@ using namespace lubyk;
 
 namespace mdns {
 
-class AbstractBrowser::Implementation : public Thread {
-  AbstractBrowser *master_;
+class Browser::Implementation {
+  Browser *master_;
   DNSServiceRef service_;
 
   /** Last detected services.
@@ -67,7 +68,7 @@ class AbstractBrowser::Implementation : public Thread {
   int fd_;
   bool query_next_;
 public:
-  Implementation(AbstractBrowser *master)
+  Implementation(Browser *master)
       : master_(master)
       , query_next_(true)
   {
@@ -153,19 +154,27 @@ public:
 
 };
 
-AbstractBrowser::AbstractBrowser(const char *service_type)
+Browser::Browser(Context *ctx, const char *service_type)
       : service_type_(service_type) {
   setProtocolFromServiceType();
-  impl_ = new AbstractBrowser::Implementation(this);
+  impl_ = new Implementation(this);
   fd_ = impl_->fd();
 }
 
-AbstractBrowser::~AbstractBrowser() {
+Browser::~Browser() {
   delete impl_;
 }
 
-Service *AbstractBrowser::getService() {
-  return impl_->getService();
+LuaStackSize Browser::getService(lua_State *L) {
+  Service *service = impl_->getService();
+
+  if (service) {
+    // Service is a LuaThreadedObject. We must push it with proper initialization
+    // on the stack. GC by Lua.
+    return service->luaInit(L, service, "mdns.Service");
+  } else {
+    return 0;
+  }
 }
 
 } // mdns

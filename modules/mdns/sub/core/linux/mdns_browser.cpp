@@ -27,7 +27,8 @@
   ==============================================================================
 */
 
-#include "mdns/AbstractBrowser.h"
+#include "mdns/Browser.h"
+#include "mdns/Context.h"
 #include "mdns/Service.h"
 #include "lk/SelectCallback.h"
 
@@ -46,155 +47,183 @@ extern "C" {
 
 #include <queue>
 
-using namespace lubyk;
-
-/** This class is used to have the AvahiPoll API work with lubyk's
- * Scheduler.
- */
-class AvahiWatch : public lk::SelectCallback {
-  AvahiWatchEvent last_event_;
-  AvahiWatchCallback callback_;
-  bool in_callback_;
-  /** This is the userdata passed in avahi_client_new. In our case, this is
-   * an instance of AbstractBrowser::Implementation.
-   */
-  mdns::Browser *browser_;
-public:
-  AvahiWatch(int fd, AvahiWatchEvent event, AvahiWatchCallback callback, void* userdata)
-    : lk::SelectCallback(fd, event & AVAHI_WATCH_IN, event & AVAHI_WATCH_OUT, 0)
-    , last_event_(event)
-    , callback_(callback)
-    , browser_((mdns::Browser*)userdata)
-  {
-    // This registers the class into lua.
-    browser_->addSelectCallback(this);
-  }
-
-  virtual ~AvahiWatch() {
-  }
-
-  void update(bool read, bool write, double timeout) {
-    lk::SelectCallback::update(read, write, timeout);
-  }
-
-  AvahiWatchEvent events() const {
-    return in_callback_ ? last_event_ : (AvahiWatchEvent)0;
-  }
-};
-
 namespace mdns {
 
-/** Get struct with all the callbacks.
- */
-static const AvahiPoll* get_avahi_poll(void);
-
-class AbstractBrowser::Implementation {
-  /** Last detected services.
-   */
-  std::queue<Service*> found_services_;
-  bool query_next_;
-  AvahiClient *avahi_client_;
+class Browser::Implementation {
+  AvahiServiceBrowser *browser_;
 public:
-  Implementation(AbstractBrowser *master)
+  Implementation(Browser *master, Context *ctx)
     : master_(master)
-    , query_next_(true)
-    , avahi_client_(NULL)
+    , browser_(NULL)
   {
-    // This will call new AvahiWatch
-    avahi_client_ = avahi_client_new(pollAPI(), ..., master_, ...);
+    AvahiClient *client = (AvahiClient*)ctx->context();
+
+    // Create the service browser.
+    browser_ = avahi_service_browser_new(
+        client,                    // 
+        AVAHI_IF_UNSPEC,           // any interface
+        AVAHI_PROTO_UNSPEC,        // any protocol
+        master_->serviceType(),    // service type   ("_http._tcp")
+        NULL,                      // default domain (".local")
+        0,
+        sBrowseCallback,
+        this);
+
+    if (!browser_) {
+      throw dub::Exception("Failed to create service browser (%s).\n", avahi_strerror(avahi_client_errno(client)));
+    }
   }
 
   ~Implementation() {
-    while (!found_services_.empty()) {
-      delete found_services_.front();
-      found_services_.pop();
-    }
   }
 
+  // We do not use a file descriptor.
   int fd() {
-    return fd_;
+    return 0;
   }
 
-  // [2] Return found services. If this returns NULL, the calling app must
-  // waitRead on fd() before asking again.
+  // We push services directly on in Lua. Not used.
   Service *getService() {
-    if (query_next_) {
-      // calls sBrowseCallback
-      DNSServiceErrorType err = DNSServiceProcessResult(service_);
-      if (err) {
-        // An error occured. Halt.
-        fprintf(stderr, "DNSServiceProcessResult error (%d).\n", err);
-        return 0;
-      }
-      query_next_ = false;
-    }
-
-    if (found_services_.empty()) {
-      query_next_ = true;
-      return NULL;
-    }
-
-    Service *service = found_services_.front();
-    found_services_.pop();
-    return service;
+    return NULL;
   }
 
-  // CLIENT Callback
+  void pushService(Service *service) {
+    lua_State *L = master_-lua_;
+    if (!master_->pushLuaCallback("browseCallback")) {
+      // This is really bad...
+      throw dub::Exception("'browseCallback' callback not set for mdns.Browser !");
+    }
+    // <func> <self>
+    service->luaInit(L, service, "mdns.Service");
+    // <func> <self> <service>
+    int status = lua_pcall(L, 2, 0, 0);
 
-  // POLL API Callbacks
-  static AvahiWatch* sNew(const AvahiPoll *api, int fd, AvahiWatchEvent event, AvahiWatchCallback callback, 
+    if (status) {
+      throw dub::Exception("Error in 'browseCallback': %s\n", lua_tostring(L, -1));
+    }
+    // The service will be garbage collected by Lua.
+  }
+
+  /** Called when a new service appears or is removed from the
+   * netwhor.
+   */
+  static void sBrowseCallback(
+    AvahiServiceBrowser *browser,
+    AvahiIfIndex interface,
+    AvahiProtocol protocol,
+    AvahiBrowserEvent event,
+    const char *name,
+    const char *type,
+    const char *domain,
+    AVAHI_GCC_UNUSED AvahiLookupResultFlags flags,
+    void* userdata) {
+
+    Implementation impl = (Implementation*)userdata;
+    assert(avahi_browser);
+
+    AvahiClient *client = avahi_service_browser_get_client(browser);
+    switch (event) {
+      case AVAHI_BROWSER_FAILURE:
+        throw dub::Exception("mdns.Browser browser failure (%s).\n",
+            avahi_strerror(
+              avahi_client_errno(client)));
+        return;
+      case AVAHI_BROWSER_NEW:
+        // New service available.
+
+        AvahiServiceResolver *resolver = avahi_service_resolver_new(
+            client,
+            interface,
+            protocol,
+            name,
+            type,
+            domain,
+            AVAHI_PROTO_UNSPEC,
+            0,
+            sResolveCallback,
+            impl);
+        /** We do not have to save the resolver object: we free it in
+         * the callback. If the server quits before the callback is
+         * called, the server will free the resolver for us.
+         */
+        if (!resolver) {
+          throw dub::Exception("Failed to resolve service '%s' (%s).\n", name, avahi_strerror(avahi_client_errno(client)));
+        }
+      case AVAHI_BROWSER_REMOVE:
+        impl_->pushService(new Service(
+              impl_->master_->service_type_,
+              name,
+              interface,
+              type,
+              domain,
+              false));
+        break;
+      case AVAHI_BROWSER_ALL_FOR_NOW:
+      case AVAHI_BROWSER_CACHE_EXHAUSTED:
+        // Done: nothing more.
+        break;
+    }
+  }
+
+
+  /** Service resolution callback.
+   */
+  static void resolve_callback(
+      AvahiServiceResolver *r,
+      AvahiIfIndex interface,
+      AVAHI_GCC_UNUSED AvahiProtocol protocol,
+      AvahiResolverEvent event,
+      const char *name,
+      const char *type,
+      const char *domain,
+      const char *host_name,
+      const AvahiAddress *address,
+      uint16_t port,
+      AvahiStringList *txt,
+      AvahiLookupResultFlags flags,
       void *userdata) {
     Implementation *impl = (Implementation*)userdata;
-    Service *service = new Service(fd, event);
-    // This will add the service's fd to our select loop.
-    impl->found_services_.push(service);
-    return service;
+    AvahiClient *client = avahi_service_resolver_get_client(r);
+
+    // Service either resolved or timed out.
+    switch (event) {
+      case AVAHI_RESOLVER_FAILURE:
+        throw dub::Exception("Could not resolve service '%s' (%s).\n",
+            name,
+            avahi_strerror(avahi_client_errno(client)));
+      case AVAHI_RESOLVER_FOUND: {
+        Service *service = new Service(
+              impl_->master_->service_type_,
+              name,
+              interface,
+              type,
+              domain,
+              true);
+        char *t = avahi_string_list_to_string(txt);
+        service->set(host_name, port, t);
+        avahi_free(t);
+
+        impl_->pushService(service);
+      }
+    }
+
+    // Free resolver allocated in sBrowseCallback.
+    avahi_service_resolver_free(r);
   }
-
-  static void sUpdate(AvahiWatch *w, AvahiWatchEvent events) {
-    w->event_ = events;
-  }
-
-  static AvahiWatchEvent sGetEvents(AvahiWatch *w) {
-    return w->event_;
-  }
-
-  static void sFree(AvahiWatch *w) {
-    delete w;
-  }
-
-  /** This is just a C++ trick to allocate and return static
-   * data. The poll_functions data contains all our callbacks.
-   */
-  const AvahiPoll* pollAPI(void) {
-    static const AvahiPoll poll_functions = {
-      NULL,
-      sNew,
-      sUpdate,
-      sGetEvents,
-      sFree,
-      NULL,
-      NULL,
-      NULL
-    };
-
-    return &poll_functions;
-  }
-
 };
 
-AbstractBrowser::AbstractBrowser(const char *service_type)
+Browser::Browser(Context *ctx, const char *service_type)
       : service_type_(service_type) {
   setProtocolFromServiceType();
-  impl_ = new AbstractBrowser::Implementation(this);
+  impl_ = new Browser::Implementation(this, ctx);
   fd_ = impl_->fd();
 }
 
-AbstractBrowser::~AbstractBrowser() {
+Browser::~Browser() {
   delete impl_;
 }
 
-Service *AbstractBrowser::getService() {
+Service *Browser::getService() {
   return impl_->getService();
 }
 
@@ -203,3 +232,167 @@ Service *AbstractBrowser::getService() {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+/***
+  This file is part of avahi.
+
+  avahi is free software; you can redistribute it and/or modify it
+  under the terms of the GNU Lesser General Public License as
+  published by the Free Software Foundation; either version 2.1 of the
+  License, or (at your option) any later version.
+
+  avahi is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General
+  Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public
+  License along with avahi; if not, write to the Free Software
+  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+  USA.
+***/
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#include <stdio.h>
+#include <assert.h>
+#include <stdlib.h>
+#include <time.h>
+
+#include <avahi-client/client.h>
+#include <avahi-client/lookup.h>
+
+#include <avahi-common/simple-watch.h>
+#include <avahi-common/malloc.h>
+#include <avahi-common/error.h>
+
+static AvahiSimplePoll *simple_poll = NULL;
+
+static void resolve_callback(
+    AvahiServiceResolver *r,
+    AVAHI_GCC_UNUSED AvahiIfIndex interface,
+    AVAHI_GCC_UNUSED AvahiProtocol protocol,
+    AvahiResolverEvent event,
+    const char *name,
+    const char *type,
+    const char *domain,
+    const char *host_name,
+    const AvahiAddress *address,
+    uint16_t port,
+    AvahiStringList *txt,
+    AvahiLookupResultFlags flags,
+    AVAHI_GCC_UNUSED void* userdata) {
+
+    assert(r);
+
+    /* Called whenever a service has been resolved successfully or timed out */
+
+    switch (event) {
+        case AVAHI_RESOLVER_FAILURE:
+            fprintf(stderr, "(Resolver) Failed to resolve service '%s' of type '%s' in domain '%s': %s\n", name, type, domain, avahi_strerror(avahi_client_errno(avahi_service_resolver_get_client(r))));
+            break;
+
+        case AVAHI_RESOLVER_FOUND: {
+            char a[AVAHI_ADDRESS_STR_MAX], *t;
+
+            fprintf(stderr, "Service '%s' of type '%s' in domain '%s':\n", name, type, domain);
+
+            avahi_address_snprint(a, sizeof(a), address);
+            t = avahi_string_list_to_string(txt);
+            fprintf(stderr,
+                    "\t%s:%u (%s)\n"
+                    "\tTXT=%s\n"
+                    "\tcookie is %u\n"
+                    "\tis_local: %i\n"
+                    "\tour_own: %i\n"
+                    "\twide_area: %i\n"
+                    "\tmulticast: %i\n"
+                    "\tcached: %i\n",
+                    host_name, port, a,
+                    t,
+                    avahi_string_list_get_service_cookie(txt),
+                    !!(flags & AVAHI_LOOKUP_RESULT_LOCAL),
+                    !!(flags & AVAHI_LOOKUP_RESULT_OUR_OWN),
+                    !!(flags & AVAHI_LOOKUP_RESULT_WIDE_AREA),
+                    !!(flags & AVAHI_LOOKUP_RESULT_MULTICAST),
+                    !!(flags & AVAHI_LOOKUP_RESULT_CACHED));
+
+            avahi_free(t);
+        }
+    }
+
+    avahi_service_resolver_free(r);
+}
+
+
+static void client_callback(AvahiClient *c, AvahiClientState state, AVAHI_GCC_UNUSED void * userdata) {
+    assert(c);
+
+    /* Called whenever the client or server state changes */
+
+    if (state == AVAHI_CLIENT_FAILURE) {
+        fprintf(stderr, "Server connection failure: %s\n", avahi_strerror(avahi_client_errno(c)));
+        avahi_simple_poll_quit(simple_poll);
+    }
+}
+
+int main(AVAHI_GCC_UNUSED int argc, AVAHI_GCC_UNUSED char*argv[]) {
+    AvahiClient *client = NULL;
+    AvahiServiceBrowser *sb = NULL;
+    int error;
+    int ret = 1;
+
+    /* Allocate main loop object */
+    if (!(simple_poll = avahi_simple_poll_new())) {
+        fprintf(stderr, "Failed to create simple poll object.\n");
+        goto fail;
+    }
+
+    /* Allocate a new client */
+    client = avahi_client_new(avahi_simple_poll_get(simple_poll), 0, client_callback, NULL, &error);
+
+    /* Check wether creating the client object succeeded */
+    if (!client) {
+        fprintf(stderr, "Failed to create client: %s\n", avahi_strerror(error));
+        goto fail;
+    }
+
+    /* Create the service browser */
+    if (!(sb = avahi_service_browser_new(client, AVAHI_IF_UNSPEC, AVAHI_PROTO_UNSPEC, "_http._tcp", NULL, 0, browse_callback, client))) {
+        fprintf(stderr, "Failed to create service browser: %s\n", avahi_strerror(avahi_client_errno(client)));
+        goto fail;
+    }
+
+    /* Run the main loop */
+    avahi_simple_poll_loop(simple_poll);
+
+    ret = 0;
+
+fail:
+
+    /* Cleanup things */
+    if (sb)
+        avahi_service_browser_free(sb);
+
+    if (client)
+        avahi_client_free(client);
+
+    if (simple_poll)
+        avahi_simple_poll_free(simple_poll);
+
+    return ret;
+}

@@ -12,7 +12,7 @@ using namespace mdns;
 /* ============================ Constructors     ====================== */
 
 /** mdns::Service::Service(std::string service_type, const char *name, int interface_index, const char *type, const char *domain, bool is_add)
- * include/mdns/Service.h:61
+ * include/mdns/Service.h:69
  */
 static int Service_Service(lua_State *L) {
   try {
@@ -77,7 +77,7 @@ static int Service__tostring(lua_State *L) {
 
 
 /** LuaStackSize mdns::Service::fd(lua_State *L)
- * include/mdns/Service.h:65
+ * include/mdns/Service.h:73
  */
 static int Service_fd(lua_State *L) {
   try {
@@ -97,7 +97,7 @@ static int Service_fd(lua_State *L) {
 
 
 /** LuaStackSize mdns::Service::info(lua_State *L)
- * include/mdns/Service.h:89
+ * include/mdns/Service.h:97
  */
 static int Service_info(lua_State *L) {
   try {
@@ -117,7 +117,7 @@ static int Service_info(lua_State *L) {
 
 
 /** bool mdns::Service::isAdd()
- * include/mdns/Service.h:74
+ * include/mdns/Service.h:82
  */
 static int Service_isAdd(lua_State *L) {
   try {
@@ -137,7 +137,7 @@ static int Service_isAdd(lua_State *L) {
 
 
 /** const char* mdns::Service::name()
- * include/mdns/Service.h:78
+ * include/mdns/Service.h:86
  */
 static int Service_name(lua_State *L) {
   try {
@@ -157,7 +157,7 @@ static int Service_name(lua_State *L) {
 
 
 /** LuaStackSize mdns::Service::serviceType(lua_State *L)
- * include/mdns/Service.h:82
+ * include/mdns/Service.h:90
  */
 static int Service_serviceType(lua_State *L) {
   try {

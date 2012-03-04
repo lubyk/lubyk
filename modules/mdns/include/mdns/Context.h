@@ -26,24 +26,43 @@
 
   ==============================================================================
 */
+#ifndef LUBYK_INCLUDE_MDNS_CONTEXT_H_
+#define LUBYK_INCLUDE_MDNS_CONTEXT_H_
 
-#include "mdns/Browser.h"
+#include "lubyk.h"
+#include "mdns/AbstractBrowser.h"
+#include "mdns/Service.h"
 
-#include <stdio.h>
+using namespace lubyk;
 
-#include <iostream>
-#include <string>
+#include <stdlib.h> // atoi
 
 namespace mdns {
 
-void AbstractBrowser::setProtocolFromServiceType() {
-  size_t dot_index = service_type_.find(".");
-  if (dot_index != std::string::npos) {
-    protocol_ = service_type_.substr(1, dot_index - 1);
-  } else {
-    // Bad service type
-    std::cerr << "Could not get protocol from service type: " << service_type_ << "\n";
-  }
-}
+/** Singleton used to handle mdns queries on some platforms.
+ *
+ * @dub lib_name:'Context_core'
+ *      ignore:'context,addSelectCallback'
+ */
+class Context : public ThreadedLuaObject
+{
+  class Implementation;
+  Implementation *impl_;
+public:
+  Context();
 
+  ~Context();
+
+  /** @internal. Push a select callback into Lua and insert it into the event
+   * loop (lk.Scheduler). This is called from C++, not from Lua.
+   */
+  void addSelectCallback(lk::SelectCallback *clbk);
+
+  /** @internal. Platform specific context.
+   */
+  void *context();
+};
 } // mdns
+
+#endif // LUBYK_INCLUDE_MDNS_CONTEXT_H_
+

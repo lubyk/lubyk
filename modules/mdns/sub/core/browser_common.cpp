@@ -27,51 +27,23 @@
   ==============================================================================
 */
 
-#ifndef MDNS_INCLUDE_MDNS_ABSTRACT_BROWSER_H_
-#define MDNS_INCLUDE_MDNS_ABSTRACT_BROWSER_H_
+#include "mdns/Browser.h"
 
-#include "mdns/Location.h"
-#include "lubyk/mutex.h"
+#include <stdio.h>
+
+#include <iostream>
+#include <string>
 
 namespace mdns {
 
-class Service;
-
-/** This class let's you easily find applications providing a certain
- * service.
- */
-class AbstractBrowser {
-  class Implementation;
-  Implementation *impl_;
-protected:
-
-  /** Protocol used in communication (usually 'lubyk').
-  */
-  std::string   protocol_;
-
-  /** Service-type to browse.
-  */
-  std::string   service_type_;
-  
-  /** Filedescriptor to listen for new/removed devices.
-   */
-  int fd_;
-
-public:
-  AbstractBrowser(const char *service_type);
-
-  virtual ~AbstractBrowser();
-
-  /** Once we have some data ready, we call this method to get the
-   * new mdns::Service (caller is responsible for deallocation).
-   */
-  Service *getService();
-
-protected:
-  void setProtocolFromServiceType();
-
-};
+void Browser::setProtocolFromServiceType() {
+  size_t dot_index = service_type_.find(".");
+  if (dot_index != std::string::npos) {
+    protocol_ = service_type_.substr(1, dot_index - 1);
+  } else {
+    // Bad service type
+    std::cerr << "Could not get protocol from service type: " << service_type_ << "\n";
+  }
+}
 
 } // mdns
-
-#endif // MDNS_INCLUDE_MDNS_ABSTRACT_BROWSER_H_

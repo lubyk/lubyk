@@ -11,13 +11,14 @@ using namespace mdns;
 
 /* ============================ Constructors     ====================== */
 
-/** mdns::Browser::Browser(const char *service_type)
- * include/mdns/Browser.h:53
+/** mdns::Browser::Browser(mdns::Context *ctx, const char *service_type)
+ * include/mdns/Browser.h:67
  */
 static int Browser_Browser(lua_State *L) {
   try {
-    const char *service_type = dubL_checkstring(L, 1);
-    Browser * retval__ = new Browser(service_type);
+    mdns::Context *ctx = *((mdns::Context **)dubL_checksdata(L, 1, "mdns.Context"));
+    const char *service_type = dubL_checkstring(L, 2);
+    Browser * retval__ = new Browser(ctx, service_type);
     return retval__->luaInit(L, retval__, "mdns.Browser");
   } catch (std::exception &e) {
     lua_pushfstring(L, "Browser: %s", e.what());
@@ -72,7 +73,7 @@ static int Browser__tostring(lua_State *L) {
 
 
 /** int mdns::Browser::fd()
- * include/mdns/Browser.h:63
+ * include/mdns/Browser.h:77
  */
 static int Browser_fd(lua_State *L) {
   try {
@@ -92,7 +93,7 @@ static int Browser_fd(lua_State *L) {
 
 
 /** LuaStackSize mdns::Browser::getService(lua_State *L)
- * include/mdns/Browser.h:71
+ * include/mdns/Browser.h:85
  */
 static int Browser_getService(lua_State *L) {
   try {
@@ -112,7 +113,7 @@ static int Browser_getService(lua_State *L) {
 
 
 /** const char* mdns::Browser::serviceType()
- * include/mdns/Browser.h:57
+ * include/mdns/Browser.h:71
  */
 static int Browser_serviceType(lua_State *L) {
   try {

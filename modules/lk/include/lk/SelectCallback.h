@@ -53,62 +53,43 @@ namespace lk {
  */
 class SelectCallback : public ThreadedLuaObject {
   int fd_;
-  bool wait_read_;
-  bool wait_write_;
   double timeout_;
 public:
-  SelectCallback(int fd, bool read, bool write, double timeout)
+  SelectCallback(int fd)
     : fd_(fd)
-    , wait_read_(read)
-    , wait_write_(write)
-    , timeout_(timeout) {
+    , timeout_(-1) {
   }
 
   virtual ~SelectCallback() {
-    if (fd_ || timeout_) {
+    if (fd_ != 0 || timeout_ >= 0) {
       // Call to Lua to remove the file descriptor.
       remove();
       fd_ = 0;
-      timeout_ = 0;
+      timeout_ = -1;
     }
   }
 
   /** This is the callback called when the file descriptor has the
-   * required events.
+   * required events. It should be reimplemented by the sub-classes.
    */
-  virtual void callback() {}
+  virtual void callback(bool read, bool write, bool timeout) {}
 
   /** Destruction initiated by Lua. We should not update when this is
    * called.
    */
   void finalize() {
     fd_ = 0;
-    timeout_ = 0;
+    timeout_ = -1;
     luaDestroy();
   }
 
-  bool shouldRead() {
-    return wait_read_;
+  int fd() {
+    return fd_;
   }
-
-  bool shouldWrite() {
-    return wait_write_;
-  }
-
-  bool shouldTimeout() {
-    return timeout_ > 0;
-  }
-
-  double timeout() {
-    return timeout_;
-  }
-
 protected:
   /** Called by C++.
    */
   void update(bool read, bool write, double timeout) {
-    if (read == wait_read_ && write == wait_write_ && timeout == timeout_) return;
-
     lua_State *L = lua_;
     if (!pushLuaCallback("update")) {
       throw dub::Exception("Update callback not set.");
@@ -122,9 +103,7 @@ protected:
     if (status) {
       printf("Error in 'update' function: %s\n", lua_tostring(lua_, -1));
     }
-    wait_read_  = read;
-    wait_write_ = write;
-    timeout_    = timeout;
+    timeout_ = timeout;
   }
   
 private:
@@ -136,7 +115,7 @@ private:
       throw dub::Exception("Remove callback not set.");
     }
     // <remove> <self>
-    int status = lua_pcall(lua_, 1, 0, 0);
+    int status = lua_pcall(L, 1, 0, 0);
 
     if (status) {
       printf("Error in 'remove' function: %s\n", lua_tostring(lua_, -1));

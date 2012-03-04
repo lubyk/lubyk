@@ -30,31 +30,43 @@
 #define LUBYK_INCLUDE_MDNS_BROWSER_H_
 
 #include "lubyk.h"
-#include "mdns/AbstractBrowser.h"
 #include "mdns/Service.h"
 
 using namespace lubyk;
 
 #include <stdlib.h> // atoi
 
-class lk::SelectCallback;
-
 namespace mdns {
+
+class Context;
 
 /** Browse for devices matching a give service type. Call a lua function
  * when devices are added or removed.
  *
  * @dub string_format:'%%s'
  *      string_args:'(*userdata)->serviceType()'
- *      lib_name:'Browser_core'
+ *      lib_name:'core/Browser_core'
  */
-class Browser : public AbstractBrowser, public ThreadedLuaObject
+class Browser : public ThreadedLuaObject
 {
-public:
-  Browser(const char *service_type)
-      : AbstractBrowser(service_type) {}
+  /** Protocol used in communication (usually '_lubyk._tcp').
+  */
+  std::string   protocol_;
 
-  ~Browser() {}
+  /** Service-type to browse.
+  */
+  std::string   service_type_;
+  
+  /** Filedescriptor to listen for new/removed devices.
+   */
+  int fd_;
+
+  class Implementation;
+  Implementation *impl_;
+public:
+  Browser(mdns::Context *ctx, const char *service_type);
+
+  ~Browser();
 
   const char *serviceType() {
     return service_type_.c_str();
@@ -66,22 +78,14 @@ public:
     return fd_;
   }
 
-  /** We have some data: get the service. Must be called after waitRead on
-   * fd().
+  /** We have some data: get the service. Must be called after
+   * waitRead on fd().
    *
    */
-  LuaStackSize getService(lua_State *L) {
-    Service *service = AbstractBrowser::getService();
-    if (service) {
-      // Service is a LuaThreadedObject. We must push it with proper initialization
-      // on the stack. GC by Lua.
-      return service->luaInit(L, service, "mdns.Service");
-    } else {
-      return 0;
-    }
-  }
+  LuaStackSize getService(lua_State *L);
 
-  void addSelectCallback(lk::SelectCallback *clbk);
+private:
+  void setProtocolFromServiceType();
 };
 } // mdns
 

@@ -56,6 +56,11 @@ function lib:quit()
   return true
 end
 
+--- Make it easy to rewrite logger.
+function lib:log(typ, msg)
+  print(typ, msg)
+end
+
 --- Waits a given number of milliseconds starting from the
 -- logical time. This should be used as a timer because it will not
 -- drift.

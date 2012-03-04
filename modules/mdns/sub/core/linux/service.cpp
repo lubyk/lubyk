@@ -27,42 +27,31 @@
   ==============================================================================
 */
 
-#ifndef LUBYK_INCLUDE_MDNS_ABSTRACT_REGISTRATION_H_
-#define LUBYK_INCLUDE_MDNS_ABSTRACT_REGISTRATION_H_
-#include <string>
-
-#include "mdns/location.h"
+#include "mdns/Service.h"
 
 namespace mdns {
 
-/** This class let's you easily register an application as providing a certain type of
- *  service.
+/** For Linux, resolution is done in the mdns.Browser: nothing to do here.
  */
-class AbstractRegistration {
- public:
-  AbstractRegistration(const char *service_type, const char *name, uint port, const char *txt);
 
-  virtual ~AbstractRegistration();
+Service::Service(std::string service_type, const char *name, int interface_index, const char *type, const char *domain, bool is_add)
+  : service_type_(service_type)
+  , name_(name)
+  , is_add_(is_add)
+{
+  fd_ = 0;
+}
 
-  const char *name() {
-    return name_.c_str();
-  }
+Service::~Service() {
+}
 
- protected:
-  bool getService();
-
-  std::string name_;
-  std::string host_;
-  std::string service_type_;
-  uint16_t    port_;
-  std::string txt_;
-  int fd_;
-
- private:
-  class Implementation;
-  Implementation *impl_;
-};
+bool Service::getInfo() {
+  return true;
+}
 
 } // mdns
 
-#endif // LUBYK_INCLUDE_MDNS_ABSTRACT_REGISTRATION_H_
+
+
+
+

@@ -42,12 +42,14 @@ namespace mdns {
  *
  * @dub string_format:'%%s'
  *      string_args:'(*userdata)->name()'
- *      lib_name:'Service_core'
+ *      lib_name:'core/Service_core'
+ *      ignore:'set'
  */
 class Service : public Location, public ThreadedLuaObject {
   std::string service_type_;
   std::string name_;
   std::string txt_;
+  bool is_resolved_;
   bool is_add_;
 
   /** File descriptor used to register the resolution socket.
@@ -62,13 +64,9 @@ class Service : public Location, public ThreadedLuaObject {
   Implementation *impl_;
  public:
 
-  /** @internal. Used by macosx.
+  /** @internal.
    */
   Service(std::string service_type, const char *name, int interface_index, const char *type, const char *domain, bool is_add);
-
-  /** @internal. Used by linux.
-   */
-  Service(int fd, int op);
 
   virtual ~Service();
 
@@ -134,17 +132,19 @@ class Service : public Location, public ThreadedLuaObject {
     return 1;
   }
 
- protected:
-  // Calls Implementation::getInfo --> calls back 'set'.
-  bool getInfo();
-
-  // Callback from Implementation
+  /** @internal.
+   * Callback from Implementation
+   */
   void set(const char *hostname, int port, std::string txt) {
     host_ = hostname;
     ip_   = ip_from_hostname(hostname);
     port_ = port;
     txt_  = txt;
   }
+
+ protected:
+  // Calls Implementation::getInfo --> calls back 'set'.
+  bool getInfo();
 
   void pushTxtRecord(lua_State *L, const std::string &txt) {
     // [LEN] KEY ( EOF | '=' ) ( VALUE | EOF ) [LEN] ...

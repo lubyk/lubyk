@@ -47,13 +47,12 @@ typedef	int	pid_t;
 
 #include <dns_sd.h>     // zeroconf
 
-#include "lubyk/thread.h"
 #include "mdns/AbstractRegistration.h"
 
 
 namespace mdns {
 
-class AbstractRegistration::Implementation : public Thread {
+class AbstractRegistration::Implementation {
   DNSServiceRef service_;
 public:
   Implementation(AbstractRegistration *master) : master_(master) {
@@ -98,7 +97,6 @@ public:
     }
     return true;
   }
-
 
   /** Callback called after registration. */
   static void sGetServiceInfo(DNSServiceRef ref,

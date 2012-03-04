@@ -41,7 +41,7 @@ namespace mdns {
  *
  * @dub string_format:'%%s'
  *      string_args:'(*userdata)->name()'
- *      lib_name:'Registration_core'
+ *      lib_name:'core/Registration_core'
  */
 class Registration : public AbstractRegistration, public LuaObject {
 public:
