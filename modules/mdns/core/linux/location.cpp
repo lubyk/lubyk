@@ -27,7 +27,8 @@
   ==============================================================================
 */
 
-#include "oscit/location.h"
+#include "dub/dub.h"
+#include "mdns/Location.h"
 
 #include <sstream>
 
@@ -35,7 +36,7 @@
 #include <sys/socket.h>
 #include <netdb.h>
 
-namespace oscit {
+namespace mdns {
 
 unsigned long Location::ip_from_hostname(const char *hostname) {
   struct addrinfo *result, *result0;
@@ -44,7 +45,7 @@ unsigned long Location::ip_from_hostname(const char *hostname) {
 
   error = getaddrinfo(hostname, NULL, NULL, &result0);
   if (error) {
-    std::cerr << "Could not resolve '" << hostname << "' (" << gai_strerror(error) << ")\n";
+    throw dub::Exception("Could not resolve '%s' (%s).", hostname, gai_strerror(error));
     return Location::NO_IP;
   }
 
@@ -67,4 +68,4 @@ unsigned long Location::ip_from_hostname(const char *hostname) {
   return ip;
 }
 
-} // oscit
+} // mdns

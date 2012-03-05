@@ -28,6 +28,20 @@
 */
 #include "mdns/Context.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+#include <avahi-client/client.h>
+#include <avahi-client/lookup.h>
+
+#include <avahi-common/simple-watch.h>
+#include <avahi-common/timeval.h>
+#include <avahi-common/malloc.h>
+#include <avahi-common/error.h>
+
+
+using namespace mdns;
 
 /** This class is used to have the AvahiPoll API work with lubyk's
  * Scheduler.
@@ -36,7 +50,7 @@ class AvahiWatch : public lk::SelectCallback {
   AvahiWatchEvent last_event_;
   AvahiWatchCallback callback_;
   bool in_callback_;
-  mdns::Context *ctx_;
+  Context *ctx_;
 public:
   AvahiWatch(int fd, AvahiWatchEvent event, AvahiWatchCallback callback, Context *ctx)
     : lk::SelectCallback(fd)
@@ -86,7 +100,7 @@ public:
  */
 class AvahiTimeout : public lk::SelectCallback {
   AvahiTimeoutCallback callback_;
-  mdns::Context *ctx_;
+  Context *ctx_;
 public:
   AvahiTimeout(
       const struct timeval *tv,
@@ -129,11 +143,11 @@ public:
 namespace mdns {
 
 class Context::Implementation {
-  AvahiClient *avahi_client_;
+  AvahiClient *client_;
   Context *ctx_;
 public:
-  Implementation(mdns::Context *ctx)
-    : avahi_client_(NULL)
+  Implementation(Context *ctx)
+    : client_(NULL)
     , ctx_(ctx)
   {
     int error;
@@ -141,7 +155,7 @@ public:
     // This calls sNew
     client_ = avahi_client_new(
         pollAPI(),                 // Our Lua coroutine fd based API
-        0,                         // No flags
+        (AvahiClientFlags)0,                         // No flags
         sClientCallback,           // Client callbacks
         ctx_,                      // Context
         &error);                   // error
@@ -152,7 +166,11 @@ public:
   }
 
   ~Implementation() {
-    if (client_) avahi_client_delete(client_);
+    if (client_) avahi_client_free(client_);
+  }
+
+  void *context() {
+    return client_;
   }
 
   /** CLIENT Callback (this is called as part of a Lua Thread resume
@@ -177,7 +195,7 @@ public:
       AvahiWatchEvent event,
       AvahiWatchCallback callback,
       void *userdata) {
-    mdns::Context *ctx = (mdns::Context*)userdata;
+    Context *ctx = (Context*)userdata;
     return new AvahiWatch(fd, event, callback, ctx);
   }
 
@@ -200,7 +218,7 @@ public:
       const struct timeval *tv,
       AvahiTimeoutCallback callback,
       void *userdata) {
-    mdns::Context *ctx = (mdns::Context*)userdata);
+    Context *ctx = (Context*)userdata;
     return new AvahiTimeout(tv, callback, ctx);
   }
 

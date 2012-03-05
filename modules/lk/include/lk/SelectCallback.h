@@ -50,13 +50,14 @@ namespace lk {
  * @dub destructor: 'luaDestroy'
  */
 class SelectCallback : public dub::Thread {
+protected:
   int fd_;
   double timeout_;
 public:
   SelectCallback(int fd)
     : fd_(fd)
-    , timeout_(-1) {
-  }
+    , timeout_(-1)
+  {}
 
   virtual ~SelectCallback() {
     if (fd_ != 0 || timeout_ >= 0) {

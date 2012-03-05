@@ -29,11 +29,13 @@
 
 #ifndef LUBYK_INCLUDE_MDNS_SERVICE_H_
 #define LUBYK_INCLUDE_MDNS_SERVICE_H_
-#include <string>
 
 #include "dub/dub.h"
 
 #include "mdns/Location.h"
+
+#include <stdlib.h> // atoi
+#include <string>
 
 namespace mdns {
 

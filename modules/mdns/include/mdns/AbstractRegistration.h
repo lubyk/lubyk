@@ -31,7 +31,7 @@
 #define LUBYK_INCLUDE_MDNS_ABSTRACT_REGISTRATION_H_
 #include <string>
 
-#include "mdns/location.h"
+#include "mdns/Location.h"
 
 // TODO: Remove this class and keep everything in mdns::Registration.
 namespace mdns {
@@ -55,7 +55,7 @@ class AbstractRegistration {
   std::string name_;
   std::string host_;
   std::string service_type_;
-  uint16_t    port_;
+  uint        port_;
   std::string txt_;
   int fd_;
 
