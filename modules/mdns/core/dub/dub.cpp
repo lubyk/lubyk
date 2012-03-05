@@ -29,7 +29,6 @@
 #include "dub/dub.h"
 
 #include <stdlib.h>  // malloc
-#include <string.h>  // strlen strcmp
 
 #define DUB_EXCEPTION_BUFFER_SIZE 256  
 #define TYPE_EXCEPTION_MSG "expected %s, found %s"

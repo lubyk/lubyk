@@ -123,7 +123,7 @@ Registration::Registration(
     Context *ctx,
     const char *service_type,
     const char *name,
-    uint port,
+    int port,
     const char *txt)
     : name_(name), service_type_(service_type), port_(port), txt_(txt), fd_(0) {
   impl_ = new Registration::Implementation(this);

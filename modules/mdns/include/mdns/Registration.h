@@ -46,7 +46,7 @@ class Registration : public dub::Thread {
   std::string name_;
   std::string host_;
   std::string service_type_;
-  uint        port_;
+  int         port_;
   std::string txt_;
   int fd_;
 
@@ -54,7 +54,7 @@ class Registration : public dub::Thread {
   Implementation *impl_;
 public:
 
-  Registration(Context *ctx, const char *service_type, const char *name, uint port, const char *txt);
+  Registration(Context *ctx, const char *service_type, const char *name, int port, const char *txt);
 
   ~Registration();
 

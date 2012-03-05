@@ -11,35 +11,17 @@
 
 using namespace mdns;
 
-/** Cast (class_name)
- * 
- */
-static int Registration__cast_(lua_State *L) {
-
-  Registration *self = *((Registration **)dub_checksdata_n(L, 1, "mdns.Registration"));
-  const char *key = luaL_checkstring(L, 2);
-  void **retval__ = (void**)lua_newuserdata(L, sizeof(void*));
-  int key_h = dub_hash(key, 2);
-  switch(key_h) {
-    case 1: {
-      if (DUB_ASSERT_KEY(key, "mdns.AbstractRegistration")) break;
-      *retval__ = static_cast<AbstractRegistration *>(self);
-      return 1;
-    }
-  }
-  return 0;
-}
-
-/** mdns::Registration::Registration(const char *service_type, const char *name, uint port, const char *txt)
- * include/mdns/Registration.h:49
+/** mdns::Registration::Registration(Context *ctx, const char *service_type, const char *name, int port, const char *txt)
+ * include/mdns/Registration.h:57
  */
 static int Registration_Registration(lua_State *L) {
   try {
-    const char *service_type = dub_checkstring(L, 1);
-    const char *name = dub_checkstring(L, 2);
-    uint port = dub_checkint(L, 3);
-    const char *txt = dub_checkstring(L, 4);
-    Registration *retval__ = new Registration(service_type, name, port, txt);
+    Context *ctx = *((Context **)dub_checksdata(L, 1, "mdns.Context"));
+    const char *service_type = dub_checkstring(L, 2);
+    const char *name = dub_checkstring(L, 3);
+    int port = dub_checkint(L, 4);
+    const char *txt = dub_checkstring(L, 5);
+    Registration *retval__ = new Registration(ctx, service_type, name, port, txt);
     retval__->pushobject(L, retval__, "mdns.Registration", true);
     return 1;
   } catch (std::exception &e) {
@@ -51,7 +33,7 @@ static int Registration_Registration(lua_State *L) {
 }
 
 /** mdns::Registration::~Registration()
- * include/mdns/Registration.h:52
+ * include/mdns/Registration.h:59
  */
 static int Registration__Registration(lua_State *L) {
   try {
@@ -71,7 +53,7 @@ static int Registration__Registration(lua_State *L) {
 }
 
 /** int mdns::Registration::fd()
- * include/mdns/Registration.h:55
+ * include/mdns/Registration.h:61
  */
 static int Registration_fd(lua_State *L) {
   try {
@@ -86,8 +68,56 @@ static int Registration_fd(lua_State *L) {
   return dub_error(L);
 }
 
+/** void mdns::Registration::start()
+ * include/mdns/Registration.h:67
+ */
+static int Registration_start(lua_State *L) {
+  try {
+    Registration *self = *((Registration **)dub_checksdata(L, 1, "mdns.Registration"));
+    self->start();
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "mdns.Registration.start: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "mdns.Registration.start: Unknown exception");
+  }
+  return dub_error(L);
+}
+
+/** void mdns::Registration::stop()
+ * include/mdns/Registration.h:71
+ */
+static int Registration_stop(lua_State *L) {
+  try {
+    Registration *self = *((Registration **)dub_checksdata(L, 1, "mdns.Registration"));
+    self->stop();
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "mdns.Registration.stop: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "mdns.Registration.stop: Unknown exception");
+  }
+  return dub_error(L);
+}
+
+/** const char* mdns::Registration::name()
+ * include/mdns/Registration.h:73
+ */
+static int Registration_name(lua_State *L) {
+  try {
+    Registration *self = *((Registration **)dub_checksdata(L, 1, "mdns.Registration"));
+    lua_pushstring(L, self->name());
+    return 1;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "mdns.Registration.name: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "mdns.Registration.name: Unknown exception");
+  }
+  return dub_error(L);
+}
+
 /** LuaStackSize mdns::Registration::getService(lua_State *L)
- * include/mdns/Registration.h:61
+ * include/mdns/Registration.h:79
  */
 static int Registration_getService(lua_State *L) {
   try {
@@ -97,22 +127,6 @@ static int Registration_getService(lua_State *L) {
     lua_pushfstring(L, "mdns.Registration.getService: %s", e.what());
   } catch (...) {
     lua_pushfstring(L, "mdns.Registration.getService: Unknown exception");
-  }
-  return dub_error(L);
-}
-
-/** const char* mdns::AbstractRegistration::name()
- * include/mdns/AbstractRegistration.h:48
- */
-static int Registration_name(lua_State *L) {
-  try {
-    Registration *self = *((Registration **)dub_checksdata(L, 1, "mdns.Registration"));
-    lua_pushstring(L, self->name());
-    return 1;
-  } catch (std::exception &e) {
-    lua_pushfstring(L, "mdns.AbstractRegistration.name: %s", e.what());
-  } catch (...) {
-    lua_pushfstring(L, "mdns.AbstractRegistration.name: Unknown exception");
   }
   return dub_error(L);
 }
@@ -130,12 +144,13 @@ static int Registration___tostring(lua_State *L) {
 // --=============================================== METHODS
 
 static const struct luaL_Reg Registration_member_methods[] = {
-  { "_cast_"       , Registration__cast_  },
   { "new"          , Registration_Registration },
   { "__gc"         , Registration__Registration },
   { "fd"           , Registration_fd      },
-  { "getService"   , Registration_getService },
+  { "start"        , Registration_start   },
+  { "stop"         , Registration_stop    },
   { "name"         , Registration_name    },
+  { "getService"   , Registration_getService },
   { "__tostring"   , Registration___tostring },
   { NULL, NULL},
 };
