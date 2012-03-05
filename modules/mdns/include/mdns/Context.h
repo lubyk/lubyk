@@ -39,6 +39,7 @@ namespace mdns {
 /** Singleton used to handle mdns queries on some platforms.
  *
  * @dub push: pushobject
+ *      register: Context_core
  *      ignore: context, addSelectCallback
  */
 class Context : public dub::Thread {
@@ -58,13 +59,19 @@ public:
       throw dub::Exception("Missing 'addSelectCallback' !");
     }
     clbk->pushobject(dub_L, clbk, "lk.SelectCallback", true);
-    dub_call(1, 0);
+    // <func> <self> <clbk>
+    dub_call(2, 0);
   }
 
 
   /** @internal. Platform specific context.
    */
   void *context();
+
+  /** @internal. Used to perform initialization once Lua context
+   * is properly initialized.
+   */
+  virtual void pushobject(lua_State *L, void *ptr, const char *type_name, bool gc = true);
 };
 } // mdns
 

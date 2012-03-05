@@ -6,8 +6,9 @@
   This class is returned from mdns.Browser.
 
 --]]------------------------------------------------------
-local lib = mdns.Service_
-local constr = mdns.Service
+require 'mdns.core'
+local lib = mdns.Service_core
+local constr = lib.new
 local private = {}
 
 -- Disable constructor from Lua for now.

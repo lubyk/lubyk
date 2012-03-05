@@ -12,7 +12,7 @@
 using namespace mdns;
 
 /** mdns::Registration::Registration(Context *ctx, const char *service_type, const char *name, int port, const char *txt)
- * include/mdns/Registration.h:57
+ * modules/mdns/include/mdns/Registration.h:58
  */
 static int Registration_Registration(lua_State *L) {
   try {
@@ -33,7 +33,7 @@ static int Registration_Registration(lua_State *L) {
 }
 
 /** mdns::Registration::~Registration()
- * include/mdns/Registration.h:59
+ * modules/mdns/include/mdns/Registration.h:60
  */
 static int Registration__Registration(lua_State *L) {
   try {
@@ -53,7 +53,7 @@ static int Registration__Registration(lua_State *L) {
 }
 
 /** int mdns::Registration::fd()
- * include/mdns/Registration.h:61
+ * modules/mdns/include/mdns/Registration.h:62
  */
 static int Registration_fd(lua_State *L) {
   try {
@@ -69,7 +69,7 @@ static int Registration_fd(lua_State *L) {
 }
 
 /** void mdns::Registration::start()
- * include/mdns/Registration.h:67
+ * modules/mdns/include/mdns/Registration.h:68
  */
 static int Registration_start(lua_State *L) {
   try {
@@ -85,7 +85,7 @@ static int Registration_start(lua_State *L) {
 }
 
 /** void mdns::Registration::stop()
- * include/mdns/Registration.h:71
+ * modules/mdns/include/mdns/Registration.h:72
  */
 static int Registration_stop(lua_State *L) {
   try {
@@ -101,7 +101,7 @@ static int Registration_stop(lua_State *L) {
 }
 
 /** const char* mdns::Registration::name()
- * include/mdns/Registration.h:73
+ * modules/mdns/include/mdns/Registration.h:74
  */
 static int Registration_name(lua_State *L) {
   try {
@@ -117,7 +117,7 @@ static int Registration_name(lua_State *L) {
 }
 
 /** LuaStackSize mdns::Registration::getService(lua_State *L)
- * include/mdns/Registration.h:79
+ * modules/mdns/include/mdns/Registration.h:80
  */
 static int Registration_getService(lua_State *L) {
   try {
@@ -165,7 +165,7 @@ extern "C" int luaopen_mdns_Registration(lua_State *L)
   // register member methods
   luaL_register(L, NULL, Registration_member_methods);
   // save meta-table in mdns
-  dub_register(L, "mdns", "Registration");
+  dub_register(L, "mdns", "Registration_core");
   // <mt>
   lua_pop(L, 1);
   return 0;

@@ -11,6 +11,7 @@ require 'lubyk'
 
 local should = test.Suite('mdns')
 local timeout = 5000
+test.verbose = true
 
 function should.register()
   local continue = false

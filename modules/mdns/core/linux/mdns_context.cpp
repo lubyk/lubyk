@@ -51,13 +51,18 @@ class AvahiWatch : public lk::SelectCallback {
   AvahiWatchCallback callback_;
   bool in_callback_;
   Context *ctx_;
+  /** Obscure field used internally by Avahi.
+   * This is *NOT* our own userdata passed in sNew.
+   */
+  void *userdata_;
 public:
-  AvahiWatch(int fd, AvahiWatchEvent event, AvahiWatchCallback callback, Context *ctx)
+  AvahiWatch(int fd, AvahiWatchEvent event, AvahiWatchCallback callback, Context *ctx, void *userdata)
     : lk::SelectCallback(fd)
     , last_event_(event)
     , callback_(callback)
     , in_callback_(false)
-    , ctx_(ctx) {
+    , ctx_(ctx)
+    , userdata_(userdata) {
     // This registers the class into lua.
     ctx_->addSelectCallback(this);
     // Insert fd in proper fields.
@@ -76,18 +81,20 @@ public:
   }
 
   virtual void callback(bool read, bool write, bool timeout) {
+    printf("Watch callback.\n");
     if (read) {
       last_event_ = AVAHI_WATCH_IN;
       in_callback_ = true;
-      callback_(this, fd_, last_event_, ctx_); // ctx_ = userdata
+      callback_(this, fd_, last_event_, userdata_);
       in_callback_ = false;
     }
     if (write) {
       last_event_ = AVAHI_WATCH_OUT;
       in_callback_ = true;
-      callback_(this, fd_, last_event_, ctx_); // ctx_ = userdata
+      callback_(this, fd_, last_event_, userdata_);
       in_callback_ = false;
     }
+    printf("Watch callback done.\n");
   }
 
   AvahiWatchEvent events() const {
@@ -101,14 +108,20 @@ public:
 class AvahiTimeout : public lk::SelectCallback {
   AvahiTimeoutCallback callback_;
   Context *ctx_;
+  /** Obscure field used internally by Avahi.
+   * This is *NOT* our own userdata passed in sNew.
+   */
+  void *userdata_;
 public:
   AvahiTimeout(
       const struct timeval *tv,
       AvahiTimeoutCallback callback,
-      Context *ctx)
+      Context *ctx,
+      void *userdata)
     : lk::SelectCallback(0)
     , callback_(callback)
-    , ctx_(ctx) {
+    , ctx_(ctx)
+    , userdata_(userdata) {
     // This registers the class into lua.
     ctx_->addSelectCallback(this);
     // Insert fd in proper fields.
@@ -134,9 +147,11 @@ public:
   }
 
   virtual void callback(bool read, bool write, bool timeout) {
+    printf("Timeout callback.\n");
     if (timeout) {
-      callback_(this, ctx_); // ctx_ = userdata
+      callback_(this, userdata_);
     }
+    printf("Timeout callback done.\n");
   }
 };
 
@@ -145,19 +160,28 @@ namespace mdns {
 class Context::Implementation {
   AvahiClient *client_;
   Context *ctx_;
+  AvahiPoll *poll_api_;
 public:
   Implementation(Context *ctx)
     : client_(NULL)
     , ctx_(ctx)
-  {
+    , poll_api_(NULL)
+  {}
+
+  /** This is called once the Lua state is properly initialized because
+   * addSelectCallback will get called directly.
+   */
+  void start() {
     int error;
                               
     // This calls sNew
+    poll_api_ = new AvahiPoll;
+    setupAPI(poll_api_, ctx_);     // ctx_ ends in poll_api_->userdata
     client_ = avahi_client_new(
-        pollAPI(),                 // Our Lua coroutine fd based API
+        poll_api_,                 // Our Lua coroutine fd based API
         (AvahiClientFlags)0,                         // No flags
         sClientCallback,           // Client callbacks
-        ctx_,                      // Context
+        ctx_,                      // This ends in client_->userdata
         &error);                   // error
 
     if (!client_) {
@@ -167,6 +191,7 @@ public:
 
   ~Implementation() {
     if (client_) avahi_client_free(client_);
+    if (poll_api_) delete poll_api_;
   }
 
   void *context() {
@@ -229,8 +254,8 @@ public:
       AvahiWatchEvent event,
       AvahiWatchCallback callback,
       void *userdata) {
-    Context *ctx = (Context*)userdata;
-    return new AvahiWatch(fd, event, callback, ctx);
+    Context *ctx = (Context*)api->userdata;
+    return new AvahiWatch(fd, event, callback, ctx, userdata);
   }
 
   /** Read/write events changed. Update the scheduler (calls lk.SelectCallback::update).
@@ -252,8 +277,8 @@ public:
       const struct timeval *tv,
       AvahiTimeoutCallback callback,
       void *userdata) {
-    Context *ctx = (Context*)userdata;
-    return new AvahiTimeout(tv, callback, ctx);
+    Context *ctx = (Context*)api->userdata;
+    return new AvahiTimeout(tv, callback, ctx, userdata);
   }
 
   static void sUpdateTimeout(
@@ -266,22 +291,18 @@ public:
     delete t;
   }
 
-  /** This is just a C++ trick to allocate and return static
-   * data. The poll_functions data contains all our callbacks.
+  /** Create a new pollAPI struct with our Context as userdata
+   * and our callbacks.
    */
-  const AvahiPoll* pollAPI(void) {
-    static const AvahiPoll poll_functions = {
-      NULL,
-      sNew,
-      sUpdate,
-      sGetEvents,
-      sFree,
-      sNewTimeout,
-      sUpdateTimeout,
-      sFreeTimeout,
-    };
-
-    return &poll_functions;
+  void setupAPI(AvahiPoll *poll, void *userdata) {
+    poll->userdata = userdata;
+    poll->watch_new = sNew;
+    poll->watch_update = sUpdate;
+    poll->watch_get_events = sGetEvents;
+    poll->watch_free = sFree;
+    poll->timeout_new = sNewTimeout;
+    poll->timeout_update = sUpdateTimeout;
+    poll->timeout_free = sFreeTimeout;
   }
 
 };
@@ -298,6 +319,11 @@ Context::~Context() {
  */
 void *Context::context() {
   return impl_->context();
+}
+
+void Context::pushobject(lua_State *L, void *ptr, const char *type_name, bool gc) {
+  dub::Thread::pushobject(L, ptr, type_name, gc);
+  impl_->start();
 }
 
 } // mdns

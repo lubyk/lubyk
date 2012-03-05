@@ -12,7 +12,7 @@
 using namespace mdns;
 
 /** mdns::Context::Context()
- * include/mdns/Context.h:48
+ * modules/mdns/include/mdns/Context.h:49
  */
 static int Context_Context(lua_State *L) {
   try {
@@ -28,7 +28,7 @@ static int Context_Context(lua_State *L) {
 }
 
 /** mdns::Context::~Context()
- * include/mdns/Context.h:50
+ * modules/mdns/include/mdns/Context.h:51
  */
 static int Context__Context(lua_State *L) {
   try {
@@ -76,7 +76,7 @@ extern "C" int luaopen_mdns_Context(lua_State *L)
   // register member methods
   luaL_register(L, NULL, Context_member_methods);
   // save meta-table in mdns
-  dub_register(L, "mdns", "Context");
+  dub_register(L, "mdns", "Context_core");
   // <mt>
   lua_pop(L, 1);
   return 0;

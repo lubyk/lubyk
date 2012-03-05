@@ -42,5 +42,9 @@ void *Context::context() {
   return NULL;
 }
 
+void Context::pushobject(lua_State *L, void *ptr, const char *type_name, bool gc = true) {
+  dub::Thread::pushobject(L, ptr, type_name, gc);
+}
+
 } // mdns
 

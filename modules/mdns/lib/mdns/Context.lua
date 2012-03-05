@@ -6,24 +6,36 @@
   This class is used internally.
 
 --]]------------------------------------------------------
-local lib = mdns.core.Context
--- Hide internals
+require 'mdns.core'
+local lib = mdns.Context_core
 local WeakValue = {__mode = 'v'}
 
 function mdns.Context()
   local self = lib.new()
-  self.callbacks = {}
+  if not self.callbacks then
+    self.callbacks = {}
+  end
   self.registrations = setmetatable({}, WeakValue)
-  if Lubyk.plat == 'macosx' then
-    -- On macosx, we can always start the registration right away.
-    self.running = true
-  else
+  if self.running then
+    -- 'start' was called directly during 'new', call again
+    -- now that self.registrations is set.
     self.running = false
+    self:start()
+  else
+    if Lubyk.plat == 'macosx' then
+      -- On macosx, we can always start the registration right away.
+      self.running = true
+    else
+      self.running = false
+    end
   end
   return self
 end
 
 function lib:addSelectCallback(clbk)
+  if not self.callbacks then
+    self.callbacks = {}
+  end
   -- Insertion into the sceduler will be done in lk.SelectCallback.update.
 
   -- Protect from GC
@@ -53,10 +65,14 @@ end
 function lib:start()
   -- Server is ready, register our services.
   if not self.running then
-    for _, reg in pairs(self.registrations) do
-      local ok, err = pcall(reg.start, reg)
-      if not ok then
-        sched:log('error', err)
+    if self.registrations then
+      -- In case this is called before we finished setting up
+      -- mdns.Context in 'new'.
+      for _, reg in pairs(self.registrations) do
+        local ok, err = pcall(reg.start, reg)
+        if not ok then
+          sched:log('error', err)
+        end
       end
     end
     self.running = true
@@ -75,5 +91,4 @@ function lib:stop(reg)
     self.running = false
   end
 end
-
 

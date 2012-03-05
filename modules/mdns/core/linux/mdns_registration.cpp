@@ -144,7 +144,7 @@ public:
         // error
         if (error == AVAHI_ERR_COLLISION) {
           // collision with local service name
-          nextname();
+          nextName();
           avahi_entry_group_reset(avahi_group_);
           // retry
           start();
@@ -152,7 +152,7 @@ public:
           // Other error
           throw dub::Exception("Could not add '%s' with type '%s' (%s).",
                                   name_,
-                                  registration_->service_type_.c_str(),
+                                  master_->service_type_.c_str(),
                                   avahi_strerror(error));
         }
       }
@@ -178,7 +178,7 @@ public:
       case AVAHI_ENTRY_GROUP_ESTABLISHED:
         // done !
         impl->master_->name_ = impl->name_;
-        impl->master_->host_ = avahi_client_get_host_name(impl->cient_);
+        impl->master_->host_ = avahi_client_get_host_name(impl->client_);
         // Write a single byte into our pipe so that the
         // scheduler halts by. This is used to keep the same
         // fd based interface as with macosx's version.
@@ -208,7 +208,7 @@ Registration::Registration(
     Context *ctx,
     const char *service_type,
     const char *name,
-    uint port,
+    int port,
     const char *txt)
     : name_(name), service_type_(service_type), port_(port), txt_(txt), fd_(0) {
   impl_ = new Registration::Implementation(this, ctx);

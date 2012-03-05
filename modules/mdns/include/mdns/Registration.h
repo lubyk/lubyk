@@ -37,9 +37,10 @@ class Context;
 
 /** Register a service for a given service type.
  *
- * @dub string_format: %%s
+ * @dub push: pushobject
+ *      register: Registration_core
+ *      string_format: %%s
  *      string_args: self->name()
- *      push: pushobject
  *      
  */
 class Registration : public dub::Thread {

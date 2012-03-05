@@ -12,7 +12,7 @@
 using namespace mdns;
 
 /** mdns::Service::Service(std::string service_type, const char *name, int interface_index, const char *type, const char *domain, bool is_add)
- * include/mdns/Service.h:69
+ * modules/mdns/include/mdns/Service.h:71
  */
 static int Service_Service(lua_State *L) {
   try {
@@ -24,7 +24,7 @@ static int Service_Service(lua_State *L) {
     const char *domain = dub_checkstring(L, 5);
     bool is_add = dub_checkboolean(L, 6);
     Service *retval__ = new Service(std::string(service_type, service_type_sz_), name, interface_index, type, domain, is_add);
-    dub_pushudata(L, retval__, "mdns.Service", true);
+    retval__->pushobject(L, retval__, "mdns.Service", true);
     return 1;
   } catch (std::exception &e) {
     lua_pushfstring(L, "mdns.Service.Service: %s", e.what());
@@ -35,7 +35,7 @@ static int Service_Service(lua_State *L) {
 }
 
 /** virtual mdns::Service::~Service()
- * include/mdns/Service.h:71
+ * modules/mdns/include/mdns/Service.h:73
  */
 static int Service__Service(lua_State *L) {
   try {
@@ -55,7 +55,7 @@ static int Service__Service(lua_State *L) {
 }
 
 /** LuaStackSize mdns::Service::fd(lua_State *L)
- * include/mdns/Service.h:73
+ * modules/mdns/include/mdns/Service.h:75
  */
 static int Service_fd(lua_State *L) {
   try {
@@ -70,7 +70,7 @@ static int Service_fd(lua_State *L) {
 }
 
 /** bool mdns::Service::isAdd()
- * include/mdns/Service.h:82
+ * modules/mdns/include/mdns/Service.h:84
  */
 static int Service_isAdd(lua_State *L) {
   try {
@@ -86,7 +86,7 @@ static int Service_isAdd(lua_State *L) {
 }
 
 /** const char* mdns::Service::name()
- * include/mdns/Service.h:86
+ * modules/mdns/include/mdns/Service.h:88
  */
 static int Service_name(lua_State *L) {
   try {
@@ -102,7 +102,7 @@ static int Service_name(lua_State *L) {
 }
 
 /** LuaStackSize mdns::Service::serviceType(lua_State *L)
- * include/mdns/Service.h:90
+ * modules/mdns/include/mdns/Service.h:92
  */
 static int Service_serviceType(lua_State *L) {
   try {
@@ -117,7 +117,7 @@ static int Service_serviceType(lua_State *L) {
 }
 
 /** LuaStackSize mdns::Service::info(lua_State *L)
- * include/mdns/Service.h:97
+ * modules/mdns/include/mdns/Service.h:99
  */
 static int Service_info(lua_State *L) {
   try {
@@ -132,7 +132,7 @@ static int Service_info(lua_State *L) {
 }
 
 /** void mdns::Service::set(const char *hostname, int port, std::string txt)
- * include/mdns/Service.h:138
+ * modules/mdns/include/mdns/Service.h:140
  */
 static int Service_set(lua_State *L) {
   try {
@@ -186,7 +186,7 @@ extern "C" int luaopen_mdns_Service(lua_State *L)
   // register member methods
   luaL_register(L, NULL, Service_member_methods);
   // save meta-table in mdns
-  dub_register(L, "mdns", "Service");
+  dub_register(L, "mdns", "Service_core");
   // <mt>
   lua_pop(L, 1);
   return 0;

@@ -41,7 +41,9 @@ namespace mdns {
 
 /** This class holds a service as found by an mnds.Browser. 
  *
- * @dub string_format: %%s
+ * @dub push: pushobject
+ *      register: Service_core
+ *      string_format: %%s
  *      string_args: self->name()
  *      ignore: set
  */

@@ -9,7 +9,8 @@
   browser).
 
 --]]------------------------------------------------------
-local lib = mdns.core.Browser
+require 'mdns.core'
+local lib = mdns.Browser_core
 local constr  = lib.new
 local private = {}
 
@@ -98,4 +99,3 @@ function lib:browseCallback(service)
     self:removeDevice({name = name})
   end
 end
-

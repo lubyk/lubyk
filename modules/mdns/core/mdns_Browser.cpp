@@ -12,7 +12,7 @@
 using namespace mdns;
 
 /** mdns::Browser::Browser(mdns::Context *ctx, const char *service_type)
- * include/mdns/Browser.h:64
+ * modules/mdns/include/mdns/Browser.h:65
  */
 static int Browser_Browser(lua_State *L) {
   try {
@@ -30,7 +30,7 @@ static int Browser_Browser(lua_State *L) {
 }
 
 /** mdns::Browser::~Browser()
- * include/mdns/Browser.h:66
+ * modules/mdns/include/mdns/Browser.h:67
  */
 static int Browser__Browser(lua_State *L) {
   try {
@@ -50,7 +50,7 @@ static int Browser__Browser(lua_State *L) {
 }
 
 /** const char* mdns::Browser::serviceType()
- * include/mdns/Browser.h:68
+ * modules/mdns/include/mdns/Browser.h:69
  */
 static int Browser_serviceType(lua_State *L) {
   try {
@@ -66,7 +66,7 @@ static int Browser_serviceType(lua_State *L) {
 }
 
 /** int mdns::Browser::fd()
- * include/mdns/Browser.h:74
+ * modules/mdns/include/mdns/Browser.h:75
  */
 static int Browser_fd(lua_State *L) {
   try {
@@ -82,7 +82,7 @@ static int Browser_fd(lua_State *L) {
 }
 
 /** LuaStackSize mdns::Browser::getService(lua_State *L)
- * include/mdns/Browser.h:82
+ * modules/mdns/include/mdns/Browser.h:83
  */
 static int Browser_getService(lua_State *L) {
   try {
@@ -128,7 +128,7 @@ extern "C" int luaopen_mdns_Browser(lua_State *L)
   // register member methods
   luaL_register(L, NULL, Browser_member_methods);
   // save meta-table in mdns
-  dub_register(L, "mdns", "Browser");
+  dub_register(L, "mdns", "Browser_core");
   // <mt>
   lua_pop(L, 1);
   return 0;

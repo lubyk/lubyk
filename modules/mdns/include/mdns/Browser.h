@@ -42,6 +42,7 @@ class Context;
  * when devices are added or removed.
  *
  * @dub push: pushobject
+ *      register: Browser_core
  *      string_format: %%s
  *      string_args: self->serviceType()
  */

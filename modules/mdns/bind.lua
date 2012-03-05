@@ -7,7 +7,7 @@
   bindings for mdns.
 
   Input:  headers in 'include/mdns'
-  Output: cpp files in 'sub/core'
+  Output: cpp files in 'core'
 
 --]]------------------------------------------------------
 require 'lubyk'

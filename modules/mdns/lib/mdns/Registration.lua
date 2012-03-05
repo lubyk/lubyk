@@ -9,7 +9,8 @@
   registration).
 
 --]]------------------------------------------------------
-local lib = mdns.core.Registration
+require 'mdns.core'
+local lib = mdns.Registration_core
 local constr = lib.new
 
 local function dummy()
