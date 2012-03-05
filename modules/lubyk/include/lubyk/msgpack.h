@@ -29,8 +29,6 @@
 #ifndef LUBYK_INCLUDE_LUBYK_MSGPACK_H_
 #define LUBYK_INCLUDE_LUBYK_MSGPACK_H_
 
-#include "lubyk.h"
-
 // This header only declares msgpack_bin_to_lua and msgpack_lua_to_bin with
 // the minimal other information needed to use these.
 // If you need to manually pack/unpack data, please include 'msgpack/msgpack.h'
@@ -46,7 +44,5 @@ extern "C" {
 bool msgpack_lua_to_bin(lua_State *L, msgpack_sbuffer **buffer, int skip_index = 0);
 int  msgpack_bin_to_lua(lua_State *L, void *msg, size_t msg_len);
 void free_msgpack_msg(void *data, void *buffer);
-
-
 
 #endif // LUBYK_INCLUDE_LUBYK_MSGPACK_H_

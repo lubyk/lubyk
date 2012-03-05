@@ -44,7 +44,7 @@ static const struct lua_constants_Reg zmq_namespace_constants[] = {
   {"BACKLOG"                       , zmq::BACKLOG},
   {"POLLIN"                        , zmq::POLLIN},
   {"POLLOUT"                       , zmq::POLLOUT},
-  {NULL, NULL},
+  {NULL, 0},
 };
 
 

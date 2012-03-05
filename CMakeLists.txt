@@ -8,6 +8,7 @@ cmake_minimum_required(VERSION 2.6.2)
 
 project (LUBYK)
 set(LUBYK_VERSION "0.5")
+set(LUBYK_MODULES ${CMAKE_CURRENT_SOURCE_DIR}/modules)
 
 # ==============================================================================
 #

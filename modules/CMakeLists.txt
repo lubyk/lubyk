@@ -26,18 +26,6 @@ list(REMOVE_ITEM MODULES ${CMAKE_CURRENT_SOURCE_DIR}/bind.rb)
 
 # ==============================================================================
 #
-#  Update all bindings with 'dub' target
-#
-# ==============================================================================
-
-
-# Build files from dub
-add_custom_target(dub
-   COMMAND ruby ${LUBYK_SOURCE_DIR}/modules/bind.rb
-   DEPENDS ${DOXYGEN_OUTPUT})
-
-# ==============================================================================
-#
 #  Macro to create a single module.
 #  This macro expects the following variables to be set:
 #  MODULE_NAME: main module name ('video')

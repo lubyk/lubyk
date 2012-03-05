@@ -15,7 +15,7 @@ add_executable(${target} ${MODULE_SOURCES})
 
 if(LINUX)
   message("LINUX LUA")
-  target_link_libraries(${target} readline dl m)
+  target_link_libraries(${target} readline dl m pthread)
   # $(MAKE) all MYCFLAGS=-DLUA_USE_LINUX MYLIBS="-Wl,-E -ldl -lreadline -lhistory -lncurses"
 else(LINUX)
   target_link_libraries(${target} readline)
