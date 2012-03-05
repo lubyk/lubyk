@@ -8,9 +8,11 @@
   loop to the GUI.
 
 --]]------------------------------------------------------
-require 'lk.SelectCallback_core'
-local constr = lk.SelectCallback
-local lib    = lk.SelectCallback_
+require 'lk.core'
+local constr = lk.SelectCallback_core.new
+local lib    = lk.SelectCallback_core
+lk.SelectCallback = lib
+
 lib.type = 'lk.SelectCallback'
 
 -- Callback from C++ when the fd flags change.
@@ -25,7 +27,7 @@ function lib:update(read, write, timeout)
           local ok, err = pcall(
             self.callback, self, true, false, false)
           if not ok then
-            sched:log('error', err)
+            sched:log('error', 'lk.SelectCallback.update: '.. err)
           end
         end
       end)
@@ -43,7 +45,7 @@ function lib:update(read, write, timeout)
           local ok, err = pcall(
             self.callback, self, false, true, false)
           if not ok then
-            sched:log('error', err)
+            sched:log('error', 'lk.SelectCallback.update: '.. err)
           end
         end
       end)
@@ -53,14 +55,14 @@ function lib:update(read, write, timeout)
     self.write_thread:kill()
     self.write_thread = nil
   end
-  if timeout then
+  if timeout >= 0 then
     if not self.timeout_thread then
       self.timeout_thread = lk.Thread(function()
         sleep(timeout)
         local ok, err = pcall(
         self.callback, self, false, false, true)
         if not ok then
-          sched:log('error', err)
+          sched:log('error', 'lk.SelectCallback.update: '.. err)
         end
       end)
       self.timeout_thread = nil

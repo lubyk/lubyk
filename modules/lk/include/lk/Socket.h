@@ -29,7 +29,7 @@
 #ifndef LUBYK_INCLUDE_LK_SOCKET_H_
 #define LUBYK_INCLUDE_LK_SOCKET_H_
 
-#include "lubyk.h"
+#include "dub/dub.h"
 #include "lubyk/msgpack.h"
 
 #include <sys/types.h>
@@ -43,8 +43,6 @@
 
 #include <string>
 
-#include "lua_cpp_helper.h"
-
 // How many pending connections should wait for 'accept'.
 #define BACKLOG 10
 // recv buffer size (must be at least SIZEOF_SIZE)
@@ -52,21 +50,16 @@
 // 4 = size needed to encode SIZE_MAX
 #define SIZEOF_SIZE 4
 
-using namespace lubyk;
-
-typedef int LuaStackSize;
-
 namespace lk {
 
 /** Listen for incoming messages on a given port.
  *
- * @dub lib_name:'Socket_core'
- *      filename:'Socket_core/Socket_core'
+ * @dub push: pushobject
+ *      register: Socket_core
  *      string_format:'%%s:%%d --> %%s:%%d'
- *      string_args:'(*userdata)->localHost(), (*userdata)->localPort(), (*userdata)->remoteHost(), (*userdata)->remotePort()'
+ *      string_args:'self->localHost(), self->localPort(), self->remoteHost(), self->remotePort()'
  */
-class Socket : public LuaObject
-{
+class Socket : public dub::Thread {
   int socket_fd_;
   int socket_type_;
   std::string local_host_;

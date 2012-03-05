@@ -11,8 +11,9 @@
   Usage: lk.Debug('some name', ...)
 
 --]]------------------------------------------------------
-require 'lk.Debug_core'
-local constr = lk.Debug
+-- Load C++ stuff
+require 'lk.core'
+local constr = lk.Debug_core.new
 local lib   = {}
 lib.__index = lib
 lk.Debug    = lib

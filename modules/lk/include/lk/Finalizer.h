@@ -29,31 +29,27 @@
 #ifndef LUBYK_INCLUDE_LK_FINALIZER_H_
 #define LUBYK_INCLUDE_LK_FINALIZER_H_
 
-#include "lubyk.h"
-using namespace lubyk;
+#include "dub/dub.h"
 
 namespace lk {
 /** The sole purpose of this class is to execute some cleanup operation
  * on garbage collection. The object calls "callback" when being garbage
  * collected.
  * 
- * @dub lib_name: 'Finalizer_core'
+ * @dub push: pushobject
  *      destructor: 'finalize'
+ *      register: Finalizer_core
  */
-class Finalizer : public ThreadedLuaObject {
+class Finalizer : public dub::Thread {
 public:
   Finalizer() {}
 
   virtual ~Finalizer() {}
 
   void finalize() {
-    lua_State *L = lua_;
-    if (pushLuaCallback("finalize")) {
+    if (dub_pushcallback("finalize")) {
       // ... <finalize> <self>
-      int status = lua_pcall(L, 1, 0, 0);
-      if (status) {
-        fprintf(stderr, "Error in 'finalize': %s\n", lua_tostring(L, -1));
-      }
+      dub_call(1, 0);
     }
     delete this;
   }

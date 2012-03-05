@@ -6,18 +6,15 @@
   BSD Socket that uses msgpack to send Lua values.
 
 --]]------------------------------------------------------
-require 'lk.Socket_core'
-local constr = lk.Socket
-local lib    = lk.SubClass(lk, 'Socket')
+require 'lk.core'
+local lib    = lk.Socket_core
 lk.Socket    = lib
 
-lib.type = 'lk.Socket'
-lib.TCP  = lk.Socket_const.TCP
-lib.UDP  = lk.Socket_const.UDP
-
+-- Rewrite new
+local constr = lib.new
 function lib.new(func)
   local self = constr(lib.TCP)
-  self.super:setNonBlocking()
+  self:setNonBlocking()
   self.clients = {}
   if func then
     self.thread = lk.Thread(function()

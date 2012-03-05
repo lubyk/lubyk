@@ -226,6 +226,23 @@ function lk.join(list, sep)
   return res
 end
 
+-------------------------------- lk.insertSorted(table, string)
+-- Insert a string into a table, keeping entries sorted.
+function lk.insertSorted(list, str)
+  local pos = -1
+  for i, n in ipairs(list) do
+    if n > str then
+      pos = i
+      break
+    end
+  end
+  if pos == -1 then
+    table.insert(list, str)
+  else
+    table.insert(list, pos, str)
+  end
+end
+
 -------------------------------- lk.absToRel(abs_string, base)
 -- Transform an absolute url to a relative with given base
 function lk.absToRel(abs_string, base)

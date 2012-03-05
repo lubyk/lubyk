@@ -13,8 +13,8 @@
   Usage: lk.Finalizer(func)
 
 --]]------------------------------------------------------
-require 'lk.Finalizer_core'
-local constr    = lk.Finalizer
+require 'lk.core'
+local constr    = lk.Finalizer_core.new
 
 local function dummy() end
 

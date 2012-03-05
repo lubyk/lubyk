@@ -29,16 +29,16 @@
 #ifndef LUBYK_INCLUDE_LK_DEBUG_H_
 #define LUBYK_INCLUDE_LK_DEBUG_H_
 
-#include "lubyk.h"
-using namespace lubyk;
+#include "dub/dub.h"
 
 namespace lk {
 /** The sole purpose of this class is to ease garbage collection testing
  * in lua. The object calls "callback" when being garbage collected.
  * 
- * @dub lib_name: 'Debug_core'
+ * @dub push: pushobject
+ *      register: Debug_core
  */
-class Debug : public ThreadedLuaObject {
+class Debug : public dub::Thread {
   std::string name_;
 public:
   Debug(lua_State *L) {
@@ -61,13 +61,9 @@ public:
 
   virtual ~Debug() {
     printf("-------------- ~%s\n", name_.c_str());
-    if (!pushLuaCallback("callback")) return;
+    if (!dub_pushcallback("callback")) return;
     // <func> <self>
-    int status = lua_pcall(lua_, 1, 0, 0);
-
-    if (status) {
-      printf("Error in callback function: %s\n", lua_tostring(lua_, -1));
-    }
+    dub_call(1, 0);
   }
 
   /** Return userdata type and pointer value.

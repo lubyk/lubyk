@@ -48,6 +48,8 @@ namespace lk {
  * collected (keep a link to the object from Lua).
  * 
  * @dub destructor: 'luaDestroy'
+ *      push: pushobject
+ *      register: SelectCallback_core
  */
 class SelectCallback : public dub::Thread {
 protected:
