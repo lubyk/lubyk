@@ -29,11 +29,11 @@
 #ifndef LUBYK_INCLUDE_MDNS_REGISTRATION_H_
 #define LUBYK_INCLUDE_MDNS_REGISTRATION_H_
 
-#include "mdns/AbstractRegistration.h"
-
 #include "dub/dub.h"
 
 namespace mdns {
+
+class Context;
 
 /** Register a service for a given service type.
  *
@@ -42,24 +42,42 @@ namespace mdns {
  *      push: pushobject
  *      
  */
-class Registration : public AbstractRegistration, public dub::Thread {
+class Registration : public dub::Thread {
+  std::string name_;
+  std::string host_;
+  std::string service_type_;
+  uint        port_;
+  std::string txt_;
+  int fd_;
+
+  class Implementation;
+  Implementation *impl_;
 public:
 
-  Registration(const char *service_type, const char *name, uint port, const char *txt)
-      : AbstractRegistration(service_type, name, port, txt) {
-  }
+  Registration(Context *ctx, const char *service_type, const char *name, uint port, const char *txt);
 
-  ~Registration() {
-  }
+  ~Registration();
 
   int fd() {
     return fd_;
   }
 
+  /** @internal.
+   */
+  void start();
+
+  /** @internal.
+   */
+  void stop();
+
+  const char *name() {
+    return name_.c_str();
+  }
+
   /** Get a table describing the service.
    */
   LuaStackSize getService(lua_State *L) {
-    if (!AbstractRegistration::getService()) {
+    if (!getService()) {
       // TODO: Something went wrong, we should return nil, error ?
       return 0;
     }
@@ -80,6 +98,9 @@ public:
     // <table>
     return 1;
   }
+
+private:
+  bool getService();
 };
 
 } // mdns

@@ -48,6 +48,9 @@ local function buildTXT(dict)
   end
   return txt
 end
+
+local ctx = mdns.Context()
+
 --- We should provide a socket to inform when registration is over (callback).
 -- This socket could be the default zmq.REQ socket used to by lk.Service ?
 function mdns.Registration(service_type, name, port, txt, func)
@@ -58,7 +61,7 @@ function mdns.Registration(service_type, name, port, txt, func)
     end
   end
   txt = buildTXT(txt)
-  local self = constr(service_type, name, port, txt)
+  local self = constr(ctx, service_type, name, port, txt)
   self.callback = func or dummy
   self.txt = txt
   self.thread = lk.Thread(function()

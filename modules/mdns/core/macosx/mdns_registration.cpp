@@ -47,15 +47,15 @@ typedef	int	pid_t;
 
 #include <dns_sd.h>     // zeroconf
 
-#include "mdns/AbstractRegistration.h"
+#include "mdns/Registration.h"
 
 
 namespace mdns {
 
-class AbstractRegistration::Implementation {
+class Registration::Implementation {
   DNSServiceRef service_;
 public:
-  Implementation(AbstractRegistration *master) : master_(master) {
+  Implementation(Registration *master) : master_(master) {
     getFiledescriptor();
   }
 
@@ -110,26 +110,39 @@ public:
     if (error != kDNSServiceErr_NoError) {
       fprintf(stderr, "DNSServiceRegister error (%d).\n", error);
     } else {
-      AbstractRegistration *reg = (AbstractRegistration*)context;
+      Registration *reg = (Registration*)context;
       reg->name_ = name;
       reg->host_ = host;
     }
   }
-  AbstractRegistration *master_;
+  Registration *master_;
 };
 
 
-AbstractRegistration::AbstractRegistration(const char *service_type, const char *name, uint port, const char *txt)
+Registration::Registration(
+    Context *ctx,
+    const char *service_type,
+    const char *name,
+    uint port,
+    const char *txt)
     : name_(name), service_type_(service_type), port_(port), txt_(txt), fd_(0) {
-  impl_ = new AbstractRegistration::Implementation(this);
+  impl_ = new Registration::Implementation(this);
 }
 
-AbstractRegistration::~AbstractRegistration() {
+Registration::~Registration() {
   delete impl_;
 }
 
-bool AbstractRegistration::getService() {
+bool Registration::getService() {
   return impl_->getService();
+}
+
+void Registration::start() {
+  // noop
+}
+
+void Registration::stop() {
+  // noop
 }
 
 } // mdns

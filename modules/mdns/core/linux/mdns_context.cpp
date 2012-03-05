@@ -178,8 +178,42 @@ public:
    */
   static void sClientCallback(AvahiClient *c, AvahiClientState state, void *userdata) {
     // Called whenever the client or server state changes.
-    if (state == AVAHI_CLIENT_FAILURE) {
-      throw dub::Exception("Server connection failure (%s).", avahi_strerror(avahi_client_errno(c)));
+    Context *context = (Context*)userdata;
+    switch(state) {
+      case AVAHI_CLIENT_S_RUNNING:
+        /** Ready to process registrations.
+         */
+        if (!context->dub_pushcallback("start")) {
+          throw dub::Exception("Missing 'start' callback for mdns.Context.");
+        }
+        context->dub_call(1, 0);
+        break;
+      case AVAHI_CLIENT_FAILURE:
+        /** Something went really wrong...
+         */
+        if (!context->dub_pushcallback("failure")) {
+          throw dub::Exception("Missing 'failure' callback for mdns.Context.");
+        }
+        lua_pushstring(context->dub_L, avahi_strerror(avahi_client_errno(c)));
+        // <func> <self> <err>
+        context->dub_call(2, 0);
+        break;
+      case AVAHI_CLIENT_S_COLLISION: /* continue */
+        /** Another host with same name is on the network. Remove our
+         * registered services until things come back to normal.
+         */
+      case AVAHI_CLIENT_S_REGISTERING:
+        /** The server is registering, remove our services until things
+         * come back to normal.
+         */
+        if (!context->dub_pushcallback("stop")) {
+          throw dub::Exception("Missing 'stop' callback for mdns.Context.");
+        }
+        context->dub_call(1, 0);
+        break;
+      case AVAHI_CLIENT_CONNECTING:
+        // ignore
+        ;
     }
   }
 
