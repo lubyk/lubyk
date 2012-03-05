@@ -9,9 +9,8 @@
   registration).
 
 --]]------------------------------------------------------
-require 'mdns.Registration_core'
-local constr = mdns.Registration
-local mt = mdns.Registration_
+local lib = mdns.core.Registration
+local constr = lib.new
 
 local function dummy()
   -- noop
@@ -71,7 +70,7 @@ function mdns.Registration(service_type, name, port, txt, func)
   return self
 end
 
-function mt:kill()
+function lib:kill()
   if self.thread then
     self.thread:kill()
     self.thread = nil

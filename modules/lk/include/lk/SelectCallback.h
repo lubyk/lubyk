@@ -29,8 +29,7 @@
 #ifndef LUBYK_INCLUDE_LK_SELECT_CALLBACK_H_
 #define LUBYK_INCLUDE_LK_SELECT_CALLBACK_H_
 
-#include "lubyk.h"
-using namespace lubyk;
+#include "dub/dub.h"
 
 namespace lk {
 /** This class is used to help integrate foreign libraries inside our
@@ -48,10 +47,9 @@ namespace lk {
  * and then call :init() on the lua class and ensure it is not garbage
  * collected (keep a link to the object from Lua).
  * 
- * @dub lib_name: 'SelectCallback_core'
- *      destructor: 'finalize'
+ * @dub destructor: 'luaDestroy'
  */
-class SelectCallback : public ThreadedLuaObject {
+class SelectCallback : public dub::Thread {
   int fd_;
   double timeout_;
 public:
@@ -62,7 +60,7 @@ public:
 
   virtual ~SelectCallback() {
     if (fd_ != 0 || timeout_ >= 0) {
-      // Call to Lua to remove the file descriptor.
+      // Call to Lua to remove the file descriptor or timeout.
       remove();
       fd_ = 0;
       timeout_ = -1;
@@ -74,13 +72,13 @@ public:
    */
   virtual void callback(bool read, bool write, bool timeout) {}
 
-  /** Destruction initiated by Lua. We should not update when this is
-   * called.
+  /** Destruction initiated by Lua. We invalidate 'remove' before
+   * destruction.
    */
-  void finalize() {
+  void luaDestroy() {
     fd_ = 0;
     timeout_ = -1;
-    luaDestroy();
+    delete this;
   }
 
   int fd() {
@@ -90,19 +88,14 @@ protected:
   /** Called by C++.
    */
   void update(bool read, bool write, double timeout) {
-    lua_State *L = lua_;
-    if (!pushLuaCallback("update")) {
+    if (!dub_pushcallback("update")) {
       throw dub::Exception("Update callback not set.");
     }
-    lua_pushboolean(L, read);
-    lua_pushboolean(L, write);
-    lua_pushnumber(L, timeout);
+    lua_pushboolean(dub_L, read);
+    lua_pushboolean(dub_L, write);
+    lua_pushnumber(dub_L, timeout);
     // <update> <self> <read> <write> <timeout>
-    int status = lua_pcall(lua_, 4, 0, 0);
-
-    if (status) {
-      printf("Error in 'update' function: %s\n", lua_tostring(lua_, -1));
-    }
+    dub_call(4, 0);
     timeout_ = timeout;
   }
   
@@ -110,16 +103,11 @@ private:
   /** Triggered by C++ before delete.
    */
   void remove() {
-    lua_State *L = lua_;
-    if (!pushLuaCallback("remove")) {
+    if (!dub_pushcallback("remove")) {
       throw dub::Exception("Remove callback not set.");
     }
     // <remove> <self>
-    int status = lua_pcall(L, 1, 0, 0);
-
-    if (status) {
-      printf("Error in 'remove' function: %s\n", lua_tostring(lua_, -1));
-    }
+    dub_call(1, 0);
   }
 };
 

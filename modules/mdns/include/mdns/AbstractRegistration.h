@@ -33,6 +33,7 @@
 
 #include "mdns/location.h"
 
+// TODO: Remove this class and keep everything in mdns::Registration.
 namespace mdns {
 
 /** This class let's you easily register an application as providing a certain type of

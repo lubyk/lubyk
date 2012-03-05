@@ -29,10 +29,8 @@
 #ifndef LUBYK_INCLUDE_MDNS_BROWSER_H_
 #define LUBYK_INCLUDE_MDNS_BROWSER_H_
 
-#include "lubyk.h"
+#include "dub/dub.h"
 #include "mdns/Service.h"
-
-using namespace lubyk;
 
 #include <stdlib.h> // atoi
 
@@ -43,12 +41,11 @@ class Context;
 /** Browse for devices matching a give service type. Call a lua function
  * when devices are added or removed.
  *
- * @dub string_format:'%%s'
- *      string_args:'(*userdata)->serviceType()'
- *      lib_name:'core/Browser_core'
+ * @dub push: pushobject
+ *      string_format: %%s
+ *      string_args: self->serviceType()
  */
-class Browser : public ThreadedLuaObject
-{
+class Browser : public dub::Thread {
   /** Protocol used in communication (usually '_lubyk._tcp').
   */
   std::string   protocol_;

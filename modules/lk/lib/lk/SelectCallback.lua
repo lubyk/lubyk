@@ -70,3 +70,22 @@ function lib:update(read, write, timeout)
     self.timeout_thread = nil
   end
 end
+
+-- Remove from scheduler, call finalizer if there exists any.
+function lib:remove()
+  if self.read_thread then
+    self.read_thread:kill()
+    self.read_thread = nil
+  end
+  if self.write_thread then
+    self.write_thread:kill()
+    self.write_thread = nil
+  end
+  if self.timeout_thread then
+    self.timeout_thread:kill()
+    self.timeout_thread = nil
+  end
+  if self.finalize then
+    self.finalize()
+  end
+end

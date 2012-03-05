@@ -54,8 +54,6 @@ typedef	int	pid_t;
 
 #include <queue>
 
-using namespace lubyk;
-
 namespace mdns {
 
 class Browser::Implementation {
@@ -169,9 +167,10 @@ LuaStackSize Browser::getService(lua_State *L) {
   Service *service = impl_->getService();
 
   if (service) {
-    // Service is a LuaThreadedObject. We must push it with proper initialization
-    // on the stack. GC by Lua.
-    return service->luaInit(L, service, "mdns.Service");
+    // Service is a dub::Thread. We must push it with proper initialization
+    // on the stack. GC by Lua.  
+    service->pushobject(L, service, "mdns.Service", true);
+    return 1;
   } else {
     return 0;
   }

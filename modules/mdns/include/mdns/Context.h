@@ -29,11 +29,8 @@
 #ifndef LUBYK_INCLUDE_MDNS_CONTEXT_H_
 #define LUBYK_INCLUDE_MDNS_CONTEXT_H_
 
-#include "lubyk.h"
-#include "mdns/AbstractBrowser.h"
-#include "mdns/Service.h"
-
-using namespace lubyk;
+#include "dub/dub.h"
+#include "lk/SelectCallback.h"
 
 #include <stdlib.h> // atoi
 
@@ -41,11 +38,10 @@ namespace mdns {
 
 /** Singleton used to handle mdns queries on some platforms.
  *
- * @dub lib_name:'Context_core'
- *      ignore:'context,addSelectCallback'
+ * @dub push: pushobject
+ *      ignore: context, addSelectCallback
  */
-class Context : public ThreadedLuaObject
-{
+class Context : public dub::Thread {
   class Implementation;
   Implementation *impl_;
 public:
@@ -56,7 +52,15 @@ public:
   /** @internal. Push a select callback into Lua and insert it into the event
    * loop (lk.Scheduler). This is called from C++, not from Lua.
    */
-  void addSelectCallback(lk::SelectCallback *clbk);
+  void addSelectCallback(lk::SelectCallback *clbk) {
+    if (!dub_pushcallback("addSelectCallback")) {
+      // Should never happen (callback defined in Context.lua)
+      throw dub::Exception("Missing 'addSelectCallback' !");
+    }
+    clbk->pushobject(dub_L, clbk, "lk.SelectCallback", true);
+    dub_call(1, 0);
+  }
+
 
   /** @internal. Platform specific context.
    */

@@ -26,62 +26,21 @@
 
   ==============================================================================
 */
-#ifndef LUBYK_INCLUDE_MDNS_REGISTRATION_H_
-#define LUBYK_INCLUDE_MDNS_REGISTRATION_H_
-
-#include "mdns/AbstractRegistration.h"
-
-#include "dub/dub.h"
+#include "mdns/Context.h"
 
 namespace mdns {
 
-/** Register a service for a given service type.
- *
- * @dub string_format: %%s
- *      string_args: self->name()
- *      push: pushobject
- *      
+Context::Context() {
+}
+
+Context::~Context() {
+}
+
+/** Returns a pointer to the avahi_client_new
  */
-class Registration : public AbstractRegistration, public dub::Thread {
-public:
-
-  Registration(const char *service_type, const char *name, uint port, const char *txt)
-      : AbstractRegistration(service_type, name, port, txt) {
-  }
-
-  ~Registration() {
-  }
-
-  int fd() {
-    return fd_;
-  }
-
-  /** Get a table describing the service.
-   */
-  LuaStackSize getService(lua_State *L) {
-    if (!AbstractRegistration::getService()) {
-      // TODO: Something went wrong, we should return nil, error ?
-      return 0;
-    }
-    // create table {name = 'x', host = '10.0.0.34', port = 7500}
-    lua_newtable(L);
-    // name = 'xxxx'
-    lua_pushstring(L, "name");
-    lua_pushstring(L, name_.c_str());
-    lua_settable(L, -3);
-    // host = 'gaspard.local' / '10.3.4.5'
-    lua_pushstring(L, "host");
-    lua_pushstring(L, host_.c_str());
-    lua_settable(L, -3);
-    // port = 7890
-    lua_pushstring(L, "port");
-    lua_pushnumber(L, port_);
-    lua_settable(L, -3);
-    // <table>
-    return 1;
-  }
-};
+void *Context::context() {
+  return NULL;
+}
 
 } // mdns
 
-#endif // LUBYK_INCLUDE_MDNS_REGISTRATION_H_

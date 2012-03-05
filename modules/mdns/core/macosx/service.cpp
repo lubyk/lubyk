@@ -50,8 +50,6 @@ typedef	int	pid_t;
 
 #include <dns_sd.h>     // zeroconf
 
-using namespace lubyk;
-
 namespace mdns {
 
 class Service::Implementation {

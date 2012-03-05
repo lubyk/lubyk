@@ -9,11 +9,8 @@
   browser).
 
 --]]------------------------------------------------------
-require 'mdns.Browser_core'
--- mdns.Service mt must be loaded
-require 'mdns.Service'
-local lib = mdns.Browser_
-local constr = mdns.Browser
+local lib = mdns.core.Browser
+local constr  = lib.new
 local private = {}
 
 local ctx = mdns.Context()

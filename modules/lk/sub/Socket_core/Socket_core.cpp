@@ -12,7 +12,7 @@ using namespace lk;
 /* ============================ Constructors     ====================== */
 
 /** lk::Socket::Socket(int socket_type)
- * include/lk/Socket.h:112
+ * include/lk/Socket.h:113
  */
 static int Socket_Socket(lua_State *L) {
   try {
@@ -72,7 +72,7 @@ static int Socket__tostring(lua_State *L) {
 
 
 /** LuaStackSize lk::Socket::accept(lua_State *L)
- * include/lk/Socket.h:148
+ * include/lk/Socket.h:149
  */
 static int Socket_accept(lua_State *L) {
   try {
@@ -92,7 +92,7 @@ static int Socket_accept(lua_State *L) {
 
 
 /** int lk::Socket::bind(const char *localhost=NULL, int port=0)
- * include/lk/Socket.h:129
+ * include/lk/Socket.h:130
  */
 static int Socket_bind(lua_State *L) {
   try {
@@ -124,7 +124,7 @@ static int Socket_bind(lua_State *L) {
 
 
 /** void lk::Socket::close()
- * include/lk/Socket.h:119
+ * include/lk/Socket.h:120
  */
 static int Socket_close(lua_State *L) {
   try {
@@ -143,7 +143,7 @@ static int Socket_close(lua_State *L) {
 
 
 /** bool lk::Socket::connect(const char *host, int port)
- * include/lk/Socket.h:134
+ * include/lk/Socket.h:135
  */
 static int Socket_connect(lua_State *L) {
   try {
@@ -165,7 +165,7 @@ static int Socket_connect(lua_State *L) {
 
 
 /** void lk::Socket::connectFinish()
- * include/lk/Socket.h:138
+ * include/lk/Socket.h:139
  */
 static int Socket_connectFinish(lua_State *L) {
   try {
@@ -184,7 +184,7 @@ static int Socket_connectFinish(lua_State *L) {
 
 
 /** int lk::Socket::fd() const 
- * include/lk/Socket.h:223
+ * include/lk/Socket.h:224
  */
 static int Socket_fd(lua_State *L) {
   try {
@@ -204,7 +204,7 @@ static int Socket_fd(lua_State *L) {
 
 
 /** void lk::Socket::listen(int backlog=BACKLOG)
- * include/lk/Socket.h:143
+ * include/lk/Socket.h:144
  */
 static int Socket_listen(lua_State *L) {
   try {
@@ -229,7 +229,7 @@ static int Socket_listen(lua_State *L) {
 
 
 /** const char* lk::Socket::localHost() const 
- * include/lk/Socket.h:203
+ * include/lk/Socket.h:204
  */
 static int Socket_localHost(lua_State *L) {
   try {
@@ -249,7 +249,7 @@ static int Socket_localHost(lua_State *L) {
 
 
 /** int lk::Socket::localPort() const 
- * include/lk/Socket.h:207
+ * include/lk/Socket.h:208
  */
 static int Socket_localPort(lua_State *L) {
   try {
@@ -269,7 +269,7 @@ static int Socket_localPort(lua_State *L) {
 
 
 /** int lk::Socket::port() const 
- * include/lk/Socket.h:219
+ * include/lk/Socket.h:220
  */
 static int Socket_port(lua_State *L) {
   try {
@@ -289,7 +289,7 @@ static int Socket_port(lua_State *L) {
 
 
 /** LuaStackSize lk::Socket::recv(lua_State *L)
- * include/lk/Socket.h:180
+ * include/lk/Socket.h:181
  */
 static int Socket_recv(lua_State *L) {
   try {
@@ -309,7 +309,7 @@ static int Socket_recv(lua_State *L) {
 
 
 /** const char* lk::Socket::remoteHost() const 
- * include/lk/Socket.h:211
+ * include/lk/Socket.h:212
  */
 static int Socket_remoteHost(lua_State *L) {
   try {
@@ -329,7 +329,7 @@ static int Socket_remoteHost(lua_State *L) {
 
 
 /** int lk::Socket::remotePort() const 
- * include/lk/Socket.h:215
+ * include/lk/Socket.h:216
  */
 static int Socket_remotePort(lua_State *L) {
   try {
@@ -349,7 +349,7 @@ static int Socket_remotePort(lua_State *L) {
 
 
 /** int lk::Socket::send(lua_State *L)
- * include/lk/Socket.h:186
+ * include/lk/Socket.h:187
  */
 static int Socket_send(lua_State *L) {
   try {
@@ -370,7 +370,7 @@ static int Socket_send(lua_State *L) {
 
 
 /** void lk::Socket::setNonBlocking()
- * include/lk/Socket.h:158
+ * include/lk/Socket.h:159
  */
 static int Socket_setNonBlocking(lua_State *L) {
   try {
@@ -389,7 +389,7 @@ static int Socket_setNonBlocking(lua_State *L) {
 
 
 /** void lk::Socket::setRecvTimeout(int timeout)
- * include/lk/Socket.h:150
+ * include/lk/Socket.h:151
  */
 static int Socket_setRecvTimeout(lua_State *L) {
   try {
@@ -409,7 +409,7 @@ static int Socket_setRecvTimeout(lua_State *L) {
 
 
 /** void lk::Socket::setSendTimeout(int timeout)
- * include/lk/Socket.h:154
+ * include/lk/Socket.h:155
  */
 static int Socket_setSendTimeout(lua_State *L) {
   try {
@@ -465,7 +465,7 @@ static const struct luaL_Reg Socket_namespace_methods[] = {
 static const struct lua_constants_Reg Socket_namespace_constants[] = {
   {"TCP"               , lk::Socket::TCP},
   {"UDP"               , lk::Socket::UDP},
-  {NULL, 0},
+  {NULL, NULL},
 };
 
 

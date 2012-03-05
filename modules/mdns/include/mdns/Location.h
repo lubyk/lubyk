@@ -39,10 +39,8 @@ namespace mdns {
 
 #define DEFAULT_PROTOCOL "lubyk"
 
-class ZeroConfBrowser;
-
-/** Browse for devices matching a give service type. Call a lua function
- * when devices are added or removed.
+/** This class contains location information (IP, port, host, etc)
+ * FIXME: remove and merge information into mdns.Service
  *
  * @dub string_format:'%%s'
  *      string_args:'(*userdata)->inspect().c_str()'

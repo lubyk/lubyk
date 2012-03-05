@@ -31,8 +31,7 @@
 #define LUBYK_INCLUDE_MDNS_SERVICE_H_
 #include <string>
 
-#include "lubyk.h"
-using namespace lubyk;
+#include "dub/dub.h"
 
 #include "mdns/Location.h"
 
@@ -40,12 +39,11 @@ namespace mdns {
 
 /** This class holds a service as found by an mnds.Browser. 
  *
- * @dub string_format:'%%s'
- *      string_args:'(*userdata)->name()'
- *      lib_name:'core/Service_core'
- *      ignore:'set'
+ * @dub string_format: %%s
+ *      string_args: self->name()
+ *      ignore: set
  */
-class Service : public Location, public ThreadedLuaObject {
+class Service : protected Location, public dub::Thread {
   std::string service_type_;
   std::string name_;
   std::string txt_;
