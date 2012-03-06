@@ -63,7 +63,7 @@ function lib:start(opts)
     callback = function(...)
       return self:callback(...)
     end,
-    registration_callback = function(service)
+    registration_callback = function(reg, service)
       if (Lubyk.zone .. ':') ~= service.name then
         -- We do not want to have two morph servers on the same zone.
         printf("Another morph service is running in zone '%s'. Quit.", Lubyk.zone)

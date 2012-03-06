@@ -32,12 +32,12 @@ function should.browse(t)
   local name2       = 'Doors'
   local device_list = {}
   -- register a service at port 12345
-  local registration = mdns.Registration(lubyk.service_type, name1, 12346, function(service)
+  local registration = mdns.Registration(lubyk.service_type, name1, 12346, function(self, service)
     hostname = service.host
     continue = continue + 1
   end)
 
-  local registration2 = mdns.Registration(lubyk.service_type, name2, 12346, function(service)
+  local registration2 = mdns.Registration(lubyk.service_type, name2, 12346, function(self, service)
     hostname = service.host
     continue = continue + 1
   end)

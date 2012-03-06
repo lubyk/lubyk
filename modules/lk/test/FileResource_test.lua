@@ -63,7 +63,11 @@ end
 function should.listChildren()
   local root = root()
   local proj = lk.FileResource('/project', root)
-  local children = proj:children()
+  local list = proj:children()
+  local children = {}
+  for _, v in ipairs(list) do
+    lk.insertSorted(children, v, 'name')
+  end
   assertEqual(5, #children)
   assertEqual('bang', children[1].name)
   -- should propagate root
@@ -74,7 +78,11 @@ end
 function should.cacheInRoot()
   local root = root()
   local proj = lk.FileResource('/project', root)
-  local children = proj:children()
+  local list = proj:children()
+  local children = {}
+  for _, v in ipairs(list) do
+    lk.insertSorted(children, v, 'name')
+  end
   assertEqual(children[1], root.cache['/project/bang'])
   assertEqual(children[2], root.cache['/project/example.lkp'])
 end
@@ -82,7 +90,11 @@ end
 function should.findFromCache()
   local root = root()
   local proj = lk.FileResource('/project', root)
-  local children = proj:children()
+  local list = proj:children()
+  local children = {}
+  for _, v in ipairs(list) do
+    lk.insertSorted(children, v, 'name')
+  end
   assertEqual(children[1], lk.FileResource('/project/bang', root))
 end
 

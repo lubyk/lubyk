@@ -69,7 +69,7 @@ function private:start()
     callback = function(...)
       return self:callback(...)
     end,
-    registration_callback = function(service)
+    registration_callback = function(req, service)
       private.registrationCallback(self, service)
     end,
     type = 'lk.StemCell',

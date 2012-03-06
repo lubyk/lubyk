@@ -226,12 +226,17 @@ function lk.join(list, sep)
   return res
 end
 
--------------------------------- lk.insertSorted(table, string)
+-------------------------------- lk.insertSorted(table, string, [key])
 -- Insert a string into a table, keeping entries sorted.
-function lk.insertSorted(list, str)
+function lk.insertSorted(list, str, key)
   local pos = -1
   for i, n in ipairs(list) do
-    if n > str then
+    local a, b = n, str
+    if key then
+      a = a[key]
+      b = b[key]
+    end
+    if a > b then
       pos = i
       break
     end
@@ -311,7 +316,10 @@ end
 -- Find source code from a given class name of the
 -- form 'lubyk.Metro' or 'my.super.complicated.Thing'. The
 -- loader searches locally first and then into package.paths.
+-- 
+-- TODO: REMOVE
 function lk.findCode(basedir, class_name)
+  assert(false, "lk.findCode will be removed")
   if not class_name then
     class_name = basedir
     basedir = lfs.currentdir()

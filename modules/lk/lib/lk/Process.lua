@@ -22,7 +22,7 @@ setmetatable(lib, {
       return self:callback(...)
     end,
 
-    registration_callback = function(service)
+    registration_callback = function(reg, service)
       if Lubyk.zone .. ':' .. name ~= service.name then
         printf("Existing process '%s'. Quit.", name)
         sched:quit()

@@ -36,7 +36,7 @@ function mdns.Registration(service_type, name, port, txt, func)
   self.thread = lk.Thread(function()
     while true do
       sched:waitRead(self:fd())
-      self.callback(self:getService())
+      self:callback(self:getService())
     end
   end)
   ctx:addRegistration(self)

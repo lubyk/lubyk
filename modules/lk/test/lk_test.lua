@@ -147,14 +147,6 @@ function should.testFileExistence()
   assertEqual(nil, lk.fileType(nil))
 end
 
-function should.findCodeLocally()
-  assertMatch('adagio', lk.findCode(fixture.path(), 'pass'))
-end
-
-function should.findCodeInLibs()
-  assertMatch('Triggers regular bangs', lk.findCode(lk.dir(), 'lubyk.Metro'))
-end
-
 function should.shellQuote()
   assertEqual('"foo"', lk.shellQuote('foo'))
   -- foo 25"  --> "foo 25\""
