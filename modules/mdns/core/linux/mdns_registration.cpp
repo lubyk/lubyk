@@ -42,6 +42,7 @@
 #include <avahi-common/alternative.h>
 #include <avahi-common/malloc.h>
 #include <avahi-common/error.h>
+#include <avahi-common/strlst.h>
 
 #include <unistd.h> // pipe
 #include <fcntl.h>
@@ -79,6 +80,7 @@ public:
   }
 
   ~Implementation() {
+    stop();
     avahi_free(name_);
   }
 
@@ -123,12 +125,19 @@ public:
 
     if (avahi_entry_group_is_empty(avahi_group_)) {
       size_t txt_len = master_->txt_.size();
-      const char *txt = NULL;
+      const char *txt = master_->txt_.c_str();
+      AvahiStringList *list = NULL;
       if (txt_len) {
-        txt = master_->txt_.c_str();
+        for(size_t i = 0; i < txt_len;) {
+          size_t len = txt[i];
+          const unsigned char *text = (unsigned char*)txt+i+1;
+          list = avahi_string_list_add_arbitrary(list, text, len);
+          i += len + 1;
+        }
       }
+
       // new group or after reset
-      error = avahi_entry_group_add_service(avahi_group_,  // group
+      error = avahi_entry_group_add_service_strlst(avahi_group_,  // group
         AVAHI_IF_UNSPEC,                  // interface
         AVAHI_PROTO_UNSPEC,               // protocol to announce service with
         (AvahiPublishFlags)0,             // flags
@@ -137,8 +146,12 @@ public:
         NULL,                             // domain
         NULL,                             // host
         master_->port_,                   // port
-        txt,                              // NULL terminated list of txt records
-        NULL);
+        list                              // AvahiStringList containing txt rec.
+        );
+
+      if (list) {
+        avahi_string_list_free(list);
+      }
 
       if (error < 0) {
         // error

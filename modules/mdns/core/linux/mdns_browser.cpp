@@ -74,6 +74,9 @@ public:
   }
 
   ~Implementation() {
+    if (browser_) {
+      avahi_service_browser_free(browser_);
+    }
   }
 
   void pushService(Service *service) {
@@ -185,9 +188,17 @@ public:
               type,
               domain,
               true);
-        char *t = avahi_string_list_to_string(txt);
+        std::string t;
+        AvahiStringList *l = txt;
+        // This is idiotic. Why can't avahi just give us the
+        // raw txt record, eventually with a ctor for AvahiStringList.
+        // (The same goes for registration).
+        while (l) {
+          t.push_back(l->size);
+          t.append((const char *)l->text, l->size);
+          l = l->next;
+        }
         service->set(host_name, port, t);
-        avahi_free(t);
 
         impl->pushService(service);
       }

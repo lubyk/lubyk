@@ -12,7 +12,7 @@
 using namespace lk;
 
 /** lk::SelectCallback::SelectCallback(int fd)
- * include/lk/SelectCallback.h:62
+ * include/lk/SelectCallback.h:72
  */
 static int SelectCallback_SelectCallback(lua_State *L) {
   try {
@@ -29,14 +29,14 @@ static int SelectCallback_SelectCallback(lua_State *L) {
 }
 
 /** virtual lk::SelectCallback::~SelectCallback()
- * include/lk/SelectCallback.h:64
+ * include/lk/SelectCallback.h:75
  */
 static int SelectCallback__SelectCallback(lua_State *L) {
   try {
     DubUserdata *userdata = ((DubUserdata*)dub_checksdata_d(L, 1, "lk.SelectCallback"));
     if (userdata->gc) {
       SelectCallback *self = (SelectCallback *)userdata->ptr;
-      delete self;
+      self->luaDestroy();
     }
     userdata->gc = false;
     return 0;
@@ -49,7 +49,7 @@ static int SelectCallback__SelectCallback(lua_State *L) {
 }
 
 /** virtual void lk::SelectCallback::callback(bool read, bool write, bool timeout)
- * include/lk/SelectCallback.h:76
+ * include/lk/SelectCallback.h:87
  */
 static int SelectCallback_callback(lua_State *L) {
   try {
@@ -67,24 +67,8 @@ static int SelectCallback_callback(lua_State *L) {
   return dub_error(L);
 }
 
-/** void lk::SelectCallback::luaDestroy()
- * include/lk/SelectCallback.h:81
- */
-static int SelectCallback_luaDestroy(lua_State *L) {
-  try {
-    SelectCallback *self = *((SelectCallback **)dub_checksdata(L, 1, "lk.SelectCallback"));
-    self->luaDestroy();
-    return 0;
-  } catch (std::exception &e) {
-    lua_pushfstring(L, "lk.SelectCallback.luaDestroy: %s", e.what());
-  } catch (...) {
-    lua_pushfstring(L, "lk.SelectCallback.luaDestroy: Unknown exception");
-  }
-  return dub_error(L);
-}
-
 /** int lk::SelectCallback::fd()
- * include/lk/SelectCallback.h:87
+ * include/lk/SelectCallback.h:98
  */
 static int SelectCallback_fd(lua_State *L) {
   try {
@@ -115,7 +99,6 @@ static const struct luaL_Reg SelectCallback_member_methods[] = {
   { "new"          , SelectCallback_SelectCallback },
   { "__gc"         , SelectCallback__SelectCallback },
   { "callback"     , SelectCallback_callback },
-  { "luaDestroy"   , SelectCallback_luaDestroy },
   { "fd"           , SelectCallback_fd    },
   { "__tostring"   , SelectCallback___tostring },
   { NULL, NULL},

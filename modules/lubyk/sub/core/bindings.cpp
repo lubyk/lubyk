@@ -112,9 +112,6 @@ int luaopen_lubyk_Worker(lua_State *L);
 }
 
 extern "C" int luaopen_lubyk_core(lua_State *L) {
-  printf("Loaded again lubyk.core.\n");
-  lubyk::TimeRef ref;
-  printf("---> %f\n", ref.elapsed());
   // initialize the global weak table to store functions that should
   // still be garbage collected.
 

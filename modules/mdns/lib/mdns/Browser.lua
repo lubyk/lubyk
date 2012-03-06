@@ -96,6 +96,6 @@ function lib:browseCallback(service)
   elseif self.found[name] then
     -- only remove once
     self.found[name] = nil
-    self:removeDevice({name = name})
+    self:removeDevice({name = name, op = 'remove'})
   end
 end

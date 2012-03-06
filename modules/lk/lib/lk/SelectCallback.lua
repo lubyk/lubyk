@@ -18,7 +18,6 @@ lib.type = 'lk.SelectCallback'
 -- Callback from C++ when the fd flags change.
 -- <update> <self> <read> <write> <timeout>
 function lib:update(read, write, timeout)
-  print(self, 'UPDATE', read, write, timeout)
   local fd = self:fd()
   if read then
     if not self.read_thread then
@@ -55,16 +54,18 @@ function lib:update(read, write, timeout)
     self.write_thread = nil
   end
   if timeout >= 0 then
-    if not self.timeout_thread then
-      self.timeout_thread = lk.Thread(function()
-        sleep(timeout)
-        local ok, err = pcall(
-        self.callback, self, false, false, true)
-        if not ok then
-          sched:log('error', 'lk.SelectCallback.update: '.. err)
-        end
-      end)
+    if self.timeout_thread then
+      self.timeout_thread:kill()
     end
+    self.timeout_thread = lk.Thread(function()
+      sleep(timeout)
+      local ok, err = pcall(
+      self.callback, self, false, false, true)
+      if not ok then
+        sched:log('error', 'lk.SelectCallback.update: '.. err)
+      end
+      self.timeout_thread = nil
+    end)
   elseif self.timeout_thread then
     self.timeout_thread:kill()
     self.timeout_thread = nil
@@ -73,7 +74,6 @@ end
 
 -- Remove from scheduler, call finalizer if there exists any.
 function lib:remove()
-  print(self, 'REMOVE')
   if self.read_thread then
     self.read_thread:kill()
     self.read_thread = nil

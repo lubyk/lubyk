@@ -10,19 +10,17 @@
 require 'lubyk'
 
 local should = test.Suite('mdns')
-local timeout = 5000
-test.verbose = true
+local TIMEOUT = 5000
 
-function should.register()
+function should.register(t)
   local continue = false
   -- register our service at port 12345
   local registration = mdns.Registration(lubyk.service_type, 'Service1', 12345, function()
     continue = true
   end)
-  local now = worker:now()
-  while not continue and worker:now() < now + timeout do
-    sleep(10)
-  end
+  t:timeout(TIMEOUT, function()
+    return continue
+  end)
   assertTrue(continue)
 end
 
@@ -44,12 +42,10 @@ function should.browse(t)
     continue = continue + 1
   end)
 
-  t:timeout(5000, function(done)
-    if done or continue == 2 then
-      assertEqual(2, continue)
-      return true
-    end
+  t:timeout(TIMEOUT, function()
+    return continue == 2
   end)
+  assertEqual(2, continue)
   continue = 0
 
   local browser = mdns.Browser(lubyk.service_type, function(self, service)
@@ -62,8 +58,8 @@ function should.browse(t)
   end)
 
   -- wait (and give time for callback to enter Lua State)
-  t:timeout(3000, function(done)
-    return done or continue == 2
+  t:timeout(TIMEOUT, function()
+    return continue == 2
   end)
 
   assertEqual(2, continue)
@@ -71,30 +67,36 @@ function should.browse(t)
 
   continue   = 0
   should_op  = 'remove'
+  registration.debug = lk.Finalizer(function()
+    print("REMOVED", name1)
+  end)
+  registration2.debug = lk.Finalizer(function()
+    print("REMOVED", name2)
+  end)
+
   registration = nil  -- delete
   registration2= nil
   collectgarbage('collect')
+  collectgarbage('collect')
 
   -- wait (and give time for callback to enter Lua State)
-  t:timeout(3000, function(done)
-    if done or continue == 2 then
-      assertEqual(2, continue)
-      return true
-    end
+  t:timeout(TIMEOUT, function()
+    return continue == 2
   end)
+  assertEqual(2, continue)
 end
 
 function should.registerTxt(t)
   local continue = false
   -- register our service at port 12345
-  local registration = mdns.Registration(lubyk.service_type, 'Service3', 12345, {planet='Dune', name='Worm', pull=34}, function()
+  local registration = mdns.Registration(lubyk.service_type, 'Service3', 12345, {planet='Dune', name='Worm', pull=34}, function(s)
     continue = true
   end)
   assertMatch(string.char(11) .. 'planet=Dune', registration.txt)
   assertMatch(string.char(9)  .. 'name=Worm',   registration.txt)
   assertMatch(string.char(7)  .. 'pull=34',     registration.txt)
-  t:timeout(3000, function(done)
-    return done or continue
+  t:timeout(TIMEOUT, function()
+    return continue
   end)
 
   continue = false
@@ -102,11 +104,12 @@ function should.registerTxt(t)
   local browser = mdns.Browser(lubyk.service_type, function(self, service)
     if service.op == 'add' and service.name == 'Service3' then
       txt = service.txt
+      print(yaml.dump(txt))
       continue = true
     end
   end)
-  t:timeout(3000, function(done)
-    return done or continue
+  t:timeout(TIMEOUT, function()
+    return continue
   end)
   assertEqual('Dune', txt.planet)
   assertEqual('Worm', txt.name)

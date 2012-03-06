@@ -35,7 +35,7 @@ static int Finalizer__Finalizer(lua_State *L) {
     DubUserdata *userdata = ((DubUserdata*)dub_checksdata_d(L, 1, "lk.Finalizer"));
     if (userdata->gc) {
       Finalizer *self = (Finalizer *)userdata->ptr;
-      delete self;
+      self->finalize();
     }
     userdata->gc = false;
     return 0;
@@ -43,22 +43,6 @@ static int Finalizer__Finalizer(lua_State *L) {
     lua_pushfstring(L, "lk.Finalizer.~Finalizer: %s", e.what());
   } catch (...) {
     lua_pushfstring(L, "lk.Finalizer.~Finalizer: Unknown exception");
-  }
-  return dub_error(L);
-}
-
-/** void lk::Finalizer::finalize()
- * include/lk/Finalizer.h:49
- */
-static int Finalizer_finalize(lua_State *L) {
-  try {
-    Finalizer *self = *((Finalizer **)dub_checksdata(L, 1, "lk.Finalizer"));
-    self->finalize();
-    return 0;
-  } catch (std::exception &e) {
-    lua_pushfstring(L, "lk.Finalizer.finalize: %s", e.what());
-  } catch (...) {
-    lua_pushfstring(L, "lk.Finalizer.finalize: Unknown exception");
   }
   return dub_error(L);
 }
@@ -78,7 +62,6 @@ static int Finalizer___tostring(lua_State *L) {
 static const struct luaL_Reg Finalizer_member_methods[] = {
   { "new"          , Finalizer_Finalizer  },
   { "__gc"         , Finalizer__Finalizer },
-  { "finalize"     , Finalizer_finalize   },
   { "__tostring"   , Finalizer___tostring },
   { NULL, NULL},
 };

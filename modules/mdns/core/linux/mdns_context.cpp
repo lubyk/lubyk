@@ -81,7 +81,6 @@ public:
   }
 
   virtual void callback(bool read, bool write, bool timeout) {
-    printf("Watch callback.\n");
     if (read) {
       last_event_ = AVAHI_WATCH_IN;
       in_callback_ = true;
@@ -94,7 +93,6 @@ public:
       callback_(this, fd_, last_event_, userdata_);
       in_callback_ = false;
     }
-    printf("Watch callback done.\n");
   }
 
   AvahiWatchEvent events() const {
@@ -147,11 +145,9 @@ public:
   }
 
   virtual void callback(bool read, bool write, bool timeout) {
-    printf("Timeout callback.\n");
     if (timeout) {
       callback_(this, userdata_);
     }
-    printf("Timeout callback done.\n");
   }
 };
 

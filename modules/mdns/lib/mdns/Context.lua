@@ -8,14 +8,14 @@
 --]]------------------------------------------------------
 require 'mdns.core'
 local lib = mdns.Context_core
-local WeakValue = {__mode = 'v'}
+local WeakKey = {__mode = 'k'}
 
 function mdns.Context()
   local self = lib.new()
   if not self.callbacks then
     self.callbacks = {}
   end
-  self.registrations = setmetatable({}, WeakValue)
+  self.registrations = setmetatable({}, WeakKey)
   if self.running then
     -- 'start' was called directly during 'new', call again
     -- now that self.registrations is set.
@@ -33,7 +33,6 @@ function mdns.Context()
 end
 
 function lib:addSelectCallback(clbk)
-  print(clbk, 'NEW')
   if not self.callbacks then
     self.callbacks = {}
   end
@@ -53,7 +52,10 @@ function lib:addRegistration(reg)
   if self.running then
     reg:start()
   end
-  table.insert(self.registrations, reg)
+  self.registrations[reg] = true
+  reg.fin = lk.Finalizer(function()
+    self.registrations[reg] = nil
+  end)
 end
 
 --=============================================== Used by avahi
@@ -69,7 +71,7 @@ function lib:start()
     if self.registrations then
       -- In case this is called before we finished setting up
       -- mdns.Context in 'new'.
-      for _, reg in pairs(self.registrations) do
+      for reg, _ in pairs(self.registrations) do
         local ok, err = pcall(reg.start, reg)
         if not ok then
           sched:log('error', err)
@@ -83,7 +85,7 @@ end
 function lib:stop(reg)
   -- Server not ready (offline, collision, etc).
   if self.running then
-    for _, reg in pairs(self.registrations) do
+    for reg, _ in pairs(self.registrations) do
       local ok, err = pcall(reg.stop, reg)
       if not ok then
         sched:log('error', err)

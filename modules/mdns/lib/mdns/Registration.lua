@@ -12,16 +12,50 @@
 require 'mdns.core'
 local lib = mdns.Registration_core
 local constr = lib.new
+local private = {}
 
 local function dummy()
   -- noop
 end
 
+local ctx = mdns.Context()
 
+--- We should provide a socket to inform when registration is over (callback).
+-- This socket could be the default zmq.REQ socket used to by lk.Service ?
+function mdns.Registration(service_type, name, port, txt, func)
+  if not func then
+    if type(txt) == 'function' then
+      func = txt
+      txt = nil
+    end
+  end
+  txt = private.buildTXT(txt)
+  local self = constr(ctx, service_type, name, port, txt)
+  self.callback = func or dummy
+  self.txt = txt
+  self.thread = lk.Thread(function()
+    while true do
+      sched:waitRead(self:fd())
+      self.callback(self:getService())
+    end
+  end)
+  ctx:addRegistration(self)
+  return self
+end
+
+function lib:kill()
+  if self.thread then
+    self.thread:kill()
+    self.thread = nil
+  end
+end
+
+
+--=============================================== PRIVATE
 local INVALID_KEY_CHARS = '[^a-zA-Z]'
 
 --- Build a TXT record from a Lua table.
-local function buildTXT(dict)
+function private.buildTXT(dict)
   if not dict then
     return ''
   elseif type(dict) ~= 'table' then
@@ -50,33 +84,3 @@ local function buildTXT(dict)
   return txt
 end
 
-local ctx = mdns.Context()
-
---- We should provide a socket to inform when registration is over (callback).
--- This socket could be the default zmq.REQ socket used to by lk.Service ?
-function mdns.Registration(service_type, name, port, txt, func)
-  if not func then
-    if type(txt) == 'function' then
-      func = txt
-      txt = nil
-    end
-  end
-  txt = buildTXT(txt)
-  local self = constr(ctx, service_type, name, port, txt)
-  self.callback = func or dummy
-  self.txt = txt
-  self.thread = lk.Thread(function()
-    while true do
-      sched:waitRead(self:fd())
-      self.callback(self:getService())
-    end
-  end)
-  return self
-end
-
-function lib:kill()
-  if self.thread then
-    self.thread:kill()
-    self.thread = nil
-  end
-end
