@@ -33,6 +33,7 @@ function mdns.Context()
 end
 
 function lib:addSelectCallback(clbk)
+  print(clbk, 'NEW')
   if not self.callbacks then
     self.callbacks = {}
   end

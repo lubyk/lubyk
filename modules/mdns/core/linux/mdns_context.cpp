@@ -63,8 +63,8 @@ public:
     , in_callback_(false)
     , ctx_(ctx)
     , userdata_(userdata) {
-    // This registers the class into lua.
-    ctx_->addSelectCallback(this);
+    // This registers the class into lua (no GC in lua).
+    ctx_->addSelectCallback(this, false);
     // Insert fd in proper fields.
     update(event);
   }
@@ -122,8 +122,8 @@ public:
     , callback_(callback)
     , ctx_(ctx)
     , userdata_(userdata) {
-    // This registers the class into lua.
-    ctx_->addSelectCallback(this);
+    // This registers the class into lua (no gc).
+    ctx_->addSelectCallback(this, false);
     // Insert fd in proper fields.
     update(tv);
   }
@@ -269,6 +269,7 @@ public:
   }
 
   static void sFree(AvahiWatch *w) {
+    // Lua does not delete the pushed lk.SelectCallbacks
     delete w;
   }
 
@@ -288,6 +289,7 @@ public:
   }
 
   static void sFreeTimeout(AvahiTimeout *t) {
+    // Not gc by Lua. Do it ourselves.
     delete t;
   }
 

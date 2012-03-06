@@ -18,12 +18,13 @@ lib.type = 'lk.SelectCallback'
 -- Callback from C++ when the fd flags change.
 -- <update> <self> <read> <write> <timeout>
 function lib:update(read, write, timeout)
+  print(self, 'UPDATE', read, write, timeout)
   local fd = self:fd()
   if read then
     if not self.read_thread then
       self.read_thread = lk.Thread(function()
         while true do
-          self:waitRead(fd)
+          sched:waitRead(fd)
           local ok, err = pcall(
             self.callback, self, true, false, false)
           if not ok then
@@ -31,7 +32,6 @@ function lib:update(read, write, timeout)
           end
         end
       end)
-      self.read_thread = nil
     end
   elseif self.read_thread then
     self.read_thread:kill()
@@ -41,7 +41,7 @@ function lib:update(read, write, timeout)
     if not self.write_thread then
       self.write_thread = lk.Thread(function()
         while true do
-          self:waitWrite(fd)
+          sched:waitWrite(fd)
           local ok, err = pcall(
             self.callback, self, false, true, false)
           if not ok then
@@ -49,7 +49,6 @@ function lib:update(read, write, timeout)
           end
         end
       end)
-      self.write_thread = nil
     end
   elseif self.write_thread then
     self.write_thread:kill()
@@ -65,7 +64,6 @@ function lib:update(read, write, timeout)
           sched:log('error', 'lk.SelectCallback.update: '.. err)
         end
       end)
-      self.timeout_thread = nil
     end
   elseif self.timeout_thread then
     self.timeout_thread:kill()
@@ -75,6 +73,7 @@ end
 
 -- Remove from scheduler, call finalizer if there exists any.
 function lib:remove()
+  print(self, 'REMOVE')
   if self.read_thread then
     self.read_thread:kill()
     self.read_thread = nil

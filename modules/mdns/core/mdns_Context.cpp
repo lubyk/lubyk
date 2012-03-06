@@ -12,7 +12,7 @@
 using namespace mdns;
 
 /** mdns::Context::Context()
- * modules/mdns/include/mdns/Context.h:49
+ * include/mdns/Context.h:49
  */
 static int Context_Context(lua_State *L) {
   try {
@@ -28,7 +28,7 @@ static int Context_Context(lua_State *L) {
 }
 
 /** mdns::Context::~Context()
- * modules/mdns/include/mdns/Context.h:51
+ * include/mdns/Context.h:51
  */
 static int Context__Context(lua_State *L) {
   try {

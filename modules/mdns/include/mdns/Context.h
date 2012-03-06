@@ -53,12 +53,12 @@ public:
   /** @internal. Push a select callback into Lua and insert it into the event
    * loop (lk.Scheduler). This is called from C++, not from Lua.
    */
-  void addSelectCallback(lk::SelectCallback *clbk) {
+  void addSelectCallback(lk::SelectCallback *clbk, bool gc) {
     if (!dub_pushcallback("addSelectCallback")) {
       // Should never happen (callback defined in Context.lua)
       throw dub::Exception("Missing 'addSelectCallback' !");
     }
-    clbk->pushobject(dub_L, clbk, "lk.SelectCallback", true);
+    clbk->pushobject(dub_L, clbk, "lk.SelectCallback", gc);
     // <func> <self> <clbk>
     dub_call(2, 0);
   }

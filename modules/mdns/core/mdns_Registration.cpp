@@ -12,7 +12,7 @@
 using namespace mdns;
 
 /** mdns::Registration::Registration(Context *ctx, const char *service_type, const char *name, int port, const char *txt)
- * modules/mdns/include/mdns/Registration.h:58
+ * include/mdns/Registration.h:58
  */
 static int Registration_Registration(lua_State *L) {
   try {
@@ -33,7 +33,7 @@ static int Registration_Registration(lua_State *L) {
 }
 
 /** mdns::Registration::~Registration()
- * modules/mdns/include/mdns/Registration.h:60
+ * include/mdns/Registration.h:60
  */
 static int Registration__Registration(lua_State *L) {
   try {
@@ -53,7 +53,7 @@ static int Registration__Registration(lua_State *L) {
 }
 
 /** int mdns::Registration::fd()
- * modules/mdns/include/mdns/Registration.h:62
+ * include/mdns/Registration.h:62
  */
 static int Registration_fd(lua_State *L) {
   try {
@@ -69,7 +69,7 @@ static int Registration_fd(lua_State *L) {
 }
 
 /** void mdns::Registration::start()
- * modules/mdns/include/mdns/Registration.h:68
+ * include/mdns/Registration.h:68
  */
 static int Registration_start(lua_State *L) {
   try {
@@ -85,7 +85,7 @@ static int Registration_start(lua_State *L) {
 }
 
 /** void mdns::Registration::stop()
- * modules/mdns/include/mdns/Registration.h:72
+ * include/mdns/Registration.h:72
  */
 static int Registration_stop(lua_State *L) {
   try {
@@ -101,7 +101,7 @@ static int Registration_stop(lua_State *L) {
 }
 
 /** const char* mdns::Registration::name()
- * modules/mdns/include/mdns/Registration.h:74
+ * include/mdns/Registration.h:74
  */
 static int Registration_name(lua_State *L) {
   try {
@@ -117,7 +117,7 @@ static int Registration_name(lua_State *L) {
 }
 
 /** LuaStackSize mdns::Registration::getService(lua_State *L)
- * modules/mdns/include/mdns/Registration.h:80
+ * include/mdns/Registration.h:80
  */
 static int Registration_getService(lua_State *L) {
   try {
