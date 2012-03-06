@@ -67,13 +67,6 @@ function should.browse(t)
 
   continue   = 0
   should_op  = 'remove'
-  registration.debug = lk.Finalizer(function()
-    print("REMOVED", name1)
-  end)
-  registration2.debug = lk.Finalizer(function()
-    print("REMOVED", name2)
-  end)
-
   registration = nil  -- delete
   registration2= nil
   collectgarbage('collect')
@@ -104,7 +97,6 @@ function should.registerTxt(t)
   local browser = mdns.Browser(lubyk.service_type, function(self, service)
     if service.op == 'add' and service.name == 'Service3' then
       txt = service.txt
-      print(yaml.dump(txt))
       continue = true
     end
   end)

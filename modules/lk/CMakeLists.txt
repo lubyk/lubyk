@@ -21,8 +21,8 @@ set_target_properties("${MODULE_NAME}_core"
   LIBRARY_OUTPUT_DIRECTORY ${LUBYK_LIB}/${MODULE_NAME}
   PREFIX ""
   SUFFIX ".so"
-)
-target_link_libraries("${MODULE_NAME}_core" ${PLAT_LINK} -lavahi-client -lpthread)
+)  
+target_link_libraries("${MODULE_NAME}_core" ${PLAT_LINK})
 add_dependencies(${MODULE_NAME} "${MODULE_NAME}_core")
 
 # --------------------------------------------------------------

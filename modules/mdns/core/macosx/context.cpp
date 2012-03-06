@@ -30,6 +30,8 @@
 
 namespace mdns {
 
+/** The mdns::Context is just an empty shell on macosx.
+ */
 Context::Context() {
 }
 
@@ -42,7 +44,8 @@ void *Context::context() {
   return NULL;
 }
 
-void Context::pushobject(lua_State *L, void *ptr, const char *type_name, bool gc = true) {
+void Context::pushobject(lua_State *L, void *ptr, const char *type_name, bool gc) {
+  // nothing special here
   dub::Thread::pushobject(L, ptr, type_name, gc);
 }
 

@@ -21,19 +21,21 @@ function lib.new(func)
       func(self)
     end)
   end
-  return setmetatable(self, lib)
+  return self
 end
 
+local bind = lib.bind
 function lib:bind(host, port)
   self.host    = host
-  self.port    = self.super:bind(host, port)
-  self.sock_fd = self.super:fd()
+  self.port    = bind(self.super, host, port)
+  self.sock_fd = self:fd()
   return self.port
 end
 
+local connect = lib.connect
 function lib:connect(...)
   local super = self.super
-  local ok = super:connect(...)
+  local ok = connect(super, ...)
   self.sock_fd = super:fd()
   if not ok then
     sched:waitWrite(self.sock_fd)
@@ -41,6 +43,7 @@ function lib:connect(...)
   end
 end
 
+local recv = lib.recv
 function lib:recv(len)
   if not len or len == '*l' then
     return self:recvLine()
@@ -60,7 +63,7 @@ function lib:recv(len)
     end
     -- we need more
     sched:waitRead(self.sock_fd)
-    buffer = self.super:recv('*a')
+    buffer = recv(self.super, '*a')
   end
 end
 
@@ -75,7 +78,7 @@ function lib:recvLine()
       end
     end
     sched:waitRead(self.sock_fd)
-    local data = self.super:recv('*a')
+    local data = recv(self.super, '*a')
     if not data then
       -- connection closed
       -- FIXME: What should we do here ? error ? reconnect ?
@@ -89,10 +92,11 @@ function lib:recvLine()
   end
 end
 
+local send = lib.send
 function lib:send(data)
   local buffer = data
   while true do
-    local sent = self.super:send(data)
+    local sent = send(self.super, data)
     if sent == string.len(data) then
       break
     else
@@ -102,10 +106,11 @@ function lib:send(data)
   end
 end
 
+local accept = lib.accept
 function lib:accept(func)
   sched:waitRead(self.sock_fd)
-  local cli = self.super:accept()
-  cli.super:setNonBlocking()
+  local cli = accept(self.super)
+  cli:setNonBlocking()
   cli.sock_fd = cli:fd()
   if func then
     -- start new thread

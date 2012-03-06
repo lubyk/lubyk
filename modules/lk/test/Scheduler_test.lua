@@ -200,12 +200,11 @@ function should.runWithManySockets(t)
   end
 
   local all_ok
-  t:timeout(function(done)
+  t:timeout(function()
     all_ok = true
     for i=1,NB do
       if cli[i] ~= 'DONE' then
-        all_ok = false
-        return done
+        return false
       end
     end
     return true

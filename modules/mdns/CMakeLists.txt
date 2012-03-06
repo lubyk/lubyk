@@ -23,7 +23,11 @@ set_target_properties("${MODULE_NAME}_core"
   PREFIX ""
   SUFFIX ".so"
 )
-target_link_libraries("${MODULE_NAME}_core" ${PLAT_LINK} -lavahi-client -lpthread)
+if(LINUX)
+  target_link_libraries("${MODULE_NAME}_core" ${PLAT_LINK} -lavahi-client -lpthread)
+else(LINUX)
+  target_link_libraries("${MODULE_NAME}_core" ${PLAT_LINK})
+endif(LINUX)
 add_dependencies(${MODULE_NAME} "${MODULE_NAME}_core")
 
 # --------------------------------------------------------------
