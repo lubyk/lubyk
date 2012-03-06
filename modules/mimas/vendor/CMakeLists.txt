@@ -2,7 +2,7 @@ project(glew)
 set(target "glew")
 
 
-set(GLEW_OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/glew/lib/libglew.a")
+set(GLEW_OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/glew/lib/libGLEW.a")
 add_custom_command(
   OUTPUT ${GLEW_OUTPUT}
   COMMAND make

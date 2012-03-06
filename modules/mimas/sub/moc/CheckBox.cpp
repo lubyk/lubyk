@@ -1,8 +1,8 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'CheckBox.h'
 **
-** Created: Wed Feb 22 08:55:27 2012
-**      by: The Qt Meta Object Compiler version 63 (Qt 4.8.0)
+** Created: Tue Mar 6 16:32:05 2012
+**      by: The Qt Meta Object Compiler version 62 (Qt 4.7.4)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
@@ -10,8 +10,8 @@
 #include "../../include/mimas/CheckBox.h"
 #if !defined(Q_MOC_OUTPUT_REVISION)
 #error "The header file 'CheckBox.h' doesn't include <QObject>."
-#elif Q_MOC_OUTPUT_REVISION != 63
-#error "This file was generated using the moc from 4.8.0. It"
+#elif Q_MOC_OUTPUT_REVISION != 62
+#error "This file was generated using the moc from 4.7.4. It"
 #error "cannot be used with the include files from this version of Qt."
 #error "(The moc has changed too much.)"
 #endif
@@ -20,7 +20,7 @@ QT_BEGIN_MOC_NAMESPACE
 static const uint qt_meta_data_mimas__CheckBox[] = {
 
  // content:
-       6,       // revision
+       5,       // revision
        0,       // classname
        0,    0, // classinfo
        1,   14, // methods
@@ -45,25 +45,9 @@ static const char qt_meta_stringdata_mimas__CheckBox[] = {
     "QString\0class\0float\0hue\0"
 };
 
-void mimas::CheckBox::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
-{
-    if (_c == QMetaObject::InvokeMetaMethod) {
-        Q_ASSERT(staticMetaObject.cast(_o));
-        CheckBox *_t = static_cast<CheckBox *>(_o);
-        switch (_id) {
-        case 0: _t->clickedSlot((*reinterpret_cast< bool(*)>(_a[1]))); break;
-        default: ;
-        }
-    }
-}
-
-const QMetaObjectExtraData mimas::CheckBox::staticMetaObjectExtraData = {
-    0,  qt_static_metacall 
-};
-
 const QMetaObject mimas::CheckBox::staticMetaObject = {
     { &QCheckBox::staticMetaObject, qt_meta_stringdata_mimas__CheckBox,
-      qt_meta_data_mimas__CheckBox, &staticMetaObjectExtraData }
+      qt_meta_data_mimas__CheckBox, 0 }
 };
 
 #ifdef Q_NO_DATA_RELOCATION
@@ -91,8 +75,10 @@ int mimas::CheckBox::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 1)
-            qt_static_metacall(this, _c, _id, _a);
+        switch (_id) {
+        case 0: clickedSlot((*reinterpret_cast< bool(*)>(_a[1]))); break;
+        default: ;
+        }
         _id -= 1;
     }
 #ifndef QT_NO_PROPERTIES

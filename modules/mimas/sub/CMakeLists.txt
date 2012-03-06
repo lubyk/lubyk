@@ -74,7 +74,7 @@ build_sub_module("core" ${SUB_MODULE_SOURCES} ${SUB_MODULE_HEADERS_MOC})
 target_link_libraries("${MODULE_NAME}_core"
   ${QT_LIBRARIES}
   ${OPENGL_LIBRARIES}
-  ${LUBYK_SOURCE_DIR}/modules/mimas/vendor/glew/lib/libglew.a
+  ${LUBYK_SOURCE_DIR}/modules/mimas/vendor/glew/lib/libGLEW.a
   )
 add_dependencies("${MODULE_NAME}_core" glew_make)
 

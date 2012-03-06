@@ -31,7 +31,7 @@
 
 #include "mimas/mimas.h"
 
-#include <QtCore/QTimer.h>
+#include <QtCore/QTimer>
 
 using namespace lubyk;
 

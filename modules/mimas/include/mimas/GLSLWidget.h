@@ -79,8 +79,8 @@ class GLSLWidget : public QGLWidget, public ThreadedLuaObject
     }
   };
 #else
-  struct GLSLFormoat {
-    GLSLFormoat() {
+  struct GLSLFormat : public QGLFormat {
+    GLSLFormat() {
       setVersion(3, 2);
       setProfile(QGLFormat::CoreProfile);
       setSampleBuffers(true);
@@ -94,7 +94,7 @@ public:
 #ifdef __macosx__
     : QGLWidget(new GLSLContext(QGLFormat::defaultFormat()))
 #else
-    : QGLWidget(GLSLFormoat())
+    : QGLWidget(GLSLFormat())
 #endif
   {
     setAttribute(Qt::WA_DeleteOnClose);
