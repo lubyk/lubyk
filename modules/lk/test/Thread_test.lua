@@ -94,7 +94,7 @@ function should.createManyThreadsAndProperlyGc()
   collectgarbage('collect')
   after = collectgarbage('count')
 
-  assertEqual(before, after)
+  assertTrue(after <= before)
 end
 
 function should.getKilledBeforeStarting()

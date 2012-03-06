@@ -38,11 +38,11 @@ function should.connectWhenRemoteAppears(t)
   -- subscribe to messages from 'Mars'
   -- connection goes from subscriber to publisher and can be initiated before
   -- Mars is even created.
-  venus:subscribe('Mars')
+  venus:subscribe('base:Mars')
 
   -- create a service called 'Mars' with default service type 'Lubyk.Tcp'
   -- and that replies to all messages with nil.
-  local mars = lk.Service('Mars')
+  local mars = lk.Service('base:Mars')
 
   -- connected becomes true when 'Mars' appears on the network
   t:timeout(3000, function(done)

@@ -11,29 +11,29 @@ require 'lubyk'
 local should = test.Suite('lk.Environment')
 
 -- global env
-env_test_global = 1
+Environment_test_a = 1
 
-function should.protect_global_env()
+function should.protectGlobalEnv()
   local env = lk.Environment[[
-    assertEqual(1, env_test_global)
+    assertEqual(1, Environment_test_a)
     -- new value in protected env
-    env_test_global = 2
-    assertEqual(2, env_test_global)
+    Environment_test_a = 2
+    assertEqual(2, Environment_test_a)
   ]]
   env()
-  assertEqual(1, env_test_global)
+  assertEqual(1, Environment_test_a)
 end
 
-function should.read_global_env()
+function should.readGlobalEnv()
   local env = lk.Environment[[
-    assertEqual(3, env_test_global2)
+    assertEqual(3, Environment_test_b)
   ]]
   -- new global created after env compilation
-  env_test_global2 = 3
+  Environment_test_b = 3
   env()
   -- a copy exists in env, does not read this anymore
   -- (performance).
-  env_test_global2 = 4
+  Environment_test_b = 4
   env()
 end
 

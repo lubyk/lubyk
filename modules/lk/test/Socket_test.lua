@@ -21,7 +21,6 @@ function should.runMutlithreaded(t)
   end
   t.server = lk.Socket(function()
     -- will start as soon as we join
-    log('srv:thread')
     local client = t.server:accept()
     log('srv:accept')
     t.received = client:recv()
@@ -44,7 +43,6 @@ function should.runMutlithreaded(t)
   -- should give us control back on 'accept'
   assertValueEqual('Hello Lubyk!', t.received)
   assertValueEqual({
-    'srv:thread',
     'cli:connect',
     'cli:send',
     'srv:accept',

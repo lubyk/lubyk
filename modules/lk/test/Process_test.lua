@@ -25,12 +25,10 @@ function should.announceService(t)
   end
 
   -- wait (and give time for callback to enter Lua State)
-  t:timeout(3000, function(done)
-    if continue or done then
-      assertTrue(continue)
-      return true
-    end
+  t:timeout(3000, function()
+    return continue
   end)
+  assertTrue(continue)
   process = nil
 end
 
