@@ -86,4 +86,36 @@ function should.joinTimer()
   assertEqual(5, counter)
 end
 
+function should.beRegular(t)
+  local values = {}
+  local i = 0
+  local last
+  local min = 9999
+  local max = -1
+  local timer = lk.Timer(10, function()
+    local now = worker:now()
+    if last then
+      local d = now - last
+      table.insert(values, d)
+      if d > max then
+        max = d
+      elseif d < min then
+        min = d
+      end
+    end
+    last = now
+    i = i + 1
+    if i == 10 then
+      -- stop
+      return 0
+    end
+  end)
+  timer:start()
+  t:timeout(function()
+    return i == 10
+  end)
+  local jitter = (max - min) / 2
+  assertLessThen(1, jitter)
+end
+
 test.all()
