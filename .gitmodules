@@ -31,3 +31,6 @@
 [submodule "modules/sqlite3"]
 	path = modules/sqlite3
 	url = git://github.com/lubyk/sqlite3.git
+[submodule "modules/mimas"]
+	path = modules/mimas
+	url = git://github.com/lubyk/mimas.git
