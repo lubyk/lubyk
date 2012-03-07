@@ -28,3 +28,6 @@
 [submodule "modules/midi"]
 	path = modules/midi
 	url = git://github.com/lubyk/midi.git
+[submodule "modules/sqlite3"]
+	path = modules/sqlite3
+	url = git://github.com/lubyk/sqlite3.git
