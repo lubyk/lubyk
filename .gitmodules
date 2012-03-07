@@ -52,6 +52,3 @@
 [submodule "modules/remdebug"]
 	path = modules/remdebug
 	url = git://github.com/lubyk/remdebug.git
-[submodule "modules/socket"]
-	path = modules/socket
-	url = git://github.com/lubyk/socket.git
