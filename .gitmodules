@@ -37,3 +37,6 @@
 [submodule "modules/wii"]
 	path = modules/wii
 	url = git://github.com/lubyk/wii.git
+[submodule "modules/dummy"]
+	path = modules/dummy
+	url = git://github.com/lubyk/dummy.git
