@@ -16,3 +16,6 @@
 [submodule "modules/crypto"]
 	path = modules/crypto
 	url = git://github.com/lubyk/crypto.git
+[submodule "modules/db"]
+	path = modules/db
+	url = git://github.com/lubyk/db.git
