@@ -25,3 +25,6 @@
 [submodule "modules/glut"]
 	path = modules/glut
 	url = git://github.com/lubyk/glut.git
+[submodule "modules/midi"]
+	path = modules/midi
+	url = git://github.com/lubyk/midi.git
