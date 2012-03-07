@@ -34,3 +34,6 @@
 [submodule "modules/mimas"]
 	path = modules/mimas
 	url = git://github.com/lubyk/mimas.git
+[submodule "modules/wii"]
+	path = modules/wii
+	url = git://github.com/lubyk/wii.git
