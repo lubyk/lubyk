@@ -26,20 +26,48 @@
 
   ==============================================================================
 */
+#ifndef LUBYK_INCLUDE_ZMQ_CONTEXT_H_
+#define LUBYK_INCLUDE_ZMQ_CONTEXT_H_
 
-#ifndef LUBYK_INCLUDE_CORE_NON_COPYABLE_H_
-#define LUBYK_INCLUDE_CORE_NON_COPYABLE_H_
 
-namespace lubyk {
-class NonCopyable {
- protected:
-  NonCopyable() {}
-  ~NonCopyable() {}
- private:
-  NonCopyable(const NonCopyable &other);
-  NonCopyable &operator=(const NonCopyable &other);
+#include "dub/dub.h"
+
+#include <stdlib.h> // rand()
+#include <time.h>   // time()
+#include <assert.h> // assert()
+#include <signal.h> // signal(), SIG_DFL, ...
+
+#include "zmq.h"
+#include "lubyk/msgpack.h"
+#include "lubyk/time_ref.h"
+#include "zmq/Socket.h"
+
+using namespace lubyk;
+
+namespace zmq {
+
+/** ZeroMQ context.
+ *
+ * @dub register:'Context_core'
+ *      string_format: %%f
+ *      string_args: self->count()
+ */
+class Context {
+  friend class Socket;
+
+  /** Context use by zmq::Socket.
+   */
+  void *zmq_context_;
+
+  /** Counts the number of zmq::Socket depending on the
+   * socket.
+   */
+  size_t zmq_context_refcount_;
+public:
+  Context();
+  ~Context();
 };
+} // zmq
 
-} // core
+#endif // LUBYK_INCLUDE_ZMQ_CONTEXT_H_
 
-#endif  // LUBYK_INCLUDE_CORE_NON_COPYABLE_H_

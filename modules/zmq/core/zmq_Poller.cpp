@@ -11,61 +11,8 @@
 
 using namespace zmq;
 
-/** Set attributes (key, value)
- * 
- */
-static int Poller__set_(lua_State *L) {
-
-  Poller *self = *((Poller **)dub_checksdata_n(L, 1, "zmq.Poller"));
-  const char *key = luaL_checkstring(L, 2);
-  int key_h = dub_hash(key, 2);
-  switch(key_h) {
-    case 0: {
-      if (DUB_ASSERT_KEY(key, "sThisKey")) break;
-      Poller::sThisKey = **((pthread_key_t *)dub_checksdata_n(L, 3, "pthread_key_t"));
-      return 0;
-    }
-  }
-  if (lua_istable(L, 1)) {
-    lua_rawset(L, 1);
-  } else {
-    luaL_error(L, KEY_EXCEPTION_MSG, key);
-  }
-  return 0;
-}
-
-/** Get attributes (key)
- * 
- */
-static int Poller__get_(lua_State *L) {
-
-  Poller *self = *((Poller **)dub_checksdata_n(L, 1, "zmq.Poller", true));
-  const char *key = luaL_checkstring(L, 2);
-  // <self> "key" <mt>
-  // rawget(mt, key)
-  lua_pushvalue(L, 2);
-  // <self> "key" <mt> "key"
-  lua_rawget(L, -2);
-  if (!lua_isnil(L, -1)) {
-    // Found method.
-    return 1;
-  } else {
-    // Not in mt = attribute access.
-    lua_pop(L, 2);
-  }
-  int key_h = dub_hash(key, 2);
-  switch(key_h) {
-    case 0: {
-      if (DUB_ASSERT_KEY(key, "sThisKey")) break;
-      dub_pushudata(L, &Poller::sThisKey, "pthread_key_t", false);
-      return 1;
-    }
-  }
-  return 0;
-}
-
 /** zmq::Poller::Poller(int reserve=8)
- * include/zmq/Poller.h:100
+ * include/zmq/Poller.h:96
  */
 static int Poller_Poller(lua_State *L) {
   try {
@@ -73,11 +20,11 @@ static int Poller_Poller(lua_State *L) {
     if (top__ >= 1) {
       int reserve = dub_checkint(L, 1);
       Poller *retval__ = new Poller(reserve);
-      retval__->pushobject(L, retval__, "zmq.Poller", true);
+      dub_pushudata(L, retval__, "zmq.Poller", true);
       return 1;
     } else {
       Poller *retval__ = new Poller();
-      retval__->pushobject(L, retval__, "zmq.Poller", true);
+      dub_pushudata(L, retval__, "zmq.Poller", true);
       return 1;
     }
   } catch (std::exception &e) {
@@ -89,7 +36,7 @@ static int Poller_Poller(lua_State *L) {
 }
 
 /** zmq::Poller::~Poller()
- * include/zmq/Poller.h:130
+ * include/zmq/Poller.h:98
  */
 static int Poller__Poller(lua_State *L) {
   try {
@@ -109,7 +56,7 @@ static int Poller__Poller(lua_State *L) {
 }
 
 /** bool zmq::Poller::poll(float timeout)
- * include/zmq/Poller.h:141
+ * include/zmq/Poller.h:109
  */
 static int Poller_poll(lua_State *L) {
   try {
@@ -126,7 +73,7 @@ static int Poller_poll(lua_State *L) {
 }
 
 /** LuaStackSize zmq::Poller::events(lua_State *L)
- * include/zmq/Poller.h:200
+ * include/zmq/Poller.h:168
  */
 static int Poller_events(lua_State *L) {
   try {
@@ -141,7 +88,7 @@ static int Poller_events(lua_State *L) {
 }
 
 /** int zmq::Poller::add(int fd, int events)
- * include/zmq/Poller.h:218
+ * include/zmq/Poller.h:186
  */
 static int Poller_add(lua_State *L) {
   try {
@@ -167,7 +114,7 @@ static int Poller_add(lua_State *L) {
 }
 
 /** void zmq::Poller::modify(int idx, int events, lua_State *L)
- * include/zmq/Poller.h:228
+ * include/zmq/Poller.h:196
  */
 static int Poller_modify(lua_State *L) {
   try {
@@ -185,7 +132,7 @@ static int Poller_modify(lua_State *L) {
 }
 
 /** void zmq::Poller::remove(int idx)
- * include/zmq/Poller.h:250
+ * include/zmq/Poller.h:218
  */
 static int Poller_remove(lua_State *L) {
   try {
@@ -202,7 +149,7 @@ static int Poller_remove(lua_State *L) {
 }
 
 /** int zmq::Poller::count()
- * include/zmq/Poller.h:276
+ * include/zmq/Poller.h:244
  */
 static int Poller_count(lua_State *L) {
   try {
@@ -218,7 +165,7 @@ static int Poller_count(lua_State *L) {
 }
 
 /** LuaStackSize zmq::Poller::idxToPos(int idx, lua_State *L)
- * include/zmq/Poller.h:283
+ * include/zmq/Poller.h:251
  */
 static int Poller_idxToPos(lua_State *L) {
   try {
@@ -234,7 +181,7 @@ static int Poller_idxToPos(lua_State *L) {
 }
 
 /** LuaStackSize zmq::Poller::posToIdx(int pos, lua_State *L)
- * include/zmq/Poller.h:292
+ * include/zmq/Poller.h:260
  */
 static int Poller_posToIdx(lua_State *L) {
   try {
@@ -250,7 +197,7 @@ static int Poller_posToIdx(lua_State *L) {
 }
 
 /** LuaStackSize zmq::Poller::posToFd(int pos, lua_State *L)
- * include/zmq/Poller.h:301
+ * include/zmq/Poller.h:269
  */
 static int Poller_posToFd(lua_State *L) {
   try {
@@ -266,7 +213,7 @@ static int Poller_posToFd(lua_State *L) {
 }
 
 /** LuaStackSize zmq::Poller::posToEvent(int pos, lua_State *L)
- * include/zmq/Poller.h:310
+ * include/zmq/Poller.h:278
  */
 static int Poller_posToEvent(lua_State *L) {
   try {
@@ -294,8 +241,6 @@ static int Poller___tostring(lua_State *L) {
 // --=============================================== METHODS
 
 static const struct luaL_Reg Poller_member_methods[] = {
-  { "__newindex"   , Poller__set_         },
-  { "__index"      , Poller__get_         },
   { "new"          , Poller_Poller        },
   { "__gc"         , Poller__Poller       },
   { "poll"         , Poller_poll          },

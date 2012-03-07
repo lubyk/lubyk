@@ -5,7 +5,7 @@ project(msgpack)
 
 include_directories(src)
 
-file(GLOB MSGPACK_SOURCES src/*.c)
+file(GLOB MSGPACK_SOURCES src/*.c lubyk.cpp)
 add_library(msgpack ${MSGPACK_SOURCES})
 
 # ----------------------------------------------------------------------------------

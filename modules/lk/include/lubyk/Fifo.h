@@ -32,9 +32,7 @@
 #include <unistd.h> // pipe
 #include <fcntl.h>
 
-#include "lubyk/non_copyable.h"
-
-namespace lubyk {
+namespace lk {
 
 /** This is a utility class that should be used to wrap objects that need to run
  * in a different OS thread. The fifo provides a file descriptor and a 'pop'
@@ -45,8 +43,7 @@ namespace lubyk {
  * and write operations are not atomic.
  */
 template<class T>
-class Fifo : private NonCopyable
-{
+class Fifo {
   /** Current read position in the queue.
    */
   volatile int read_idx_;
@@ -145,11 +142,13 @@ protected:
       return false;
     }
   }
-  
+private:  
+  // NonCopyable
+  Fifo(const Fifo &other);
+  Fifo &operator=(const Fifo &other);
 };
 
-
-} // lubyk
+} // lk
 
 #endif // LUBYK_INCLUDE_LUBYK_FIFO_H_
 

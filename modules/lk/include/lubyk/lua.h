@@ -27,69 +27,28 @@
   ==============================================================================
 */
 
-#ifndef LUBYK_INCLUDE_LUBYK_WORKER_H_
-#define LUBYK_INCLUDE_LUBYK_WORKER_H_
+#ifndef LUBYK_INCLUDE_LUBYK_H_
+#define LUBYK_INCLUDE_LUBYK_H_
 
-#include "lubyk/lua.h"
-#include "lubyk/time_ref.h"
-
-#include <cstdlib>
-#include <sys/socket.h> // fd_set
-
-namespace lubyk {
-
-/** The worker should be created only once and is responsible for
- * timing and lua locking.
- *
- * @dub string_format:'%%f'
- *      string_args:'(*userdata)->now()'
- *      lib_name:'core/Worker.cpp'
+/** Pseudo return value for complex types or to push
+ * variable args on stack.
  */
-class Worker {
-public:
-  /** Time reference. All times are in milliseconds (as double) from this reference.
-   * 0.0 = The worker's birthdate !
+typedef int LuaStackSize;
+
+/** Include Lua
+ */
+extern "C" {
+  #include "lua/lua.h"
+  #include "lua/lauxlib.h"
+
+  /** Output debugging information on the current lua stack.
+   * Must link with static lubyk_core if used.
    */
-  TimeRef time_ref_;
+  void luaDump(lua_State *L, const char *msg, bool inspect_tables = true);
+}
 
-  /** Context use by zmq::Socket.
-   */
-  void *zmq_context_;
+// We often check for 'false' return value, this helps
+#define lua_isfalse(L,i) (lua_isboolean(L,i) && !lua_toboolean(L,i))
+#define lua_istrue(L,i)  (lua_isboolean(L,i) && lua_toboolean(L,i))
 
-  /** Counts the number of zmq::Socket depending on the
-   * socket.
-   */
-  size_t zmq_context_refcount_;
-public:
-
-  Worker();
-
-  ~Worker();
-
-  /** Start a new process with the given Lua script.
-   * @return new process id or nil on failure
-   */
-  LuaStackSize spawn(const char *script, lua_State *L);
-
-  /** Wait for another process to finish (BLOCKING).
-   */
-  int waitpid(int pid);
-
-  /** Exit with a given status.
-   */
-  void exit(int status);
-
-  /** Get the current executable's path.
-   */
-  LuaStackSize execPath(lua_State *L);
-
-  double now() {
-    return time_ref_.elapsed();
-  }
-
-  static Worker *getWorker(lua_State *L);
-};
-
-} // lubyk
-
-#endif // LUBYK_INCLUDE_LUBYK_WORKER_H_
+#endif // LUBYK_INCLUDE_LUBYK_H_

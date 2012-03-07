@@ -8,6 +8,7 @@
   loop to the GUI.
 
 --]]------------------------------------------------------
+require 'zmq'
 local lib     = {type = 'lk.Scheduler'}
 lib.__index   = lib
 lk.Scheduler  = lib

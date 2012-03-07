@@ -98,25 +98,3 @@ extern "C" void luaDump(lua_State *L, const char *msg, bool inspect_tables) {
   printf("\n");  /* end the listing */
 }
 
-/////////////  This is a dummy Lua module just to load all lubyk core cpp code //
-
-// Register namespace
-static const struct luaL_Reg lib_functions[] = {
-  {NULL, NULL},
-};
-
-#include "lubyk/time_ref.h"
-
-extern "C" {
-int luaopen_lubyk_Worker(lua_State *L);
-}
-
-extern "C" int luaopen_lubyk_core(lua_State *L) {
-  // initialize the global weak table to store functions that should
-  // still be garbage collected.
-
-  // register functions
-  luaL_register(L, "lubyk", lib_functions);
-  luaopen_lubyk_Worker(L);
-  return 0;
-}

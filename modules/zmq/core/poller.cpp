@@ -32,7 +32,7 @@ namespace zmq {
 
 pthread_key_t Poller::sThisKey = 0;
 
-Poller::Poller(int reserve=8)
+Poller::Poller(int reserve)
       : pollitems_(NULL)
       , pollitems_size_(0)
       , idx_to_pos_(NULL)

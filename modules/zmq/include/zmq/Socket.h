@@ -33,9 +33,8 @@
 #include "lubyk/msgpack.h"
 #include "lubyk/time_ref.h"
 #include "lubyk/worker.h"
-#include "lua_cpp_helper.h"
 
-#include "../vendor/include/zmq.h"
+#include "zmq.h"
 
 #include <stdint.h>
 #include <stdlib.h> // rand()

@@ -27,27 +27,37 @@
   ==============================================================================
 */
 
-#ifndef CORE_INCLUDE_CORE_LUA_H_
-#define CORE_INCLUDE_CORE_LUA_H_
+#ifndef LUBYK_INCLUDE_LUBYK_HELPER_H_
+#define LUBYK_INCLUDE_LUBYK_HELPER_H_
 
-/** Pseudo return value for complex types or to push
- * variable args on stack.
+#include "dub/dub.h"
+
+namespace lk {
+
+/** Some helper methods to spawn new processes.
+ *
  */
-typedef int LuaStackSize;
+class Helper {
+public:
 
-/** Include Lua
- */
-extern "C" {
-  #include "lua/lua.h"
-  #include "lua/lauxlib.h"
+  Worker();
 
-  /** Output debugging information on the current lua stack.
+  ~Worker();
+
+  /** Start a new process with the given Lua script.
+   * @return new process id or nil on failure
    */
-  void luaDump(lua_State *L, const char *msg, bool inspect_tables = true);
-}
+  LuaStackSize spawn(const char *script, lua_State *L);
 
-// We often check for 'false' return value, this helps
-#define lua_isfalse(L,i) (lua_isboolean(L,i) && !lua_toboolean(L,i))
-#define lua_istrue(L,i)  (lua_isboolean(L,i) && lua_toboolean(L,i))
+  /** Wait for another process to finish (BLOCKING).
+   */
+  int waitpid(int pid);
 
-#endif // CORE_INCLUDE_CORE_LUA_H_
+  /** Get the current executable's path.
+   */
+  LuaStackSize execPath(lua_State *L);
+};
+
+} // lk
+
+#endif // LUBYK_INCLUDE_LUBYK_WORKER_H_

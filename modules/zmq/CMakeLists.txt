@@ -4,6 +4,7 @@ set(MODULE_NAME zmq)
 add_subdirectory(vendor)
 
 include_directories(include)
+include_directories(vendor/include)
 include_directories(core)
 
 # --------------------------------------------------------------

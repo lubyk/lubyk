@@ -30,13 +30,9 @@
 #ifndef LUBYK_INCLUDE_LUBYK_TIME_REF_H_
 #define LUBYK_INCLUDE_LUBYK_TIME_REF_H_
 
-#include <sys/types.h>  // time_t
+namespace lk {
 
-#include "lubyk/non_copyable.h"
-
-namespace lubyk {
-
-class TimeRef : private NonCopyable {
+class TimeRef {
 public:
   TimeRef();
   ~TimeRef();
@@ -47,7 +43,11 @@ public:
 private:
   struct TimeRefData;
   TimeRefData *reference_;
+  // NonCopyable
+  TimeRef(const TimeRef &other);
+  TimeRef &operator=(const TimeRef &other);
 };
 
-} // lubyk
+} // lk
+
 #endif // LUBYK_INCLUDE_LUBYK_TIME_REF_H_

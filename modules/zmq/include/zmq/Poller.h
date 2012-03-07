@@ -30,14 +30,14 @@
 #define LUBYK_INCLUDE_ZMQ_POLLER_H_
 
 
-#include "lubyk.h"
+#include "dub/dub.h"
 
 #include <stdlib.h> // rand()
 #include <time.h>   // time()
 #include <assert.h> // assert()
 #include <signal.h> // signal(), SIG_DFL, ...
 
-#include "../vendor/include/zmq.h"
+#include "zmq.h"
 #include "lubyk/msgpack.h"
 #include "lubyk/time_ref.h"
 #include "zmq/Socket.h"
@@ -48,8 +48,7 @@ namespace zmq {
 
 /** ZeroMQ polling helper.
  *
- * @dub push: pushobject
- *      register:'Poller_core'
+ * @dub register:'Poller_core'
  *      string_format: %%f
  *      string_args: self->count()
  */
@@ -87,45 +86,14 @@ class Poller {
    * poll to return false.
    */
   bool interrupted_;
+
+  /** Used to get back to the current poll in the interrupt handler.
+   */
+  static pthread_key_t sThisKey;
 public:
   /** Create a zmq poller and reserve free slots.
    */
-  Poller(int reserve=8)
-      : pollitems_(NULL),
-        pollitems_size_(0),
-        idx_to_pos_(NULL),
-        pos_to_idx_(NULL),
-        used_count_(0),
-        event_count_(0),
-        interrupted_(false) {
-    if (reserve <= 0) reserve = 10;
-    pollitems_ = (zmq_pollitem_t*)calloc(reserve, sizeof(zmq_pollitem_t));
-    if (pollitems_ == NULL) {
-      throw dub::Exception("Could not pre-allocate %i pollitems", reserve);
-    }
-
-    idx_to_pos_ = (int*)calloc(reserve, sizeof(int));
-    if (idx_to_pos_ == NULL) {
-      free(pollitems_);
-      pollitems_ = NULL;
-      throw dub::Exception("Could not pre-allocate %i pollitems", reserve);
-    }
-
-    pos_to_idx_ = (int*)calloc(reserve, sizeof(int));
-    if (pos_to_idx_ == NULL) {
-      free(pollitems_);
-      pollitems_ = NULL;
-      free(idx_to_pos_);
-      idx_to_pos_ = NULL;
-      throw dub::Exception("Could not pre-allocate %i pollitems", reserve);
-    }
-    pollitems_size_ = reserve;
-
-    memset(idx_to_pos_, -1, reserve * sizeof(int));
-    memset(pos_to_idx_, -1, reserve * sizeof(int));
-
-    setupInterruptHook();
-  }
+  Poller(int reserve=8);
 
   ~Poller() {
     if (pollitems_) free(pollitems_);
@@ -234,11 +202,11 @@ public:
     // <self> <idx> <events> <new_fd>
     if (top > 3) {
       if (lua_isuserdata(L, 4)) {
-        zmq::Socket *sock = *((zmq::Socket **)dubL_checksdata(L, 4, "zmq.Socket"));
+        zmq::Socket *sock = *((zmq::Socket **)dub_checksdata(L, 4, "zmq.Socket"));
         item->fd = 0;
         item->socket = sock->socket_;
       } else {
-        int fd = dubL_checkint(L, 4);
+        int fd = dub_checkint(L, 4);
         item->fd = fd;
         item->socket = NULL;
       }
@@ -313,8 +281,6 @@ public:
     return 1;
   }
 
-
-  static pthread_key_t sThisKey;
 private:
   int addItem(int fd, void *socket, int events) {
     // printf("addItem fd:%i socket:%p\n", fd, socket);
