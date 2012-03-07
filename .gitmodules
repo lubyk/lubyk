@@ -13,3 +13,6 @@
 [submodule "modules/gl"]
 	path = modules/gl
 	url = git://github.com/lubyk/gl.git
+[submodule "modules/crypto"]
+	path = modules/crypto
+	url = git://github.com/lubyk/crypto.git
