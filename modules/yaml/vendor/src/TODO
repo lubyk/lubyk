@@ -1,3 +1,0 @@
-* allow creating dump/load objects with internal configuration settings
-* better error checking when using LibYAML dump functions
-* potentially support additional Lua types (functions?)

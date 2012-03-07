@@ -1,3 +1,6 @@
 [submodule "modules/dub"]
 	path = modules/dub
 	url = git://github.com/lubyk/dub
+[submodule "modules/yaml"]
+	path = modules/yaml
+	url = git://github.com/lubyk/yaml.git
