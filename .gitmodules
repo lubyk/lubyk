@@ -49,3 +49,6 @@
 [submodule "modules/bit"]
 	path = modules/bit
 	url = git://github.com/lubyk/bit.git
+[submodule "modules/remdebug"]
+	path = modules/remdebug
+	url = git://github.com/lubyk/remdebug.git
