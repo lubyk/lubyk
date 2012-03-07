@@ -1,0 +1,3 @@
+[submodule "modules/dub"]
+	path = modules/dub
+	url = git://github.com/lubyk/dub
