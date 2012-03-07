@@ -1,6 +1,0 @@
-lib("lib")
-w = GLWindow()
-m = GLMat()
-w => m
-v = VideoIn()
-v => matrix~m

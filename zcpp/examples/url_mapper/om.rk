@@ -1,7 +1,0 @@
-lib('../lib')
-m = Metro()
-m => lua
-lua = Lua('lua.lua')
-lua => midi
-midi = MidiOut()
-map = OscMap('map.map')

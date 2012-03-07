@@ -1,2 +1,0 @@
-lib("lib")
-win = GLWindow(load:"test/fixtures/lua/glwindow.lua" reload:0.1)

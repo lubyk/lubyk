@@ -1,7 +1,0 @@
-k=Keyboard()
-k=>t
-t=Turing(load:"test/fixtures/fun.tur")
-t=>n
-n=NoteOut(length:50)
-n=>m
-m=Midi()

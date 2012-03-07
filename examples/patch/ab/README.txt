@@ -1,1 +1,0 @@
-This example contains two processes 'a' and 'b' that send each other messages.

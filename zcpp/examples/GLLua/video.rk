@@ -1,9 +1,0 @@
-# run from build directory with
-# ./lubyk ../examples/GLLua/video.rk
-w = GLWindow()
-l = GLLua("../examples/GLLua/video.lua")
-w => l
-m = Metro(3000)
-m => w
-v = VideoIn(device:"unibrain Fire-i")
-v => video~l

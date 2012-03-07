@@ -1,5 +1,0 @@
-v  =Value(0.00)
-v => pca
-pca=PCA(vector:6 data:"test/fixtures/pca" processed:"test/fixtures/pca/processed" keep:1)
-pca => print
-print=Print()

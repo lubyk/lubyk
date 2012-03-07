@@ -1,7 +1,0 @@
-m = Metro(120)
-m.1 => 1.v
-v = Value(3)
-v.1 => 1.c
-c = Counter()
-c.1 => 1.p
-p = Print()

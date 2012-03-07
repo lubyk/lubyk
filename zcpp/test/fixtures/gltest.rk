@@ -1,8 +1,0 @@
-lib("lib")
-m = Metro(20000)
-m => win
-m => lua
-win = GLWindow(fps:0)
-win.2 => 2.lua
-win.4 => 3.lua
-lua = GLLua(load:"test/fixtures/lua/gllua.lua")
