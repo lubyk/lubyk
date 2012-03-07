@@ -43,3 +43,6 @@
 [submodule "modules/video"]
 	path = modules/video
 	url = git://github.com/lubyk/video.git
+[submodule "modules/cv"]
+	path = modules/cv
+	url = git://github.com/lubyk/cv.git
