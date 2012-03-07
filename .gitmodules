@@ -10,3 +10,6 @@
 [submodule "modules/editor"]
 	path = modules/editor
 	url = git://github.com/lubyk/editor.git
+[submodule "modules/gl"]
+	path = modules/gl
+	url = git://github.com/lubyk/gl.git
