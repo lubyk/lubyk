@@ -46,3 +46,6 @@
 [submodule "modules/cv"]
 	path = modules/cv
 	url = git://github.com/lubyk/cv.git
+[submodule "modules/bit"]
+	path = modules/bit
+	url = git://github.com/lubyk/bit.git
