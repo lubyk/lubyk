@@ -1,5 +1,7 @@
-set(MODULE_NAME lk)
+set(MODULE_NAME zmq)
 # --------------------------------------------------------------
+
+add_subdirectory(vendor)
 
 include_directories(include)
 include_directories(core)
@@ -22,8 +24,8 @@ set_target_properties("${MODULE_NAME}_core"
   PREFIX ""
   SUFFIX ".so"
 )  
-# msgpack is in lubyk/vendor
-target_link_libraries("${MODULE_NAME}_core" ${PLAT_LINK} msgpack)
+# msgpack is in lubyk/vendor, zmq_vendor is created by vendor
+target_link_libraries("${MODULE_NAME}_core" ${PLAT_LINK} msgpack zmq_vendor)
 add_dependencies(${MODULE_NAME} "${MODULE_NAME}_core")
 
 # --------------------------------------------------------------
@@ -42,4 +44,5 @@ add_custom_target("${MODULE_NAME}_lib" ALL
   COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/lib ${LUBYK_LIB}
 )
 add_dependencies(${MODULE_NAME} "${MODULE_NAME}_lib")
+
 

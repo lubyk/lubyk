@@ -1,0 +1,4 @@
+This module contains the 'lubyk' executable and some header files
+that can be used while creating other modules (such as Fifo.h). It
+also contains some common code that we want to statically link to
+the executable (such as msgpack).

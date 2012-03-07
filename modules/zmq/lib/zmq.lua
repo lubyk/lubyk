@@ -7,7 +7,4 @@
 
 --]]------------------------------------------------------
 zmq = Autoload('zmq')
--- fast pack/unpack directly in zmq
-require 'msgpack.vendor'
-require 'zmq.vendor'
-require 'zmq.constants'
+require 'zmq.core'

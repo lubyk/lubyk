@@ -48,9 +48,10 @@ namespace zmq {
 
 /** ZeroMQ polling helper.
  *
- * @dub lib_name:'Poller_core'
- *      string_format:' (%%f)'
- *      string_args:'(*userdata)->count()'
+ * @dub push: pushobject
+ *      register:'Poller_core'
+ *      string_format: %%f
+ *      string_args: self->count()
  */
 class Poller {
   /** Contiguous array of pollitems.

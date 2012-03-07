@@ -1,12 +1,12 @@
-
 # ----------------------------------------------------------------------------------
 #  [lubyk]
 # ----------------------------------------------------------------------------------
+project(msgpack)
 
 include_directories(src)
 
 file(GLOB MSGPACK_SOURCES src/*.c)
-build_sub_module("vendor" lubyk.cpp ${MSGPACK_SOURCES})
+add_library(msgpack ${MSGPACK_SOURCES})
 
 # ----------------------------------------------------------------------------------
 #  [/lubyk]

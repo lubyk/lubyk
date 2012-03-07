@@ -1,0 +1,107 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.7.4">
+  <compounddef id="_socket_8h" kind="file">
+    <compoundname>Socket.h</compoundname>
+    <includes local="yes">dub/dub.h</includes>
+    <includes local="yes">lubyk/msgpack.h</includes>
+    <includes local="yes">lubyk/time_ref.h</includes>
+    <includes local="yes">lubyk/worker.h</includes>
+    <includes local="yes">lua_cpp_helper.h</includes>
+    <includes local="yes">../vendor/include/zmq.h</includes>
+    <includes local="no">stdint.h</includes>
+    <includes local="no">stdlib.h</includes>
+    <includes local="no">time.h</includes>
+    <includes local="no">string</includes>
+    <includedby refid="_poller_8h" local="yes">include/zmq/Poller.h</includedby>
+    <incdepgraph>
+      <node id="23">
+        <label>lubyk/msgpack.h</label>
+      </node>
+      <node id="28">
+        <label>stdint.h</label>
+      </node>
+      <node id="29">
+        <label>stdlib.h</label>
+      </node>
+      <node id="31">
+        <label>string</label>
+      </node>
+      <node id="27">
+        <label>../vendor/include/zmq.h</label>
+      </node>
+      <node id="22">
+        <label>dub/dub.h</label>
+      </node>
+      <node id="24">
+        <label>lubyk/time_ref.h</label>
+      </node>
+      <node id="30">
+        <label>time.h</label>
+      </node>
+      <node id="21">
+        <label>include/zmq/Socket.h</label>
+        <link refid="Socket.h"/>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+      </node>
+      <node id="26">
+        <label>lua_cpp_helper.h</label>
+      </node>
+      <node id="25">
+        <label>lubyk/worker.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="33">
+        <label>include/zmq/Poller.h</label>
+        <link refid="_poller_8h"/>
+      </node>
+      <node id="32">
+        <label>include/zmq/Socket.h</label>
+        <link refid="Socket.h"/>
+        <childnode refid="33" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classzmq_1_1_socket" prot="public">zmq::Socket</innerclass>
+    <innernamespace refid="namespacezmq">zmq</innernamespace>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="_socket_8h_1ad7b7b6ae22c7c96907552b935952aed0" prot="public" static="no">
+        <type>struct <ref refid="_socket_8h_1ad7b7b6ae22c7c96907552b935952aed0" kindref="member">ZMQ_Socket</ref></type>
+        <definition>typedef struct ZMQ_Socket ZMQ_Socket</definition>
+        <argsstring></argsstring>
+        <name>ZMQ_Socket</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/gaspard/git/lubyk/modules/zmq/include/zmq/Socket.h" line="47" bodyfile="/home/gaspard/git/lubyk/modules/zmq/include/zmq/Socket.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/gaspard/git/lubyk/modules/zmq/include/zmq/Socket.h"/>
+  </compounddef>
+</doxygen>

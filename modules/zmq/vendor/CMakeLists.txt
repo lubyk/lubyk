@@ -131,9 +131,8 @@ CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/platform.hpp.in
 # ----------------------------------------------------------------------------------
 #  [lubyk]
 # ----------------------------------------------------------------------------------
-#ADD_LIBRARY(ZMQ ${ZMQ_SRC} )
-build_sub_module("vendor" ${ZMQ_SRC} ${ZMQ_SOURCE_DIR}/lubyk.cpp)
-target_link_libraries("${MODULE_NAME}_vendor" ${LIB_DEP})
+add_library(zmq_vendor ${ZMQ_SRC})
+target_link_libraries(zmq_vendor ${LIB_DEP})
 
 # ----------------------------------------------------------------------------------
 #  [/lubyk]

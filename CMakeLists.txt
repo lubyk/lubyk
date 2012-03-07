@@ -22,11 +22,12 @@ set(QT_SRC_PATH "" CACHE STRING    "Use static qt build (provide qt src path)")
 #  Platform guessing
 #
 # ==============================================================================
+set(LUBYK_LIB ${CMAKE_BINARY_DIR}/lib)
+
 if(UNIX)
   add_definitions(-DLUA_USE_LINUX)
   if(APPLE)
     set(PLAT "macosx")
-    set(LUBYK_LIB ${LUBYK_SOURCE_DIR}/deploy/macosx/Lubyk/lib)
     # add_definitions(-DLUA_USE_MACOSX)
     add_definitions(-D__MACOSX_CORE__)
     # CoreFoundation needed by Midi and cannot be added in dylib
@@ -41,7 +42,6 @@ if(UNIX)
   else(APPLE)
     set(LINUX true)
     set(PLAT "linux")
-    set(LUBYK_LIB ${LUBYK_SOURCE_DIR}/deploy/linux/lib)
     add_definitions(-D__LINUX_ALSASEQ__)
     #set(PLAT_LINK "-lavahi-client -lrt -lreadline -lasound")
     set(PLAT_LINK "rt")
@@ -62,43 +62,6 @@ if (RELEASE)
   add_definitions(-O2 -DNDEBUG)
 endif(RELEASE)
 add_definitions(-D__${PLAT}__ -DUSE_READLINE)
-
-# ==============================================================================
-#
-#  Doxygen
-#
-# ==============================================================================
-find_package(Doxygen)
-set(DOXYGEN_OUTPUT_DIR ${CMAKE_BINARY_DIR}/doc)
-set(DOXYGEN_OUTPUT ${DOXYGEN_OUTPUT_DIR}/xml/index.xml)
-set(LUBYK_BUILD_DOXYGEN_DOCS ON CACHE BOOL "Build HTML+XML documentation with Doxygen")
-
-# The code below is moved here so that 'dub' target (Doxygen based binding generator)
-# can depend on this action.
-if(LUBYK_BUILD_DOXYGEN_DOCS AND DOXYGEN_FOUND)
-  file (GLOB MODULES ${LUBYK_SOURCE_DIR}/modules/*)
-  foreach(MODULE ${MODULES})
-    get_filename_component (MODULE_NAME ${MODULE} NAME_WE)
-    # Include headers and dummy headers used to created automatic bindings to super-classes
-    file(GLOB MODULE_DUB_HEADERS ${MODULE}/include/${MODULE_NAME}/*.h ${MODULE}/bind/*.h)
-    list(APPEND DOXYGEN_INPUT_LIST_B ${MODULE_DUB_HEADERS})
-  endforeach(MODULE ${MODULES})
-
-  string(REGEX REPLACE ";" " " DOXYGEN_INPUT_LIST "${DOXYGEN_INPUT_LIST_B}")
-
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/doc/Doxyfile.in ${CMAKE_BINARY_DIR}/Doxyfile)
-
-  add_custom_command(
-    OUTPUT ${DOXYGEN_OUTPUT}
-    COMMAND ${CMAKE_COMMAND} -E echo_append "Building API Documentation..."
-    COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/Doxyfile >/dev/null
-    COMMAND ${CMAKE_COMMAND} -E echo "Done."
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    DEPENDS ${DOXYGEN_INPUT} ${CMAKE_BINARY_DIR}/Doxyfile
-    )
-  add_custom_target(doc ALL DEPENDS ${DOXYGEN_OUTPUT})
-endif()
-
 
 # ==============================================================================
 #
@@ -132,13 +95,6 @@ add_custom_target(dmg
 # ==============================================================================
 add_custom_target(test_all cd .. && ./ltest)
 add_dependencies(test_all modules)
-
-# ==============================================================================
-#
-#  Rebuild documentation on header changes (call make dub to rebuild bindings)
-#
-# ==============================================================================
-add_custom_target(head rm -rf ${CMAKE_BINARY_DIR}/doc/xml && make doc)
 
 
 message (STATUS "===========================================================================")

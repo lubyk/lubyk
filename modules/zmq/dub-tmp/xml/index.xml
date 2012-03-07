@@ -1,0 +1,106 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygenindex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="index.xsd" version="1.7.4">
+  <compound refid="classzmq_1_1_poller" kind="class"><name>zmq::Poller</name>
+    <member refid="classzmq_1_1_poller_1a5e52f42cc4b725ffad5743635caf9b9b" kind="variable"><name>pollitems_</name></member>
+    <member refid="classzmq_1_1_poller_1a25e34f52af6102a5d118dc7185e268ea" kind="variable"><name>pollitems_size_</name></member>
+    <member refid="classzmq_1_1_poller_1ace8c21321df7921d5476b648121b33d3" kind="variable"><name>idx_to_pos_</name></member>
+    <member refid="classzmq_1_1_poller_1a132fc4f9ce6390c1cf504c9798069a43" kind="variable"><name>pos_to_idx_</name></member>
+    <member refid="classzmq_1_1_poller_1a5f4e51b42b28b2a72beb908e21cf453f" kind="variable"><name>used_count_</name></member>
+    <member refid="classzmq_1_1_poller_1a18bf5e60e5b75fce4e8ce76989132679" kind="variable"><name>event_count_</name></member>
+    <member refid="classzmq_1_1_poller_1a36710780e8664a7f6d94ee6f6ce67fbd" kind="variable"><name>time_</name></member>
+    <member refid="classzmq_1_1_poller_1a81342f4252b33884385fc1d844c1190b" kind="variable"><name>interrupted_</name></member>
+    <member refid="classzmq_1_1_poller_1a6ab80f411e0dfb094da0407f2918ac8c" kind="variable"><name>sThisKey</name></member>
+    <member refid="classzmq_1_1_poller_1ab1902c19d79435bdfb9990145383ae92" kind="function"><name>Poller</name></member>
+    <member refid="classzmq_1_1_poller_1a8f9dee6dc38621c7a82809c6fbd408ac" kind="function"><name>~Poller</name></member>
+    <member refid="classzmq_1_1_poller_1a08be8489aaee2d0ade8ff1bdf839ce48" kind="function"><name>poll</name></member>
+    <member refid="classzmq_1_1_poller_1abe06259a302655881eed1ac716abf449" kind="function"><name>events</name></member>
+    <member refid="classzmq_1_1_poller_1a333f32eed1ef2b5f77ed2e28afd93627" kind="function"><name>add</name></member>
+    <member refid="classzmq_1_1_poller_1adfc902286b26f6e29ab809a74debd7be" kind="function"><name>add</name></member>
+    <member refid="classzmq_1_1_poller_1a5e4197ac4ed9932f40d0dae3fcd80aae" kind="function"><name>modify</name></member>
+    <member refid="classzmq_1_1_poller_1ae90abc98bde5c2f0451603970bdcafb3" kind="function"><name>remove</name></member>
+    <member refid="classzmq_1_1_poller_1a9c6fc1f9d6136f534442e771bc3a874b" kind="function"><name>count</name></member>
+    <member refid="classzmq_1_1_poller_1a8fc5036306f6b3667844a4924716f458" kind="function"><name>idxToPos</name></member>
+    <member refid="classzmq_1_1_poller_1a8ffaf312d0c5d9c2856b6b8a7f37e447" kind="function"><name>posToIdx</name></member>
+    <member refid="classzmq_1_1_poller_1a1b9ddae14c69b4112f3f3e41a33b6534" kind="function"><name>posToFd</name></member>
+    <member refid="classzmq_1_1_poller_1a9089999eff431f60d3f79b5fcd84d883" kind="function"><name>posToEvent</name></member>
+    <member refid="classzmq_1_1_poller_1a372f17bfca9bf84cd98b87a69272261b" kind="function"><name>addItem</name></member>
+    <member refid="classzmq_1_1_poller_1a8c4a125d4bcae1d10ca927f638ef67de" kind="function"><name>setupInterruptHook</name></member>
+    <member refid="classzmq_1_1_poller_1ac447625ccfda6190f2e7a244c9aaf85f" kind="function"><name>sInterrupted</name></member>
+  </compound>
+  <compound refid="classzmq_1_1_socket" kind="class"><name>zmq::Socket</name>
+    <member refid="classzmq_1_1_socket_1a6368feb544053a5a867a590000aeb1de" kind="friend"><name>Poller</name></member>
+    <member refid="classzmq_1_1_socket_1a069f600701355be727b06d9f2dd7f976" kind="variable"><name>socket_</name></member>
+    <member refid="classzmq_1_1_socket_1ab9140c21bb2248b528acac9670634675" kind="variable"><name>location_</name></member>
+    <member refid="classzmq_1_1_socket_1ad4347e6eaf983accf60cfb5aed31020b" kind="variable"><name>type_</name></member>
+    <member refid="classzmq_1_1_socket_1a2494e6be34e6491248e3fc9aae01e79c" kind="variable"><name>send_flags_</name></member>
+    <member refid="classzmq_1_1_socket_1a2a1ea503ff3a43dd8982e9b105fcea50" kind="variable"><name>time_ref_</name></member>
+    <member refid="classzmq_1_1_socket_1af93cd7bd7fddc66a45e1d721b25dd575" kind="variable"><name>worker_</name></member>
+    <member refid="classzmq_1_1_socket_1ab20b347056a6dcb162f3deef4ac2a63c" kind="function"><name>Socket</name></member>
+    <member refid="classzmq_1_1_socket_1a2844b4299a3e410d88832943b4c6524f" kind="function"><name>~Socket</name></member>
+    <member refid="classzmq_1_1_socket_1a6913e6251911ecb39c2d03638e72f3a3" kind="function"><name>fd</name></member>
+    <member refid="classzmq_1_1_socket_1ab85fbea3c413a711e0ac6589448fb466" kind="function"><name>setNonBlocking</name></member>
+    <member refid="classzmq_1_1_socket_1ad7a88861054408143e59724dd87f6b5e" kind="function"><name>setsockopt</name></member>
+    <member refid="classzmq_1_1_socket_1aba886d2247712d2f85cce98f04960226" kind="function"><name>bind</name></member>
+    <member refid="classzmq_1_1_socket_1a5bb530a06ae28aed7e9b26094045d541" kind="function"><name>bind</name></member>
+    <member refid="classzmq_1_1_socket_1a1fb452e66fbc3080430b07b18d53772e" kind="function"><name>connect</name></member>
+    <member refid="classzmq_1_1_socket_1ae65e9573a8dcc32dc83242aec20a29ec" kind="function"><name>hasEvent</name></member>
+    <member refid="classzmq_1_1_socket_1ac9afea253b7419e252a348b06a09fb46" kind="function"><name>recv</name></member>
+    <member refid="classzmq_1_1_socket_1a8c9e876a842883a8a25c4647ec1039c7" kind="function"><name>send</name></member>
+    <member refid="classzmq_1_1_socket_1adb9c798cb32e1b4b2a1488f6d509adc1" kind="function"><name>rawSend</name></member>
+    <member refid="classzmq_1_1_socket_1a9d6e15efa968134db3ceaf2c6516f4ad" kind="function"><name>request</name></member>
+    <member refid="classzmq_1_1_socket_1a2db0d2f61412a6acaa0ba92bf12dd942" kind="function"><name>location</name></member>
+    <member refid="classzmq_1_1_socket_1a283c0ffa93cb186a8de58739b0eef914" kind="function"><name>port</name></member>
+    <member refid="classzmq_1_1_socket_1afffa4ad08098ae2356b42efa851b5e1f" kind="function"><name>type</name></member>
+    <member refid="classzmq_1_1_socket_1a006ba13cc78ab465f381d84223db097b" kind="function"><name>throw_bind_error</name></member>
+    <member refid="classzmq_1_1_socket_1abf9a79140e1b334387bb8962ae87b18b" kind="function"><name>throw_recv_error</name></member>
+    <member refid="classzmq_1_1_socket_1a2004a53949cd7211ef1d2c0a8855d7bb" kind="function"><name>throw_poll_error</name></member>
+    <member refid="classzmq_1_1_socket_1aefd91d4db525ae071c63bf201798e8bc" kind="function"><name>throw_send_error</name></member>
+  </compound>
+  <compound refid="namespacelubyk" kind="namespace"><name>lubyk</name>
+  </compound>
+  <compound refid="namespacezmq" kind="namespace"><name>zmq</name>
+    <member refid="namespacezmq_1a33dee23968fe7be04ac93a72bd285e7f" kind="enum"><name>SocketTypes</name></member>
+    <member refid="namespacezmq_1a33dee23968fe7be04ac93a72bd285e7fa03cc942a0511f733d227f20fe77dd4aa" kind="enumvalue"><name>PAIR</name></member>
+    <member refid="namespacezmq_1a33dee23968fe7be04ac93a72bd285e7fa4716228458bd3d9ec5e0ce05a5e79f4c" kind="enumvalue"><name>PUB</name></member>
+    <member refid="namespacezmq_1a33dee23968fe7be04ac93a72bd285e7fa7973c56bdf8bb6380853be27ed434835" kind="enumvalue"><name>SUB</name></member>
+    <member refid="namespacezmq_1a33dee23968fe7be04ac93a72bd285e7fac643992f7b809cfc192179ed5f6447e2" kind="enumvalue"><name>REQ</name></member>
+    <member refid="namespacezmq_1a33dee23968fe7be04ac93a72bd285e7fae4bbfbac1ba13d99fc62e56bac24b43b" kind="enumvalue"><name>REP</name></member>
+    <member refid="namespacezmq_1a33dee23968fe7be04ac93a72bd285e7fa73d2b105b2ff1e585f0416892db8c5fc" kind="enumvalue"><name>XREQ</name></member>
+    <member refid="namespacezmq_1a33dee23968fe7be04ac93a72bd285e7faebf7e070c579de411dd5f466821a9e64" kind="enumvalue"><name>XREP</name></member>
+    <member refid="namespacezmq_1a33dee23968fe7be04ac93a72bd285e7fa037a500d3853c9fa7bda7561966ecf9f" kind="enumvalue"><name>PULL</name></member>
+    <member refid="namespacezmq_1a33dee23968fe7be04ac93a72bd285e7faff36ddbc146db7a902a9526682d5306f" kind="enumvalue"><name>PUSH</name></member>
+    <member refid="namespacezmq_1a626b39324d380f932c20097a8f9fb9ca" kind="enum"><name>SocketOptions</name></member>
+    <member refid="namespacezmq_1a626b39324d380f932c20097a8f9fb9caa0ae3753ff49a1ee83af9549be14be26f" kind="enumvalue"><name>HWM</name></member>
+    <member refid="namespacezmq_1a626b39324d380f932c20097a8f9fb9caa2298e6f6b4bf8522743477438987e15f" kind="enumvalue"><name>SWAP</name></member>
+    <member refid="namespacezmq_1a626b39324d380f932c20097a8f9fb9caaa681d346eb4cf8d56f5f9aeb4589de1c" kind="enumvalue"><name>AFFINITY</name></member>
+    <member refid="namespacezmq_1a626b39324d380f932c20097a8f9fb9caae67be5f8f220d29c9461661a8d22ef14" kind="enumvalue"><name>IDENTITY</name></member>
+    <member refid="namespacezmq_1a626b39324d380f932c20097a8f9fb9caa9b74104021659407fa8ad4c35fd2cb93" kind="enumvalue"><name>SUBSCRIBE</name></member>
+    <member refid="namespacezmq_1a626b39324d380f932c20097a8f9fb9caad9ccf580aac224ccbe6e71553e61e911" kind="enumvalue"><name>UNSUBSCRIBE</name></member>
+    <member refid="namespacezmq_1a626b39324d380f932c20097a8f9fb9caafd89dfd8e25cc78c6d6eaa66e92487ea" kind="enumvalue"><name>RATE</name></member>
+    <member refid="namespacezmq_1a626b39324d380f932c20097a8f9fb9caab66fc217d543e4ac6f5684cd8caeb5d7" kind="enumvalue"><name>RECOVERY_IVL</name></member>
+    <member refid="namespacezmq_1a626b39324d380f932c20097a8f9fb9caa6625922b488b1c09ec2eacc9a65ea88a" kind="enumvalue"><name>MCAST_LOOP</name></member>
+    <member refid="namespacezmq_1a626b39324d380f932c20097a8f9fb9caa3b4b24403f54bae4a41a6ae380b7f232" kind="enumvalue"><name>SNDBUF</name></member>
+    <member refid="namespacezmq_1a626b39324d380f932c20097a8f9fb9caa3d7be6276f0b1af45a734b0acf3ba5a0" kind="enumvalue"><name>RCVBUF</name></member>
+    <member refid="namespacezmq_1a626b39324d380f932c20097a8f9fb9caa4feda3ce821972687d1497102d6fa22e" kind="enumvalue"><name>RCVMORE</name></member>
+    <member refid="namespacezmq_1a626b39324d380f932c20097a8f9fb9caa71053a0b7bad5e8d2280c68764557d72" kind="enumvalue"><name>FD</name></member>
+    <member refid="namespacezmq_1a626b39324d380f932c20097a8f9fb9caa5a995885727d7f50d3bb71dddfe2a13d" kind="enumvalue"><name>EVENTS</name></member>
+    <member refid="namespacezmq_1a626b39324d380f932c20097a8f9fb9caa6cbd7b9dd7bc5a7c24a9b88e77ad1183" kind="enumvalue"><name>TYPE</name></member>
+    <member refid="namespacezmq_1a626b39324d380f932c20097a8f9fb9caaddbc0ff8e0948057a1ebee10235083d4" kind="enumvalue"><name>LINGER</name></member>
+    <member refid="namespacezmq_1a626b39324d380f932c20097a8f9fb9caaca825deaa10b6a989605f0adeeb6f8c1" kind="enumvalue"><name>RECONNECT_IVL</name></member>
+    <member refid="namespacezmq_1a626b39324d380f932c20097a8f9fb9caa4e43286b137be6bec5d33e93eeb33ae3" kind="enumvalue"><name>BACKLOG</name></member>
+    <member refid="namespacezmq_1a1bb6280f3c21124e30c0f3a4f38de564" kind="enum"><name>EventOptions</name></member>
+    <member refid="namespacezmq_1a1bb6280f3c21124e30c0f3a4f38de564afdf5913051795de1d9f354f4d3030bb8" kind="enumvalue"><name>POLLIN</name></member>
+    <member refid="namespacezmq_1a1bb6280f3c21124e30c0f3a4f38de564ab7a497fa75378ed1f563c906de903370" kind="enumvalue"><name>POLLOUT</name></member>
+  </compound>
+  <compound refid="constants_8h" kind="file"><name>constants.h</name>
+  </compound>
+  <compound refid="_poller_8h" kind="file"><name>Poller.h</name>
+  </compound>
+  <compound refid="_socket_8h" kind="file"><name>Socket.h</name>
+    <member refid="_socket_8h_1ad7b7b6ae22c7c96907552b935952aed0" kind="typedef"><name>ZMQ_Socket</name></member>
+  </compound>
+  <compound refid="dir_da057ff7cf7165968f1b80038b619764" kind="dir"><name>include/</name>
+  </compound>
+  <compound refid="dir_c6ad486f89382c098489a953edfdf6ff" kind="dir"><name>include/zmq/</name>
+  </compound>
+</doxygenindex>

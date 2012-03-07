@@ -1,13 +1,16 @@
 project(luabin C)
-set(target "lua")
+set(target "luabin")
+# This is used by lk.Socket and zmq.
+add_subdirectory(msgpack)
 
 add_definitions("-DLUA_USE_LINUX")
 
-include_directories(vendor/lua5.1/src)
+include_directories(lua5.1/src)
 
-file(GLOB MODULE_SOURCES vendor/lua5.1/src/*.c)
-list(REMOVE_ITEM MODULE_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/vendor/lua5.1/src/luac.c)
+file(GLOB MODULE_SOURCES lua5.1/src/*.c)
+list(REMOVE_ITEM MODULE_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/lua5.1/src/luac.c)
 
+# FIXME: This should be an install rule (different on macosx and linux).
 set(EXECUTABLE_OUTPUT_PATH ${LUBYK_LIB}/lubyk)
 
 add_executable(${target} ${MODULE_SOURCES})

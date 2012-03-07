@@ -64,21 +64,15 @@ lubyk.rem_service_url = '/lk/rem_service'
 require 'lubyk.core'
 require 'worker' -- declares global 'sleep' and creates worker
 
-require 'lk.Scheduler'
-sched = lk.Scheduler()
-function sleep(ms)
-  sched:sleep(ms)
-end
+--require 'lk.Scheduler'
+--sched = lk.Scheduler()
+--function sleep(ms)
+--  sched:sleep(ms)
+--end
+--
+--function run(...)
+--  sched:run(...)
+--end
 
-function run(...)
-  sched:run(...)
-end
-
--------------------------------- pack/unpack (msgpack.vendor)
-require 'msgpack.vendor'
-
--------------------------------- lk.findFile
-require 'lk.constants'
--- FIXME: Do we need to load all these now ?
 require 'lk.util'
 

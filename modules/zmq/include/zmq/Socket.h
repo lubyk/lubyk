@@ -29,7 +29,7 @@
 #ifndef LUBYK_INCLUDE_ZMQ_SOCKET_H_
 #define LUBYK_INCLUDE_ZMQ_SOCKET_H_
 
-#include "lubyk.h"
+#include "dub/dub.h"
 #include "lubyk/msgpack.h"
 #include "lubyk/time_ref.h"
 #include "lubyk/worker.h"
@@ -50,11 +50,12 @@ namespace zmq {
 class Poller;
 /** ZeroMQ Socket.
  *
- * @dub lib_name:'Socket_core'
-        string_format:'%%s (%%s)'
- *      string_args:'(*userdata)->location(), (*userdata)->type()'
+ * @dub push: pushobject
+ *      register: Socket_core
+ *      string_format: %%s (%%s)
+ *      string_args: self->location(), self->type()
  */
-class Socket : public LuaObject
+class Socket : public dub::Thread
 {
   friend class Poller;
   void *socket_;
