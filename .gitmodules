@@ -22,3 +22,6 @@
 [submodule "modules/lfs"]
 	path = modules/lfs
 	url = git://github.com/lubyk/lfs.git
+[submodule "modules/glut"]
+	path = modules/glut
+	url = git://github.com/lubyk/glut.git
