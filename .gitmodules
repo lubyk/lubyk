@@ -19,3 +19,6 @@
 [submodule "modules/db"]
 	path = modules/db
 	url = git://github.com/lubyk/db.git
+[submodule "modules/lfs"]
+	path = modules/lfs
+	url = git://github.com/lubyk/lfs.git
