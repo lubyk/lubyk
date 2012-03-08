@@ -26,47 +26,39 @@
 
   ==============================================================================
 */
-#ifndef LUBYK_INCLUDE_ZMQ_CONTEXT_H_
-#define LUBYK_INCLUDE_ZMQ_CONTEXT_H_
 
 #include <assert.h>
+//#include <CoreServices/CoreServices.h>
+#include <mach/mach.h>
+#include <mach/mach_time.h>
+#include <unistd.h>
+#include <stdio.h>
 
-namespace zmq {
+#include "lk/TimeRef.h"
 
-class Socket;
-
-/** ZeroMQ context.
- *
- * @dub register:'Context_core'
- *      string_format: %%f
- *      string_args: self->count()
- */
-class Context {
-  friend class Socket;
-
-  /** Context use by zmq::Socket.
-   */
-  void *zmq_context_;
-
-  /** Counts the number of zmq::Socket depending on the
-   * socket.
-   */
-  size_t zmq_context_refcount_;
-public:
-  Context()
-    : zmq_context_(NULL)
-    , zmq_context_refcount_(0)
-  {}
-
-  ~Context() {
-    assert(zmq_context_refcount_ == 0);
-  }
-
-  size_t count() {
-    return zmq_context_refcount_;
-  }
+namespace lk {
+struct TimeRef::TimeRefData {
+  uint64_t mach_ref_;
+  double   mach_convert_;
 };
-} // zmq
 
-#endif // LUBYK_INCLUDE_ZMQ_CONTEXT_H_
 
+TimeRef::TimeRef() {
+  mach_timebase_info_data_t time_base_info;
+  reference_ = new TimeRefData;
+  mach_timebase_info(&time_base_info);
+  // numer/denom converts to nanoseconds. We multiply by 10^6 to have milliseconds
+  reference_->mach_convert_ = (double)time_base_info.numer / (time_base_info.denom * 1000000);
+  reference_->mach_ref_ = mach_absolute_time();
+}
+
+TimeRef::~TimeRef() {
+  delete reference_;
+}
+
+/** Get current real time in [ms] since the time ref object was created.
+ */
+double TimeRef::elapsed() {
+  return reference_->mach_convert_ * (mach_absolute_time() - reference_->mach_ref_);
+}
+} // lk

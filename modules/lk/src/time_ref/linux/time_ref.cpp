@@ -26,47 +26,29 @@
 
   ==============================================================================
 */
-#ifndef LUBYK_INCLUDE_ZMQ_CONTEXT_H_
-#define LUBYK_INCLUDE_ZMQ_CONTEXT_H_
 
-#include <assert.h>
+#include "lk/TimeRef.h"
+#include <time.h> // clock_gettime
 
-namespace zmq {
+namespace lk {
+struct TimeRef::TimeRefData : public timespec {};
 
-class Socket;
+TimeRef::TimeRef() {
+  reference_ = new TimeRefData;
+  clock_gettime(CLOCK_MONOTONIC, reference_);
+}
 
-/** ZeroMQ context.
- *
- * @dub register:'Context_core'
- *      string_format: %%f
- *      string_args: self->count()
+TimeRef::~TimeRef() {
+  delete reference_;
+}
+
+/** Get current real time in [ms] since the time ref object was created.
  */
-class Context {
-  friend class Socket;
+double TimeRef::elapsed() {
+  TimeRefData t;
+  clock_gettime(CLOCK_MONOTONIC, &t);
+  return ((t.tv_sec - reference_->tv_sec) * 1000.0) + (t.tv_nsec - reference_->tv_nsec) / 1000000.0;
+}
 
-  /** Context use by zmq::Socket.
-   */
-  void *zmq_context_;
-
-  /** Counts the number of zmq::Socket depending on the
-   * socket.
-   */
-  size_t zmq_context_refcount_;
-public:
-  Context()
-    : zmq_context_(NULL)
-    , zmq_context_refcount_(0)
-  {}
-
-  ~Context() {
-    assert(zmq_context_refcount_ == 0);
-  }
-
-  size_t count() {
-    return zmq_context_refcount_;
-  }
-};
-} // zmq
-
-#endif // LUBYK_INCLUDE_ZMQ_CONTEXT_H_
+} // lk
 

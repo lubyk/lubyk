@@ -40,9 +40,9 @@ namespace lk {
 class Helper {
 public:
 
-  Worker();
+  Helper() {}
 
-  ~Worker();
+  ~Helper() {}
 
   /** Start a new process with the given Lua script.
    * @return new process id or nil on failure

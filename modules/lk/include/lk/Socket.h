@@ -30,7 +30,7 @@
 #define LUBYK_INCLUDE_LK_SOCKET_H_
 
 #include "dub/dub.h"
-#include "lubyk/msgpack.h"
+#include "msgpack/msgpack.h"
 
 #include <sys/types.h>
 #include <sys/socket.h>

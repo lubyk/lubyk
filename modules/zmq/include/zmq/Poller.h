@@ -38,11 +38,9 @@
 #include <signal.h> // signal(), SIG_DFL, ...
 
 #include "zmq.h"
-#include "lubyk/msgpack.h"
-#include "lubyk/time_ref.h"
+#include "msgpack/msgpack.h"
+#include "lk/TimeRef.h"
 #include "zmq/Socket.h"
-
-using namespace lubyk;
 
 namespace zmq {
 
@@ -80,7 +78,7 @@ class Poller {
 
   /** Time reference for precise timing.
    */
-  TimeRef time_;
+  lk::TimeRef time_;
 
   /** We set this to true when we receive a SIGINT. This enables
    * poll to return false.

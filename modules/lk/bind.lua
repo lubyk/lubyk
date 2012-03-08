@@ -21,7 +21,7 @@ local ins = dub.Inspector {
 local binder = dub.LuaBinder()
 
 binder:bind(ins, {
-  output_directory = base .. '/core',
+  output_directory = base .. '/src/core',
   -- Remove this part in included headers
   header_base = base .. '/include',
   -- Execute all lua_open in a single go

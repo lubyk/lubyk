@@ -8,7 +8,7 @@ project(modules)
 # ----------------------------------------------------------------------------------
 #  Include common directories
 # ----------------------------------------------------------------------------------
-include_directories(lubyk/include lubyk/include/lua ${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(lk/include lk/include/lua ${CMAKE_CURRENT_SOURCE_DIR})
 
 # ----------------------------------------------------------------------------------
 #  Build each module

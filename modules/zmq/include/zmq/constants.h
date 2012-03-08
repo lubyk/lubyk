@@ -29,9 +29,8 @@
 #ifndef LUBYK_INCLUDE_ZMQ_CONSTANTS_H_
 #define LUBYK_INCLUDE_ZMQ_CONSTANTS_H_
 
+// Used when building from src/core
 #include "../vendor/include/zmq.h"
-
-#include "lubyk.h"
 
 #include <string>
 

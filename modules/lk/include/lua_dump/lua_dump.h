@@ -26,47 +26,21 @@
 
   ==============================================================================
 */
-#ifndef LUBYK_INCLUDE_ZMQ_CONTEXT_H_
-#define LUBYK_INCLUDE_ZMQ_CONTEXT_H_
 
-#include <assert.h>
+#ifndef LUBYK_INCLUDE_LUA_DUMP_H_
+#define LUBYK_INCLUDE_LUA_DUMP_H_
 
-namespace zmq {
-
-class Socket;
-
-/** ZeroMQ context.
- *
- * @dub register:'Context_core'
- *      string_format: %%f
- *      string_args: self->count()
+/** Include Lua
  */
-class Context {
-  friend class Socket;
+extern "C" {
+  #include "lua/lua.h"
+  #include "lua/lauxlib.h"
+}
 
-  /** Context use by zmq::Socket.
-   */
-  void *zmq_context_;
+/** Output debugging information on the current lua stack.
+ * Must link with static lubyk_core if used.
+ */
+void luaDump(lua_State *L, const char *msg, bool inspect_tables = true);
 
-  /** Counts the number of zmq::Socket depending on the
-   * socket.
-   */
-  size_t zmq_context_refcount_;
-public:
-  Context()
-    : zmq_context_(NULL)
-    , zmq_context_refcount_(0)
-  {}
-
-  ~Context() {
-    assert(zmq_context_refcount_ == 0);
-  }
-
-  size_t count() {
-    return zmq_context_refcount_;
-  }
-};
-} // zmq
-
-#endif // LUBYK_INCLUDE_ZMQ_CONTEXT_H_
+#endif // LUBYK_INCLUDE_LUA_DUMP_H_
 

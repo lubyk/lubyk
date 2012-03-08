@@ -30,9 +30,10 @@
 #define LUBYK_INCLUDE_ZMQ_SOCKET_H_
 
 #include "dub/dub.h"
-#include "lubyk/msgpack.h"
-#include "lubyk/time_ref.h"
-#include "lubyk/worker.h"
+
+#include "msgpack/msgpack.h"
+#include "lk/TimeRef.h"
+#include "zmq/Context.h"
 
 #include "zmq.h"
 
@@ -40,8 +41,6 @@
 #include <stdlib.h> // rand()
 #include <time.h>   // time()
 #include <string>
-
-using namespace lubyk;
 
 typedef struct ZMQ_Socket ZMQ_Socket;
 namespace zmq {
@@ -54,8 +53,7 @@ class Poller;
  *      string_format: %%s (%%s)
  *      string_args: self->location(), self->type()
  */
-class Socket : public dub::Thread
-{
+class Socket : public dub::Thread {
   friend class Poller;
   void *socket_;
   std::string location_;
@@ -64,34 +62,30 @@ class Socket : public dub::Thread
 
   /** Timer used for timeout in request.
    */
-  TimeRef time_ref_;
+  lk::TimeRef time_ref_;
 
-  /** FIXME: Replace lubyk::Worker with a (lua ensured) zmq::Context singleton.
+  /** Lua ensured zmq::Context singleton.
    */
-  lubyk::Worker *worker_;
+  Context *ctx_;
 public:
-  /** The worker is not provided by LuaObject before luaInit is called.
-   * This call happens after full object construction. We need the worker
-   * to set the zmq context, so we pass it as argument.
-   */
-  Socket(int type, lubyk::Worker *worker)
+  Socket(int type, zmq::Context *ctx)
       : type_(type)
       , send_flags_(0) 
-      , worker_(worker)
+      , ctx_(ctx)
   {
 
-    if (!worker->zmq_context_) {
+    if (!ctx_->zmq_context_) {
       // initialize zmq context
-      worker->zmq_context_ = zmq_init(1);
+      ctx_->zmq_context_ = zmq_init(1);
     }
-    ++worker->zmq_context_refcount_;
+    ++ctx_->zmq_context_refcount_;
 
-    socket_ = zmq_socket(worker->zmq_context_, type_);
+    socket_ = zmq_socket(ctx_->zmq_context_, type_);
 
     if (!socket_) {
-      if (!--worker->zmq_context_refcount_) {
-        zmq_term(worker->zmq_context_);
-        worker->zmq_context_ = NULL;
+      if (!--ctx_->zmq_context_refcount_) {
+        zmq_term(ctx_->zmq_context_);
+        ctx_->zmq_context_ = NULL;
       }
       switch (errno) {
       case EINVAL:
@@ -107,9 +101,9 @@ public:
 
   ~Socket() {
     zmq_close(socket_);
-    if (!--worker_->zmq_context_refcount_) {
-      zmq_term(worker_->zmq_context_);
-      worker_->zmq_context_ = NULL;
+    if (!--ctx_->zmq_context_refcount_) {
+      zmq_term(ctx_->zmq_context_);
+      ctx_->zmq_context_ = NULL;
     }
   }
 

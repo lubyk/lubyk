@@ -11,14 +11,14 @@
 --]]------------------------------------------------------
 require 'zmq.Socket_core'
 local constr = zmq.Socket
-local lib  = lk.SubClass(zmq, 'Socket')
-local worker = worker
+local lib = lk.SubClass(zmq, 'Socket')
+local ctx = zmq.Context()
 zmq.Socket = lib
 
 lib.type = 'zmq.Socket'
 
 function lib.new(type, func)
-  local self = constr(type, worker)
+  local self = constr(type, ctx)
   self.loop = func
   --- Only keep 500 messages in the send queue per subscriber (this avoids
   -- memory exhaustion when receiver is slow). By default, sending messages
