@@ -33,5 +33,5 @@ set_target_properties("${MODULE_NAME}_core"
   SUFFIX ".so"
 )  
 target_link_libraries("${MODULE_NAME}_core" ${PLAT_LINK} msgpack)
-add_dependencies(${MODULE_NAME} "${MODULE_NAME}_core")
 
+add_dependencies(${MODULE_NAME} "${MODULE_NAME}_core")

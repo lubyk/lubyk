@@ -31,3 +31,9 @@ add_custom_target("${MODULE_NAME}_lib" ALL
 )
 add_dependencies(${MODULE_NAME} "${MODULE_NAME}_lib")
 
+# --------------------------------------------------------------
+#  install                                     
+# --------------------------------------------------------------
+
+install(FILES install/${PLAT}/lubyk.lua
+  DESTINATION share/lua/5.1)

@@ -153,13 +153,12 @@ foreach (MODULE ${MODULES})
     #  module_lib
     # ----------------------------------------------------------------------------------
     if(EXISTS ${MODULE}/lib)
-      add_custom_target("${MODULE_NAME}_lib" ALL
+      add_custom_target("${MODULE_NAME}_lib" 
          COMMAND ${CMAKE_COMMAND} -E copy_directory ${MODULE}/lib ${LUBYK_LIB})
 
       add_dependencies(${MODULE_NAME} "${MODULE_NAME}_lib")
 
     endif(EXISTS ${MODULE}/lib)
-
 
   endif(EXISTS ${MODULE}/CMakeLists.txt)
 endforeach (MODULE)

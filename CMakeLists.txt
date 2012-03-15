@@ -68,7 +68,8 @@ add_definitions(-D__${PLAT}__ -DUSE_READLINE)
 #  Build all modules in 'modules'
 #
 # ==============================================================================
-add_custom_target(modules ALL)
+#add_custom_target(modules ALL)
+add_custom_target(modules)
 add_subdirectory(modules)
 
 # ==============================================================================
