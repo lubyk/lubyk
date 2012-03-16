@@ -18,6 +18,8 @@
 *.nki
 *.aiff
 /build
+/mbuild
+/lbuild
 /deploy/linux/lib
 /deploy/macosx/Lubyk/lib
 /deploy/macosx/Lubyk.dmg

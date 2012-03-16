@@ -26,34 +26,11 @@
 
   ==============================================================================
 */
-#include "lubyk/worker.h"
-#include "lubyk/cocoa.h"
-#include "lubyk/lua.h"
-#include "lua_cpp_helper.h"
+#include "lk/Helper.h"
 
-using namespace lubyk;
+using namespace lk;
 
 #include <mach-o/dyld.h> // _NSGetExecutablePath
-
-Worker::Worker()
-    : zmq_context_(NULL)
-    , zmq_context_refcount_(0) {
-}
-
-Worker *Worker::getWorker(lua_State *L) {
-  // ...
-  lua_pushlstring(L, "worker", 6);
-  // ... <'worker'>
-  lua_gettable(L, LUA_GLOBALSINDEX);
-  // ... <worker>
-  Worker **userdata = (Worker**)dubL_checksdata_n(L, -1, "lubyk.Worker");
-  lua_pop(L, 1);
-  // ...
-  return *userdata;
-}
-
-Worker::~Worker() {
-}
 
 static char *getExecPath() {
 
@@ -83,7 +60,7 @@ static char *getExecPath() {
 }
 /** Get the current executable's path.
  */
-LuaStackSize Worker::execPath(lua_State *L)
+LuaStackSize Helper::execPath(lua_State *L)
 {
   char *path = getExecPath();
   if (path) {
@@ -118,7 +95,7 @@ static void startProcess(const char *string) {
 
 /** Start a new process with the given Lua script.
  */
-LuaStackSize Worker::spawn(const char *script, lua_State *L)
+LuaStackSize Helper::spawn(const char *script, lua_State *L)
 {
   char *path = getExecPath();
   if (path) {
@@ -143,10 +120,6 @@ LuaStackSize Worker::spawn(const char *script, lua_State *L)
     // could not get executable path
     return 0;
   }
-}
-
-void Worker::exit(int status) {
-  ::exit(status);
 }
 
 /** FIXME: Replace with selfpipe so that we have a FD and we can treat
@@ -192,7 +165,7 @@ int selfpipe_waitpid(void)
     return died;
 }
 */
-int Worker::waitpid(int pid) {
+int Helper::waitpid(int pid) {
   int child_status;
   ::waitpid(pid, &child_status, 0);
   if (WIFEXITED(child_status)) {
