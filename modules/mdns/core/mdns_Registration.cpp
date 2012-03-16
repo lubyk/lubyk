@@ -25,9 +25,9 @@ static int Registration_Registration(lua_State *L) {
     retval__->pushobject(L, retval__, "mdns.Registration", true);
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mdns.Registration.Registration: %s", e.what());
+    lua_pushfstring(L, "Registration: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mdns.Registration.Registration: Unknown exception");
+    lua_pushfstring(L, "Registration: Unknown exception");
   }
   return dub_error(L);
 }
@@ -45,9 +45,9 @@ static int Registration__Registration(lua_State *L) {
     userdata->gc = false;
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mdns.Registration.~Registration: %s", e.what());
+    lua_pushfstring(L, "~Registration: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mdns.Registration.~Registration: Unknown exception");
+    lua_pushfstring(L, "~Registration: Unknown exception");
   }
   return dub_error(L);
 }
@@ -61,9 +61,9 @@ static int Registration_fd(lua_State *L) {
     lua_pushnumber(L, self->fd());
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mdns.Registration.fd: %s", e.what());
+    lua_pushfstring(L, "fd: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mdns.Registration.fd: Unknown exception");
+    lua_pushfstring(L, "fd: Unknown exception");
   }
   return dub_error(L);
 }
@@ -77,9 +77,9 @@ static int Registration_start(lua_State *L) {
     self->start();
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mdns.Registration.start: %s", e.what());
+    lua_pushfstring(L, "start: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mdns.Registration.start: Unknown exception");
+    lua_pushfstring(L, "start: Unknown exception");
   }
   return dub_error(L);
 }
@@ -93,9 +93,9 @@ static int Registration_stop(lua_State *L) {
     self->stop();
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mdns.Registration.stop: %s", e.what());
+    lua_pushfstring(L, "stop: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mdns.Registration.stop: Unknown exception");
+    lua_pushfstring(L, "stop: Unknown exception");
   }
   return dub_error(L);
 }
@@ -109,9 +109,9 @@ static int Registration_name(lua_State *L) {
     lua_pushstring(L, self->name());
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mdns.Registration.name: %s", e.what());
+    lua_pushfstring(L, "name: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mdns.Registration.name: Unknown exception");
+    lua_pushfstring(L, "name: Unknown exception");
   }
   return dub_error(L);
 }
@@ -124,9 +124,9 @@ static int Registration_getService(lua_State *L) {
     Registration *self = *((Registration **)dub_checksdata(L, 1, "mdns.Registration"));
     return self->getService(L);
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mdns.Registration.getService: %s", e.what());
+    lua_pushfstring(L, "getService: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mdns.Registration.getService: Unknown exception");
+    lua_pushfstring(L, "getService: Unknown exception");
   }
   return dub_error(L);
 }

@@ -21,9 +21,9 @@ static int SelectCallback_SelectCallback(lua_State *L) {
     retval__->pushobject(L, retval__, "lk.SelectCallback", true);
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "lk.SelectCallback.SelectCallback: %s", e.what());
+    lua_pushfstring(L, "SelectCallback: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "lk.SelectCallback.SelectCallback: Unknown exception");
+    lua_pushfstring(L, "SelectCallback: Unknown exception");
   }
   return dub_error(L);
 }
@@ -41,9 +41,9 @@ static int SelectCallback__SelectCallback(lua_State *L) {
     userdata->gc = false;
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "lk.SelectCallback.~SelectCallback: %s", e.what());
+    lua_pushfstring(L, "~SelectCallback: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "lk.SelectCallback.~SelectCallback: Unknown exception");
+    lua_pushfstring(L, "~SelectCallback: Unknown exception");
   }
   return dub_error(L);
 }
@@ -60,9 +60,9 @@ static int SelectCallback_callback(lua_State *L) {
     self->callback(read, write, timeout);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "lk.SelectCallback.callback: %s", e.what());
+    lua_pushfstring(L, "callback: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "lk.SelectCallback.callback: Unknown exception");
+    lua_pushfstring(L, "callback: Unknown exception");
   }
   return dub_error(L);
 }
@@ -76,9 +76,9 @@ static int SelectCallback_fd(lua_State *L) {
     lua_pushnumber(L, self->fd());
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "lk.SelectCallback.fd: %s", e.what());
+    lua_pushfstring(L, "fd: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "lk.SelectCallback.fd: Unknown exception");
+    lua_pushfstring(L, "fd: Unknown exception");
   }
   return dub_error(L);
 }

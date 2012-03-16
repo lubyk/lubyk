@@ -61,8 +61,12 @@ lubyk.add_service_url = '/lk/add_service'
 lubyk.rem_service_url = '/lk/rem_service'
 
 -------------------------------- lubyk.core
-require 'lubyk.core'
-require 'worker' -- declares global 'sleep' and creates worker
+require 'lk.core'
+local time_ref = lk.TimeRef()
+function elapsed()
+  return time_ref:elapsed()
+end
+now = elapsed
 
 require 'lk.Scheduler'
 sched = lk.Scheduler()

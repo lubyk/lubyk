@@ -27,9 +27,9 @@ static int Service_Service(lua_State *L) {
     retval__->pushobject(L, retval__, "mdns.Service", true);
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mdns.Service.Service: %s", e.what());
+    lua_pushfstring(L, "Service: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mdns.Service.Service: Unknown exception");
+    lua_pushfstring(L, "Service: Unknown exception");
   }
   return dub_error(L);
 }
@@ -47,9 +47,9 @@ static int Service__Service(lua_State *L) {
     userdata->gc = false;
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mdns.Service.~Service: %s", e.what());
+    lua_pushfstring(L, "~Service: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mdns.Service.~Service: Unknown exception");
+    lua_pushfstring(L, "~Service: Unknown exception");
   }
   return dub_error(L);
 }
@@ -62,9 +62,9 @@ static int Service_fd(lua_State *L) {
     Service *self = *((Service **)dub_checksdata(L, 1, "mdns.Service"));
     return self->fd(L);
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mdns.Service.fd: %s", e.what());
+    lua_pushfstring(L, "fd: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mdns.Service.fd: Unknown exception");
+    lua_pushfstring(L, "fd: Unknown exception");
   }
   return dub_error(L);
 }
@@ -78,9 +78,9 @@ static int Service_isAdd(lua_State *L) {
     lua_pushboolean(L, self->isAdd());
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mdns.Service.isAdd: %s", e.what());
+    lua_pushfstring(L, "isAdd: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mdns.Service.isAdd: Unknown exception");
+    lua_pushfstring(L, "isAdd: Unknown exception");
   }
   return dub_error(L);
 }
@@ -94,9 +94,9 @@ static int Service_name(lua_State *L) {
     lua_pushstring(L, self->name());
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mdns.Service.name: %s", e.what());
+    lua_pushfstring(L, "name: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mdns.Service.name: Unknown exception");
+    lua_pushfstring(L, "name: Unknown exception");
   }
   return dub_error(L);
 }
@@ -109,9 +109,9 @@ static int Service_serviceType(lua_State *L) {
     Service *self = *((Service **)dub_checksdata(L, 1, "mdns.Service"));
     return self->serviceType(L);
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mdns.Service.serviceType: %s", e.what());
+    lua_pushfstring(L, "serviceType: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mdns.Service.serviceType: Unknown exception");
+    lua_pushfstring(L, "serviceType: Unknown exception");
   }
   return dub_error(L);
 }
@@ -124,29 +124,9 @@ static int Service_info(lua_State *L) {
     Service *self = *((Service **)dub_checksdata(L, 1, "mdns.Service"));
     return self->info(L);
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mdns.Service.info: %s", e.what());
+    lua_pushfstring(L, "info: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mdns.Service.info: Unknown exception");
-  }
-  return dub_error(L);
-}
-
-/** void mdns::Service::set(const char *hostname, int port, std::string txt)
- * include/mdns/Service.h:140
- */
-static int Service_set(lua_State *L) {
-  try {
-    Service *self = *((Service **)dub_checksdata(L, 1, "mdns.Service"));
-    const char *hostname = dub_checkstring(L, 2);
-    int port = dub_checkint(L, 3);
-    size_t txt_sz_;
-    const char *txt = dub_checklstring(L, 4, &txt_sz_);
-    self->set(hostname, port, std::string(txt, txt_sz_));
-    return 0;
-  } catch (std::exception &e) {
-    lua_pushfstring(L, "mdns.Service.set: %s", e.what());
-  } catch (...) {
-    lua_pushfstring(L, "mdns.Service.set: Unknown exception");
+    lua_pushfstring(L, "info: Unknown exception");
   }
   return dub_error(L);
 }
@@ -171,7 +151,6 @@ static const struct luaL_Reg Service_member_methods[] = {
   { "name"         , Service_name         },
   { "serviceType"  , Service_serviceType  },
   { "info"         , Service_info         },
-  { "set"          , Service_set          },
   { "__tostring"   , Service___tostring   },
   { NULL, NULL},
 };

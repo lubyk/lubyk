@@ -13,6 +13,7 @@ local lib     = {type = 'lk.Scheduler'}
 lib.__index   = lib
 lk.Scheduler  = lib
 local private = {}
+local elapsed = elapsed
 
 setmetatable(lib, {
   __call = function()
@@ -44,7 +45,7 @@ function lib:sleep(delay)
   if delay == 0 then
     coroutine.yield('wait', 0)
   else
-    coroutine.yield('wait', worker:now() + delay)
+    coroutine.yield('wait', elapsed() + delay)
   end
 end
 
@@ -114,7 +115,7 @@ function lib:loop()
 
   --=============================================== MAIN EVENT LOOP
   while self.should_run do
-    local now = worker:now()
+    local now = elapsed()
     local now_list = {}
     local timeout = -1
     local next_thread = self.at_next
@@ -135,7 +136,7 @@ function lib:loop()
 
     -- the running thread might have added new elements
     next_thread = self.at_next
-    now = worker:now()
+    now = elapsed()
 
     if next_thread then
       if next_thread.at < now then
@@ -325,7 +326,7 @@ function private:runThread(thread)
     --   print("OUT OF REAL TIME", worker:now() - thread.at)
     -- end
   else
-    sched.now = worker:now()
+    sched.now = elapsed()
   end
   thread.at = nil
   local ok, a, b = coroutine.resume(t.co)

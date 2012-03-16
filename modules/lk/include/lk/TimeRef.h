@@ -32,6 +32,10 @@
 
 namespace lk {
 
+/** Measure elapsed time in [ms].
+ *
+ * @dub register: TimeRef_core
+ */
 class TimeRef {
 public:
   TimeRef();

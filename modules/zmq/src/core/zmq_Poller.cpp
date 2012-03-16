@@ -28,9 +28,9 @@ static int Poller_Poller(lua_State *L) {
       return 1;
     }
   } catch (std::exception &e) {
-    lua_pushfstring(L, "zmq.Poller.Poller: %s", e.what());
+    lua_pushfstring(L, "Poller: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "zmq.Poller.Poller: Unknown exception");
+    lua_pushfstring(L, "Poller: Unknown exception");
   }
   return dub_error(L);
 }
@@ -48,9 +48,9 @@ static int Poller__Poller(lua_State *L) {
     userdata->gc = false;
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "zmq.Poller.~Poller: %s", e.what());
+    lua_pushfstring(L, "~Poller: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "zmq.Poller.~Poller: Unknown exception");
+    lua_pushfstring(L, "~Poller: Unknown exception");
   }
   return dub_error(L);
 }
@@ -65,9 +65,9 @@ static int Poller_poll(lua_State *L) {
     lua_pushboolean(L, self->poll(timeout));
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "zmq.Poller.poll: %s", e.what());
+    lua_pushfstring(L, "poll: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "zmq.Poller.poll: Unknown exception");
+    lua_pushfstring(L, "poll: Unknown exception");
   }
   return dub_error(L);
 }
@@ -80,9 +80,9 @@ static int Poller_events(lua_State *L) {
     Poller *self = *((Poller **)dub_checksdata(L, 1, "zmq.Poller"));
     return self->events(L);
   } catch (std::exception &e) {
-    lua_pushfstring(L, "zmq.Poller.events: %s", e.what());
+    lua_pushfstring(L, "events: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "zmq.Poller.events: Unknown exception");
+    lua_pushfstring(L, "events: Unknown exception");
   }
   return dub_error(L);
 }
@@ -106,9 +106,9 @@ static int Poller_add(lua_State *L) {
       return 1;
     }
   } catch (std::exception &e) {
-    lua_pushfstring(L, "zmq.Poller.add: %s", e.what());
+    lua_pushfstring(L, "add: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "zmq.Poller.add: Unknown exception");
+    lua_pushfstring(L, "add: Unknown exception");
   }
   return dub_error(L);
 }
@@ -124,9 +124,9 @@ static int Poller_modify(lua_State *L) {
     self->modify(idx, events, L);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "zmq.Poller.modify: %s", e.what());
+    lua_pushfstring(L, "modify: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "zmq.Poller.modify: Unknown exception");
+    lua_pushfstring(L, "modify: Unknown exception");
   }
   return dub_error(L);
 }
@@ -141,9 +141,9 @@ static int Poller_remove(lua_State *L) {
     self->remove(idx);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "zmq.Poller.remove: %s", e.what());
+    lua_pushfstring(L, "remove: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "zmq.Poller.remove: Unknown exception");
+    lua_pushfstring(L, "remove: Unknown exception");
   }
   return dub_error(L);
 }
@@ -157,9 +157,9 @@ static int Poller_count(lua_State *L) {
     lua_pushnumber(L, self->count());
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "zmq.Poller.count: %s", e.what());
+    lua_pushfstring(L, "count: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "zmq.Poller.count: Unknown exception");
+    lua_pushfstring(L, "count: Unknown exception");
   }
   return dub_error(L);
 }
@@ -173,9 +173,9 @@ static int Poller_idxToPos(lua_State *L) {
     int idx = dub_checkint(L, 2);
     return self->idxToPos(idx, L);
   } catch (std::exception &e) {
-    lua_pushfstring(L, "zmq.Poller.idxToPos: %s", e.what());
+    lua_pushfstring(L, "idxToPos: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "zmq.Poller.idxToPos: Unknown exception");
+    lua_pushfstring(L, "idxToPos: Unknown exception");
   }
   return dub_error(L);
 }
@@ -189,9 +189,9 @@ static int Poller_posToIdx(lua_State *L) {
     int pos = dub_checkint(L, 2);
     return self->posToIdx(pos, L);
   } catch (std::exception &e) {
-    lua_pushfstring(L, "zmq.Poller.posToIdx: %s", e.what());
+    lua_pushfstring(L, "posToIdx: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "zmq.Poller.posToIdx: Unknown exception");
+    lua_pushfstring(L, "posToIdx: Unknown exception");
   }
   return dub_error(L);
 }
@@ -205,9 +205,9 @@ static int Poller_posToFd(lua_State *L) {
     int pos = dub_checkint(L, 2);
     return self->posToFd(pos, L);
   } catch (std::exception &e) {
-    lua_pushfstring(L, "zmq.Poller.posToFd: %s", e.what());
+    lua_pushfstring(L, "posToFd: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "zmq.Poller.posToFd: Unknown exception");
+    lua_pushfstring(L, "posToFd: Unknown exception");
   }
   return dub_error(L);
 }
@@ -221,9 +221,9 @@ static int Poller_posToEvent(lua_State *L) {
     int pos = dub_checkint(L, 2);
     return self->posToEvent(pos, L);
   } catch (std::exception &e) {
-    lua_pushfstring(L, "zmq.Poller.posToEvent: %s", e.what());
+    lua_pushfstring(L, "posToEvent: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "zmq.Poller.posToEvent: Unknown exception");
+    lua_pushfstring(L, "posToEvent: Unknown exception");
   }
   return dub_error(L);
 }

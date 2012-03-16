@@ -16,7 +16,6 @@ local base = lk.dir()
 
 local ins = dub.Inspector {
   INPUT    = base .. '/include/zmq',
-  doc_dir  = base .. '/tmp',
 }
 
 local binder = dub.LuaBinder()

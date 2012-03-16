@@ -20,9 +20,9 @@ static int Context_Context(lua_State *L) {
     dub_pushudata(L, retval__, "zmq.Context", true);
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "zmq.Context.Context: %s", e.what());
+    lua_pushfstring(L, "Context: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "zmq.Context.Context: Unknown exception");
+    lua_pushfstring(L, "Context: Unknown exception");
   }
   return dub_error(L);
 }
@@ -40,9 +40,9 @@ static int Context__Context(lua_State *L) {
     userdata->gc = false;
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "zmq.Context.~Context: %s", e.what());
+    lua_pushfstring(L, "~Context: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "zmq.Context.~Context: Unknown exception");
+    lua_pushfstring(L, "~Context: Unknown exception");
   }
   return dub_error(L);
 }
@@ -56,9 +56,9 @@ static int Context_count(lua_State *L) {
     lua_pushnumber(L, self->count());
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "zmq.Context.count: %s", e.what());
+    lua_pushfstring(L, "count: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "zmq.Context.count: Unknown exception");
+    lua_pushfstring(L, "count: Unknown exception");
   }
   return dub_error(L);
 }

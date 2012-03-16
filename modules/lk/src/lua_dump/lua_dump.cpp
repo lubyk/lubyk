@@ -26,7 +26,7 @@
 
   ==============================================================================
 */
-#include "lua/dump.h"
+#include "lua_dump/lua_dump.h"
 
 static void print_lua_value(lua_State *L, int i, bool inspect_tables, int flags = 3) {
     // print initial number

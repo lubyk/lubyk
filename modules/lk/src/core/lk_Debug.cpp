@@ -20,9 +20,9 @@ static int Debug_Debug(lua_State *L) {
     retval__->pushobject(L, retval__, "lk.Debug", true);
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "lk.Debug.Debug: %s", e.what());
+    lua_pushfstring(L, "Debug: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "lk.Debug.Debug: Unknown exception");
+    lua_pushfstring(L, "Debug: Unknown exception");
   }
   return dub_error(L);
 }
@@ -40,9 +40,9 @@ static int Debug__Debug(lua_State *L) {
     userdata->gc = false;
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "lk.Debug.~Debug: %s", e.what());
+    lua_pushfstring(L, "~Debug: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "lk.Debug.~Debug: Unknown exception");
+    lua_pushfstring(L, "~Debug: Unknown exception");
   }
   return dub_error(L);
 }
@@ -54,9 +54,9 @@ static int Debug_userdata(lua_State *L) {
   try {
     return Debug::userdata(L);
   } catch (std::exception &e) {
-    lua_pushfstring(L, "lk.Debug.userdata: %s", e.what());
+    lua_pushfstring(L, "userdata: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "lk.Debug.userdata: Unknown exception");
+    lua_pushfstring(L, "userdata: Unknown exception");
   }
   return dub_error(L);
 }

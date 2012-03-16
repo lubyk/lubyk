@@ -22,9 +22,9 @@ static int Browser_Browser(lua_State *L) {
     retval__->pushobject(L, retval__, "mdns.Browser", true);
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mdns.Browser.Browser: %s", e.what());
+    lua_pushfstring(L, "Browser: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mdns.Browser.Browser: Unknown exception");
+    lua_pushfstring(L, "Browser: Unknown exception");
   }
   return dub_error(L);
 }
@@ -42,9 +42,9 @@ static int Browser__Browser(lua_State *L) {
     userdata->gc = false;
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mdns.Browser.~Browser: %s", e.what());
+    lua_pushfstring(L, "~Browser: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mdns.Browser.~Browser: Unknown exception");
+    lua_pushfstring(L, "~Browser: Unknown exception");
   }
   return dub_error(L);
 }
@@ -58,9 +58,9 @@ static int Browser_serviceType(lua_State *L) {
     lua_pushstring(L, self->serviceType());
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mdns.Browser.serviceType: %s", e.what());
+    lua_pushfstring(L, "serviceType: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mdns.Browser.serviceType: Unknown exception");
+    lua_pushfstring(L, "serviceType: Unknown exception");
   }
   return dub_error(L);
 }
@@ -74,9 +74,9 @@ static int Browser_fd(lua_State *L) {
     lua_pushnumber(L, self->fd());
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mdns.Browser.fd: %s", e.what());
+    lua_pushfstring(L, "fd: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mdns.Browser.fd: Unknown exception");
+    lua_pushfstring(L, "fd: Unknown exception");
   }
   return dub_error(L);
 }
@@ -89,9 +89,9 @@ static int Browser_getService(lua_State *L) {
     Browser *self = *((Browser **)dub_checksdata(L, 1, "mdns.Browser"));
     return self->getService(L);
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mdns.Browser.getService: %s", e.what());
+    lua_pushfstring(L, "getService: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mdns.Browser.getService: Unknown exception");
+    lua_pushfstring(L, "getService: Unknown exception");
   }
   return dub_error(L);
 }

@@ -22,7 +22,6 @@ int luaopen_mdns_Service(lua_State *L);
 }
 
 // --=============================================== FUNCTIONS
-
 static const struct luaL_Reg mdns_core_functions[] = {
   { NULL, NULL},
 };
@@ -34,6 +33,20 @@ extern "C" int luaopen_mdns_core(lua_State *L) {
   luaopen_mdns_Browser(L);
   luaopen_mdns_Service(L);
 
+  // Create the table which will contain all the constants
+  lua_getfield(L, LUA_GLOBALSINDEX, "mdns_core");
+  if (lua_isnil(L, -1)) {
+    // no global table called mdns_core
+    lua_pop(L, 1);
+    lua_newtable(L);
+    // <lib>
+    lua_pushvalue(L, -1);
+    // <lib> <lib>
+    // _G.mdns_core = <lib>
+    lua_setglobal(L, "mdns_core");
+    // <lib>
+  }
+  // <lib>
   luaL_register(L, NULL, mdns_core_functions);
   // <lib>
   lua_pop(L, 1);

@@ -41,10 +41,6 @@ extern "C" {
   #include "lua/lua.h"
   #include "lua/lauxlib.h"
 
-  /** Output debugging information on the current lua stack.
-   * Must link with static lubyk_core if used.
-   */
-  void luaDump(lua_State *L, const char *msg, bool inspect_tables = true);
 }
 
 // We often check for 'false' return value, this helps

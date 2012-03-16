@@ -20,9 +20,9 @@ static int Context_Context(lua_State *L) {
     retval__->pushobject(L, retval__, "mdns.Context", true);
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mdns.Context.Context: %s", e.what());
+    lua_pushfstring(L, "Context: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mdns.Context.Context: Unknown exception");
+    lua_pushfstring(L, "Context: Unknown exception");
   }
   return dub_error(L);
 }
@@ -40,9 +40,9 @@ static int Context__Context(lua_State *L) {
     userdata->gc = false;
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mdns.Context.~Context: %s", e.what());
+    lua_pushfstring(L, "~Context: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mdns.Context.~Context: Unknown exception");
+    lua_pushfstring(L, "~Context: Unknown exception");
   }
   return dub_error(L);
 }
