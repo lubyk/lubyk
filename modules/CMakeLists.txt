@@ -162,3 +162,9 @@ foreach (MODULE ${MODULES})
 
   endif(EXISTS ${MODULE}/CMakeLists.txt)
 endforeach (MODULE)
+
+# ----------------------------------------------------------------------------------
+#  base = dub lk lfs mdns test xml yaml zmq
+# ----------------------------------------------------------------------------------
+add_custom_target(base true)
+add_dependencies(base dub lk lfs mdns test xml yaml zmq)

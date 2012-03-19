@@ -58,7 +58,7 @@ local function list_files(self)
     end
 	end
 end
---- Return a table with a list of paths in the directory.
+--- Return an iterator over the paths in the directory.
 -- The returned values are paths, not just filenames.
 function lib:list()
   local co = coroutine.create(list_files)
