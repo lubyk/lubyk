@@ -29,6 +29,9 @@
 
 #ifndef LUBYK_INCLUDE_LUBYK_FIFO_H_
 #define LUBYK_INCLUDE_LUBYK_FIFO_H_
+
+#include "dub/dub.h" // dub::Exception
+
 #include <unistd.h> // pipe
 #include <fcntl.h>
 
@@ -36,21 +39,19 @@ namespace lk {
 
 /** This is a utility class that should be used to wrap objects that need to run
  * in a different OS thread. The fifo provides a file descriptor and a 'pop'
- * method to get the last message. Messages in the FIFO queue are encoded with
- * Msgpack. The interface should be fast and does not use any locking.
+ * method to get the last message.
  *
- * For this Fifo to work: YOU NEED TO HAVE read/write index ALIGNED or the read
- * and write operations are not atomic.
+ * This fifo supports multiple reader and writer threads.
  */
 template<class T>
 class Fifo {
   /** Current read position in the queue.
    */
-  volatile int read_idx_;
+  int read_idx_;
 
   /** Next write position in the queue.
    */
-  volatile int write_idx_;
+  int write_idx_;
 
   /** The buffer should never fill up so it does not need to be large
    */
@@ -58,18 +59,23 @@ class Fifo {
 
   /** Heap allocated data.
    */
-  T* volatile data_[BUFFER_SIZE];
+  T* data_[BUFFER_SIZE];
 
   /** File descriptors used by the pipe.
    */
   int pipe_fd_[2];
+
+  /** Mutex to protect reads and writes and avoid relying on
+   * volatile or other non-portable code.
+   */
+  Mutex mutex_;
 public:
   Fifo()
       : read_idx_(0)
       , write_idx_(0) {
     // setup the pipe
     if (pipe(pipe_fd_) == -1) {
-      throw Exception("Could not setup pipe during Fifo creation (%s).", strerror(errno));
+      throw dub::Exception("Could not setup pipe during Fifo creation (%s).", strerror(errno));
     }
     
     // Set pipe fd as beeing NON-BLOCKING
@@ -104,6 +110,7 @@ public:
    * @return multiple values
    */
   LuaStackSize pop(lua_State *L) {
+    ScopedLock(mutex_);
     static char read_buffer[20];
     if (read_idx_ == write_idx_) {
       // empty queue
@@ -130,6 +137,7 @@ protected:
    * @return false if the buffer is full.
    */
   bool push(T *data) {
+    ScopedLock(mutex_);
     int next = (write_idx_ + 1) % BUFFER_SIZE;
     if (next != read_idx_) {
       data_[write_idx_] = data;
