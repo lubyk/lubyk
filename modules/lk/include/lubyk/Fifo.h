@@ -31,9 +31,12 @@
 #define LUBYK_INCLUDE_LUBYK_FIFO_H_
 
 #include "dub/dub.h" // dub::Exception
+#include "lubyk/Mutex.h"
 
 #include <unistd.h> // pipe
 #include <fcntl.h>
+
+// lk::Fifo used by midi module
 
 namespace lk {
 

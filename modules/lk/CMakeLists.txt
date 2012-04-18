@@ -7,7 +7,6 @@ include_directories(include)
 #  module
 # --------------------------------------------------------------
 add_custom_target(${MODULE_NAME} true)
-file(MAKE_DIRECTORY ${LUBYK_LIB}/${MODULE_NAME})
 
 # --------------------------------------------------------------
 #  src (module/core.so, msgpack.a, lua, lua_dump.a, time_ref.a
@@ -24,16 +23,11 @@ add_custom_target("${MODULE_NAME}_bind"
   DEPENDS ${MODULE_HEADERS} bind.lua)
 
 # --------------------------------------------------------------
-#  module_lib                                  module/xxxx.lua
-# --------------------------------------------------------------
-add_custom_target("${MODULE_NAME}_lib" ALL
-  COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/lib ${LUBYK_LIB}
-)
-add_dependencies(${MODULE_NAME} "${MODULE_NAME}_lib")
-
-# --------------------------------------------------------------
 #  install                                     
 # --------------------------------------------------------------
-
+install(DIRECTORY lubyk
+  DESTINATION lib
+)                                  
+# Bootstrap
 install(FILES install/${PLAT}/lubyk.lua
   DESTINATION share/lua/5.1)

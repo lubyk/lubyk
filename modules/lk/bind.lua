@@ -7,7 +7,7 @@
   bindings for lk.
 
   Input:  headers in 'include/lk'
-  Output: cpp files in 'sub'
+  Output: cpp files in 'src/core'
 
 --]]------------------------------------------------------
 require 'lubyk'
