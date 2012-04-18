@@ -1,13 +1,13 @@
 --[[------------------------------------------------------
 
-  lk bindings generator
-  ---------------------
+  zmq bindings generator
+  ----------------------
 
   This uses the 'dub' tool and Doxygen to generate the
   bindings for lk.
 
-  Input:  headers in 'include/lk'
-  Output: cpp files in 'sub'
+  Input:  headers in 'include/zmq'
+  Output: cpp files in 'src/core'
 
 --]]------------------------------------------------------
 require 'lubyk'

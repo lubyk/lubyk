@@ -22,7 +22,7 @@ set(QT_SRC_PATH "" CACHE STRING    "Use static qt build (provide qt src path)")
 #  Platform guessing
 #
 # ==============================================================================
-set(LUBYK_LIB ${CMAKE_BINARY_DIR}/lib)
+set(LUBYK_LIB /usr/local/lib)
 
 if(UNIX)
   add_definitions(-DLUA_USE_LINUX)
@@ -53,7 +53,6 @@ else(UNIX)
     set(PLAT "unsupported")
   endif(WIN32)
 endif(UNIX)
-MESSAGE("Platform is ${PLAT}")
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -fPIC")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -Wall -fPIC")
