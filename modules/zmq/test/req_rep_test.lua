@@ -13,7 +13,7 @@ require 'lubyk'
 
 local should = test.Suite('zmq.Req/Rep')
 
-function should.request_reply()
+function should.requestAndReply()
   -- reply
   local receiver = zmq.SimpleRep(function(...)
     return ...
@@ -24,35 +24,36 @@ function should.request_reply()
   req:connect(string.format("tcp://localhost:%i", receiver:port()))
 
 
-  local function send_and_receive(...)
-    assertValueEqual({req:request(unpack(arg))}, arg)
+  local function sendAndReceive(...)
+    local arg = {...}
+    assertValueEqual(arg, {req:request(...)})
   end
 
   -- string
-  send_and_receive("Hello Lubyk!")
+  sendAndReceive("Hello Lubyk!")
   -- number, nil, bool
-  send_and_receive(1.234567)
-  send_and_receive(nil)
-  send_and_receive(true)
-  send_and_receive(false)
+  sendAndReceive(1.234567)
+  sendAndReceive(nil)
+  sendAndReceive(true)
+  sendAndReceive(false)
   -- array
   -- we cannot send an array like this
-  -- send_and_receive({1, 2, 3}) ===> received as (1, 2, 3) (not {1, 2, 3})
-  send_and_receive(1, {1, 2, 3})
+  -- sendAndReceive({1, 2, 3}) ===> received as (1, 2, 3) (not {1, 2, 3})
+  sendAndReceive(1, {1, 2, 3})
 
-  send_and_receive(1, {1, 2, {4, 5}})
+  sendAndReceive(1, {1, 2, {4, 5}})
 
-  send_and_receive("1", {1, "zombie", {4.44, 5}})
+  sendAndReceive("1", {1, "zombie", {4.44, 5}})
 
   -- hash
-  send_and_receive("/one/two", {one=2, three="four"})
+  sendAndReceive("/one/two", {one=2, three="four"})
   -- nested hash
-  send_and_receive("/one/two", {one=2, three={'four', 5, 'six'}})
+  sendAndReceive("/one/two", {one=2, three={'four', 5, 'six'}})
 
   -- multi values
-  send_and_receive(1,2,3)
-  send_and_receive("/amp/gain", 3.5)
-  send_and_receive("/amp/gain", {{x = "foo"}, {bar = 5}})
+  sendAndReceive(1,2,3)
+  sendAndReceive("/amp/gain", 3.5)
+  sendAndReceive("/amp/gain", {{x = "foo"}, {bar = 5}})
 
   receiver:kill()
 end
