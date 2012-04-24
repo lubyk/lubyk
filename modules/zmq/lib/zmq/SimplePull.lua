@@ -8,12 +8,13 @@
 --]]------------------------------------------------------
 require 'zmq.Pull'
 
+local new = zmq.Pull
 function zmq.SimplePull(location, func)
   if not func then
     func = location
     location = nil
   end
-  return zmq.Pull(location, function(self)
+  return new(location, function(self)
     local clients = {}
     while self.thread do
       -- In case of unprotected errors, the thread is automatically

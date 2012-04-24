@@ -20,5 +20,5 @@ add_dependencies(${MODULE_NAME} ${target})
 #  install                                     
 # --------------------------------------------------------------
 install(TARGETS ${target}
-  DESTINATION lib/lubyk/${MODULE_NAME}
+  DESTINATION ${LUBYK_LIB}/lib/${MODULE_NAME}
 )

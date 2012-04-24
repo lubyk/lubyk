@@ -19,11 +19,11 @@ package.cpath = './?.so;./lib/?.so;'
 
 -- 2. user libs
 for _, path in ipairs(Lubyk.paths or {}) do
-  package.path = package.path .. path .. ';'
+  package.path = package.path .. path .. '/?.lua;'
 end
 
 for _, cpath in ipairs(Lubyk.cpaths or {}) do
-  package.cpath = package.cpath .. cpath .. ';'
+  package.cpath = package.cpath .. cpath .. '/?.so;'
 end
 -- 3. Installed lubyk libs and lua paths
 package.path  = package.path  .. lua_paths

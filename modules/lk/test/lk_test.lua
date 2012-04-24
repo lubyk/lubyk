@@ -7,7 +7,7 @@ function should.readall()
 end
 
 function should.changeDir()
-  local current = lk.dir()
+  local current = lk.scriptDir()
   lk.withDirectory(current .. '/fixtures', function()
     assertMatch(current .. '/fixtures$', lfs.currentdir())
   end)
@@ -129,21 +129,21 @@ function should.returnEmptyOnSpitStartingWithSep()
 end
 
 function should.provideSource()
-  assertMatch('modules/lk/test/lk_test.lua$', lk.source())
+  assertMatch('test/lk_test.lua$', lk.scriptSource())
 end
 
 function should.provideDir()
-  assertMatch('modules/lk/test$', lk.dir())
+  assertMatch('test$', lk.scriptDir())
 end
 
 function should.provideFile()
-  assertMatch('modules/lk/test/lk_test.lua$', lk.file())
+  assertMatch('test/lk_test.lua$', lk.scriptPath())
 end
 
 function should.testFileExistence()
   assertEqual('file', lk.fileType(fixture.path('foo.yml')))
   assertEqual(nil, lk.fileType(fixture.path('complex.yml')))
-  assertEqual('directory', lk.fileType(lk.dir()))
+  assertEqual('directory', lk.fileType(lk.scriptDir()))
   assertEqual(nil, lk.fileType(nil))
 end
 

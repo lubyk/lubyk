@@ -7,5 +7,4 @@
   filedescriptors.
 
 --]]------------------------------------------------------
-require 'zmq.core'
 zmq.Poller = zmq.Poller_core

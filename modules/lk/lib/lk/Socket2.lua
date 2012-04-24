@@ -8,7 +8,7 @@
 --]]------------------------------------------------------
 require 'lk.Socket_core'
 constr    = lk.Socket
-local lib = lk.SubClass(lk, 'Socket')
+local lib = lk.SubClass(lk.Socket)
 lk.Socket = lib
 
 lib.type = 'lk.Socket'

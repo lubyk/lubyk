@@ -7,16 +7,15 @@
   creation.
 
 --]]------------------------------------------------------
-require 'zmq.core'
 local lib = zmq.Context_core
 zmq.Context = lib
 
 -- Singleton
 local ctx
-local constr = lib.new
+local new = lib.new
 function lib.new(...)
   if not ctx then
-    ctx = contr(...)
+    ctx = new(...)
   end
   return ctx
 end

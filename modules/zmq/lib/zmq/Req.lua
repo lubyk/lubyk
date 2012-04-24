@@ -12,11 +12,11 @@
   'recv' do not support sharing across threads.
 
 --]]------------------------------------------------------
-require 'zmq'
 require 'zmq.Socket'
 
+local new = zmq.Socket.new
 function zmq.Req(location)
-  local self = zmq.Socket(zmq.REQ)
+  local self = new(zmq.REQ)
   if location then
     self:connect(location)
   end

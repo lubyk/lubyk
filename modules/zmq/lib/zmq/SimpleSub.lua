@@ -9,12 +9,13 @@
 --]]------------------------------------------------------
 require 'zmq.Sub'
 
+local new = zmq.Sub
 function zmq.SimpleSub(filter, func)
   if not func then
     func = filter
     filter = nil
   end
-  return zmq.Sub(filter, function(self)
+  return new(filter, function(self)
     while self.thread do
       func(self:recv())
     end

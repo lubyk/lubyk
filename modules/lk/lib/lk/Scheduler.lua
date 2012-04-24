@@ -321,9 +321,9 @@ function private:runThread(thread)
     -- logical time
     sched.now = thread.at
     -- This does not work. Think better and make something that works.
-    -- if worker:now() > thread.at + 2 then
+    -- if elapsed() > thread.at + 2 then
     --   -- 2 == jitter between realtime and logical time.
-    --   print("OUT OF REAL TIME", worker:now() - thread.at)
+    --   print("OUT OF REAL TIME", elapsed() - thread.at)
     -- end
   else
     sched.now = elapsed()

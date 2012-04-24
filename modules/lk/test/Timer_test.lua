@@ -19,11 +19,11 @@ function should.loopTimerInExternalThread()
   end)
   timer:start() -- default = trigger on start
   -- first trigger now
-  now = worker:now()
+  now = elapsed()
   sleep(4 * SLEEP + 10)
   -- 00, 20, 40, 60, 80
   assertEqual(5, counter)
-  now = worker:now()
+  start = elapsed()
   sleep(5 * SLEEP)
   --                   , 100, 120, 140, 160, 180
   assertEqual(10, counter)
@@ -93,7 +93,7 @@ function should.beRegular(t)
   local min = 9999
   local max = -1
   local timer = lk.Timer(10, function()
-    local now = worker:now()
+    local now = elapsed()
     if last then
       local d = now - last
       table.insert(values, d)

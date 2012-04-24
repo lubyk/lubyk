@@ -9,16 +9,13 @@
   if you need to.
 
 --]]------------------------------------------------------
-require 'zmq.Socket_core'
-local constr = zmq.Socket
-local lib = lk.SubClass(zmq, 'Socket')
-local ctx = zmq.Context()
+local lib  = zmq.Socket_core
 zmq.Socket = lib
+local ctx = zmq.Context()
 
-lib.type = 'zmq.Socket'
-
+local new = lib.new
 function lib.new(type, func)
-  local self = constr(type, ctx)
+  local self = new(type, ctx)
   self.loop = func
   --- Only keep 500 messages in the send queue per subscriber (this avoids
   -- memory exhaustion when receiver is slow). By default, sending messages
@@ -28,7 +25,6 @@ function lib.new(type, func)
 
   self:setNonBlocking(true)
 
-  setmetatable(self, lib)
   if self.loop then
     self:start()
   end
@@ -72,13 +68,14 @@ function lib:join()
   end
 end
 
+local send = lib.send
 function lib:send(...)
   local super = self.super
-  if not super:send(...) then
+  if not send(super, ...) then
     -- could not send
     sched:waitWrite(super)
     -- should be ok now
-    super:send(...)
+    send(super, ...)
   end
 end
 
@@ -88,19 +85,20 @@ function lib:request(...)
 end
 
 local zmq_POLLIN = zmq.POLLIN
+local recv = lib.recv
 function lib:recv()
   local super = self.super
   if not super:hasEvent(zmq_POLLIN) then
     self.recv_start = nil
     sched:waitRead(super)
   elseif self.recv_start then
-    if self.recv_start + 500 < worker:now() then
+    if self.recv_start + 500 < elapsed() then
       -- Force sleep to avoid DoS
       self.recv_start = nil
       sleep(1)
     end
   else
-    self.recv_start = worker:now()
+    self.recv_start = elapsed()
   end
-  return super:recv()
+  return recv(super)
 end

@@ -13,8 +13,8 @@ function lib:timeout(timeout, func)
     func = timeout
     timeout = self.TIMEOUT
   end
-  local now = worker:now()
-  while not func() and worker:now() < now + timeout do
+  local start = elapsed()
+  while not func() and elapsed() < start + timeout do
     sleep(300)
   end
 end

@@ -26,3 +26,10 @@ set_target_properties(${target} PROPERTIES OUTPUT_NAME "lubyk")
 INSTALL(TARGETS ${target}
   RUNTIME DESTINATION bin
 )
+
+if(APPLE)
+  # Copy 'lubyk' executable inside Lubyk.app
+  install(TARGETS ${target}
+    DESTINATION ${LUBYK_LIB}/Lubyk.app/Contents/Resources
+  )
+endif(APPLE)

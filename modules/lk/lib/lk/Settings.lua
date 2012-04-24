@@ -37,7 +37,7 @@ function lib:save(later)
     self._module.thread = lk.Thread(function()
       self._module.thread = nil
       self:save()
-    end, worker:now() + 500)
+    end, elapsed() + 500)
   else
     local path = self._module.path
     lk.writeall(path, lib.dump(self))

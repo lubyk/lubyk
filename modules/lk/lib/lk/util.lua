@@ -264,33 +264,33 @@ function lk.absToRel(abs_string, base)
   end
 end
 
--------------------------------- lk.source()
+-------------------------------- lk.scriptSource()
 -- Find the source of the current file or the
 -- file up x levels in the call chain (-1 = up
 -- one level).
-function lk.source(level)
+function lk.scriptSource(level)
   local level = level or 0
   return debug.getinfo(2 - level).source
 end
 
--------------------------------- lk.file(level = 0)
+-------------------------------- lk.scriptPath(level = 0)
 -- Find the the current file or the
 -- file up x levels in the call chain (-1 = up
 -- one level).
-function lk.file(level)
+function lk.scriptPath(level)
   local level = level or 0
-  return string.match(lk.source(level - 1), '^@(.*)$')
+  return string.match(lk.scriptSource(level - 1), '^@(.*)$')
 end
 
--------------------------------- lk.dir()
+-------------------------------- lk.scriptDir()
 -- Find the directory of the current file or the
 -- directory of the file up x levels in the call
 -- chain (-1 = up one level).
-function lk.dir(level)
+function lk.scriptDir(level)
   local level = level or 0
-  local file = lk.file(level - 1)
+  local file = lk.scriptPath(level - 1)
   if string.match(file, '/') then
-    return string.gsub(lk.file(level - 1), '/[^/]+$', '')
+    return string.gsub(lk.scriptPath(level - 1), '/[^/]+$', '')
   else
     return '.'
   end
@@ -309,7 +309,7 @@ lk.exist = lk.fileType
 -------------------------------- lk.dofile(path)
 -- Load a file relative to the current file.
 function lk.dofile(path)
-  return dofile(lk.dir(-1) .. '/' .. path, path)
+  return dofile(lk.scriptDir(-1) .. '/' .. path, path)
 end
 
 -------------------------------- lk.findCode(class_name)

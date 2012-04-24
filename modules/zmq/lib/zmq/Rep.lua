@@ -6,15 +6,15 @@
   Waits for messages and sends a reply back.
 
 --]]------------------------------------------------------
-require 'zmq'
 require 'zmq.Socket'
 
+local new = zmq.Socket.new
 function zmq.Rep(location, func)
   if not func then
     func = location
     location = nil
   end
-  local self = zmq.Socket(zmq.REP, func)
+  local self = new(zmq.REP, func)
   if location then
     self:bind(location)
   else

@@ -1,4 +1,4 @@
 require 'lubyk'
 
-test.files(lk.dir(), '%_test.lua$')
+test.files(lk.scriptDir(), '%_test.lua$')
 

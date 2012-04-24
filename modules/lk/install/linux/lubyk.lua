@@ -17,7 +17,7 @@ else
 end
 
 --- PLATFORM SPECIFIC
-Lubyk.lib  = Lubyk.lib  or '/usr/local/lib/lubyk'
+Lubyk.lib  = Lubyk.lib  or '/usr/local/lib/lubyk/lib'
 Lubyk.plat = 'linux'
 --- END PLATFORM SPECIFIC
 package.path  = Lubyk.lib .. '/?.lua;' .. package.path

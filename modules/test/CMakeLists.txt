@@ -9,7 +9,7 @@ add_custom_target(${MODULE_NAME} true)
 # --------------------------------------------------------------
 #  install                                     
 # --------------------------------------------------------------
-install(DIRECTORY lubyk
-  DESTINATION lib
-)                                  
+install(DIRECTORY lib
+  DESTINATION ${LUBYK_LIB}
+)
 

@@ -12,7 +12,7 @@
 --]]------------------------------------------------------
 require 'lubyk'
 
-local base = lk.dir()
+local base = lk.scriptDir()
 
 local ins = dub.Inspector {
   INPUT    = base .. '/include/zmq',

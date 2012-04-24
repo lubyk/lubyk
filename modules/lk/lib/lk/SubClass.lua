@@ -4,7 +4,7 @@
   -----------
 
   Method to create subclasses of LuaObject based classes.
-  MyWidget = lk.SubClass(mimas, 'Widget', mimas.SplashScreenFlag)
+  MyWidget = lk.SubClass(mimas.Widget, mimas.SplashScreenFlag)
 
   function MyWidget:init(...)
     -- initialize self
@@ -21,27 +21,30 @@
 
 --]]------------------------------------------------------
 
--- MyWidget = lk.SubClass(mimas, 'Widget', ...)
-function lk.SubClass(mod, class_name, ...)
-  local constr   = assert(mod[class_name])
-  local super_mt = rawget(mod,class_name .. '_') or mod[class_name]
+-- MyWidget = lk.SubClass(mimas.Widget, ...)
+function lk.SubClass(class, ...)
   local defaults = {...}
 
-  function super_mt.__call(lib, ...)
+  function class.__call(lib, ...)
     return lib.new(...)
   end
 
   -- Create the new class
-  local lib = {type = class_name}
+  local lib = {}
   lib.__index = lib
-  setmetatable(lib, super_mt)
+  -- Inherit methods from super class
+  setmetatable(lib, class)
 
-  -- default new
+  -- Default new
   function lib.new(...)
-    local self = constr(unpack(defaults))
+    local self = class.new(unpack(defaults))
     setmetatable(self, lib)
     self:init(...)
     return self
+  end
+
+  -- Default init
+  function lib:init()
   end
 
   return lib

@@ -22,11 +22,11 @@ set(QT_SRC_PATH "" CACHE STRING    "Use static qt build (provide qt src path)")
 #  Platform guessing
 #
 # ==============================================================================
-set(LUBYK_LIB /usr/local/lib)
 
 if(UNIX)
   add_definitions(-DLUA_USE_LINUX)
   if(APPLE)
+    set(LUBYK_LIB /Applications/Lubyk)
     set(PLAT "macosx")
     # add_definitions(-DLUA_USE_MACOSX)
     add_definitions(-D__MACOSX_CORE__)
@@ -39,6 +39,7 @@ if(UNIX)
       set(CMAKE_OSX_ARCHITECTURES "ppc;i386;x86_64" CACHE STRING "Build architectures for OSX" FORCE)
     endif(RELEASE)
   else(APPLE)
+    set(LUBYK_LIB /usr/local/lib/lubyk)
     set(LINUX true)
     set(PLAT "linux")
     add_definitions(-D__LINUX_ALSASEQ__)
