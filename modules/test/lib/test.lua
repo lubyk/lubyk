@@ -14,7 +14,7 @@ function lib:timeout(timeout, func)
     timeout = self.TIMEOUT
   end
   local start = elapsed()
-  while not func() and elapsed() < start + timeout do
+  while not func(elapsed() - start) and elapsed() < start + timeout do
     sleep(300)
   end
 end
@@ -163,14 +163,14 @@ function lib.runSuite(suite)
   local skip = suite._info.user_suite and lib.file_count > 1
   for i,e in pairs(suite._info.tests) do
     local name, func = unpack(e)
-    exec_count = exec_count + 1
     test_var = setmetatable({}, lib)
     gc_protect[name] = test_var
     test_func = func
-    if skip then
+    if skip or (lib.only and lib.only ~= name) then
       -- skip user tests
       skip_count = skip_count + 1
-    elseif not lib.only or lib.only == name then
+    else
+      exec_count = exec_count + 1
       suite.setup(gc_protect[name])
       if lib.verbose then
         printf("%-12s Run %s", '['..suite._info.name..']', name)
@@ -209,10 +209,11 @@ function lib.reportSuite(suite)
     if suite._info.skip_count == suite._info.exec_count then
       ok_message = '-- skip'
     else
-      skip_message = string.format(' / skipped %i', suite._info.skip_count)
+      skip_message = string.format(' : skipped %i', suite._info.skip_count)
     end
   end
-  print(string.format('==== %-28s (%2i tests%s): %s', suite._info.name, suite._info.exec_count, skip_message, ok_message))
+  local exec_count = suite._info.exec_count
+  print(string.format('==== %-28s (%2i test%s%s): %s', suite._info.name, exec_count, exec_count > 1 and 's' or '', skip_message, ok_message))
   lib.total_exec = lib.total_exec + suite._info.exec_count
   lib.total_count = lib.total_count + suite._info.total_count
   lib.total_asrt = lib.total_asrt + suite._info.assert_count
@@ -228,6 +229,9 @@ end
 
 function lib.report()
   print('\n')
+  if test.only then
+    print('Only testing \''..test.only..'\'.')
+  end
 
   if lib.total_exec == 0 then
     print(string.format('No tests defined. Test files must end with "_test.lua"'))
