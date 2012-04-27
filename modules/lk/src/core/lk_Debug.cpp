@@ -78,6 +78,7 @@ static const struct luaL_Reg Debug_member_methods[] = {
   { "__gc"         , Debug__Debug         },
   { "userdata"     , Debug_userdata       },
   { "__tostring"   , Debug___tostring     },
+  { "deleted"      , dub_isDeleted        },
   { NULL, NULL},
 };
 

@@ -115,6 +115,7 @@ static const struct luaL_Reg Browser_member_methods[] = {
   { "fd"           , Browser_fd           },
   { "getService"   , Browser_getService   },
   { "__tostring"   , Browser___tostring   },
+  { "deleted"      , dub_isDeleted        },
   { NULL, NULL},
 };
 

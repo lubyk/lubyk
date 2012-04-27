@@ -114,6 +114,7 @@ static const struct luaL_Reg Helper_member_methods[] = {
   { "waitpid"      , Helper_waitpid       },
   { "execPath"     , Helper_execPath      },
   { "__tostring"   , Helper___tostring    },
+  { "deleted"      , dub_isDeleted        },
   { NULL, NULL},
 };
 

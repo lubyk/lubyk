@@ -30,6 +30,6 @@ INSTALL(TARGETS ${target}
 if(APPLE)
   # Copy 'lubyk' executable inside Lubyk.app
   install(TARGETS ${target}
-    DESTINATION ${LUBYK_LIB}/Lubyk.app/Contents/Resources
+    DESTINATION /Applications/Lubyk.app/Contents/Resources
   )
 endif(APPLE)

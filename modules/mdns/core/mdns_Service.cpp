@@ -152,6 +152,7 @@ static const struct luaL_Reg Service_member_methods[] = {
   { "serviceType"  , Service_serviceType  },
   { "info"         , Service_info         },
   { "__tostring"   , Service___tostring   },
+  { "deleted"      , dub_isDeleted        },
   { NULL, NULL},
 };
 

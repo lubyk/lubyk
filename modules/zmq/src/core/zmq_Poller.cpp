@@ -254,6 +254,7 @@ static const struct luaL_Reg Poller_member_methods[] = {
   { "posToFd"      , Poller_posToFd       },
   { "posToEvent"   , Poller_posToEvent    },
   { "__tostring"   , Poller___tostring    },
+  { "deleted"      , dub_isDeleted        },
   { NULL, NULL},
 };
 

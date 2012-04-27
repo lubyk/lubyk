@@ -374,6 +374,7 @@ static const struct luaL_Reg Socket_member_methods[] = {
   { "port"         , Socket_port          },
   { "fd"           , Socket_fd            },
   { "__tostring"   , Socket___tostring    },
+  { "deleted"      , dub_isDeleted        },
   { NULL, NULL},
 };
 

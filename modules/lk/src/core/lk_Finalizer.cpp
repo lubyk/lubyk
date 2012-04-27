@@ -63,6 +63,7 @@ static const struct luaL_Reg Finalizer_member_methods[] = {
   { "new"          , Finalizer_Finalizer  },
   { "__gc"         , Finalizer__Finalizer },
   { "__tostring"   , Finalizer___tostring },
+  { "deleted"      , dub_isDeleted        },
   { NULL, NULL},
 };
 

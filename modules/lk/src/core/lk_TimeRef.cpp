@@ -80,6 +80,7 @@ static const struct luaL_Reg TimeRef_member_methods[] = {
   { "__gc"         , TimeRef__TimeRef     },
   { "elapsed"      , TimeRef_elapsed      },
   { "__tostring"   , TimeRef___tostring   },
+  { "deleted"      , dub_isDeleted        },
   { NULL, NULL},
 };
 

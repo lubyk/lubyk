@@ -101,6 +101,7 @@ static const struct luaL_Reg SelectCallback_member_methods[] = {
   { "callback"     , SelectCallback_callback },
   { "fd"           , SelectCallback_fd    },
   { "__tostring"   , SelectCallback___tostring },
+  { "deleted"      , dub_isDeleted        },
   { NULL, NULL},
 };
 

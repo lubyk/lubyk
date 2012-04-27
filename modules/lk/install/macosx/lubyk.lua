@@ -17,7 +17,7 @@ else
 end
 
 --- PLATFORM SPECIFIC
-Lubyk.lib  = Lubyk.lib or '/Applications/Lubyk/lib'
+Lubyk.lib  = Lubyk.lib or '/Applications/Lubyk.app/Contents/Resources/lib'
 Lubyk.plat = 'macosx'
 --- END PLATFORM SPECIFIC
 package.path  = Lubyk.lib .. '/?.lua;' .. package.path

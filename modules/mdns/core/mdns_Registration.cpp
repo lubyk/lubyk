@@ -152,6 +152,7 @@ static const struct luaL_Reg Registration_member_methods[] = {
   { "name"         , Registration_name    },
   { "getService"   , Registration_getService },
   { "__tostring"   , Registration___tostring },
+  { "deleted"      , dub_isDeleted        },
   { NULL, NULL},
 };
 

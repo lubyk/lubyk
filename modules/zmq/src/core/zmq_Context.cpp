@@ -80,6 +80,7 @@ static const struct luaL_Reg Context_member_methods[] = {
   { "__gc"         , Context__Context     },
   { "count"        , Context_count        },
   { "__tostring"   , Context___tostring   },
+  { "deleted"      , dub_isDeleted        },
   { NULL, NULL},
 };
 
