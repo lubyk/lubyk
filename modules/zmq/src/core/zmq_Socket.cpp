@@ -327,7 +327,7 @@ extern "C" int luaopen_zmq_Socket(lua_State *L)
   // register member methods
   luaL_register(L, NULL, Socket_member_methods);
   // save meta-table in zmq
-  dub_register(L, "zmq", "Socket_core");
+  dub_register(L, "zmq", "Socket_core", "Socket");
   // <mt>
   lua_pop(L, 1);
   return 0;

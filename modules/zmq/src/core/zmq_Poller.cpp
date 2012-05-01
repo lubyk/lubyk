@@ -268,7 +268,7 @@ extern "C" int luaopen_zmq_Poller(lua_State *L)
   // register member methods
   luaL_register(L, NULL, Poller_member_methods);
   // save meta-table in zmq
-  dub_register(L, "zmq", "Poller_core");
+  dub_register(L, "zmq", "Poller_core", "Poller");
   // <mt>
   lua_pop(L, 1);
   return 0;

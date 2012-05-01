@@ -94,7 +94,7 @@ extern "C" int luaopen_zmq_Context(lua_State *L)
   // register member methods
   luaL_register(L, NULL, Context_member_methods);
   // save meta-table in zmq
-  dub_register(L, "zmq", "Context_core");
+  dub_register(L, "zmq", "Context_core", "Context");
   // <mt>
   lua_pop(L, 1);
   return 0;
