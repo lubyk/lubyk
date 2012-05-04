@@ -319,8 +319,7 @@ void *Context::context() {
   return impl_->context();
 }
 
-void Context::pushobject(lua_State *L, void *ptr, const char *type_name, bool gc) {
-  dub::Thread::pushobject(L, ptr, type_name, gc);
+void Context::run() {
   impl_->start();
 }
 

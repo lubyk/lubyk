@@ -9,6 +9,9 @@ function lib:testWithUser()
 end
 
 function lib:timeout(timeout, func)
+  -- if not self._suite._info.user_suite then
+  --   printf("Using timeout without user in %s (%s).", self._suite._info.name, self._name)
+  -- end
   if not func then
     func = timeout
     timeout = self.TIMEOUT
@@ -55,6 +58,7 @@ function lib.UserSuite(name)
 end
 
 function lib.all()
+  lib.parseArgs()
   lib.total_exec = 0
   lib.total_count = 0
   lib.total_asrt = 0
@@ -73,6 +77,7 @@ function lib.all()
 end
 
 function lib.files(list_or_path, pattern, reject)
+  lib.parseArgs()
   -- first disable test.all()
   local all = lib.all
   lib.all = function() end
@@ -94,6 +99,7 @@ function lib.files(list_or_path, pattern, reject)
     list = list_or_path
   end
   for _, file in ipairs(list) do
+    lib.file_count = lib.file_count + 1
     dofile(file)
   end
   all()
@@ -164,6 +170,8 @@ function lib.runSuite(suite)
   for i,e in pairs(suite._info.tests) do
     local name, func = unpack(e)
     test_var = setmetatable({}, lib)
+    test_var._name  = name
+    test_var._suite = suite
     gc_protect[name] = test_var
     test_func = func
     if skip or (lib.only and lib.only ~= name) then
@@ -205,15 +213,15 @@ function lib.reportSuite(suite)
   else
     ok_message = string.format('%i Failure(s)', suite._info.fail_count)
   end
+  local exec_count = suite._info.exec_count
   if suite._info.skip_count > 0 then
-    if suite._info.skip_count == suite._info.exec_count then
+    if exec_count == 0 then
       ok_message = '-- skip'
     else
       skip_message = string.format(' : skipped %i', suite._info.skip_count)
     end
   end
-  local exec_count = suite._info.exec_count
-  print(string.format('==== %-28s (%2i test%s%s): %s', suite._info.name, exec_count, exec_count > 1 and 's' or '', skip_message, ok_message))
+  print(string.format('==== %-28s (%2i test%s%s): %s', suite._info.name, exec_count, exec_count > 1 and 's' or ' ', skip_message, ok_message))
   lib.total_exec = lib.total_exec + suite._info.exec_count
   lib.total_count = lib.total_count + suite._info.total_count
   lib.total_asrt = lib.total_asrt + suite._info.assert_count
@@ -257,6 +265,19 @@ function lib.report()
     end
   end
   print('')
+end
+
+function lib.parseArgs()
+  for _, val in pairs(arg) do
+    if val == '--verbose' then
+      lib.verbose = true
+    else
+      local key,value = string.match(val, '%-%-(.-)=(.*)')
+      if key == 'only' then
+        lib.only = value
+      end
+    end
+  end
 end
 
 ------------------------------------ ASSERTIONS ---------------------------

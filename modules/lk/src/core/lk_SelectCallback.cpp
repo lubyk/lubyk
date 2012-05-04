@@ -115,7 +115,7 @@ extern "C" int luaopen_lk_SelectCallback(lua_State *L)
   // register member methods
   luaL_register(L, NULL, SelectCallback_member_methods);
   // save meta-table in lk
-  dub_register(L, "lk", "SelectCallback_core");
+  dub_register(L, "lk", "SelectCallback_core", "SelectCallback");
   // <mt>
   lua_pop(L, 1);
   return 0;

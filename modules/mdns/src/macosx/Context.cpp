@@ -44,9 +44,11 @@ void *Context::context() {
   return NULL;
 }
 
-void Context::pushobject(lua_State *L, void *ptr, const char *type_name, bool gc) {
-  // nothing special here
-  dub::Thread::pushobject(L, ptr, type_name, gc);
+void Context::run() {
+  // Start right away.
+  if (!dub_pushcallback("start")) {
+    throw dub::Exception("Missing 'start' callback for mdns.Context.");
+  }
 }
 
 } // mdns

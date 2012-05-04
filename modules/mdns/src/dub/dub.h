@@ -107,8 +107,10 @@ public:
 
   /** This is called on object instanciation by dub instead of
    * dub_pushudata to setup dub_userdata_.
+   *
+   * TODO: Do we really have to make this virtual ?
    */
-  virtual void pushobject(lua_State *L, void *ptr, const char *type_name, bool gc = true);
+  void pushobject(lua_State *L, void *ptr, const char *type_name, bool gc = true);
 
 protected:
   /** Pointer to the userdata. *userdata => pointer to C++ object.
@@ -128,7 +130,7 @@ public:
    * called instead of dub_pushudata.
    * <udata> <mt>
    */
-  virtual void pushobject(lua_State *L, void *ptr, const char *type_name, bool gc = true);
+  void pushobject(lua_State *L, void *ptr, const char *type_name, bool gc = true);
 
   /** Push function 'name' found in <self> on the stack with <self> as
    * first argument.
@@ -293,9 +295,10 @@ void **dub_checksdata(lua_State *L, int ud, const char *tname, bool keep_mt = fa
 // Super aware userdata calls that DOES NOT check for dangling pointers (used in 
 // __gc binding).
 void **dub_checksdata_d(lua_State *L, int ud, const char *tname) throw(dub::Exception);
-// Return true if the type is correct. Used to resolve overloaded functions when there
-// is no other alternative (arg count, native types).
-bool dub_issdata(lua_State *L, int ud, const char *tname, int type);
+// Return pointer if the type is correct. Used to resolve overloaded functions when there
+// is no other alternative (arg count, native types). We return the pointer so that we can
+// optimize away the corresponding 'dub_checksdata'.
+void **dub_issdata(lua_State *L, int ud, const char *tname, int type);
 // Does not throw exceptions. This method behaves exactly like luaL_checkudata but searches
 // for table.super before calling lua_error. We cannot use throw() because of differing
 // implementations for luaL_error (luajit throws an exception on luaL_error).
@@ -320,7 +323,7 @@ void dub_protect(lua_State *L, int owner, int original, const char *key);
 /** Register a class inside a library, creating empty tables as
  * needed.
  */
-void dub_register(lua_State *L, const char *libname, const char *class_name);
+void dub_register(lua_State *L, const char *libname, const char *reg_name, const char *class_name = NULL);
 
 // sdbm function: taken from http://www.cse.yorku.ca/~oz/hash.html
 // This version is slightly adapted to cope with different

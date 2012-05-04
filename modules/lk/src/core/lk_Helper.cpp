@@ -128,7 +128,7 @@ extern "C" int luaopen_lk_Helper(lua_State *L)
   // register member methods
   luaL_register(L, NULL, Helper_member_methods);
   // save meta-table in lk
-  dub_register(L, "lk", "Helper");
+  dub_register(L, "lk", "Helper", "Helper");
   // <mt>
   lua_pop(L, 1);
   return 0;

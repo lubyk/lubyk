@@ -166,7 +166,7 @@ extern "C" int luaopen_mdns_Registration(lua_State *L)
   // register member methods
   luaL_register(L, NULL, Registration_member_methods);
   // save meta-table in mdns
-  dub_register(L, "mdns", "Registration_core");
+  dub_register(L, "mdns", "Registration_core", "Registration");
   // <mt>
   lua_pop(L, 1);
   return 0;

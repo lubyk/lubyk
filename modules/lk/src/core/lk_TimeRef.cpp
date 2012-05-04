@@ -94,7 +94,7 @@ extern "C" int luaopen_lk_TimeRef(lua_State *L)
   // register member methods
   luaL_register(L, NULL, TimeRef_member_methods);
   // save meta-table in lk
-  dub_register(L, "lk", "TimeRef_core");
+  dub_register(L, "lk", "TimeRef_core", "TimeRef");
   // <mt>
   lua_pop(L, 1);
   return 0;

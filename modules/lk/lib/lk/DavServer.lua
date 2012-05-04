@@ -253,7 +253,7 @@ function lib:GET(request)
 end
 
 local function getParent(self, path)
-  local base, name = lk.directory(path)
+  local base, name = lk.pathDir(path)
   return self:find(base), name
 end
   

@@ -129,7 +129,7 @@ extern "C" int luaopen_mdns_Browser(lua_State *L)
   // register member methods
   luaL_register(L, NULL, Browser_member_methods);
   // save meta-table in mdns
-  dub_register(L, "mdns", "Browser_core");
+  dub_register(L, "mdns", "Browser_core", "Browser");
   // <mt>
   lua_pop(L, 1);
   return 0;

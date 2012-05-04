@@ -47,6 +47,22 @@ static int Context__Context(lua_State *L) {
   return dub_error(L);
 }
 
+/** void mdns::Context::run()
+ * include/mdns/Context.h:73
+ */
+static int Context_run(lua_State *L) {
+  try {
+    Context *self = *((Context **)dub_checksdata(L, 1, "mdns.Context"));
+    self->run();
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "run: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "run: Unknown exception");
+  }
+  return dub_error(L);
+}
+
 
 
 // --=============================================== __tostring
@@ -62,6 +78,7 @@ static int Context___tostring(lua_State *L) {
 static const struct luaL_Reg Context_member_methods[] = {
   { "new"          , Context_Context      },
   { "__gc"         , Context__Context     },
+  { "run"          , Context_run          },
   { "__tostring"   , Context___tostring   },
   { "deleted"      , dub_isDeleted        },
   { NULL, NULL},
@@ -77,7 +94,7 @@ extern "C" int luaopen_mdns_Context(lua_State *L)
   // register member methods
   luaL_register(L, NULL, Context_member_methods);
   // save meta-table in mdns
-  dub_register(L, "mdns", "Context_core");
+  dub_register(L, "mdns", "Context_core", "Context");
   // <mt>
   lua_pop(L, 1);
   return 0;

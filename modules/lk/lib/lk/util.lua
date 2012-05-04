@@ -8,8 +8,7 @@
 --]]------------------------------------------------------
 
 --- Return the parent folder and filename from a filepath.
--- FIXME: rename this to lk.basePath (directory seems like isDirectory)
-function lk.directory(filepath)
+function lk.pathDir(filepath)
   local base, file = string.match(filepath, '(.*)/(.*)$')
   if not base then
     return '.', filepath
@@ -88,7 +87,7 @@ local function makePathPart(path, fullpath)
   elseif file_type == 'directory' then
     return -- done
   else
-    local base = lk.directory(path)
+    local base = lk.pathDir(path)
     makePathPart(base, fullpath)
     -- base should exist or an error has been raised
     lfs.mkdir(path)
@@ -132,7 +131,7 @@ end
 
 -- Move a file or directory
 function lk.move(path, new_path)
-  local base = lk.directory(new_path)
+  local base = lk.pathDir(new_path)
   lk.makePath(base)
   return os.rename(path, new_path)
 end
@@ -147,7 +146,7 @@ end
 -- is true, only write if the content has changed.
 function lk.writeall(filepath, data, check_diff)
   -- get base directory and build components if necessary
-  lk.makePath(lk.directory(filepath))
+  lk.makePath(lk.pathDir(filepath))
   if check_diff and lk.exist(filepath) then
     if data == lk.readall(filepath) then
       return true

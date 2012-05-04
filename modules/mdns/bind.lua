@@ -12,7 +12,7 @@
 --]]------------------------------------------------------
 require 'lubyk'
 
-local base = lk.directory(lk.scriptPath())
+local base = lk.pathDir(lk.scriptPath())
 
 local ins = dub.Inspector {
   INPUT    = base .. '/include/mdns',
@@ -21,7 +21,7 @@ local ins = dub.Inspector {
 local binder = dub.LuaBinder()
 
 binder:bind(ins, {
-  output_directory = base .. '/core',
+  output_directory = base .. '/src',
   -- Remove this part in included headers
   header_base = base .. '/include',
   -- Execute all lua_open in a single go

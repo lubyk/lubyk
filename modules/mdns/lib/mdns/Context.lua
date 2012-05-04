@@ -7,28 +7,20 @@
 
 --]]------------------------------------------------------
 require 'mdns.core'
-local lib = mdns.Context_core
+local lib     = mdns.Context_core
+mdns.Context  = lib
 local WeakKey = {__mode = 'k'}
 
-function mdns.Context()
-  local self = lib.new()
+local new = lib.new
+function lib.new()
+  local self = new()
   if not self.callbacks then
     self.callbacks = {}
   end
   self.registrations = setmetatable({}, WeakKey)
-  if self.running then
-    -- 'start' was called directly during 'new', call again
-    -- now that self.registrations is set.
-    self.running = false
-    self:start()
-  else
-    if Lubyk.plat == 'macosx' then
-      -- On macosx, we can always start the registration right away.
-      self.running = true
-    else
-      self.running = false
-    end
-  end
+  -- Installs the file descriptor callbacks (linux only) and start
+  -- browsing. This will call 'start' from the C++ side.
+  self:run()
   return self
 end
 
@@ -58,8 +50,8 @@ function lib:addRegistration(reg)
   end)
 end
 
---=============================================== Used by avahi
--- Not used on macosx.
+--=============================================== PROTECTED
+--                                                methods called from C++
 
 function lib:failure(err)
   sched:log('error', err)

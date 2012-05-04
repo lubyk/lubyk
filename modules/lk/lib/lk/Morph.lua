@@ -83,7 +83,7 @@ end
 
 function lib:openFile(filepath)
   self:close()
-  local base, name = lk.directory(filepath)
+  local base, name = lk.pathDir(filepath)
   if not lk.exist(filepath) then
     lk.makePath(base)
     lk.writeall(filepath, '')
@@ -292,7 +292,7 @@ function private.findOrMakeResource(self, url, is_dir)
       if is_dir then
         lk.makePath(fullpath)
       else
-        lk.makePath(lk.directory(fullpath))
+        lk.makePath(lk.pathDir(fullpath))
         lk.writeall(fullpath, '')
       end
     end

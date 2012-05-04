@@ -68,10 +68,9 @@ public:
    */
   void *context();
 
-  /** @internal. Used to perform initialization once Lua context
-   * is properly initialized.
+  /** Must be called once Lua env is ready, this starts the context.
    */
-  virtual void pushobject(lua_State *L, void *ptr, const char *type_name, bool gc = true);
+  void run();
 };
 } // mdns
 

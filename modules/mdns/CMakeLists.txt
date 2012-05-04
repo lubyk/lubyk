@@ -11,7 +11,7 @@ add_custom_target(${MODULE_NAME} true)
 # --------------------------------------------------------------
 #  module_core                                 module/core.so
 # --------------------------------------------------------------
-add_subdirectory(core)
+add_subdirectory(src)
 
 # --------------------------------------------------------------
 #  module_bind                                   

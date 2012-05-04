@@ -77,7 +77,7 @@ extern "C" int luaopen_lk_Finalizer(lua_State *L)
   // register member methods
   luaL_register(L, NULL, Finalizer_member_methods);
   // save meta-table in lk
-  dub_register(L, "lk", "Finalizer_core");
+  dub_register(L, "lk", "Finalizer_core", "Finalizer");
   // <mt>
   lua_pop(L, 1);
   return 0;
