@@ -21,7 +21,7 @@ local function makePatch(name)
   name = name or 'simple'
   local p = lk.Patch(name)
   function p:findCode(url)
-    return lk.readall(fixture.path('project' .. url))
+    return lk.readAll(fixture.path('project' .. url))
   end
   p:set(yaml.loadpath(fixture.path('project/'..name..'/_patch.yml')))
   return p

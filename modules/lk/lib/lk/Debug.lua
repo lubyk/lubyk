@@ -11,18 +11,8 @@
   Usage: lk.Debug('some name', ...)
 
 --]]------------------------------------------------------
--- Load C++ stuff
-require 'lk.core'
-local constr = lk.Debug_core.new
-local lib   = {}
-lib.__index = lib
-lk.Debug    = lib
-
-setmetatable(lib, {
-  -- new method
- __call = function(lib, ...)
-  return constr(...)
-end})
+local lib = lk.Debug_core
+lk.Debug  = lib
 
 function lib.inspect(elem)
   if type(elem) == 'table' then

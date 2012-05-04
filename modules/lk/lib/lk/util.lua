@@ -21,7 +21,7 @@ function lk.pathDir(filepath)
 end
 
 --- Read all the content from a given path (or basepath and path).
-function lk.readall(basepath, path)
+function lk.readAll(basepath, path)
   if path then
     path = string.format('%s/%s', basepath, path)
   else
@@ -148,7 +148,7 @@ function lk.writeall(filepath, data, check_diff)
   -- get base directory and build components if necessary
   lk.makePath(lk.pathDir(filepath))
   if check_diff and lk.exist(filepath) then
-    if data == lk.readall(filepath) then
+    if data == lk.readAll(filepath) then
       return true
     end
   end
@@ -328,12 +328,12 @@ function lk.findCode(basedir, class_name)
   local fullpath = basedir .. '/lib/' .. path
   if lk.fileType(fullpath) == 'file' then
     -- Found local file relative to patch
-    return lk.readall(fullpath)
+    return lk.readAll(fullpath)
   else
     -- Search in lib paths
     local file = lk.findFile(class_name)
     if file then
-      return lk.readall(file)
+      return lk.readAll(file)
     else
       return nil
     end

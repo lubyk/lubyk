@@ -2,8 +2,8 @@ require 'lubyk'
 
 local should = test.Suite('lk.path helpers')
 
-function should.readall()
-  assertEqual('Hello Lubyk!', lk.readall(fixture.path('io.txt')))
+function should.readAll()
+  assertEqual('Hello Lubyk!', lk.readAll(fixture.path('io.txt')))
 end
 
 function should.changeDir()
@@ -82,7 +82,7 @@ function should.writeall()
   local tmp_path = foo .. '/bar/lk_test_writeall.txt'
   os.remove(tmp_path)
   lk.writeall(tmp_path, 'This is the message')
-  assertEqual('This is the message', lk.readall(tmp_path))
+  assertEqual('This is the message', lk.readAll(tmp_path))
   lk.rmTree(foo, true)
 end
 
@@ -153,6 +153,23 @@ function should.shellQuote()
   assertEqual('"foo 25\\\""', lk.shellQuote('foo 25"'))
   -- foo 25\" --> "foo 25\\\""
   assertEqual('"foo 25\\\\\\\""', lk.shellQuote('foo 25\\"'))
+end
+
+function should.spawnProcess(t)
+  local tmp_path = fixture.path('lk_spawnProcess.txt')
+  assertNil(lk.fileType(tmp_path))
+  lk.spawn(string.format([[
+    require 'lubyk'
+    local file = assert(io.open('%s', 'w'))
+    file:write('Hello lubyk')
+    file:close()
+  ]], tmp_path))
+  t:timeout(function()
+    return lk.fileType(tmp_path)
+  end)
+  assertEqual('file', lk.fileType(tmp_path))
+  assertEqual('Hello lubyk', lk.readAll(tmp_path))
+  lk.rmFile(tmp_path)
 end
 
 test.all()

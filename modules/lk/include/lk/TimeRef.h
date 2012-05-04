@@ -27,8 +27,8 @@
   ==============================================================================
 */
 
-#ifndef LUBYK_INCLUDE_LUBYK_TIME_REF_H_
-#define LUBYK_INCLUDE_LUBYK_TIME_REF_H_
+#ifndef LUBYK_INCLUDE_LK_TIME_REF_H_
+#define LUBYK_INCLUDE_LK_TIME_REF_H_
 
 namespace lk {
 
@@ -54,4 +54,4 @@ private:
 
 } // lk
 
-#endif // LUBYK_INCLUDE_LUBYK_TIME_REF_H_
+#endif // LUBYK_INCLUDE_LK_TIME_REF_H_

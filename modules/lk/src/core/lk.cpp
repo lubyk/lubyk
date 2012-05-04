@@ -79,7 +79,7 @@ static const struct luaL_Reg lk_functions[] = {
 };
 
 
-extern "C" int luaopen_lk_core(lua_State *L) {
+extern "C" int luaopen_lk(lua_State *L) {
   luaopen_lk_Debug(L);
   luaopen_lk_Finalizer(L);
   luaopen_lk_SelectCallback(L);

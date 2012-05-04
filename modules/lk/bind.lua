@@ -26,7 +26,8 @@ binder:bind(ins, {
   header_base = base .. '/include',
   -- Execute all lua_open in a single go
   -- with lua_openmdns (creates mdns_core.cpp).
-  single_lib = 'lk_core',
+  single_lib = 'lk',
+  luaopen    = 'lk_core',
   lib_prefix = false,
 })
 

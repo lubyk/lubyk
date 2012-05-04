@@ -60,7 +60,7 @@ lubyk.add_service_url = '/lk/add_service'
 -- Notification for removed service (in-process)
 lubyk.rem_service_url = '/lk/rem_service'
 
--------------------------------- lubyk.core
+-------------------------------- lk.core
 require 'lk.core'
 local time_ref = lk.TimeRef()
 function elapsed()

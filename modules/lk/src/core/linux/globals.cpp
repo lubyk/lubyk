@@ -26,7 +26,7 @@
 
   ==============================================================================
 */
-#include "lk/Helper.h"
+#include "lk/globals.h"
 
 using namespace lk;
 
@@ -66,7 +66,7 @@ static char *getExecPath() {
 
 /** Get the current executable's path.
  */
-LuaStackSize Helper::execPath(lua_State *L)
+LuaStackSize lk::execPath(lua_State *L)
 {
   char *path = getExecPath();
   lua_pushstring(L, path);
@@ -97,7 +97,7 @@ static void startProcess(const char *string) {
 
 /** Start a new process with the given Lua script.
  */
-LuaStackSize Helper::spawn(const char *script, lua_State *L)
+LuaStackSize lk::spawn(const char *script, lua_State *L)
 {
   char *path = getExecPath();
   char arg1[] = "-e";
@@ -162,7 +162,7 @@ int selfpipe_waitpid(void)
     return died;
 }
 */
-int Helper::waitpid(int pid) {
+int lk::waitpid(int pid) {
   int child_status;
   ::waitpid(pid, &child_status, 0);
   if (WIFEXITED(child_status)) {

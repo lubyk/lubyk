@@ -1,8 +1,8 @@
 local lib = {}
 fixture = lib
 
-function lib.readall(test_file)
-  return lk.readall(lib.path(test_file, lk.scriptDir(-1)))
+function lib.readAll(test_file)
+  return lk.readAll(lib.path(test_file, lk.scriptDir(-1)))
 end
 
 function lib.path(test_file, basepath)

@@ -26,38 +26,30 @@
 
   ==============================================================================
 */
+#ifndef LUBYK_INCLUDE_LK_CONSTANTS_H_
+#define LUBYK_INCLUDE_LK_CONSTANTS_H_
 
-#ifndef LUBYK_INCLUDE_LUBYK_HELPER_H_
-#define LUBYK_INCLUDE_LUBYK_HELPER_H_
+#include "lubyk/lua.h"
 
-#include "dub/dub.h"
+#include <string.h>
 
 namespace lk {
 
-/** Some helper methods to spawn new processes.
- *
+// === Some OS helper methods to spawn new processes.
+
+/** Start a new process with the given Lua script.
+ * @return new process id or nil on failure
  */
-class Helper {
-public:
+LuaStackSize spawn(const char *script, lua_State *L);
 
-  Helper() {}
+/** Wait for another process to finish (BLOCKING).
+ */
+int waitpid(int pid);
 
-  ~Helper() {}
-
-  /** Start a new process with the given Lua script.
-   * @return new process id or nil on failure
-   */
-  LuaStackSize spawn(const char *script, lua_State *L);
-
-  /** Wait for another process to finish (BLOCKING).
-   */
-  int waitpid(int pid);
-
-  /** Get the current executable's path.
-   */
-  LuaStackSize execPath(lua_State *L);
-};
+/** Get the current executable's path.
+ */
+LuaStackSize execPath(lua_State *L);
 
 } // lk
 
-#endif // LUBYK_INCLUDE_LUBYK_WORKER_H_
+#endif // LUBYK_INCLUDE_LK_CONSTANTS_H_
