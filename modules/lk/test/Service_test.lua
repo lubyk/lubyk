@@ -23,12 +23,11 @@ function should.garbageCollectService()
 end
 
 function should.connectWhenRemoteAppears(t)
-  local continue = false
   local received_count = 0
   local function receiveMessage(message)
     received_count = received_count + 1
     if message == 'message from Mars' then
-      continue = true
+      t.continue = true
     end
   end
 
@@ -45,8 +44,8 @@ function should.connectWhenRemoteAppears(t)
   local mars = lk.Service('base:Mars')
 
   -- connected becomes true when 'Mars' appears on the network
-  t:timeout(3000, function(done)
-    return done or venus:connected()
+  t:timeout(3000, function()
+    return venus:connected()
   end)
   assertTrue(venus:connected())
 
@@ -54,8 +53,8 @@ function should.connectWhenRemoteAppears(t)
   mars:notify('One')
   mars:notify('message from Mars')
 
-  t:timeout(3000, function(done)
-    return done or continue
+  t:timeout(3000, function()
+    return t.continue
   end)
 
   assertEqual(2, received_count)

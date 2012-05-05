@@ -7,6 +7,22 @@
 
 --]]------------------------------------------------------
 
+local spawn = lk.spawn
+--- We use yaml to pass arguments from one process to the other.
+-- See lk_test.lua for a usage example.
+function lk.spawn(code, ...)
+  local dump = yaml.dump(...)
+  local sep = ''
+  -- Make sure the literal string in the yaml dump is not finished too soon by the
+  -- text in the dump.
+  while dump:match(string.format('%%]%s%%]', sep)) do
+    sep = sep .. '='
+  end
+
+  local args = string.format("yaml.load [%s[\n%s\n]%s]", sep, dump, sep)
+  return spawn(string.format(code, args))
+end
+
 --- Return the parent folder and filename from a filepath.
 function lk.pathDir(filepath)
   local base, file = string.match(filepath, '(.*)/(.*)$')

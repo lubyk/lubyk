@@ -11,7 +11,7 @@
 --]]------------------------------------------------------
 require 'mdns.core'
 local lib = mdns.Registration_core
-local constr = lib.new
+mdns.Registration = lib
 local private = {}
 
 local function dummy()
@@ -22,7 +22,8 @@ local ctx = mdns.Context()
 
 --- We should provide a socket to inform when registration is over (callback).
 -- This socket could be the default zmq.REQ socket used to by lk.Service ?
-function mdns.Registration(service_type, name, port, txt, func)
+local new = lib.new
+function lib.new(service_type, name, port, txt, func)
   if not func then
     if type(txt) == 'function' then
       func = txt
@@ -30,7 +31,7 @@ function mdns.Registration(service_type, name, port, txt, func)
     end
   end
   txt = private.buildTXT(txt)
-  local self = constr(ctx, service_type, name, port, txt)
+  local self = new(ctx, service_type, name, port, txt)
   self.callback = func or dummy
   self.txt = txt
   self.thread = lk.Thread(function()

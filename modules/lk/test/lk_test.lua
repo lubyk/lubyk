@@ -158,17 +158,21 @@ end
 function should.spawnProcess(t)
   local tmp_path = fixture.path('lk_spawnProcess.txt')
   assertNil(lk.fileType(tmp_path))
-  lk.spawn(string.format([[
+  msg = 'Hello Lubyk'
+  lk.spawn([[
     require 'lubyk'
-    local file = assert(io.open('%s', 'w'))
-    file:write('Hello lubyk')
-    file:close()
-  ]], tmp_path))
+    local function test(file, msg)
+      local file = assert(io.open(file, 'w'))
+      file:write(msg)
+      file:close()
+    end
+    test(%s)
+  ]], tmp_path, msg)
   t:timeout(function()
     return lk.fileType(tmp_path)
   end)
   assertEqual('file', lk.fileType(tmp_path))
-  assertEqual('Hello lubyk', lk.readAll(tmp_path))
+  assertEqual(msg, lk.readAll(tmp_path))
   lk.rmFile(tmp_path)
 end
 

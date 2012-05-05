@@ -44,15 +44,13 @@ function should.callProcessConnected(t)
   t.continue = false
   -- register 'hello'
   local s = lk.Service(Lubyk.zone .. ':hello')
-  t:timeout(3000, function(done)
-    if done or t.continue then
-      assertTrue(t.continue)
-      assertEqual('connected', del.last_op)
-      assertEqual('hello', del.last_name)
-      assertTrue(p.online)
-      return true
-    end
+  t:timeout(3000, function()
+    return t.continue
   end)
+  assertTrue(t.continue)
+  assertEqual('connected', del.last_op)
+  assertEqual('hello', del.last_name)
+  assertTrue(p.online)
 end
 
 test.all()

@@ -27,6 +27,7 @@
   ==============================================================================
 */
 #include "lk/globals.h"
+#include "dub/dub.h"
 
 using namespace lk;
 
@@ -39,10 +40,7 @@ using namespace lk;
 static char *getExecPath() {
   ssize_t bufsize = 200;
   char *buf = (char*)malloc(bufsize * sizeof(char));
-  if (!buf) {
-    throw dub::Exception("Could not allocate %i bytes.", bufsize);
-    return 0;
-  }
+  if (!buf) throw dub::Exception("Could not allocate %i bytes.", bufsize);
   ssize_t sz = readlink("/proc/self/exe", buf, bufsize);
   while (sz == bufsize) {
     // buffer too small

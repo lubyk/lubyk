@@ -144,7 +144,7 @@ function should.runWithManyZmqSockets(t)
 
 
   local all_ok
-  t:timeout(function(done)
+  t:timeout(function()
     all_ok = true
     for i=1,NB do
       if cli[i] ~= 'DONE' then
@@ -152,7 +152,7 @@ function should.runWithManyZmqSockets(t)
         break
       end
     end
-    return all_ok or done
+    return all_ok
   end)
   assertTrue(all_ok)
 end
@@ -221,8 +221,8 @@ function should.try(t)
     t.continue = true
   end, 10)
 
-  t:timeout(2000, function(done)
-    return done or t.continue
+  t:timeout(2000, function()
+    return t.continue
   end)
   assertEqual(4, count)
 end

@@ -14,8 +14,12 @@ lib.__index = lib
 lk.Service  = lib
 
 setmetatable(lib, {
-  -- new method
- __call = function(lib, name, opts)
+  __call = function(lib, ...)
+    return lib.new(...)
+  end
+})
+
+function lib.new(name, opts)
   if type(opts) == 'function' then
     opts = {callback = opts}
   elseif not opts then
@@ -51,9 +55,8 @@ setmetatable(lib, {
   self.registration = mdns.Registration(service_type, name, self.rep:port(), self.info, opts.registration_callback)
   -- TODO: act on name change ....
 
-  setmetatable(self, lib)
-  return self
-end})
+  return setmetatable(self, lib)
+end
 
 function lib:notify(...)
   self.pub:send(...)

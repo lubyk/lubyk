@@ -16,27 +16,31 @@ local private = {}
 local elapsed = elapsed
 
 setmetatable(lib, {
-  __call = function()
-    local self = {
-      now        = 0,
-      -- This is used by widgets to detect volontary close vs
-      -- quit close.
-      should_run = true,
-      -- Ordered linked list of events by event time.
-      at_next    = nil,
-      -- List of threads that have added their filedescriptors to
-      -- select.
-      fd_count      = 0,
-      idx_to_thread = {},
-      -- These are plain lua functions that will be called when
-      -- quitting.
-      finalizers    = {},
-      -- Using zmq for polling
-      poller        = zmq.Poller(),
-    }
-    return setmetatable(self, lib)
+  __call = function(lib, ...)
+    return lib.new(...)
   end
 })
+
+function lib.new()
+  local self = {
+    now        = 0,
+    -- This is used by widgets to detect volontary close vs
+    -- quit close.
+    should_run = true,
+    -- Ordered linked list of events by event time.
+    at_next    = nil,
+    -- List of threads that have added their filedescriptors to
+    -- select.
+    fd_count      = 0,
+    idx_to_thread = {},
+    -- These are plain lua functions that will be called when
+    -- quitting.
+    finalizers    = {},
+    -- Using zmq for polling
+    poller        = zmq.Poller(),
+  }
+  return setmetatable(self, lib)
+end
 
 --- Sleeps a given number of milliseconds starting from the
 -- current time (not the logical time). This should not be used as a

@@ -46,32 +46,27 @@ static char *getExecPath() {
       if (_NSGetExecutablePath(nbuf, &bufsize)) {
         // error again .... ?
         free(nbuf);
-        return NULL;
+        throw dub::Exception("Could not find executable path.");
       } else {
         return nbuf;
       }
     } else {
       // could not allocate memory
       free(buf);
-      return NULL;
+      throw dub::Exception("Could not allocate %i bytes.", bufsize);
     }
-  } else {
-    // ok
-    return buf;
   }
+  // ok
+  return buf;
 }
+
 /** Get the current executable's path.
  */
-LuaStackSize lk::execPath(lua_State *L)
-{
+LuaStackSize lk::execPath(lua_State *L) {
   char *path = getExecPath();
-  if (path) {
-    lua_pushstring(L, path);
-    free(path);
-    return 1;
-  } else {
-    return 0;
-  }
+  lua_pushstring(L, path);
+  free(path);
+  return 1;
 }
 
 extern "C" {
@@ -97,30 +92,24 @@ static void startProcess(const char *string) {
 
 /** Start a new process with the given Lua script.
  */
-LuaStackSize lk::spawn(const char *script, lua_State *L)
-{
+LuaStackSize lk::spawn(const char *script, lua_State *L) {
   char *path = getExecPath();
-  if (path) {
-    char arg1[] = "-e";
-    char *argv[] = {path, arg1, const_cast<char*>(script), NULL};
+  char arg1[] = "-e";
+  char *argv[] = {path, arg1, const_cast<char*>(script), NULL};
 
-    int pid = fork();
-    if (pid == 0) {
-      // child process
-      execv(argv[0], argv);
-      //startProcess(script);
-      // unreachable
-      exit(0);
-      return 0;
-    } else {
-      // parent process
-      free(path);
-      lua_pushnumber(L, pid);
-      return 1;
-    }
-  } else {
-    // could not get executable path
+  int pid = fork();
+  if (pid == 0) {
+    // child process
+    execv(argv[0], argv);
+    //startProcess(script);
+    // unreachable
+    exit(0);
     return 0;
+  } else {
+    // parent process
+    free(path);
+    lua_pushnumber(L, pid);
+    return 1;
   }
 }
 
