@@ -113,7 +113,7 @@ public:
    * @return multiple values
    */
   LuaStackSize pop(lua_State *L) {
-    ScopedLock(mutex_);
+    ScopedLock lock(mutex_);
     static char read_buffer[20];
     if (read_idx_ == write_idx_) {
       // empty queue
@@ -140,7 +140,7 @@ protected:
    * @return false if the buffer is full.
    */
   bool push(T *data) {
-    ScopedLock(mutex_);
+    ScopedLock lock(mutex_);
     int next = (write_idx_ + 1) % BUFFER_SIZE;
     if (next != read_idx_) {
       data_[write_idx_] = data;

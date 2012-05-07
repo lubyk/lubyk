@@ -4,8 +4,7 @@
   --------
 
   The Timer contains a callback to execute a function at
-  regular intervals. This file helps hide worker dependency
-  and simplifies timer creation.
+  regular intervals.
 
   TODO: Do not trigger on start (makes it behave more like
   mimas.Timer). This means we have to change 'setInterval'.

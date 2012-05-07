@@ -102,7 +102,7 @@ end
 -- Spawn a new process that will callback to get data (yml definition, assets).
 function private.actions:spawn(name)
   -- Spawn Process. If a process dies, the stem cell will restart it.
-  self.processes[name] = worker:spawn([[
+  self.processes[name] = lk.spawn([[
   require 'lubyk'
   process = lk.Process(%s)
   run()

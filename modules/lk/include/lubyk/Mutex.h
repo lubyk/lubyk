@@ -33,6 +33,7 @@
 #include "dub/dub.h" // dub::Exception
 
 #include <cstdio>    // printf
+#include <errno.h>     // errno
 
 namespace lk {
 
@@ -76,7 +77,7 @@ public:
 
 /** Scoped Mutex Lock for exclusive access to a resource.
  */
-class ScopedLock : private NonCopyable {
+class ScopedLock {
   Mutex *mutex_ptr_;
 public:
   ScopedLock(Mutex *mutex) : mutex_ptr_(mutex) {

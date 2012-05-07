@@ -233,7 +233,7 @@ int msgpack_bin_to_lua(lua_State *L, void *data, size_t msg_len) {
   // deserialize bin message to Lua.
   msgpack_unpacked values;
   msgpack_unpacked_init(&values);
-  // FIXME: allocate zone in worker_ and reuse ?
+  // FIXME: allocate zone in some msgpack context and reuse ?
   msgpack_zone zone;
   msgpack_zone_init(&zone, 512);
   msgpack_object obj;

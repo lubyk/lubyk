@@ -27,6 +27,7 @@
   ==============================================================================
 */
 #include "lk/globals.h"
+#include "dub/dub.h"
 
 using namespace lk;
 

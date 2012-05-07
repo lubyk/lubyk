@@ -305,7 +305,7 @@ function private:startStemCell()
   -- This is ugly, but we want to make sure this stem cell is not
   -- started before we see if there is any on the network.
   if not self.stem_cells[Lubyk.host] then
-    self.stem_fd = worker:spawn([[
+    self.stem_fd = lk.spawn([[
     require 'lubyk'
     stem = lk.StemCell()
     run()
