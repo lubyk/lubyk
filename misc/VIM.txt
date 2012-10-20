@@ -1,0 +1,5 @@
+To use vim as an external editor, use these settings for ~/.lubyk/editor.lua :
+return {
+  editor_open_at = "mvim --remote +%i \"%s\"",
+  editor_cmd = "mvim --remote \"%s\"",
+}

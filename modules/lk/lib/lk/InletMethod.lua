@@ -24,7 +24,7 @@ end})
 function lib.__newindex(self, name, func)
   -- inlet.foo(xxx)
   -- Set an inlet callback
-  local node = self.node
+  local node = assert(self.node)
   local inlet = node.inlets[name]
   if not inlet then
     inlet = node.pending_inlets[name]

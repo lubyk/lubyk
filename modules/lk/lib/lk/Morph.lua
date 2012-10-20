@@ -85,8 +85,19 @@ function lib:openFile(filepath)
   self:close()
   local base, name = lk.pathDir(filepath)
   if not lk.exist(filepath) then
+    -- New project
     lk.makePath(base)
     lk.writeall(filepath, '')
+  end
+  local views_path = base .. '/_views'
+  if not lk.exist(base..'/_views') then
+    -- Default view
+    lk.makePath(views_path)
+  end
+
+  local dir = lk.Dir(views_path)
+  if not dir:contains('%.lkv$') then
+    lk.writeall(views_path .. '/base.lkv', '')
   end
   self.root     = lk.FileResource(base)
   self.lkp_file = lk.FileResource('/' .. name, self.root)

@@ -71,9 +71,12 @@ end
 local send = lib.send
 function lib:send(...)
   local super = self.super
+  print('SEND', yaml.dump(...))
   if not send(super, ...) then
     -- could not send
+    print('WAIT WRITE')
     sched:waitWrite(super)
+    print('WRITE')
     -- should be ok now
     send(super, ...)
   end

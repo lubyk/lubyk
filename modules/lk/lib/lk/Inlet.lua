@@ -12,8 +12,13 @@ lk.Inlet    = lib
 
 setmetatable(lib, {
   -- lk.Inlet(node)
-  -- Create a new inlet
- __call = function(lib, name, node)
+ __call = function(lib, ...)
+   return lib.new(...)
+ end
+})
+
+-- Create a new inlet
+function lib.new(name, node)
   local self
   if type(node) == 'string' then
     -- Pending inlet.
@@ -29,7 +34,7 @@ setmetatable(lib, {
   end
 
   return setmetatable(self, lib)
-end})
+end
 
 function lib.receive(...)
   print('Inlet function not set.')

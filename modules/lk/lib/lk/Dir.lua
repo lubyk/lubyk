@@ -72,3 +72,11 @@ function lib:list()
   end
 end
 
+function lib:contains(patt)
+  for file in lfs.dir(self.path) do
+    if string.match(file, patt) then
+      return true
+    end
+	end
+end
+

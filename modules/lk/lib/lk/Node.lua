@@ -64,6 +64,10 @@ setmetatable(lib, {
     self:log('warn', ...)
   end
 
+  env.log = function(...)
+    self:log(...)
+  end
+
   process.nodes[name] = self
   -- pending connection resolution
   self.pending_inlets = process.pending_nodes[name] or {}
@@ -94,7 +98,7 @@ end
 
 -- function to reload code
 function lib:eval(code_str)
-  local code, err = loadstring(code_str)
+  local code, err = loadstring(code_str, self:url())
   if not code then
     self:error(err)
     return
@@ -189,7 +193,11 @@ function lib:log(typ, ...)
   local f = all[1]
   local msg = ''
   if type(f) == 'table' then
-    msg = yaml.dump(f)
+    if f.__tostring then
+      msg = tostring(f)
+    else
+      msg = yaml.dump(f)
+    end
   elseif #all > 1 then
     for i, v in ipairs(all) do
       if i == 1 then
@@ -330,7 +338,7 @@ function private:defaults(hash)
   local accessors = self.accessors
   for k, v in pairs(hash) do
     if type(k) ~= 'string' then
-      error("Default keys must be strings.")
+      self:error("Default keys must be strings.")
     end
     if type(v) == 'table' then
       -- Transform foo = {x = 3} to
@@ -343,7 +351,7 @@ function private:defaults(hash)
       -- Only one level deep.
       for sk, sv in pairs(v) do
         if type(sk) ~= 'string' then
-          error(string.format("Default in '%s' must be a string.", k))
+          self:error(string.format("Default in '%s' must be a string.", k))
         end
         local pname = k .. '.' .. sk
         if not accessors[pname] then

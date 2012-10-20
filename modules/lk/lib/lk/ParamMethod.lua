@@ -48,6 +48,31 @@ function lib.__newindex(self, k, value)
     -- Create an accessor for parameter 'k'
     -- or the special 'changed' callback.
     self.node.accessors[k] = value
+  elseif type(value) == 'table' then
+    -- Change parameter 'k' and notify.
+    -- param.pos= {x = 1, y = 2}
+    -- This is used from inside lk.Node.
+    local old = env[k]
+    if not old then
+      -- This is an error
+      error("Setting invalid parameter '%s'", k)
+    end
+    local changed = false
+    local notify = {}
+    for sk, sv in pairs(value) do
+      if old[sk] ~= sv then
+        changed = true
+        old[sk] = sv
+        notify[sk] = sv
+      end
+      if changed then
+        -- Notify
+        self.param_list._ = {
+          [k] = notify,
+        }
+        self.node.process:notify(self.msg) 
+      end
+    end
   else
     -- Change parameter 'k' and notify.
     -- param.foo = 45.5

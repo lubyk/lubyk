@@ -9,6 +9,7 @@
 local version = {
   major = 0,
   minor = 5,
+  patch = 1,
 }
 ----------------------------------------------------------
 
@@ -33,6 +34,7 @@ local defaults = {
 Lubyk = lk.Settings('lk', defaults)
 -- Cannot be changed, no need for copy on write.
 Lubyk.version = defaults.version
+Lubyk.version_str = string.format('%i.%i.%i', version.major, version.minor, version.patch)
 
 -- Default host name
 local function getMachineName()

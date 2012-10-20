@@ -52,3 +52,6 @@
 [submodule "modules/remdebug"]
 	path = modules/remdebug
 	url = git://github.com/lubyk/remdebug.git
+[submodule "modules/luajit"]
+	path = modules/luajit
+	url = git://github.com/lubyk/luajit.git

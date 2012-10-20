@@ -133,8 +133,9 @@ function lib:loop()
     self.at_next = next_thread
 
     for i, thread in ipairs(now_list) do
-      -- We run them all now so that we give time for 'select' in
+      -- We run them all now so that we give time for poll based events in
       -- case they keep on adding new events in at_next list.
+      -- TODO: We could discard events if this loop takes more then some max seconds to run.
       private.runThread(self, thread)
     end
 
@@ -164,6 +165,7 @@ function lib:loop()
       -- the list.
       local events = poller:events()
       if events then
+        -- Execute poll events.
         for _, ev_idx in ipairs(events) do
           local thread = idx_to_thread[ev_idx]
           if thread then
@@ -337,10 +339,16 @@ function private:runThread(thread)
   local event = zmq_const[a]
 
   if not ok then
-    -- a = error (unhandled errors is bad)
-    print('ERROR', a, t.co, debug.traceback(t.co))
+    -- a = error in thread
+    if t.error then
+      -- Thread has an error handler, call it
+      t.error(a, debug.traceback(t.co))
+    else
+      print('ERROR', a, t.co, debug.traceback(t.co))
+    end
+
     if t.restart then
-      -- This is a safety net to avoid dead sockets.
+      -- Restart on error
       t.co = coroutine.create(t.func)
     else
       if thread.fd then
