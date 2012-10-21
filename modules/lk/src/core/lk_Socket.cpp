@@ -346,7 +346,7 @@ static int Socket_fd(lua_State *L) {
 // --=============================================== __tostring
 static int Socket___tostring(lua_State *L) {
   Socket *self = *((Socket **)dub_checksdata_n(L, 1, "lk.Socket"));
-  lua_pushfstring(L, "lk.Socket: %p (%s:%d --> %s:%d)", self, self-> localHost() , self-> localPort() , self-> remoteHost() , self-> remotePort() );
+  lua_pushfstring(L, "lk.Socket: %p (%s:%d  > %s:%d)", self, self-> localHost() , self-> localPort() , self-> remoteHost() , self-> remotePort() );
   
   return 1;
 }
