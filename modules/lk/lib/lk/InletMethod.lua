@@ -34,7 +34,7 @@ function lib.__newindex(self, name, func)
       inlet:setNode(node)
     else
       -- New inlet
-      inlet = lk.Inlet(name, node)
+      inlet = lk.Inlet(node, name)
     end
     node.inlets[name] = inlet
   end

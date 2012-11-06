@@ -495,9 +495,6 @@ function private.process:disconnect(process)
 end
 
 --- We receive notifications from processes.
--- FIXME: Process changes should go through lk.Morph so that we do not need to
--- receive process notifications (most of these are GUI events).
--- Another solution would be to use zmq filtering.
 function private.process.changed(self, process, changes)
   -- write changes to file    
   local cache = process.cache
@@ -573,6 +570,8 @@ function private.process.changed(self, process, changes)
           end
         end
       end
+    elseif base_k == 'log' then
+      -- ignore
     else
       patch_changed = lk.deepMerge(cache, base_k, base_v) or patch_changed
     end

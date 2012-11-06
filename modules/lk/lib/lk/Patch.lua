@@ -49,6 +49,8 @@ end})
 
 
 local function setNodes(self, nodes_definition)
+  print('setNodes', yaml.dump(nodes_definition))
+  local to_remove = {}
   local nodes = self.nodes
   for name, def in pairs(nodes_definition) do
     -- parsing each node
@@ -56,9 +58,9 @@ local function setNodes(self, nodes_definition)
     if not def then
       -- remove node
       if node then
-        node:remove()
-        node = nil
-        nodes[name] = nil
+        -- Remove node after other updates. This is important so that
+        -- link deconnection is triggered with a valid node.env.
+        table.insert(to_remove, {node, name})
       end
     else
       if not node then
@@ -69,6 +71,10 @@ local function setNodes(self, nodes_definition)
       -- update
       node:set(def)
     end
+  end
+  for _, pair in ipairs(to_remove) do
+    pair[1]:remove()
+    nodes[pair[2]] = nil
   end
 end
 
@@ -120,7 +126,7 @@ function lib:pendingInlet(inlet_abs_url)
   local inlet = nil
   if node then
     -- inlet not created yet
-    inlet = lk.Inlet(inlet_name)
+    inlet = lk.Inlet(nil, inlet_name)
     node.pending_inlets[inlet_name] = inlet
   else
     -- node not created yet
@@ -132,7 +138,7 @@ function lib:pendingInlet(inlet_abs_url)
     inlet = pending_node[inlet_name]
     if not inlet then
       -- We pass absolute url so that the inlet can answer 'url()' requests.
-      inlet = lk.Inlet(inlet_name, inlet_abs_url)
+      inlet = lk.Inlet(inlet_abs_url, inlet_name)
       pending_node[inlet_name] = inlet
     end
   end

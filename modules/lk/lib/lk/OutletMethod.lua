@@ -24,7 +24,7 @@ function lib:__call(name, opts)
   -- Declare or update an outlet.
   local oultet = node.outlets[name]
   if not oultet then
-    outlet = lk.Outlet(name, self.node)
+    outlet = lk.Outlet(self.node, name)
     node.outlets[name] = outlet
   end
   if opts then

@@ -18,7 +18,7 @@ setmetatable(lib, {
 })
 
 -- Create a new inlet
-function lib.new(name, node)
+function lib.new(node, name)
   local self
   if type(node) == 'string' then
     -- Pending inlet.
