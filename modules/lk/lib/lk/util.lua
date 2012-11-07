@@ -288,6 +288,18 @@ function lk.scriptSource(level)
   return debug.getinfo(2 - level).source
 end
 
+-------------------------------- lk.log(...)
+-- Print a log message with the current file name and line.
+function lk.log(...)
+  local trace = lk.split(debug.traceback(), '\n\t')[3]
+  local file, line = string.match(trace, '^([^:]+):([^:]):')
+  if file and line then
+    print(string.format('%s:%i:', file, line), ...)
+  else
+    print(trace, ...)
+  end
+end
+
 -------------------------------- lk.scriptPath(level = 0)
 -- Find the the current file or the
 -- file up x levels in the call chain (-1 = up
