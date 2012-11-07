@@ -19,12 +19,12 @@ setmetatable(lib, {
   return setmetatable(self, lib)
 end})
 
-function lib:__call(name, opts)
+function lib:__call(name, connect_msg, disconnect_msg)
   local node = self.node
   -- Declare or update an outlet.
   local oultet = node.outlets[name]
   if not oultet then
-    outlet = lk.Outlet(self.node, name)
+    outlet = lk.Outlet(self.node, name, connect_msg, disconnect_msg)
     node.outlets[name] = outlet
   end
   if opts then

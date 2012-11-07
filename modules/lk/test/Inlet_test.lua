@@ -24,7 +24,7 @@ local function mockNode()
 end
 
 function should.createInlet()
-  local inlet = lk.Inlet(, mockNode(), 'tempo')
+  local inlet = lk.Inlet(mockNode(), 'tempo')
   assertEqual('lk.Inlet', inlet.type)
   assertEqual('tempo', inlet.name)
 end

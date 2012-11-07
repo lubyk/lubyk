@@ -4,7 +4,7 @@
   --------
 
   Example of a child node able to create a Bidirectional
-  link with a parent.
+  link with a parent. To be used with lk.Parent.
 
   Inlets
   --------------------------------------------------------
@@ -22,27 +22,28 @@ local CONNECT_TYPE = 'some.Type'
 defaults {
 }
 
-function inlet.register()
-  -- only used for registration
-end
+local parent
 
-function connected(type, list)
-  if type == CONNECT_TYPE then
-    table.insert(list, url())
-    return true
-  end
-end
+-- Shared data with parent
+data = data or {}
 
-function disconnected(type, list)
-  local url = url()
-  if type ~= CONNECT_TYPE then
-    return
+function inlet.register(elem, conn)
+  if parent then
+    -- Disconnect
+    parent[url()] = nil
   end
 
-  for i, v in ipairs(list) do
-    if v == url then
-      table.remove(list, i)
-      break
+  if conn then
+    -- Bidirectional connection
+    if elem.type == CONNECT_TYPE then
+      -- Example of registration.
+      parent = elem
+      elem[url()] = data
+      -- Inform GUI that the connection is bidirectional.
+      conn.type = 'Bidirectional'
+    else
+      error('Invalid connection type. Expecting "%s", found "%s".', CONNECT_TYPE, elem.type)
     end
   end
 end
+

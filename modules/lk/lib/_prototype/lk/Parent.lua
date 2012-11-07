@@ -4,7 +4,7 @@
   ---------
 
   Example of parent node able to create Bidirectional links
-  with child nodes.
+  with child nodes. To be used with lk.Child.
 
   Inlets
   --------------------------------------------------------
@@ -22,18 +22,12 @@ local CONNECT_TYPE = 'some.Type'
 defaults {
 }
 
-outlet 'register'
+list = list or {type = CONNECT_TYPE}
 
-list = {}
+--     name,       connect value,    disconnect value
+outlet('register', list,             false)
 
-function childConnected(func)
-  return func(CONNECT_TYPE, list)
-end
-
-function childDisconnected(func)
-  func(CONNECT_TYPE, list)
-end
-
+-- Connection debugging
 function inlet.bang()
   print(yaml.dump(list))
 end

@@ -232,7 +232,6 @@ function lib:makeAbsoluteUrl(url)
 end
 
 local function setLink(self, out_name, target_url, process)
-  print('setLink', self.name, out_name, target_url, process:url())
   local outlet = self.outlets[out_name]
   if not outlet then
     self:error("Outlet name '%s' does not exist.", out_name)

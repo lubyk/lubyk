@@ -49,7 +49,6 @@ end})
 
 
 local function setNodes(self, nodes_definition)
-  print('setNodes', yaml.dump(nodes_definition))
   local to_remove = {}
   local nodes = self.nodes
   for name, def in pairs(nodes_definition) do

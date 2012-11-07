@@ -73,9 +73,7 @@ function lib:send(...)
   local super = self.super
   if not send(super, ...) then
     -- could not send
-    print('WAIT WRITE')
     sched:waitWrite(super)
-    print('WRITE')
     -- should be ok now
     send(super, ...)
   end

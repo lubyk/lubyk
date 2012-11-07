@@ -57,80 +57,61 @@ function should.connectToInlets()
   assertEqual(120, t)
 end
 
-function should.callChildConnected(t)
+function should.sendDefaultOnConnection(t)
   local parent = mockNode()
+  local child = mockNode()
   local data = {}
-  function parent.env.childConnected(func)
+  local test_val  = 'Bidim test value'
+  local test_val2 = 'Something else'
+
+  local bang = lk.Outlet(parent, 'bang', test_val)
+  local bang2 = lk.Outlet(parent, 'bang2', test_val2)
+  local beep = lk.Inlet(child, 'beep')
+
+  function beep.receive(x, conn)
+    t.received = x
     -- Returns 'true' if the connection succeeds. This is used to
     -- indicate a bi-directional link.
-    return func('foo.Bar', data)
-  end
-
-  local bang = lk.Outlet(parent, 'bang', 'Send bang.')
-
-  local child = mockNode()
-  function child.env.connected(type, data)
-    if type == 'foo.Bar' then
-      -- Do something with provided arguments.
-      table.insert(data, 'child1')
-      -- Return true to inform parent that connection is OK.
-      return true
+    if x == test_val then
+      conn.type = 'Bidirectional'
     end
   end
 
-  local beep = lk.Inlet(child, 'beep', 'Receives bangs.')
   bang:connect(beep)
 
-  assertValueEqual({
-    'child1'
-  }, data)
-
+  assertEqual(test_val, t.received)
   assertEqual('Bidirectional', bang.links[beep:url()].type)
+
+  bang2:connect(beep)
+  assertEqual(test_val2, t.received)
+  assertEqual('Basic', bang2.links[beep:url()].type)
 end
 
-function should.callChildDisconnected(t)
+function should.sendDisconnectValue(t)
   local parent = mockNode()
-  local data = {}
-  function parent.env.childConnected(func)
-    return func('foo.Bar', data)
-  end
-
-  function parent.env.childDisconnected(func)
-    -- Returns 'true' if the connection succeeds. This is used to
-    -- indicate a bi-directional link.
-    return func('foo.Bar', data)
-  end
-
-  local bang = lk.Outlet(parent, 'bang', 'Send bang.')
-
   local child = mockNode()
-  function child.env.connected(type, d)
-    table.insert(d, 'child1')
-    return true
+  local data = {}
+  local test_val  = 'Bidim test value'
+  local test_val2 = 'Something else'
+
+  local bang  = lk.Outlet(parent, 'bang',  'connect', test_val)
+  local bang2 = lk.Outlet(parent, 'bang2', 'connect2', test_val2)
+  local beep  = lk.Inlet(child, 'beep')
+
+  function beep.receive(x)
+    t.received = x
   end
 
-  function child.env.disconnected(type, d)
-    if type == 'foo.Bar' then
-      -- Do something with provided arguments.
-      for i, v in ipairs(d) do
-        if v == 'child1' then
-          table.remove(d, i)
-        end
-      end
-    end
-  end
-
-  local beep = lk.Inlet(child, 'beep', 'Receives bangs.')
   bang:connect(beep)
+  assertEqual('connect', t.received)
+  bang2:connect(beep)
+  assertEqual('connect2', t.received)
 
-  assertValueEqual({
-    'child1'
-  }, data)
-
-  -- disconnect
   bang:disconnect(beep:url())
-  assertValueEqual({
-  }, data)
+  assertEqual(test_val, t.received)
+
+  bang2:disconnect(beep:url())
+  assertEqual(test_val2, t.received)
 end
 
 

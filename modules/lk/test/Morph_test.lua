@@ -28,7 +28,8 @@ end
 
 function should.teardown()
   -- clear _views
-  lk.rmTree(fixture.path('project/_views'))
+  lk.rmTree(fixture.path('project/_views'), true)
+  lk.rmTree(fixture.path('_views'), true)
 end
 
 function should.loadCode()
