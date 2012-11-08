@@ -58,3 +58,6 @@
 [submodule "modules/seq"]
 	path = modules/seq
 	url = https://github.com/lubyk/seq.git
+[submodule "modules/bt"]
+	path = modules/bt
+	url = https://github.com/lubyk/bt.git
