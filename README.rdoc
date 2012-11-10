@@ -1,7 +1,8 @@
 == Lubyk
 
 Lubyk is an open source tool written in C++/Lua for real time signal processing.
-This tool uses zeromq to communicate between processes and with the graphical interfaces.
+This tool uses zeromq to communicate between processes and with the graphical
+interfaces.
 
 website: http://lubyk.org
 
@@ -11,93 +12,27 @@ author: Gaspard Bucher - Buma (http://feature-space.com)
 
 See the "CREDITS" file for the list of included open source projects.
 
-== History
-
-This is the 3rd incarnation of Lubyk (without counting the early Ruby prototype). The first version was a
-very rough draft that worked pretty well but crashed often during startup and/or quit. The second version
-was a big C++ rewrite with the creation of a super library (oscit) and many great C++ templates (Hash, etc)
-but it never really worked. This big rewrite made me learn how to use CMake and how to code C++, integrate
-with openCV, use zeroconf but I got drowned in concurrent C++ with dynamic memory and introspection issues.
-The current incarnation tries to keep coding fun and fast by using Lua for all the 'glue'.
-
-The first prototype was started for the show 'home' (first showed in Arsenic, Lausanne, Switzerland in
-January 2008) because I wanted to be able to write Ruby scripts inside a multimedia application. I never felt
-at home in the purely visual patchers where you can get lost quite quickly if you create complex works.
-
-Due to speed issues with the first prototype in Ruby, I decided to write the whole thing in C. As I quickly
-felt like reinventing object orientation I thought it would be more natural to use C++. The project now uses
-Lua for scripting for its speed and ease of integration but the name lubyk (Ruby Kontroller) was kept. In my
-country (Switzerland) rubies are used in clockworks so Lubyk is also a reference to this tradition.
-
 == Installation
 
-Lubyk is currently *alpha* software. If you want to experiment with the project, download the sources from
-github (http://github.com/lubyk/lubyk) or clone and download if you feel like contributing. From there,
-"..." means the path to the downloaded repository.
+Lubyk is currently *alpha* software.
 
-In order to build everything, you need to have Qt SDK 4.7 and CMake installed.
+=== Mac OS X
 
+In order to build everything, you need to have Qt SDK 4.8 and CMake installed:
+
+  ...> brew install cmake
+  ...> brew install qt
+
+  ...> git clone git://github.com/lubyk/lubyk.git
+  ...> git submodules init
+  ...> git submodules update
   ...> mkdir build
   ...> cd build
   .../build> cmake ..
-  .../build> make
-   takes some time... please wait
-  .../build> cd ../deploy
-  .../deploy> lua install.lua
+  .../build> make -j4
+  .../build> make install
 
-The install script installs a single lua file in '/usr/local/lib/lua/5.1/lubyk.lua' and a '.lubykrc' file
-that informs lubyk where to search for libraries (.../lib).
+The install script installs a single lua file in '/usr/local/lib/lua/5.1/lubyk.lua'
+and a '~/.lubyk/lk.lua' file that informs lubyk where to search for libraries.
+Default location for libraries is in /Applications/Lubyk.app on Mac OS X.
 
-Now you can use lubyk in lua scripts by simply doing a "require 'lubyk'". You can test the mimas graphical
-interface with with:
-
-  ...> lua Mimas/Resources/mimas_app.lua
-
-=== File organization
-
-Every module has it's own namespace (table) and all the code lives in a separate
-folder organized as follow:
-
-
-    modules/foo                   All code, documentation, assets, tests and external libraries
-                                  should live inside this folder.
-
-            .../include           Headers should be stored in here. When possible, the headers
-                                  for 'foo' should be stored inside a sub-folder with the same
-                                  name so that the code contains the module name (#include
-                                  "foo/base.h").
-
-            .../sub               Cpp files live in here.
-
-            .../sub/[mod]/[arch]  Architecture specific source files should be kept in separate
-                                  folders with the name of the architecture. Valid names are
-                                  'macosx', 'linux' and 'win32'. If this list is not up-to-date
-                                  look inside the root CMakeLists.txt for ${PLAT} values.
-
-            .../lua               Lua source code inside this directory will be installed inside
-                                  the library. If the module does not provide a binary library,
-                                  it should have a file called '.../lua/foo.lua' that declares
-                                  the 'foo' table. Other files should be kept in a sub-folder
-                                  with the same name as the module (.../lua/foo/) to avoid
-                                  collisions with other modules inside the library.
-
-            .../test              All files ending in '_test.lua' will be loaded an run during
-                                  testing.
-
-            .../doc               All documentation should be kept here in textile format if
-                                  possible.
-
-            .../vendor            Code imported into Lubyk but written by other people. The code
-                                  in there should (as much as possible) not be modified from the
-                                  original version (apart from adding/changing CMakeFileLists.tx
-                                  or adding a lubyk.c/lubyk.cpp for the lua bindings).
-
-=== Main modules
-
-  * lubyk                       Contains all the code and helpers but without any classes.
-
-  * lk                          Contains classes such as (Dir, Service, Patch, etc).
-
-  * test                        Testing infrastructure.
-
-  * mimas                       Bindings to Qt used for the graphical interfaces (not mandatory).
