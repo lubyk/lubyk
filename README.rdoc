@@ -24,15 +24,27 @@ In order to build everything, you need to have Qt SDK 4.8 and CMake installed:
   ...> brew install qt
 
   ...> git clone git://github.com/lubyk/lubyk.git
-  ...> git submodules init
-  ...> git submodules update
+  ...> git submodule init
+  ...> git submodule update
   ...> mkdir build
   ...> cd build
   .../build> cmake ..
   .../build> make -j4
   .../build> make install
 
-The install script installs a single lua file in '/usr/local/lib/lua/5.1/lubyk.lua'
-and a '~/.lubyk/lk.lua' file that informs lubyk where to search for libraries.
+The install script installs a single lua file in '/usr/local/lib/lua/5.1/lubyk.lua'.
+
+=== Settings files
+
+If '~/.lubyk/lk.lua' file that informs lubyk where to search for extra libraries.
 Default location for libraries is in /Applications/Lubyk.app on Mac OS X.
+
+  return {
+    paths = {
+      -- Example of extra paths to store lua libraries and run them without
+      -- installing.
+      '/Users/gaspard/git/lubyk/modules/seq/lib',
+    }
+  }
+
 

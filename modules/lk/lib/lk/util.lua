@@ -292,7 +292,7 @@ end
 -- Print a log message with the current file name and line.
 function lk.log(...)
   local trace = lk.split(debug.traceback(), '\n\t')[3]
-  local file, line = string.match(trace, '^([^:]+):([^:]):')
+  local file, line = string.match(trace, '^([^:]+):([^:]+):')
   if file and line then
     print(string.format('%s:%i:', file, line), ...)
   else
@@ -339,6 +339,15 @@ function lk.dofile(path)
   return dofile(lk.scriptDir(-1) .. '/' .. path, path)
 end
 
+-------------------------------- lk.traceRequire()
+-- Print out require statements as they occur.
+local orig_req = require
+function lk.traceRequire()
+  require = function(path)
+    print("require '"..path.."'")
+    return orig_req(path)
+  end
+end
 -------------------------------- lk.findCode(class_name)
 -- Find source code from a given class name of the
 -- form 'lubyk.Metro' or 'my.super.complicated.Thing'. The
