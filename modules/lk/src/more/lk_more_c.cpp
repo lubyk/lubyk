@@ -8,20 +8,16 @@
  */
 #include "dub/dub.h"
 #include "lk/Debug.h"
-#include "lk/Finalizer.h"
 #include "lk/SelectCallback.h"
 #include "lk/Socket.h"
-#include "lk/TimeRef.h"
 #include "lk/globals.h"
 
 using namespace lk;
 
 extern "C" {
 int luaopen_lk_Debug(lua_State *L);
-int luaopen_lk_Finalizer(lua_State *L);
 int luaopen_lk_SelectCallback(lua_State *L);
 int luaopen_lk_Socket(lua_State *L);
-int luaopen_lk_TimeRef(lua_State *L);
 }
 
 /** LuaStackSize lk::spawn(const char *script, lua_State *L)
@@ -79,12 +75,10 @@ static const struct luaL_Reg lk_functions[] = {
 };
 
 
-extern "C" int luaopen_lk_core(lua_State *L) {
+extern "C" int luaopen_lk_more_c(lua_State *L) {
   luaopen_lk_Debug(L);
-  luaopen_lk_Finalizer(L);
   luaopen_lk_SelectCallback(L);
   luaopen_lk_Socket(L);
-  luaopen_lk_TimeRef(L);
 
   // Create the table which will contain all the constants
   lua_getfield(L, LUA_GLOBALSINDEX, "lk");

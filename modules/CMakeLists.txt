@@ -8,7 +8,7 @@ project(modules)
 # ----------------------------------------------------------------------------------
 #  Include common directories
 # ----------------------------------------------------------------------------------
-include_directories(modules/core/include lk/include/lua ${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(core/include core/include/lua ${CMAKE_CURRENT_SOURCE_DIR})
 
 # ----------------------------------------------------------------------------------
 #  Build each module

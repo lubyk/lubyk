@@ -27,12 +27,8 @@
   ==============================================================================
 */
 
-#include "dub/dub.h"
-// vendor/src/msgpack.h
+#include "dub/dub.h" // dub::Exception
 #include "msgpack.h"
-
-//#include <string.h>
-//#include <stdio.h>
 
 #define MAX_DEPTH 10000
 static void pack_lua(lua_State *L, msgpack_packer *pk, int index);
@@ -189,7 +185,7 @@ static int unpack_object(lua_State *L, msgpack_object *o, bool array_as_arglist)
     return 1;
     }
 	default:
-    fprintf(stderr, "Unknown type in msg packet (%hu).\n", o->type);
+    fprintf(stderr, "Unknown type in msg packet (%hu).\n", (unsigned short)o->type);
     return 0;
 	}
 }

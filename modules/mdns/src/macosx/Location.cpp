@@ -29,7 +29,7 @@
 
 #include "mdns/Location.h"
 
-#include "lubyk/lua.h"
+#include "lua.h"
 
 #include <sstream>
 

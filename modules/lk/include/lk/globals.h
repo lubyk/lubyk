@@ -29,7 +29,7 @@
 #ifndef LUBYK_INCLUDE_LK_CONSTANTS_H_
 #define LUBYK_INCLUDE_LK_CONSTANTS_H_
 
-#include "lubyk/lua.h"
+#include "dub/dub.h"
 
 #include <string.h>
 

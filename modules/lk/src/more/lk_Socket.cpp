@@ -21,9 +21,9 @@ static int Socket_Socket(lua_State *L) {
     retval__->pushobject(L, retval__, "lk.Socket", true);
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "Socket: %s", e.what());
+    lua_pushfstring(L, "new: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "Socket: Unknown exception");
+    lua_pushfstring(L, "new: Unknown exception");
   }
   return dub_error(L);
 }
@@ -41,9 +41,9 @@ static int Socket__Socket(lua_State *L) {
     userdata->gc = false;
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "~Socket: %s", e.what());
+    lua_pushfstring(L, "__gc: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "~Socket: Unknown exception");
+    lua_pushfstring(L, "__gc: Unknown exception");
   }
   return dub_error(L);
 }
