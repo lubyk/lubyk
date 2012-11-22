@@ -27,12 +27,12 @@
   ==============================================================================
 */
 
-#ifndef LUBYK_INCLUDE_LUBYK_COCOA_H_
-#define LUBYK_INCLUDE_LUBYK_COCOA_H_
+#ifndef LUBYK_INCLUDE_LK_COCOA_H_
+#define LUBYK_INCLUDE_LK_COCOA_H_
 
 #import <Cocoa/Cocoa.h>
 
-namespace lubyk {
+namespace lk {
 
 class ScopedPool {
 public:
@@ -50,4 +50,4 @@ private:
 
 } // lk
 
-#endif // LUBYK_INCLUDE_LUBYK_COCOA_H_
+#endif // LUBYK_INCLUDE_LK_COCOA_H_

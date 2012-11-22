@@ -22,12 +22,7 @@ function lib.new(path)
   return private.parseFile(self, path)
 end
 
-local parser = {
-  start = {},
-  preamble = {},
-  description = {},
-  body = {},
-}
+local parser = {}
 
 -- A parser state is defined with:
 -- {MATCH_KEY, SUB-STATES, key = function}
@@ -46,7 +41,7 @@ parser.start = {
     -- matchers
     { key    = '^ *h1. (.*)$', 
       output = function(doc, line, title) doc.title = title end,
-      move   = function() return parser.description end,
+      move   = function() return parser.summary end,
     },
     { key    = '^--%]',
       output = function(doc, line) error('Missing h1 title in preamble (line '.. line .. ').') end,
@@ -54,7 +49,7 @@ parser.start = {
   },
 }
 
-parser.description = {
+parser.summary = {
   -- Paragraph = summary
   { key = '^ *([^ ].+)$',
     output = function(doc, i, d) doc.summary = d end,
@@ -65,8 +60,37 @@ parser.description = {
     },
     -- End of paragraph
     { key = '^ *$', 
+      output = function(doc, i, d)
+        doc.description = ''
+        doc._step = ''
+      end,
+      move = function() return parser.description end,
     },
   },
+}
+
+parser.description = {
+  -- All text until end of comment = description
+  -- End of comment
+  { key = '^--%]%]', 
+    move = function() return parser.section end
+  },
+  { key = '^ *$',
+    output = function(doc, i, d) doc._step = '\n\n' end,
+    -- Continue in same
+    move = false,
+  },
+  { key = '^ *([^\n]*)$',
+    output = function(doc, i, d)
+      doc.description = doc.description .. doc._step .. d
+      doc._step = ' '
+    end,
+    -- Continue in same
+    move = false,
+  },
+}
+
+parser.section = {
 }
 
 function private:parseFile(path)

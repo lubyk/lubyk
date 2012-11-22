@@ -27,11 +27,11 @@
   ==============================================================================
 */
 
-#ifndef LUBYK_INCLUDE_LUBYK_FIFO_H_
-#define LUBYK_INCLUDE_LUBYK_FIFO_H_
+#ifndef LUBYK_INCLUDE_LK_FIFO_H_
+#define LUBYK_INCLUDE_LK_FIFO_H_
 
 #include "dub/dub.h" // dub::Exception
-#include "lubyk/Mutex.h"
+#include "lk/Mutex.h"
 
 #include <unistd.h> // pipe
 #include <fcntl.h>
@@ -161,6 +161,6 @@ private:
 
 } // lk
 
-#endif // LUBYK_INCLUDE_LUBYK_FIFO_H_
+#endif // LUBYK_INCLUDE_LK_FIFO_H_
 
 

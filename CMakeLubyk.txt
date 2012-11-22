@@ -15,7 +15,10 @@ if(UNIX)
     set(PLAT_OBJ_FLAGS "-flat_namespace -undefined suppress -dynamic -bundle")
 
     if (RELEASE)
-      set(CMAKE_OSX_ARCHITECTURES "ppc;i386;x86_64" CACHE STRING "Build architectures for OSX" FORCE)
+      # We do not use CMAKE_OSX_ARCHITECTURES because it triggers
+      # isysroot and then the build fails.
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -arch x86_64 -arch i386")
+      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}-arch x86_64 -arch i386")
     endif(RELEASE)
   else(APPLE)
     set(LUBYK_LIB /usr/local/lib/lubyk)
@@ -39,4 +42,3 @@ if (RELEASE)
   add_definitions(-O2 -DNDEBUG)
 endif(RELEASE)
 add_definitions(-D__${PLAT}__ -DUSE_READLINE)
-set(LUBYK true)

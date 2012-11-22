@@ -1,11 +1,11 @@
 # --------------------------------------------------------------
 #  core
 # --------------------------------------------------------------
-set(target "${MODULE_NAME}_core")
+set(target "${MODULE_NAME}_more")
 file(GLOB CORE_SOURCES dub/*.cpp *.cpp ${PLAT}/*.cpp ${PLAT}/*.mm)
 add_library(${target} MODULE ${CORE_SOURCES})
 set_target_properties(${target}
-  PROPERTIES OUTPUT_NAME core
+  PROPERTIES OUTPUT_NAME more
   LINK_FLAGS ${PLAT_OBJ_FLAGS}
   PREFIX ""
   SUFFIX ".so"
