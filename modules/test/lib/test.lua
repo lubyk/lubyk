@@ -336,7 +336,7 @@ end
 
 function assertTableEqual(expected, value, resolution, up_count)
   up_count = up_count or 1
-  assertEqual('table', type(value))
+  assertEqual('table', type(value), up_count + 1)
   for i, v in ipairs(expected) do
     assertValueEqual(v, value[i], resolution, up_count + 1)
   end

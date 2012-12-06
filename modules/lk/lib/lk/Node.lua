@@ -200,7 +200,7 @@ function lib:log(typ, ...)
     if f.__tostring then
       msg = tostring(f)
     else
-      msg = yaml.dump(f)
+      msg = tostring(f)
     end
   elseif #all > 1 then
     for i, v in ipairs(all) do

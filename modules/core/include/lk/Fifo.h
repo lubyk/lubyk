@@ -130,6 +130,12 @@ public:
     }
   }
 
+  /** Return true if there are messages in the message queue.
+   */
+  bool hasMessage() {
+    return read_idx_ != write_idx_;
+  }
+
 protected:
 
   /** Push data onto the lua stack.
