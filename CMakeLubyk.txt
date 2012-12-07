@@ -4,6 +4,8 @@
 #
 # ==============================================================================
 
+set(USE_LUAJIT true)
+
 if(UNIX)
   if(APPLE)
     set(LUBYK_LIB /Applications/Lubyk.app/Contents/Resources)

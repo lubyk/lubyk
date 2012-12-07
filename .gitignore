@@ -32,3 +32,15 @@
 /modules/mimas/vendor/glew/bin
 /modules/mimas/vendor/glew/lib
 /tags
+/modules/lk/src/lua/vendor_jit/src/host/buildvm
+/modules/lk/src/lua/vendor_jit/src/host/buildvm_arch.h
+/modules/lk/src/lua/vendor_jit/src/host/minilua
+/modules/lk/src/lua/vendor_jit/src/jit/vmdef.lua
+/modules/lk/src/lua/vendor_jit/src/libluajit.so
+/modules/lk/src/lua/vendor_jit/src/lj_bcdef.h
+/modules/lk/src/lua/vendor_jit/src/lj_ffdef.h
+/modules/lk/src/lua/vendor_jit/src/lj_folddef.h
+/modules/lk/src/lua/vendor_jit/src/lj_libdef.h
+/modules/lk/src/lua/vendor_jit/src/lj_recdef.h
+/modules/lk/src/lua/vendor_jit/src/lj_vm.s
+/modules/lk/src/lua/vendor_jit/src/luajit
