@@ -55,9 +55,9 @@
 [submodule "modules/luajit"]
 	path = modules/luajit
 	url = git://github.com/lubyk/luajit.git
-[submodule "modules/seq"]
-	path = modules/seq
-	url = https://github.com/lubyk/seq.git
 [submodule "modules/bt"]
 	path = modules/bt
 	url = https://github.com/lubyk/bt.git
+[submodule "modules/binseq"]
+	path = modules/binseq
+	url = git://github.com/lubyk/binseq.git
