@@ -61,3 +61,6 @@
 [submodule "modules/binseq"]
 	path = modules/binseq
 	url = git://github.com/lubyk/binseq.git
+[submodule "modules/four"]
+	path = modules/four
+	url = git@github.com:lubyk/four.git
