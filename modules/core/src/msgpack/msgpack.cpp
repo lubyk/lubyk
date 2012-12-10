@@ -204,7 +204,7 @@ void msgpack_lua_to_bin(lua_State *L, msgpack_sbuffer **buffer, int skip_index) 
     if (rtop == 0) {
       msgpack_pack_nil(pk);
     } else if (rtop == 1) {
-       pack_lua(L, pk, 1 + skip_index);
+      pack_lua(L, pk, 1 + skip_index);
     } else {
       // multiple objects are sent into an array
       msgpack_pack_array(pk, rtop);

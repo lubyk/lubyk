@@ -32,6 +32,10 @@ function sleep(ms)
   sched:sleep(ms)
 end
 
+function yield()
+  sched:sleep(0)
+end
+
 function run(...)
   sched:run(...)
 end

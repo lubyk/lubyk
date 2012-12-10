@@ -63,4 +63,7 @@
 	url = git://github.com/lubyk/binseq.git
 [submodule "modules/four"]
 	path = modules/four
-	url = git@github.com:lubyk/four.git
+	url = git://github.com/lubyk/four.git
+[submodule "modules/osc"]
+	path = modules/osc
+	url = git://github.com/lubyk/osc.git

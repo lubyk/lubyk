@@ -35,7 +35,7 @@ function should.runMutlithreaded(t)
   t.client = lk.Socket()
   t.client:connect('127.0.0.1', t.port)
   log('cli:connect')
-  -- 'send' does not unlock mutex
+  -- 'send' does not yield
   t.client:send('Hello Lubyk!\n')
   log('cli:send')
   -- The server thread finally has some time to run
@@ -57,7 +57,7 @@ function should.send(t)
     t.server:bind('*', 0)
     t.server:listen()
     t.port = t.server.port
-    -- will start as soon as we release the mutex
+    -- will start as soon as we yield
     t.srv_client = t.server:accept()
     t.received1 = t.srv_client:recv()
     t.received2 = t.srv_client:recv()
@@ -83,7 +83,7 @@ function should.recvBytes(t)
   t.port = t.server.port
   -- run server in new thread
   t.thread = lk.Thread(function()
-    -- will start as soon as we release the mutex
+    -- will start as soon as we yield
     local client = t.server:accept()
     t.received1 = client:recv(6)
     t.received2 = client:recv(4)
@@ -91,7 +91,7 @@ function should.recvBytes(t)
   end)
   t.client = lk.Socket()
   t.client:connect('127.0.0.1', t.port)
-  -- 'send' does not unlock mutex
+  -- 'send' does not yield
   t.client:send('0123456789')
   -- The server thread finally has some time to run
   t.thread:join()
@@ -108,7 +108,7 @@ function should.sendMessages(t)
   t.port = t.server.port
   -- run server in new thread
   t.thread = lk.Thread(function()
-    -- will start as soon as we release the mutex
+    -- will start as soon as we release yield
     local client = t.server:accept()
     t.received1 = client:recvMsg()
     t.received2, t.received3 = client:recvMsg()
@@ -116,7 +116,7 @@ function should.sendMessages(t)
   end)
   t.client = lk.Socket()
   t.client:connect('127.0.0.1', t.port)
-  -- 'send' does not unlock mutex
+  -- 'send' does not yield
   t.client:sendMsg('0123456789')
   t.client:sendMsg(34, {a = 'blah'})
   -- The server thread finally has some time to run
@@ -145,7 +145,7 @@ function should.sendMessagesWithPartialBuffer(t)
   end)
   t.client = lk.Socket()
   t.client:connect('127.0.0.1', t.port)
-  -- 'send' does not unlock mutex
+  -- 'send' does not yield
   t.client:send('abcd\n')
   t.client:sendMsg(34, {a = 'blah'})
   t.client:send('Hello World!\n')

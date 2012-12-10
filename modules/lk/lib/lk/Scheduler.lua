@@ -364,9 +364,11 @@ function private:runThread(thread)
       if thread.fd == b then
         -- same
         self.poller:modify(thread.idx, event)
-      else
+      elseif b then
         -- changed fd
         self.poller:modify(thread.idx, event, b)
+      else
+        assert(false, 'This is a bug. Check sched:waitRead calls.')
       end
     else
       -- add fd

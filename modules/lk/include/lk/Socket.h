@@ -106,7 +106,7 @@ public:
       , non_blocking_(false) {
   }
 
-  ~Socket() {
+  virtual ~Socket() {
     close();
   }
 
@@ -218,30 +218,80 @@ public:
     return socket_fd_;
   }
 
-private:
-   /** Create a socket with an existing file descriptor.
-    * This is used as the result of an 'accept()' call.
-    */
-   Socket(int fd, const char *local_host, const char *remote_host, int remote_port)
-       : socket_fd_(fd)
-       , local_host_(local_host)
-       , local_port_(get_port(fd))
-       , remote_host_(remote_host)
-       , remote_port_(remote_port)
-       , buffer_length_(0)
-       , buffer_i_(0)
-       , non_blocking_(false) {
+protected:
+
+  /** Send raw bytes from C++.
+   */
+  inline int sendBytes(const char *bytes, size_t sz) {
+    if (socket_type_ == UDP) {
+      struct addrinfo hints, *res;
+
+      memset(&hints, 0, sizeof(hints));
+
+      // we do not care if we get an IPv4 or IPv6 address
+      hints.ai_family = AF_UNSPEC;
+      // UDP
+      hints.ai_socktype = SOCK_DGRAM;
+
+      // TODO: performance save port string.
+      char port_str[10];
+      snprintf(port_str, 10, "%i", remote_port_);
+
+      int status;
+      if ( (status = getaddrinfo(remote_host_.c_str(), port_str, &hints, &res)) ) {
+        throw dub::Exception("Could not getaddrinfo for %s:%i (%s).", remote_host_.c_str(), remote_port_, gai_strerror(status));
+      }
+
+
+      int sent = sendto(socket_fd_, bytes, sz, 0, res->ai_addr, res->ai_addrlen);
+      freeaddrinfo(res);
+      return sent;
+    } else {
+      int sent = ::send(socket_fd_, bytes, sz, 0);
+      if (sent == -1) {
+        if (errno == EAGAIN) {
+          sent = 0;
+        } else {
+          throw dub::Exception("Could not send message (%s).", strerror(errno));
+        };
+      }
+      return sent;
+    }
   }
 
+  int recvAll(lua_State *L);
+
+  /** Create a socket with an existing file descriptor.
+   * This is used as the result of an 'accept()' call.
+   */
+  Socket(int type, int fd, const char *local_host, const char *remote_host, int remote_port)
+      : socket_fd_(fd)
+      , socket_type_(type)
+      , local_host_(local_host)
+      , local_port_(get_port(fd))
+      , remote_host_(remote_host)
+      , remote_port_(remote_port)
+      , buffer_length_(0)
+      , buffer_i_(0)
+      , non_blocking_(false) {
+      }
+
+private:
   static int get_port(int fd);
 
   int recvLine(lua_State *L);
 
   int recvBytes(lua_State *L, int sz);
 
-  int recvAll(lua_State *L);
 
   void setTimeout(int timeout, int opt_name);
+
+  virtual int pushNewSocket(lua_State *L, int type, int fd, const char *local_host, const char *remote_host, int remote_port) {
+    Socket *new_socket = new Socket(type, fd, local_host, remote_host, remote_port);
+
+    new_socket->pushobject(L, new_socket, "lk.Socket", true);
+    return 1;
+  }
 };
 } // lk
 

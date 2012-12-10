@@ -122,7 +122,7 @@ function lib:accept(func)
       self.clients[cli.sock_fd] = nil
     end)
   end
-  return setmetatable(cli, lib)
+  return cli
 end
 
 function lib:shouldRun()

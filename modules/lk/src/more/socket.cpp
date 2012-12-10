@@ -53,7 +53,11 @@ int lk::Socket::bind(const char *localhost, int port) {
   hints.ai_family = AF_UNSPEC;
   // TCP
   // TODO: Use socket_type_ info
-  hints.ai_socktype = SOCK_STREAM;
+  if (socket_type_ == TCP) {
+    hints.ai_socktype = SOCK_STREAM;
+  } else {
+    hints.ai_socktype = SOCK_DGRAM;
+  }
   // fill our own IP
   hints.ai_flags = AI_PASSIVE;
 
@@ -91,6 +95,32 @@ int lk::Socket::bind(const char *localhost, int port) {
 }
 
 bool lk::Socket::connect(const char *host, int port) {
+  if (socket_fd_ != -1) {
+    // printf("close(%i)\n", socket_fd_);
+    ::close(socket_fd_);
+    socket_fd_ = -1;
+  }
+
+  if (socket_type_ == UDP) {
+    // store remote info but only connect on send
+    remote_host_ = host;
+    remote_port_ = port;
+
+    socket_fd_ = socket(AF_INET, SOCK_DGRAM, 0);
+
+    // bind any port
+    struct sockaddr_in addr;
+    
+    addr.sin_family = AF_INET;
+    addr.sin_addr.s_addr = htonl(INADDR_ANY);
+    addr.sin_port = htons(0);
+
+    if (::bind(socket_fd_, (struct sockaddr *) &addr, sizeof(addr))) {
+      throw dub::Exception("Could not bind local socket (%s)\n.", strerror(errno));
+    }
+    return true;
+  }
+
   char port_str[10];
   snprintf(port_str, 10, "%i", port);
   struct addrinfo hints, *res;
@@ -107,11 +137,6 @@ bool lk::Socket::connect(const char *host, int port) {
     throw dub::Exception("Could not getaddrinfo for %s:%i (%s).", host, port, gai_strerror(status));
   }
 
-  if (socket_fd_ != -1) {
-    // printf("close(%i)\n", socket_fd_);
-    ::close(socket_fd_);
-    socket_fd_ = -1;
-  }
 
   // we use getaddrinfo to stay IPv4/IPv6 agnostic
   socket_fd_ = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
@@ -214,10 +239,7 @@ LuaStackSize lk::Socket::accept(lua_State *L) {
     throw dub::Exception("Could not get remote host name (%s).", strerror(errno));
   }
 
-  Socket *new_socket = new Socket(fd, local_host_.c_str(), remote_host, remote_port);
-
-  new_socket->pushobject(L, new_socket, "lk.Socket", true);
-  return 1;
+  return pushNewSocket(L, socket_type_, fd, local_host_.c_str(), remote_host, remote_port);
 }
 
 
@@ -353,15 +375,7 @@ int lk::Socket::send(lua_State *L) {
   const char *data = luaL_checklstring(L, -1, &size);
   // printf("send string (%lu bytes)\n", size);
   // send raw bytes
-  int sent = ::send(socket_fd_, data, size, 0);
-  if (sent == -1) {
-    if (errno == EAGAIN) {
-      sent = 0;
-    } else {
-      throw dub::Exception("Could not send message (%s).", strerror(errno));
-    };
-  }
-  return sent;
+  return sendBytes(data, size);
 }
 
 /** Send a message packed with msgpack.
@@ -480,33 +494,48 @@ int lk::Socket::recvBytes(lua_State *L, int sz) {
 }
 
 int lk::Socket::recvAll(lua_State *L) {
-  luaL_Buffer buffer;
-  luaL_buffinit(L, &buffer);
+  if (socket_type_ == lk::Socket::UDP) {
 
-  if (buffer_i_ < buffer_length_) {
-    luaL_addlstring(&buffer, buffer_ + buffer_i_, buffer_length_ - buffer_i_);
-  }
+    struct sockaddr_in fromAddr;
+    socklen_t fromAddrLen = sizeof(fromAddr);
 
-  while (true) {
-    // read more data
-    buffer_length_ = ::recv(socket_fd_, buffer_, MAX_BUFF_SIZE, 0);
-    if (buffer_length_ == 0) {
-      // connection closed
-      // done
-      return 0;
-    } else if (buffer_length_ < 0) {
-      buffer_length_ = 0;
-      if (errno == EAGAIN) {
-        break;
-      } else {
-        throw dub::Exception("Could not receive (%s).", strerror(errno));
-      }
+    // TODO: store latest fromAddr.
+    buffer_length_ = recvfrom(socket_fd_, buffer_, MAX_BUFF_SIZE, 0,
+		 (struct sockaddr *) &fromAddr, &fromAddrLen);
+    if (buffer_length_ < 0) return 0;
+
+    // Single packet: do not wait for disconnection.
+    lua_pushlstring(L, buffer_, buffer_length_);
+    return 1;
+  } else {
+    luaL_Buffer buffer;
+    luaL_buffinit(L, &buffer);
+
+    if (buffer_i_ < buffer_length_) {
+      luaL_addlstring(&buffer, buffer_ + buffer_i_, buffer_length_ - buffer_i_);
     }
-    luaL_addlstring(&buffer, buffer_, buffer_length_);
-  }                             
-  
-  luaL_pushresult(&buffer);
-  return 1;
+
+    while (true) {
+      // read more data
+      buffer_length_ = ::recv(socket_fd_, buffer_, MAX_BUFF_SIZE, 0);
+      if (buffer_length_ == 0) {
+        // connection closed
+        // done
+        return 0;
+      } else if (buffer_length_ < 0) {
+        buffer_length_ = 0;
+        if (errno == EAGAIN) {
+          break;
+        } else {
+          throw dub::Exception("Could not receive (%s).", strerror(errno));
+        }
+      }
+      luaL_addlstring(&buffer, buffer_, buffer_length_);
+    }                             
+    
+    luaL_pushresult(&buffer);
+    return 1;
+  }
 }
 
 void lk::Socket::setTimeout(int timeout, int opt_name) {
