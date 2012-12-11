@@ -10,9 +10,13 @@ set_target_properties(${target}
   PREFIX ""
   SUFFIX ".so"
 )  
+
+add_library(${target}_static ${CORE_SOURCES})
+
 # msgpack needed for lk.Socket
 # time_ref needed by lk.TimeRef
 target_link_libraries(${target} msgpack time_ref lua_dump)
+target_link_libraries(${target}_static msgpack time_ref lua_dump)
 
 add_dependencies(${MODULE_NAME} ${target})
 
