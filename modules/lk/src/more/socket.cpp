@@ -74,22 +74,23 @@ int lk::Socket::bind(const char *localhost, int port) {
   socket_fd_ = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
   // printf("socket --> %i\n", socket_fd_);
   if (socket_fd_ == -1) {
+    freeaddrinfo(res);
     throw dub::Exception("Could not create socket for %s:%i (%s).", local_host_.c_str(), port, strerror(errno));
   }
   if (non_blocking_) setNonBlocking();
 
   // bind to port
   if (::bind(socket_fd_, res->ai_addr, res->ai_addrlen)) {
+    freeaddrinfo(res);
     throw dub::Exception("Could not bind socket to %s:%i (%s).", local_host_.c_str(), port, strerror(errno));
   }
+  freeaddrinfo(res);
 
   if (port == 0) {
     local_port_ = get_port(socket_fd_);
   } else {
     local_port_ = port;
   }
-
-  freeaddrinfo(res);
 
   return local_port_;
 }
@@ -142,12 +143,14 @@ bool lk::Socket::connect(const char *host, int port) {
   socket_fd_ = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
   // printf("socket --> %i\n", socket_fd_);
   if (socket_fd_ == -1) {
+    freeaddrinfo(res);
     throw dub::Exception("Could not create socket for %s:%i (%s).", host, port, strerror(errno));
   }
   if (non_blocking_) setNonBlocking();
 
   // connect
   if (::connect(socket_fd_, res->ai_addr, res->ai_addrlen)) {
+    freeaddrinfo(res);
     if (errno == EINPROGRESS) {
       return false; // wait for 'write' and try again later
     }
