@@ -10,6 +10,12 @@ file(GLOB CORE_SOURCES dub/*.cpp *.cpp ${PLAT}/*.cpp ${PLAT}/*.mm)
 if(MODULES_STATIC)
   set(target "${MODULE_NAME}_static")
   add_library(${target} ${CORE_SOURCES})
+  # --------------------------------------------------------------
+  #  .a
+  # --------------------------------------------------------------
+  install(TARGETS ${target}
+    DESTINATION ${MODULES_STATIC}
+  )
 else(MODULES_STATIC)
   set(target "${MODULE_NAME}_core")
   add_library(${target} MODULE ${CORE_SOURCES})
@@ -21,7 +27,7 @@ else(MODULES_STATIC)
   )  
 
   # --------------------------------------------------------------
-  #  only install .so
+  #  .so
   # --------------------------------------------------------------
   install(TARGETS ${target}
     DESTINATION ${LUBYK_LIB}/lib/lk
