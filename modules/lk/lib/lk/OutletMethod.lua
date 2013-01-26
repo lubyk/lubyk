@@ -22,14 +22,15 @@ end})
 function lib:__call(name, connect_msg, disconnect_msg)
   local node = self.node
   -- Declare or update an outlet.
-  local oultet = node.outlets[name]
-  if not oultet then
+  local outlet = node.outlet_by_name[name]
+  if not outlet then
     outlet = lk.Outlet(self.node, name, connect_msg, disconnect_msg)
-    node.outlets[name] = outlet
+    node.outlet_by_name[name] = outlet
   end
   if opts then
     outlet:set(opts)
   end
+  -- Ordered list of outlets, GC protected.
   table.insert(node.slots.outlets, outlet)
   node.env[name] = outlet.send
   return outlet

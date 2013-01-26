@@ -22,18 +22,18 @@ function lib.new(node, name)
   local self
   if type(node) == 'string' then
     -- Pending inlet.
-    self = {
+    self = setmetatable({
       name       = name,
       target_url = node,
-    }
+    }, lib)
   else
-    self = {
+    self = setmetatable({
       name = name,
-      node = node,
-    }
+    }, lib)
+    self:setNode(node)
   end
 
-  return setmetatable(self, lib)
+  return self
 end
 
 function lib.receive(...)

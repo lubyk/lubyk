@@ -25,7 +25,7 @@ function lib.__newindex(self, name, func)
   -- inlet.foo(xxx)
   -- Set an inlet callback
   local node = assert(self.node)
-  local inlet = node.inlets[name]
+  local inlet = node.inlet_by_name[name]
   if not inlet then
     inlet = node.pending_inlets[name]
     if inlet then
@@ -36,9 +36,10 @@ function lib.__newindex(self, name, func)
       -- New inlet
       inlet = lk.Inlet(node, name)
     end
-    node.inlets[name] = inlet
+    -- Find inlet by name (not GC protected).
+    node.inlet_by_name[name] = inlet
   end
-  -- Each time we redeclare an inlet, we add it.
+  -- Each time we redeclare an inlet, we add it here and GC protect it.
   table.insert(node.slots.inlets, inlet)
 
   -- Protection with pcall

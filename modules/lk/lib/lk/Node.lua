@@ -22,10 +22,11 @@ setmetatable(lib, {
   local env  = {}
   -- new node
   local self = {
-    -- inlets not in slots.inlets are removed on gc
-    inlets         = setmetatable({}, {__mode = 'v'}),
-    -- outlets not in sorted_outlets are removed on gc
-    outlets        = setmetatable({}, {__mode = 'v'}),
+    -- Find inlet by name. Inlets not in slots.inlets are removed on GC.
+    inlet_by_name  = setmetatable({}, {__mode = 'v'}),
+    -- Find outlet by name. Outlets not in slots.outlets are removed on GC.
+    outlet_by_name = setmetatable({}, {__mode = 'v'}),
+    -- GC protection of inlets and outlets. Here the slots are ordered.
     slots = {
       inlets  = {},
       outlets = {},
@@ -108,11 +109,10 @@ function lib:eval(code_str)
     return
   end
 
-  -- Hold to all current slots
-  local gc_protect = {self.inlets, self.outlets}
-
   -- In case of error, we rollback
-  local old_slots  = self.slots
+  local old_slots = self.slots
+
+  -- Reset list of GC protected slots.
   self.slots = {
     inlets  = {},
     outlets = {},
@@ -131,6 +131,7 @@ function lib:eval(code_str)
     self.accessors = old_accessors
     self:error(err)
   else
+
     self.code = code_str
     -- Unused inlets and outlets will be collected by the GC.
   end
@@ -232,7 +233,7 @@ function lib:makeAbsoluteUrl(url)
 end
 
 local function setLink(self, out_name, target_url, process)
-  local outlet = self.outlets[out_name]
+  local outlet = self.outlet_by_name[out_name]
   if not outlet then
     self:error("Outlet name '%s' does not exist.", out_name)
   else
@@ -258,7 +259,7 @@ local function setLink(self, out_name, target_url, process)
 end
 
 local function removeLink(self, out_name, target_url)
-  local outlet = self.outlets[out_name]
+  local outlet = self.outlet_by_name[out_name]
   if outlet then
     outlet:disconnect(target_url)
   end
@@ -342,7 +343,6 @@ function private:defaults(hash)
   local defaults = {}
   self.defaults = defaults
   local env = self.env
-  local inlets = self.inlets
   local accessors = self.accessors
   for k, v in pairs(hash) do
     if type(k) ~= 'string' then
@@ -408,7 +408,6 @@ function lib:setParams(params)
   -- Special pos.x accessors need to register
   -- set value in pdump directly.
   env._pdump     = pdump
-  local inlets   = self.inlets
   local accessors= self.accessors
   local defaults = self.defaults or {}
   if params == true then
