@@ -78,6 +78,7 @@ function lib:start(opts)
       self:quit()
     end,
   }
+  -- Setup ports and publish service
   self.service = lk.Service(Lubyk.zone .. ':', srv_opts)
 end
 

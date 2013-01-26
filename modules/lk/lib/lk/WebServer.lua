@@ -10,6 +10,7 @@
 local lib = {type='lk.WebServer'}
 lib.__index  = lib
 lk.WebServer = lib
+local private = {}
 
 setmetatable(lib, {
   -- new method
@@ -141,6 +142,7 @@ function lib:listen()
   local server = self.server
   server:listen()
   self.thread = lk.Thread(function()
+    private.ready(self)
     while true do
       local client = server:accept()
       self.clients[client.sock_fd] = client
@@ -165,6 +167,18 @@ function lib:listen()
       end)
     end
   end)
+end
+
+function lib:onReady(callback)
+  table.insert(self.on_ready, callback)
+end
+
+function private:ready()
+  local list = self.on_ready
+  self.on_ready = {}
+  for _, callback in pairs(list) do
+    callback()
+  end
 end
 
 function lib:GET(request)

@@ -28,6 +28,7 @@ setmetatable(lib, {
     should_run = true,
     clients    = {},
     server     = lk.Socket(),
+    on_ready   = {},
   }
 
   self.server:bind('*', port or 0)

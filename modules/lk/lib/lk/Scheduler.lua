@@ -344,7 +344,7 @@ function private:runThread(thread)
       -- Thread has an error handler, call it
       t.error(a, debug.traceback(t.co))
     else
-      print('ERROR', a, t.co, debug.traceback(t.co))
+      print('UNPROTECTED ERROR', a, t.co, debug.traceback(t.co))
     end
 
     if t.restart then

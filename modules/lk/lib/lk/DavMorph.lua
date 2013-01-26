@@ -22,9 +22,12 @@ function lk.DavMorph(opts)
   opts.info = {}
   self.dav = lk.DavServer()
   opts.info.davport = self.dav.port
-  -- Register WebDAV service
-  self.dav_registration = mdns.Registration('_webdav._tcp', Lubyk.zone .. '.lubyk', self.dav.port)
-  self:start(opts)
+  -- Register WebDAV service when it has finished starting
+  self.dav:onReady(function()
+    self.dav_registration = mdns.Registration('_webdav._tcp', Lubyk.zone .. '.lubyk', self.dav.port)
+    -- Start lubyk service and announce Morph.
+    self:start(opts)
+  end)
   return self
 end
 
