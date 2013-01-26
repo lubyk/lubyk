@@ -695,6 +695,7 @@ function private.update:_views(data)
       -- update
       for id, opt in pairs(def) do
         if not opt then
+          view.cache[id] = nil
           view[id] = nil
         else
           lk.deepMerge(view.cache, id, opt)
