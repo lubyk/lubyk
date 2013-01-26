@@ -194,9 +194,9 @@ function lib:findByPath(path)
     if c_next == 'node' then
       -- Find node
       if name == 'in' then
-        c, c_next = c.inlet_by_name, 'slot'
+        c, c_next = c.inlets, 'slot'
       elseif name == 'out' then
-        c, c_next = c.outlet_by_name, 'slot'
+        c, c_next = c.outlets, 'slot'
       else
         -- sub-node 'a/b' lives in nodes.a.nodes.b
         c = c.nodes[name]

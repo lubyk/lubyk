@@ -22,10 +22,10 @@ end})
 function lib:__call(name, connect_msg, disconnect_msg)
   local node = self.node
   -- Declare or update an outlet.
-  local outlet = node.outlet_by_name[name]
+  local outlet = node.outlets[name]
   if not outlet then
     outlet = lk.Outlet(self.node, name, connect_msg, disconnect_msg)
-    node.outlet_by_name[name] = outlet
+    node.outlets[name] = outlet
   end
   if opts then
     outlet:set(opts)

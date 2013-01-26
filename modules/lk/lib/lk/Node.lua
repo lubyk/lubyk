@@ -23,9 +23,11 @@ setmetatable(lib, {
   -- new node
   local self = {
     -- Find inlet by name. Inlets not in slots.inlets are removed on GC.
-    inlet_by_name  = setmetatable({}, {__mode = 'v'}),
+    -- Do not change this field name: it is used by editor.Node.
+    inlets  = setmetatable({}, {__mode = 'v'}),
     -- Find outlet by name. Outlets not in slots.outlets are removed on GC.
-    outlet_by_name = setmetatable({}, {__mode = 'v'}),
+    -- Do not change this field name: it is used by editor.Node.
+    outlets = setmetatable({}, {__mode = 'v'}),
     -- GC protection of inlets and outlets. Here the slots are ordered.
     slots = {
       inlets  = {},
@@ -233,7 +235,7 @@ function lib:makeAbsoluteUrl(url)
 end
 
 local function setLink(self, out_name, target_url, process)
-  local outlet = self.outlet_by_name[out_name]
+  local outlet = self.outlets[out_name]
   if not outlet then
     self:error("Outlet name '%s' does not exist.", out_name)
   else
@@ -259,7 +261,7 @@ local function setLink(self, out_name, target_url, process)
 end
 
 local function removeLink(self, out_name, target_url)
-  local outlet = self.outlet_by_name[out_name]
+  local outlet = self.outlets[out_name]
   if outlet then
     outlet:disconnect(target_url)
   end
