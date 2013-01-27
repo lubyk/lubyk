@@ -1,0 +1,25 @@
+OSC control
+===========
+
+Add a node "osc.all" that uses two public methods available in every node:
+
+setParam(url, value)
+
+onNotify(callback)
+
+The callback is:
+
+onNotify(function(url, value)
+end)
+
+Publish OSC with _osc._udp
+
+Learn
+=====
+
+Click 'learn' param (osc.all). Sent OSC message, notify change = two way mapping.
+
+Editor
+======
+
+Raccourci pour aller à la première erreur (depuis dernier lock).

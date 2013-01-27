@@ -1,0 +1,5 @@
+======== EDITOR
+
+* Linking from object to slider does not work.
+* Why do fast print messages lock the editor ?
+
