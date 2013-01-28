@@ -37,9 +37,10 @@ setmetatable(lib, {
   -- new method
  __call = function(lib, name)
   local self  = {
-    name              = name,
-    nodes             = {},
-    pending_nodes     = {},
+    name          = name,
+    nodes         = {},
+    pending_nodes = {},
+    on_notify     = setmetatable({}, {__mode = 'k'}),
   }
   sched.patch = name
   setmetatable(self, lib)
@@ -335,9 +336,34 @@ function lib:notify(...)
   if service then
     service:notify(...)
   end
+
+  for _, clbk in pairs(self.on_notify) do
+    clbk(...)
+  end
 end
 
---- relative url : ex. metro/@tempo
+function lib:onNotify(key, callback)
+  self.on_notify[key] = callback
+end
+
+-- Takes a relative target link like 'metro/_/tempo' and sets the remote param
+-- with the given value. Used by internal nodes.
+function lib:setParam(lio, path, value)
+  local p, param_name = string.match(path, '^(.*)/_/(.*)$')
+  if not p or not param_name then
+    lio.error("Invalid path format '"..path.."'")
+  else
+    local node = self:findByPath(p)
+    if node then
+      node:setParam(param_name, value)
+    else
+      lio.warn("Could not find node at path '"..path.."'")
+    end
+  end
+end
+
+-- Set a parameter from a relative url like "metro/@tempo".
+-- FIXME: Is this used ?
 function lib:control(url, value)
   local parts = lk.split(url, '/')
   local param_name = parts[#parts]

@@ -33,47 +33,39 @@ setmetatable(lib, {
       inlets  = {},
       outlets = {},
     },
-    accessors      = {},
-    env            = env,
-    errors         = {},
-    name           = name,
-    process        = process,
+    accessors = {},
+    env       = env,
+    errors    = {},
+    name      = name,
+    process   = process,
   }
   setmetatable(self, lib)
   -- env has read access to _G
   setmetatable(env, env_mt)
-  -- method to declare inlets
-  env.inlet  = lk.InletMethod(self)
-  -- method to declare outlets
-  env.outlet = lk.OutletMethod(self)
-  -- method to declare default settings values
-  env.defaults = function(...)
-    private.defaults(self, ...)
-  end
-  -- method to set a parameter and notify
-  env.param = lk.ParamMethod(self)
+  env.lubyk = {
+    -- method to declare inlets
+    i = lk.InletMethod(self),
+    -- method to declare outlets
+    o = lk.OutletMethod(self),
+    -- method to declare default settings values
+    -- attr = function(...) private.defaults(self, ...) end,
+    -- method to declare parameters and to set a parameter and notify
+    p = lk.ParamMethod(self),
 
-  -- print, warn, error
-  env.print = function(...)
-    self:log('info', ...)
-  end
+    log = function(...) self:log(...) end,
 
-  -- print, warn, error
-  env.printf = function(...)
-    self:log('info', string.format(...))
-  end
+    -- state info
+    info = function() return {url = self:url()} end,
 
-  env.warn = function(...)
-    self:log('warn', ...)
-  end
+    -- register a function that should be called if there is a
+    -- notification
+    onNotify = function(callback)
+      process:onNotify(self, callback)
+    end,
+  }
 
-  env.log = function(...)
-    self:log(...)
-  end
-
-  env.url = function()
-    return self:url()
-  end
+  -- set any param
+  env.lubyk.setParam = function(url, ...) process:setParam(env.lio, url, ...) end
 
   process.nodes[name] = self
   -- pending connection resolution
@@ -337,11 +329,13 @@ function lib:remove()
   for _, outlet in ipairs(self.slots.outlets) do
     outlet:disconnectAll()
   end
+  -- Remove from notification center
+  self.process:onNotify(self, nil)
   self.env = nil
   self.process.need_cleanup = true
 end
 
-function private:defaults(hash)
+function lib:defaults(hash)
   local defaults = {}
   self.defaults = defaults
   local env = self.env
@@ -400,7 +394,7 @@ function private:defaults(hash)
   end
 end
 
---- Receive a control event: update setting.
+--- Receive control events: update setting.
 function lib:setParams(params)
   -- Prepare for partial dump
   local pdump    = {}
@@ -439,6 +433,38 @@ function lib:setParams(params)
   if func then
     func(params)
   end
+end
+
+--- Receive a single param change from a source inside the process so
+-- we need to notify.
+function lib:setParam(k, value)
+  local defaults  = self.defaults or {}
+  local accessors = self.accessors
+  if not defaults[k] then
+    -- Error notification: Invalid param.
+    self:error("Trying to set invalid parameter '%s'.", k)
+  else
+    self.env[k] = value
+    local recv = accessors[k]
+    if recv then
+      recv(value)
+    end
+    -- Call 'param.changed' function in env if
+    -- it exists.
+    local func = accessors.changed
+    if func then
+      func({k = value})
+    end
+  end
+  self.process:notify {
+    -- YUCK ! FIXME: Why don't we use an alternative messaging method with
+    -- string urls: notify('/foo/bar/_/baz', value) ?
+    nodes = {
+      [self.name] = {
+        _ = {[k] = value},
+      },
+    },
+  }
 end
 
 function private:dumpParams(params)

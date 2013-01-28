@@ -3,14 +3,9 @@ OSC control
 
 Add a node "osc.all" that uses two public methods available in every node:
 
-setParam(url, value)
+setParam(url, value) => DONE
 
-onNotify(callback)
-
-The callback is:
-
-onNotify(function(url, value)
-end)
+onNotify(callback) => DONE
 
 Publish OSC with _osc._udp
 
