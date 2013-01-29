@@ -12,29 +12,26 @@ local should = test.Suite('lk.OutletMethod')
 
 local function mockNode()
   return {
-    outlets        = {},
+    outlets = {},
     slots = {
       outlets = {},
     },
-    env            = {},
+    env = {},
   }
 end
 
 function should.createOutletMethod()
   local node = mockNode()
-  local outlet = lk.OutletMethod(node)
-  assertType('table', outlet)
+  local o = lk.OutletMethod(node)
+  assertType('table', o)
+  assertEqual('lk.OutletMethod', o.type)
 end
 
 function should.createNewOutletOnCall()
   local node = mockNode()
   local outlet = lk.OutletMethod(node)
   assertPass(function()
-    outlet('bang', 'Connect', 'Disconnect')
-    local outl = node.outlets.bang
-    outlet('bang', 'Send bang.')
-    -- multiple calls do not create new outlets
-    assertEqual(outl, node.outlets.bang)
+    outlet.bang = {connect = 'Connect', disconnect = 'Disconnect'}
   end)
   assertEqual('Connect', node.outlets.bang.connect_msg)
   assertEqual('Disconnect', node.outlets.bang.disconnect_msg)
@@ -45,10 +42,9 @@ end
 function should.createOutletFunction()
   local node = mockNode()
   local outlet = lk.OutletMethod(node)
-  outlet('draw', 'Connect drawing methods.')
-  -- TODO:
-  -- outlet.draw:setLocalOnly()
-  assertType('function', node.env.draw)
+  outlet.draw = {info = 'Connect drawing methods.'}
+  local func = outlet.draw
+  assertType('function', func)
 end
 
 test.all()

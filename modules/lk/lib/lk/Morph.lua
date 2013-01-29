@@ -517,6 +517,13 @@ function private.process.changed(self, process, changes)
             -- removed node
             cache_nodes[name] = nil
             patch_changed = true
+            -- remove file
+            local url = process.dir.url .. '/' .. name .. '.lua'
+            local resource = self.root.cache[url] 
+            if resource then
+              -- delete file
+              resource:delete()
+            end
           end
         else
           if not cache_node then

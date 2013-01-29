@@ -40,19 +40,24 @@ setmetatable(lib, {
     process   = process,
   }
   setmetatable(self, lib)
+
+  -- Table to declare and access outlets
+  self.outlet_method = lk.OutletMethod(self)
+
   -- env has read access to _G
   setmetatable(env, env_mt)
   env.lubyk = {
-    -- method to declare inlets
+    -- Table to declare inlets.
     i = lk.InletMethod(self),
-    -- method to declare outlets
-    o = lk.OutletMethod(self),
-    -- method to declare default settings values
-    -- attr = function(...) private.defaults(self, ...) end,
-    -- method to declare parameters and to set a parameter and notify
+    -- Table to declare and access outlets.
+    o = self.outlet_method,
+    -- Table to declare and access parameters.
     p = lk.ParamMethod(self),
 
-    log = function(...) self:log(...) end,
+    -- Messaging
+    log   = function(...) self:log(...) end,
+    print = function(...) self:log('info', ...) end,
+    warn  = function(...) self:log('warn', ...) end,
 
     -- state info
     info = function() return {url = self:url()} end,
@@ -63,6 +68,7 @@ setmetatable(lib, {
       process:onNotify(self, callback)
     end,
   }
+
 
   -- set any param
   env.lubyk.setParam = function(url, ...) process:setParam(env.lio, url, ...) end
@@ -111,6 +117,9 @@ function lib:eval(code_str)
     inlets  = {},
     outlets = {},
   }
+
+  -- Clear cached outlet functions
+  self.outlet_method:clear()
 
   local old_accessors = self.accessors
   self.accessors = {}
@@ -335,7 +344,7 @@ function lib:remove()
   self.process.need_cleanup = true
 end
 
-function lib:defaults(hash)
+function lib:declareParams(hash)
   local defaults = {}
   self.defaults = defaults
   local env = self.env

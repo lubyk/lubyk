@@ -16,7 +16,7 @@ setmetatable(lib, {
   -- lk.Outlet(node)
   -- Create a new outlet and insert it into
   -- node.
- __call = function(lib, node, name, connect_msg, disconnect_msg)
+ __call = function(lib, node, name)
   local self = {
     name = name,
     node = node,
@@ -46,23 +46,22 @@ end
 
 function lib:set(opts)
   self.opts = opts
-  -- noop for the moment. We could change the type of zmq
-  -- operation (work distribution).
 end
 
 local default_receive = lk.Inlet.receive
 -- TODO: performance compile new 'instance.send' method by
 -- generating lua code and evaluating the code with upvalues.
 function lib:connect(inlet)
-  for _,inlet in ipairs(self.inlets) do
-    if inlet == inlet then
+  for _, inl in ipairs(self.inlets) do
+    if inl == inlet then
       return
     end
   end
   local conn = {type = 'Basic'}
   self.links[inlet:url()] = conn
   table.insert(self.inlets, inlet)
-  local msg = self.connect_msg
+
+  local msg = self.opts.connect
   if msg then
     local receive = inlet.receive
     if receive ~= default_receive then
@@ -80,7 +79,7 @@ function lib:disconnect(target_url)
       table.remove(self.inlets, i)
       local link_def = self.links[target_url]
       if link_def then
-        local msg = self.disconnect_msg
+        local msg = self.opts.disconnect
         if msg ~= nil then
           local receive = inlet.receive
           if receive ~= default_receive then

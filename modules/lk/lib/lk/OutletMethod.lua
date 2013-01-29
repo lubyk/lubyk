@@ -3,35 +3,41 @@
   lk.OutletMethod
   ---------------
 
-  Creates the outlet declaration method 'outlet' used in
-  nodes.
+  Creates the 'lubyk.o' declaration table used in nodes.
 
 --]]------------------------------------------------------
--- 'outlet' accessor metamethod
 local lib = {type='lk.OutletMethod'}
+lib.__index     = lib
 lk.OutletMethod = lib
 
-setmetatable(lib, {
-  -- new method
- __call = function(lib, node)
-  -- Create outlet() method/accessor for a given node
-  local self = {node = node}
-  return setmetatable(self, lib)
-end})
+setmetatable(lib, {__call = function(lib, ...) return lib.new(...) end})
 
-function lib:__call(name, connect_msg, disconnect_msg)
-  local node = self.node
+function lib.new(node)
+  -- Create lubyk.o declaration/accessor table for a given node
+  local self = {_node = node}
+  return setmetatable(self, lib)
+end
+
+function lib:__newindex(name, def)
+  local node = self._node
   -- Declare or update an outlet.
   local outlet = node.outlets[name]
   if not outlet then
-    outlet = lk.Outlet(self.node, name, connect_msg, disconnect_msg)
+    outlet = lk.Outlet(node, name)
     node.outlets[name] = outlet
   end
-  if opts then
-    outlet:set(opts)
-  end
+  
+  outlet:set(def)
+
   -- Ordered list of outlets, GC protected.
   table.insert(node.slots.outlets, outlet)
-  node.env[name] = outlet.send
-  return outlet
+  rawset(self, name, outlet.send)
+end
+
+function lib:clear()
+  for k,_ in pairs(self) do
+    if k ~= '_node' then
+      self[k] = nil
+    end
+  end
 end

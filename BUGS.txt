@@ -1,5 +1,14 @@
 ======== EDITOR
 
-* Linking from object to slider does not work.
 * Why do fast print messages lock the editor ?
 * Qt crash with retina display (ScaleFactor)
+
+======== LK
+
+UNPROTECTED ERROR	./lib/editor/MachineList.lua:74: bad argument #1 to 'ipairs' (table expected, got nil)	thread: 0x0c827b88	stack traceback:
+	[C]: in function 'ipairs'
+	./lib/editor/MachineList.lua:74: in function 'getMachine'
+	./lib/editor/MachineList.lua:31: in function 'addProcess'
+	./lib/editor/Zone.lua:284: in function 'processConnected'
+	/Users/gaspard/git/lubyk/modules/lk/lib/lk/ProcessWatch.lua:77: in function 'addDevice'
+	...s/gaspard/git/lubyk/modules/lk/lib/lk/ServiceBrowser.lua:68: in function <...s/gaspard/git/lubyk/modules/lk/lib/lk/ServiceBrowser.lua:49>

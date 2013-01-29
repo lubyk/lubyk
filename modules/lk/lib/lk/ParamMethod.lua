@@ -8,17 +8,17 @@
 
 --]]------------------------------------------------------
 local lib = {type='lk.ParamMethod'}
+lib.__index    = lib
 lk.ParamMethod = lib
 
-setmetatable(lib, {
-  -- new method
- __call = function(lib, node, call)
-  -- Create param method/accessor for a given node
+setmetatable(lib, {__call = function(lib, ...) return lib.new(...) end})
+
+-- Create param method/accessor for a given node
+function lib.new(node)
   local self = {
     node   = node,
     inlets = node.inlets,
     env    = node.env,
-    call   = call,
   }
   -- Takes a target link like '/a/metro/_/tempo'
   -- /[process]/[node](/[sub-node])/_/[param name]
@@ -41,7 +41,7 @@ setmetatable(lib, {
   self.param_list = path
   setmetatable(self, lib)
   return self
-end})
+end
 
 function lib.__newindex(self, k, value)
   local env = self.env
@@ -92,6 +92,6 @@ end
 
 -- Declare parameters.
 function lib:__call(...)
-  self.node:defaults(...)
+  self.node:declareParams(...)
 end
 
