@@ -16,9 +16,10 @@ lk.Node     = lib
 local env_mt= {}
 local private = {}
 
-setmetatable(lib, {
-  -- new method
- __call = function(lib, process, name, code_str)
+setmetatable(lib, { __call = function(lib, ...) return lib.new(...) end })
+
+function lib.new(process, name, code_str)
+  lk.log('NEW', name)
   local env  = {}
   -- new node
   local self = {
@@ -81,7 +82,7 @@ setmetatable(lib, {
     self:eval(code_str)
   end
   return self
-end})
+end
 
 -- metatable for the new global env in each
 -- node
@@ -141,7 +142,7 @@ function lib:eval(code_str)
   self.process.need_cleanup = true
 end
 
-function lib:set(definition)
+function lib:set(definition, ignore_links)
 
   if definition.code and definition.code ~= self.code then
     self:eval(definition.code)
@@ -184,9 +185,11 @@ function lib:set(definition)
     end
   end
 
-  local links = definition.links
-  if links then
-    self:setLinks(links)
+  if not ignore_links then
+    local links = definition.links
+    if links then
+      self:setLinks(links)
+    end
   end
 end
 
@@ -235,7 +238,7 @@ function lib:makeAbsoluteUrl(url)
   end
 end
 
-local function setLink(self, out_name, target_url, process)
+function private:setLink(out_name, target_url, process)
   local outlet = self.outlets[out_name]
   if not outlet then
     self:error("Outlet name '%s' does not exist.", out_name)
@@ -255,13 +258,15 @@ local function setLink(self, out_name, target_url, process)
         self:error(err)
         return
       end
+      lk.log('pending...', target_url)
     end
     -- connect to real or pending slot
+    lk.log('CONNECT', target_url)
     outlet:connect(slot)
   end
 end
 
-local function removeLink(self, out_name, target_url)
+function private:removeLink(out_name, target_url)
   local outlet = self.outlets[out_name]
   if outlet then
     outlet:disconnect(target_url)
@@ -276,9 +281,9 @@ function lib:setLinks(all_links)
     else
       for target_url, link_def in pairs(links) do
         if link_def then
-          setLink(self, out_name, target_url, process)
+          private.setLink(self, out_name, target_url, process)
         else
-          removeLink(self, out_name, target_url)
+          private.removeLink(self, out_name, target_url)
         end
       end
     end

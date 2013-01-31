@@ -12,3 +12,29 @@ UNPROTECTED ERROR	./lib/editor/MachineList.lua:74: bad argument #1 to 'ipairs' (
 	./lib/editor/Zone.lua:284: in function 'processConnected'
 	/Users/gaspard/git/lubyk/modules/lk/lib/lk/ProcessWatch.lua:77: in function 'addDevice'
 	...s/gaspard/git/lubyk/modules/lk/lib/lk/ServiceBrowser.lua:68: in function <...s/gaspard/git/lubyk/modules/lk/lib/lk/ServiceBrowser.lua:49>
+
+FIX PENDING LINKS BUGS
+======================
+
+1. process --> sync            ---> Morph
+   process <-- nodes (no link) <--- Morph
+
+2. process --> notify nodes    ---> Morph
+   process <-- pending links*  ---> Morph
+
+   * All possible links from and to declared nodes.
+
+3. process --> node removed    ---> Morph + pending links
+
+
+4. Morph   --> pending links list --> GUI
+
+5. GUI  --> Display/remove pending links
+
+TODO:
+1. Remove links in process sync
+2. Keep links definition in Morph
+3. Keep list of active nodes in Morph
+4. Send msg to create links between active nodes when node creation is notified by process
+5. Process notify link creation
+6. Update active/disactive node/links in Morph

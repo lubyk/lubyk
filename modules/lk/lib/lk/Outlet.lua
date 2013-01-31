@@ -61,14 +61,17 @@ function lib:connect(inlet)
   self.links[inlet:url()] = conn
   table.insert(self.inlets, inlet)
 
-  local msg = self.opts.connect
-  if msg then
-    local receive = inlet.receive
-    if receive ~= default_receive then
-      if type(msg) == 'function' then
-        msg = msg()
+  if inlet.node then
+    -- Real inlet
+    local msg = self.opts.connect
+    if msg then
+      local receive = inlet.receive
+      if receive ~= default_receive then
+        if type(msg) == 'function' then
+          msg = msg()
+        end
+        receive(msg, conn)
       end
-      receive(msg, conn)
     end
   end
 end
@@ -90,6 +93,7 @@ function lib:disconnect(target_url)
             receive(msg)
           end
         end
+        self.links[target_url] = nil
       end
     end
   end

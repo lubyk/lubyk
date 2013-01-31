@@ -7,9 +7,10 @@
   for a set of nodes.
 
 --]]------------------------------------------------------
-local lib   = {type='lk.Patch'}
-lib.__index = lib
-lk.Patch    = lib
+local lib     = {type='lk.Patch'}
+lib.__index   = lib
+lk.Patch      = lib
+local private = {}
 
 Lubyk.mimas_quit_on_close = false
 
@@ -23,13 +24,6 @@ local ALLOWED_KEYS = {
   hue    = true,
   name   = true,
 }
-
-local function loadFromYaml(self, yaml_code)
-  local data = yaml.load(yaml_code) or {}
-  -- clear before loading (yaml contains a full definition)
-  self.nodes = {}
-  self:set(data)
-end
 
 -- PUBLIC
 
@@ -49,35 +43,6 @@ setmetatable(lib, {
 end})
 
 
-local function setNodes(self, nodes_definition)
-  local to_remove = {}
-  local nodes = self.nodes
-  for name, def in pairs(nodes_definition) do
-    -- parsing each node
-    local node = nodes[name]
-    if not def then
-      -- remove node
-      if node then
-        -- Remove node after other updates. This is important so that
-        -- link deconnection is triggered with a valid node.env.
-        table.insert(to_remove, {node, name})
-      end
-    else
-      if not node then
-        -- create node
-        node = lk.Node(self, name)
-        nodes[name] = node
-      end
-      -- update
-      node:set(def)
-    end
-  end
-  for _, pair in ipairs(to_remove) do
-    pair[1]:remove()
-    nodes[pair[2]] = nil
-  end
-end
-
 function lib:start()
   -- When we load from morph, we must set file loader to be the
   -- remote morph server. (find code)
@@ -96,7 +61,7 @@ function lib:set(definitions)
   --print("================================= lk.Patch ]")
   for k, v in pairs(definitions) do
     if k == 'nodes' then
-      setNodes(self, v)
+      private.setNodes(self, v)
     elseif ALLOWED_KEYS[k] then
       self[k] = v
     end
@@ -111,6 +76,7 @@ end
 --- Create a pending inlet from an url relative to this process (nearly the same
 -- as editor.Process.pendingInlet).
 function lib:pendingInlet(inlet_abs_url)
+  lk.log('pendingInlet', inlet_abs_url)
   local inlet_url = lk.absToRel(inlet_abs_url, self:url())
   -- inlet_url example:
   --   node/in/slot
@@ -412,7 +378,7 @@ end
 function lib:sync()
   local patch = self:findCode(self:url() .. '/_patch.yml')
   if patch then
-    loadFromYaml(self, patch)
+    private.loadFromYaml(self, patch)
     self:notify(self:dump())
   else
     print("Could not sync: no _patch.yml")
@@ -440,3 +406,53 @@ function lib:processDisconnected(remote_process)
     self:setMorph(nil)
   end
 end
+
+--=============================================== PRIVATE
+
+function private:loadFromYaml(yaml_code)
+  local data = yaml.load(yaml_code) or {}
+  -- clear before loading (yaml contains a full definition)
+  self.nodes = {}
+  self:set(data)
+end
+
+function private:setNodes(nodes_definition)
+  local to_link = {}
+  local nodes = self.nodes
+  local to_remove = {}
+  
+  -- 1. Create/remove/update nodes
+  for name, def in pairs(nodes_definition) do
+    -- parsing each node
+    local node = nodes[name]
+    if not def then
+      -- remove node
+      if node then
+        to_remove[name] = node
+      end
+    else
+      if not node then
+        -- create node
+        node = lk.Node(self, name)
+        nodes[name] = node
+      end
+      -- update
+      node:set(def, false)
+      local links = def.links
+      if links then to_link[node] = links end
+    end
+  end
+  
+  -- 2. Update links
+  for node, links in pairs(to_link) do
+    node:setLinks(links)
+  end
+
+  -- 3. Remove nodes
+  for name, node in pairs(to_remove) do
+    node:remove()
+    nodes[name] = nil
+  end
+
+end
+

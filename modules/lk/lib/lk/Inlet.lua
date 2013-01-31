@@ -42,6 +42,8 @@ end
 
 -- This is called when a pending inlet becomes real.
 function lib:setNode(node)
+  -- Pending becomes real.
+  -- FIXME: receive "connect" message ?
   self.target_url = nil
   self.node = node
 end
