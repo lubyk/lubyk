@@ -21,9 +21,10 @@ local function makePatch(name)
   name = name or 'simple'
   local p = lk.Patch(name)
   function p:findCode(url)
-    return lk.readAll(fixture.path('project' .. url))
+    x = fixture.content('project' .. url)
+    return x
   end
-  p:set(yaml.loadpath(fixture.path('project/'..name..'/_patch.yml')))
+  p:set(yaml.load(fixture.content('project/'..name..'/_patch.yml')))
   return p
 end
 
@@ -40,7 +41,7 @@ end
 
 function should.createPatchWithInlineCode()
   local patch = makePatch('inline')
-  patch:set(yaml.loadpath(fixture.path('project/inline/_patch.yml')))
+  patch:set(yaml.load(fixture.content('project/inline/_patch.yml')))
   assertEqual('lk.Patch', patch.type)
   assertEqual(patch.nodes.store, patch:get('/inline/store'))
   assertEqual(patch.nodes.add,   patch:get('/inline/add'))

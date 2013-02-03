@@ -60,7 +60,7 @@ function should.saveToFile(t)
   morph.processes.hello = {host='waga', dir='hello'}
   morph.private.writeFile(morph)
   -- should have created empty.lkp with all data
-  local data = yaml.loadpath(lkp)
+  local data = yaml.load(lk.content(lkp))
   assertEqual(0, data.lubyk.version.major)
   assertEqual(5, data.lubyk.version.minor)
   assertEqual('waga', data.processes.hello.host)
@@ -78,7 +78,7 @@ function should.createFilesOnNewProcess(t)
   assertEqual('directory', lk.fileType(hello))
   assertEqual('file', lk.fileType(hello .. '/_patch.yml'))
   -- should have written changes to empty.lkp
-  local data = yaml.loadpath(lkp)
+  local data = yaml.load(lk.content(lkp))
   assertEqual(0, data.lubyk.version.major)
   assertEqual(5, data.lubyk.version.minor)
   assertEqual('waga', data.processes.hello.host)

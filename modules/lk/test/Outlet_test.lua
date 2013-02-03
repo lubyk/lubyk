@@ -61,29 +61,29 @@ function should.sendDefaultOnConnection(t)
   local parent = mockNode()
   local child = mockNode()
   local data = {}
-  local test_val  = 'Bidim test value'
-  local test_val2 = 'Something else'
+  local conn_val1 = 'Connect value1'
+  local conn_val2 = 'Connect value2'
 
-  local bang = lk.Outlet(parent, 'bang', test_val)
-  local bang2 = lk.Outlet(parent, 'bang2', test_val2)
+  local bang = lk.Outlet(parent, 'bang', {connect = conn_val1})
+  local bang2 = lk.Outlet(parent, 'bang2', {connect = conn_val2})
   local beep = lk.Inlet(child, 'beep')
 
   function beep.receive(x, conn)
     t.received = x
     -- Returns 'true' if the connection succeeds. This is used to
     -- indicate a bi-directional link.
-    if x == test_val then
+    if x == conn_val1 then
       conn.type = 'Bidirectional'
     end
   end
 
   bang:connect(beep)
 
-  assertEqual(test_val, t.received)
+  assertEqual(conn_val1, t.received)
   assertEqual('Bidirectional', bang.links[beep:url()].type)
 
   bang2:connect(beep)
-  assertEqual(test_val2, t.received)
+  assertEqual(conn_val2, t.received)
   assertEqual('Basic', bang2.links[beep:url()].type)
 end
 
@@ -91,11 +91,19 @@ function should.sendDisconnectValue(t)
   local parent = mockNode()
   local child = mockNode()
   local data = {}
-  local test_val  = 'Bidim test value'
-  local test_val2 = 'Something else'
+  local conn_val1 = 'Connect value1'
+  local conn_val2 = 'Connect value2'
+  local disc_val1 = 'Disconnect value1'
+  local disc_val2 = 'Disconnect value2'
 
-  local bang  = lk.Outlet(parent, 'bang',  'connect', test_val)
-  local bang2 = lk.Outlet(parent, 'bang2', 'connect2', test_val2)
+  local bang  = lk.Outlet(parent, 'bang',  {
+    connect    = conn_val1,
+    disconnect = disc_val1,
+  })
+  local bang2 = lk.Outlet(parent, 'bang2', {
+    connect    = conn_val2,
+    disconnect = disc_val2,
+  })
   local beep  = lk.Inlet(child, 'beep')
 
   function beep.receive(x)
@@ -103,16 +111,15 @@ function should.sendDisconnectValue(t)
   end
 
   bang:connect(beep)
-  assertEqual('connect', t.received)
+  assertEqual(conn_val1, t.received)
   bang2:connect(beep)
-  assertEqual('connect2', t.received)
+  assertEqual(conn_val2, t.received)
 
   bang:disconnect(beep:url())
-  assertEqual(test_val, t.received)
+  assertEqual(disc_val1, t.received)
 
   bang2:disconnect(beep:url())
-  assertEqual(test_val2, t.received)
+  assertEqual(disc_val2, t.received)
 end
-
 
 test.all()

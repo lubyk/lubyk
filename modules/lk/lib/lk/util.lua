@@ -36,8 +36,23 @@ function lk.pathDir(filepath)
   end
 end
 
+function lk.deprecation(lib_name, old, new, ...)
+  local trace = lk.split(debug.traceback(), '\n\t')[4]
+  local arg = ...
+  if arg then
+    print(string.format("[DEPRECATION] %s\n\t'%s.%s' is deprecated. Please use '%s.%s' instead.", trace, lib_name, old, lib_name, new))
+    return _G[lib_name][new](...)
+  else
+    print(string.format("[DEPRECATION] %s\n\t'%s.%s' is deprecated and will be removed. Please use '%s' instead.", trace, lib_name, old, new))
+  end
+end
+
 --- Read all the content from a given path (or basepath and path).
-function lk.readAll(basepath, path)
+function lk.readAll(...)
+  return lk.deprecation('lk', 'readAll', 'content', ...)
+end
+
+function lk.content(basepath, path)
   if path then
     path = string.format('%s/%s', basepath, path)
   else
@@ -164,7 +179,7 @@ function lk.writeall(filepath, data, check_diff)
   -- get base directory and build components if necessary
   lk.makePath(lk.pathDir(filepath))
   if check_diff and lk.exist(filepath) then
-    if data == lk.readAll(filepath) then
+    if data == lk.content(filepath) then
       return true
     end
   end
@@ -316,6 +331,7 @@ end
 function lk.scriptDir(level)
   local level = level or 0
   local file = lk.scriptPath(level - 1)
+  assert(file, "Cannot use lk.scriptDir here because of a tail call optimization.")
   if string.match(file, '/') then
     return string.gsub(lk.scriptPath(level - 1), '/[^/]+$', '')
   else
@@ -365,12 +381,12 @@ function lk.findCode(basedir, class_name)
   local fullpath = basedir .. '/lib/' .. path
   if lk.fileType(fullpath) == 'file' then
     -- Found local file relative to patch
-    return lk.readAll(fullpath)
+    return lk.content(fullpath)
   else
     -- Search in lib paths
     local file = lk.findFile(class_name)
     if file then
-      return lk.readAll(file)
+      return lk.content(file)
     else
       return nil
     end

@@ -1,8 +1,12 @@
 local lib = {}
 fixture = lib
 
-function lib.readAll(test_file)
-  return lk.readAll(lib.path(test_file, lk.scriptDir(-1)))
+function lib.readAll(...)
+  return lk.deprecation('fixture', 'readAll', 'content', ...)
+end
+  
+function lib.content(test_file)
+  return lk.content(lib.path(test_file, lk.scriptDir(-1)))
 end
 
 function lib.path(test_file, basepath)

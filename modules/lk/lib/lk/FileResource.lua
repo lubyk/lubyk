@@ -99,11 +99,11 @@ function lib:body()
   if self.body_cache then
     return self.body_cache
   elseif self.getcontentlength < CACHE_MAX_SIZE then
-    self.body_cache = lk.readAll(self.path)
+    self.body_cache = lk.content(self.path)
     return self.body_cache
   else
     -- TODO: something that reads by chunks... (io.read func wrapper?)
-    return lk.readAll(self.path)
+    return lk.content(self.path)
   end
 end
 

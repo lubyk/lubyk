@@ -95,7 +95,7 @@ function should.saveSettings()
   assertFalse(lk.exist(settings._module.path))
   s:save()
   assertTrue(lk.exist(settings._module.path))
-  local dump = lk.readAll(settings._module.path)
+  local dump = lk.content(settings._module.path)
   assertMatch('name = "Fuzz"', dump)
   assertMatch('foo = {.*ban = "Boom"', dump)
 end

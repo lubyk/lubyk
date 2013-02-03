@@ -11,7 +11,7 @@ require 'lubyk'
 local should = test.Suite('lk.Node')
 
 local function makePatch()
-  local code = yaml.loadpath(fixture.path('foo.yml'))
+  local code = yaml.load(lk.content(fixture.path('foo.yml')))
   local patch = lk.Patch('foo')
   patch:set(code)
   return patch
@@ -20,8 +20,10 @@ end
 local function makeNode(patch, name)
   name = name or 'foo'
   return lk.Node(patch or makePatch(), name, [[
-    outlet 'scaled'
-    defaults {
+    local i, o, p = lubyk.i, lubyk.o, lubyk.p
+    o.scaled = {}
+
+    p {
       scale = 1,
       vect = {
         x = 1,
@@ -29,9 +31,9 @@ local function makeNode(patch, name)
       },
     }
 
-    function inlet.raw(x)
+    function i.raw(x)
       received = x
-      scaled(x * scale)
+      o.scaled(x * scale)
     end
 
     function assertReceived(x)

@@ -16,11 +16,15 @@ UNPROTECTED ERROR	./lib/editor/MachineList.lua:74: bad argument #1 to 'ipairs' (
 FIX PENDING LINKS BUGS
 ======================
 
+The problem is not external pending links (we should fix the initial "connect" value
+thing, though) it's the internal ones. To fix, we simply need to "NOT CREATE"
+pending links and simply store a list of links to make in the process and read
+this list whenever a node comes online or is removed.
 1. process --> sync            ---> Morph
-   process <-- nodes (no link) <--- Morph
+   process <-- patch           <--- Morph
 
 2. process --> notify nodes    ---> Morph
-   process <-- pending links*  ---> Morph
+   process <-- pending links*  <--- Morph
 
    * All possible links from and to declared nodes.
 

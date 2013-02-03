@@ -76,7 +76,6 @@ end
 --- Create a pending inlet from an url relative to this process (nearly the same
 -- as editor.Process.pendingInlet).
 function lib:pendingInlet(inlet_abs_url)
-  lk.log('pendingInlet', inlet_abs_url)
   local inlet_url = lk.absToRel(inlet_abs_url, self:url())
   -- inlet_url example:
   --   node/in/slot
@@ -92,7 +91,7 @@ function lib:pendingInlet(inlet_abs_url)
   local inlet = nil
   if node then
     -- inlet not created yet
-    inlet = lk.Inlet(nil, inlet_name)
+    inlet = lk.Inlet(inlet_abs_url, inlet_name)
     node.pending_inlets[inlet_name] = inlet
   else
     -- node not created yet

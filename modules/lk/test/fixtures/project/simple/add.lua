@@ -1,16 +1,20 @@
-outlet 'sum'
+local i, o, p = lubyk.i, lubyk.o, lubyk.p
 
-defaults {
+o.sum = {}
+
+p {
   val1 = 0,
   val2 = 0,
 }
 
-function inlet.val1(v)
-  val1 = v
-  sum(val1 + val2)
+function i.val1(v)
+  -- notify
+  p.val1 = v
+  o.sum(val1 + val2)
 end
 
-function inlet.val2(v)
-  val2 = v
-  sum(val1 + val2)
+function i.val2(v)
+  -- notify
+  p.val2 = v
+  o.sum(val1 + val2)
 end

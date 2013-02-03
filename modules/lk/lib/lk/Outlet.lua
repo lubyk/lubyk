@@ -16,10 +16,11 @@ setmetatable(lib, {
   -- lk.Outlet(node)
   -- Create a new outlet and insert it into
   -- node.
- __call = function(lib, node, name)
+ __call = function(lib, node, name, opts)
   local self = {
     name = name,
     node = node,
+    opts = opts or {},
     -- Connection information
     links = {},
     -- Connection inlets
@@ -61,17 +62,14 @@ function lib:connect(inlet)
   self.links[inlet:url()] = conn
   table.insert(self.inlets, inlet)
 
-  if inlet.node then
-    -- Real inlet
-    local msg = self.opts.connect
-    if msg then
-      local receive = inlet.receive
-      if receive ~= default_receive then
-        if type(msg) == 'function' then
-          msg = msg()
-        end
-        receive(msg, conn)
+  local msg = self.opts.connect
+  if msg then
+    local receive = inlet.receive
+    if receive ~= default_receive then
+      if type(msg) == 'function' then
+        msg = msg()
       end
+      receive(msg, conn)
     end
   end
 end

@@ -3,7 +3,7 @@ require 'lubyk'
 local should = test.Suite('lk.path helpers')
 
 function should.readAll()
-  assertEqual('Hello Lubyk!', lk.readAll(fixture.path('io.txt')))
+  assertEqual('Hello Lubyk!', lk.content(fixture.path('io.txt')))
 end
 
 function should.changeDir()
@@ -82,7 +82,7 @@ function should.writeall()
   local tmp_path = foo .. '/bar/lk_test_writeall.txt'
   os.remove(tmp_path)
   lk.writeall(tmp_path, 'This is the message')
-  assertEqual('This is the message', lk.readAll(tmp_path))
+  assertEqual('This is the message', lk.content(tmp_path))
   lk.rmTree(foo, true)
 end
 
@@ -172,7 +172,7 @@ function should.spawnProcess(t)
     return lk.fileType(tmp_path)
   end)
   assertEqual('file', lk.fileType(tmp_path))
-  assertEqual(msg, lk.readAll(tmp_path))
+  assertEqual(msg, lk.content(tmp_path))
   lk.rmFile(tmp_path)
 end
 

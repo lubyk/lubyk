@@ -19,7 +19,6 @@ local private = {}
 setmetatable(lib, { __call = function(lib, ...) return lib.new(...) end })
 
 function lib.new(process, name, code_str)
-  lk.log('NEW', name)
   local env  = {}
   -- new node
   local self = {
@@ -258,10 +257,8 @@ function private:setLink(out_name, target_url, process)
         self:error(err)
         return
       end
-      lk.log('pending...', target_url)
     end
     -- connect to real or pending slot
-    lk.log('CONNECT', target_url)
     outlet:connect(slot)
   end
 end
@@ -277,7 +274,7 @@ function lib:setLinks(all_links)
   local process = self.process
   for out_name, links in pairs(all_links) do
     if type(links) == 'string' then
-      setLink(self, out_name, links, process)
+      private.setLink(self, out_name, links, process)
     else
       for target_url, link_def in pairs(links) do
         if link_def then

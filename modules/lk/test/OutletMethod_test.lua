@@ -33,8 +33,8 @@ function should.createNewOutletOnCall()
   assertPass(function()
     outlet.bang = {connect = 'Connect', disconnect = 'Disconnect'}
   end)
-  assertEqual('Connect', node.outlets.bang.connect_msg)
-  assertEqual('Disconnect', node.outlets.bang.disconnect_msg)
+  assertEqual('Connect', node.outlets.bang.opts.connect)
+  assertEqual('Disconnect', node.outlets.bang.opts.disconnect)
   local bang = node.outlets.bang
   assertEqual('bang', bang.name)
 end

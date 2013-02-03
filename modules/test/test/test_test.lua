@@ -3,6 +3,7 @@ require 'test'
 
 local should = test.Suite('test')
 local run = ''
+local base = lk.scriptDir()
 
 function should.runTest()
   run = run .. '1'
@@ -17,11 +18,16 @@ end
 
 function should.findFixtures()
   run = run .. ',3'
-  assertMatch('modules/test/test/fixtures/aaa', fixture.path('aaa'))
+  assertEqual(base .. '/fixtures/aaa.txt', fixture.path('aaa.txt'))
+end
+
+function should.readFixtures()
+  run = run .. ',4'
+  assertEqual('hello test\n', fixture.content('aaa.txt'))
 end
 
 function should.compareTables()
-  run = run .. ',4'
+  run = run .. ',5'
   assertValueEqual(
     {1, {a='a'}},
     {1, {a='a'}}
@@ -29,15 +35,15 @@ function should.compareTables()
 end
 
 function should.compareWithResolution()
-  run = run .. ',5'
+  run = run .. ',6'
   assertValueEqual(1, 1.5, 0.5)
   assertEqual(1, 1.5, 0.5)
   assertValueEqual({1, 2}, {1.5, 1.5}, 0.5)
 end
 
 function should.runInOrder()
-  run = run .. ',6'
-  assertEqual('1,2,3,4,5,6', run)
+  run = run .. ',7'
+  assertEqual('1,2,3,4,5,6,7', run)
 end
 
 test.all()

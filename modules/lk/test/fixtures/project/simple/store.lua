@@ -1,3 +1,3 @@
-function inlet.value(v)
+function lubyk.i.value(v)
   value = v
 end

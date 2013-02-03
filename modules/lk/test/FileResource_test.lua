@@ -157,7 +157,7 @@ function should.createChild()
   local child = lk.FileResource('/project/FileResource.tmp', root)
   assertEqual('FileResource.tmp', child.name)
   assertEqual('/project/FileResource.tmp', child.url)
-  assertEqual('A new FileResource', lk.readAll(childpath))
+  assertEqual('A new FileResource', lk.content(childpath))
   assertEqual('A new FileResource', child:body())
   children = proj:children()
   assertEqual(6, #children)
@@ -190,7 +190,7 @@ function should.update()
 
   assertTrue(rez:update('Something else'))
   assertEqual('Something else', rez:body())
-  assertEqual('Something else', lk.readAll(path))
+  assertEqual('Something else', lk.content(path))
 end
 
 function should.moveChild()
@@ -204,7 +204,7 @@ function should.moveChild()
 
   assertTrue(proj:moveChild(child, proj, 'FileResource.tmp'))
   assertEqual('One World', child:body())
-  assertEqual('One World', lk.readAll(fixture.path('project/FileResource.tmp')))
+  assertEqual('One World', fixture.content('project/FileResource.tmp'))
   assertFalse(lk.exist(fixture.path('project/OneFileResource.tmp')))
 end
 
