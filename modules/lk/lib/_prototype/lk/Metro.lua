@@ -58,7 +58,12 @@ function setFreq(val)
   if val > 0 then
     -- interval in [ms]
     timer:setInterval(1000 / val)
+    if timer.stopped then
+      timer.stopped = nil
+      timer:start()
+    end
   else
+    timer.stopped = true
     timer:stop()
   end
 end

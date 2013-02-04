@@ -29,21 +29,30 @@ function lk.SubClass(class, ...)
     return lib.new(...)
   end
 
+  if not class._new then
+    -- Keep track of the topmost "new" function.
+    -- We need this because we only want to call the bottom most "init"
+    -- function to avoid calling methods on a version of self without the
+    -- correct metatable.
+    class._new = class.new
+  end
+
   -- Create the new class
   local lib = {}
   lib.__index = lib
+
   -- Inherit methods from super class
   setmetatable(lib, class)
 
   -- Default new
   function lib.new(...)
-    local self = class.new(unpack(defaults))
+    local self = class._new(unpack(defaults))
     setmetatable(self, lib)
     self:init(...)
     return self
   end
 
-  -- Default init
+  -- Default init (only the last defined init function is called).
   function lib:init()
   end
 
