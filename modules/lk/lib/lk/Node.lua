@@ -15,6 +15,7 @@ lk.Node     = lib
 -- node's environment metatable
 local env_mt= {}
 local private = {}
+local lubyk_mt = {}
 
 setmetatable(lib, { __call = function(lib, ...) return lib.new(...) end })
 
@@ -46,28 +47,17 @@ function lib.new(process, name, code_str)
 
   -- env has read access to _G
   setmetatable(env, env_mt)
-  env.lubyk = {
+  env.lubyk = setmetatable({
     -- Table to declare inlets.
     i = lk.InletMethod(self),
     -- Table to declare and access outlets.
     o = self.outlet_method,
     -- Table to declare and access parameters.
     p = lk.ParamMethod(self),
-
-    -- Messaging
-    log   = function(...) self:log(...) end,
+    -- Print to remote GUI
     print = function(...) self:log('info', ...) end,
-    warn  = function(...) self:log('warn', ...) end,
 
-    -- state info
-    info = function() return {url = self:url()} end,
-
-    -- register a function that should be called if there is a
-    -- notification
-    onNotify = function(callback)
-      process:onNotify(self, callback)
-    end,
-  }
+  }, lubyk_mt)
 
 
   -- set any param
@@ -509,3 +499,37 @@ function private:dumpParams(params)
     end
   end
 end
+
+-- lubyk()
+function lubyk_mt:__call()
+  return self.i, self.o, self.p, self.print
+end
+
+function lubyk_mt:setParam(url, ...)
+  self.process:setParam(self, url, ...)
+end
+
+function lubyk_mt:info()
+  return {
+    url = self.node:url()
+  }
+end
+
+-- register a function that should be called if there is a
+-- notification
+function lubyk_mt:onNotify(callback)
+  self.node.process:onNotify(self.node, callback)
+end
+
+lib.DEFAULT_CODE = [=[
+--[[------------------------------------------------------
+
+h1. TITLE
+
+DESCRIPTION
+
+--]]------------------------------------------------------
+local i, o, p, print = lubyk()
+
+
+]=]

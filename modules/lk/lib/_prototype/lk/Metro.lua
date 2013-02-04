@@ -1,7 +1,6 @@
 --[[------------------------------------------------------
 
-  lk.Metro
-  --------
+  h1. lk.Metro
 
   Triggers regular bangs out of it's unique outlet.
 
@@ -13,14 +12,16 @@
 
   Outlets
   --------------------------------------------------------
-  [ban]      Sends 'true'.
+  [bang]     Sends 'true'.
 
 --]]
-outlet 'bang'
+local i, o, p, print = lubyk()
 
-defaults {
-  tempo = 120,
-  freq  = 2,
+o.bang = {}
+
+p {
+  tempo = 120, -- in beats per minute
+  freq  = 2,   -- in Hz
 }
 
 if not timer then
@@ -34,22 +35,22 @@ end
 
 --=============================================== params
 
-function param.tempo(val)
+function p.tempo(val)
   setFreq(val / 60)
-  param.freq = val / 60
+  p.freq = val / 60
 end
 
-function param.freq(val)
+function p.freq(val)
   setFreq(val)
-  param.tempo = val * 60
+  p.tempo = val * 60
 end
 
 --=============================================== inlets
-function inlet.tempo(val)
+function i.tempo(val)
   setFreq(val)
   -- notify change.
-  param.freq  = val
-  param.tempo = val * 60
+  p.freq  = val
+  p.tempo = val * 60
 end
 
 --=============================================== code
@@ -62,6 +63,7 @@ function setFreq(val)
   end
 end
 
+local bang = o.bang
 function timer:tick()
   bang(true)
 end

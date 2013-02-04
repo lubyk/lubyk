@@ -313,16 +313,16 @@ end
 
 -- Takes a relative target link like 'metro/_/tempo' and sets the remote param
 -- with the given value. Used by internal nodes.
-function lib:setParam(lio, path, value)
+function lib:setParam(lubyk, path, value)
   local p, param_name = string.match(path, '^(.*)/_/(.*)$')
   if not p or not param_name then
-    lio.error("Invalid path format '"..path.."'")
+    lubyk.error("Invalid path format '"..path.."'")
   else
     local node = self:findByPath(p)
     if node then
       node:setParam(param_name, value)
     else
-      lio.warn("Could not find node at path '"..path.."'")
+      lubyk.warn("Could not find node at path '"..path.."'")
     end
   end
 end

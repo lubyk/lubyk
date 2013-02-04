@@ -1,16 +1,12 @@
 --[[------------------------------------------------------
 
-  Print
-  -----
+  h1.Print
 
   Print incomming values.
 
 --]]------------------------------------------------------
+local i, o, p, print = lubyk()
 
-function inlet.print(v)
-  if type(v) == 'table' then
-    print(yaml.dump(v))
-  else
-    print(v)
-  end
+function i.print(...)
+  print(...)
 end
