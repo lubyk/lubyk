@@ -34,6 +34,16 @@ In order to build everything, you need to have Qt SDK 4.8 and CMake installed:
 
 The install script installs a single lua file in '/usr/local/lib/lua/5.1/lubyk.lua'.
 
+=== Linux
+
+Packages require to build and install lubyk:
+
+  cmake uuid uuid-dev libssl-dev libqt4-dev libglc-dev freeglut3-dev libxmu-dev libxi-dev libavahi-client-dev  libasound2-dev
+
+Will not be needed once we remove legacy gl:
+
+  libglc-dev freeglut3-dev libxmu-dev libxi-dev
+
 === Settings files
 
 If '~/.lubyk/lk.lua' file that informs lubyk where to search for extra libraries.
