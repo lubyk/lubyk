@@ -34,6 +34,7 @@
 
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <unistd.h> // close
 #include <netdb.h>  // getaddrinfo
 #include <arpa/inet.h> // inet_ntop
 
