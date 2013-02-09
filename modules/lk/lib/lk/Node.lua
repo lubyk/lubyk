@@ -56,6 +56,8 @@ function lib.new(process, name, code_str)
     p = lk.ParamMethod(self),
     -- Print to remote GUI
     print = function(...) self:log('info', ...) end,
+    -- Log error or warning to GUI
+    log = function(...) self:log(...) end,
 
   }, lubyk_mt)
 
@@ -395,8 +397,10 @@ function lib:declareParams(hash)
   end
 end
 
---- Receive control events: update setting.
-function lib:setParams(params)
+local p_node, p_params = {}, {}
+
+local function doSetParams()
+  local self, params = p_node, p_params
   -- Prepare for partial dump
   local pdump    = {}
   self.pdump     = pdump
@@ -414,7 +418,7 @@ function lib:setParams(params)
     for k, value in pairs(params) do
       if not defaults[k] then
         -- Error notification: Invalid param.
-        self:error("Trying to set invalid parameter '%s'.", k)
+        self:error(string.format("Trying to set invalid parameter '%s'.", k))
       else
         env[k] = value
         local recv = accessors[k]
@@ -433,6 +437,15 @@ function lib:setParams(params)
   local func = accessors.changed
   if func then
     func(params)
+  end
+end
+
+--- Receive control events: update setting.
+function lib:setParams(params)
+  p_node, p_params = self, params
+  local ok, err = pcall(doSetParams)
+  if not ok then
+    p_node:error(err)
   end
 end
 
