@@ -496,7 +496,7 @@ int lk::Socket::recvBytes(lua_State *L, int sz) {
   return 1;
 }
 
-int lk::Socket::recvAll(lua_State *L) {
+LuaStackSize lk::Socket::recvAll(lua_State *L) {
   if (socket_type_ == lk::Socket::UDP) {
 
     struct sockaddr_in fromAddr;

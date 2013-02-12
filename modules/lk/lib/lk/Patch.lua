@@ -442,16 +442,21 @@ function private:setNodes(nodes_definition)
     end
   end
   
-  -- 2. Update links
-  for node, links in pairs(to_link) do
-    node:setLinks(links)
-  end
+  -- 2. Update links later
+  -- FIXME: This is an ugly hack and should not be necessary...
+  local key = {}
+  self[key] = lk.Thread(function()
+    for node, links in pairs(to_link) do
+      node:setLinks(links)
+    end
+    self[key] = nil
 
-  -- 3. Remove nodes
-  for name, node in pairs(to_remove) do
-    node:remove()
-    nodes[name] = nil
-  end
+    -- 3. Remove nodes
+    for name, node in pairs(to_remove) do
+      node:remove()
+      nodes[name] = nil
+    end
+  end)
 
 end
 

@@ -126,7 +126,7 @@ function lib:eval(code_str)
     self.accessors = old_accessors
     self:error(err)
   else
-
+    self:log('info', 'Script OK')
     self.code = code_str
     -- Unused inlets and outlets will be collected by the GC.
   end
@@ -256,6 +256,7 @@ function private:setLink(out_name, target_url, process)
 end
 
 function private:removeLink(out_name, target_url)
+  print('REMOVE_LINK', out_name, target_url)
   local outlet = self.outlets[out_name]
   if outlet then
     outlet:disconnect(target_url)
@@ -524,7 +525,8 @@ end
 
 function lubyk_mt:info()
   return {
-    url = self.node:url()
+    name = self.node.name,
+    url = self.node:url(),
   }
 end
 
@@ -537,12 +539,23 @@ end
 lib.DEFAULT_CODE = [=[
 --[[------------------------------------------------------
 
-h1. TITLE
+  h1. TITLE
 
-DESCRIPTION
+  DESCRIPTION
 
 --]]------------------------------------------------------
 local i, o, p, print = lubyk()
 
+--=============================================== PARAMS
+p {
+}
+
+--=============================================== OUTLETS
+
+--=============================================== INLETS
+
+--=============================================== CODE
+
+--=============================================== HOOKS
 
 ]=]

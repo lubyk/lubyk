@@ -24,6 +24,8 @@ p {
   freq  = 2,   -- in Hz
 }
 
+step = 0.5
+
 if not timer then
   if tempo > 0 then
     timer = lk.Timer(60000 / tempo)
@@ -57,7 +59,8 @@ end
 function setFreq(val)
   if val > 0 then
     -- interval in [ms]
-    timer:setInterval(1000 / val)
+    step = 1/val
+    timer:setInterval(1000 * step)
     if timer.stopped then
       timer.stopped = nil
       timer:start()
@@ -70,5 +73,5 @@ end
 
 local bang = o.bang
 function timer:tick()
-  bang(true)
+  bang(step)
 end

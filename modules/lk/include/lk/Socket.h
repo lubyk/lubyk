@@ -219,6 +219,10 @@ public:
     return socket_fd_;
   }
 
+  /** This is the same as recv("*a").
+   */
+  LuaStackSize recvAll(lua_State *L);
+
 protected:
 
   /** Send raw bytes from C++.
@@ -260,7 +264,6 @@ protected:
     }
   }
 
-  int recvAll(lua_State *L);
 
   /** Create a socket with an existing file descriptor.
    * This is used as the result of an 'accept()' call.

@@ -542,6 +542,7 @@ function private.process.changed(self, process, changes)
             elseif k == 'outlets' then
               -- extract links
               for _, outlet in ipairs(v) do
+                print('MORPH FUCK', name, yaml.dump(outlet))
                 local l = outlet.links
                 if l then
                   if not links then
