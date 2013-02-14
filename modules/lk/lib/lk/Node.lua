@@ -16,6 +16,7 @@ lk.Node     = lib
 local env_mt= {}
 local private = {}
 local lubyk_mt = {}
+lubyk_mt.__index = lubyk_mt
 
 setmetatable(lib, { __call = function(lib, ...) return lib.new(...) end })
 
@@ -59,11 +60,10 @@ function lib.new(process, name, code_str)
     -- Log error or warning to GUI
     log = function(...) self:log(...) end,
 
+    -- PRIVATE
+    _node = self,
   }, lubyk_mt)
 
-
-  -- set any param
-  env.lubyk.setParam = function(url, ...) process:setParam(env.lio, url, ...) end
 
   process.nodes[name] = self
   -- pending connection resolution
@@ -457,7 +457,7 @@ function lib:setParam(k, value)
   local accessors = self.accessors
   if not defaults[k] then
     -- Error notification: Invalid param.
-    self:error("Trying to set invalid parameter '%s'.", k)
+    self:error(string.format("Trying to set invalid parameter '%s'.", k))
   else
     self.env[k] = value
     local recv = accessors[k]
@@ -519,8 +519,8 @@ function lubyk_mt:__call()
   return self.i, self.o, self.p, self.print
 end
 
-function lubyk_mt:setParam(url, ...)
-  self.process:setParam(self, url, ...)
+function lubyk_mt:setParam(...)
+  self._node.process:setParam(self, ...)
 end
 
 function lubyk_mt:info()
@@ -533,7 +533,7 @@ end
 -- register a function that should be called if there is a
 -- notification
 function lubyk_mt:onNotify(callback)
-  self.node.process:onNotify(self.node, callback)
+  self._node.process:onNotify(self.node, callback)
 end
 
 lib.DEFAULT_CODE = [=[

@@ -311,19 +311,13 @@ function lib:onNotify(key, callback)
   self.on_notify[key] = callback
 end
 
--- Takes a relative target link like 'metro/_/tempo' and sets the remote param
--- with the given value. Used by internal nodes.
-function lib:setParam(lubyk, path, value)
-  local p, param_name = string.match(path, '^(.*)/_/(.*)$')
-  if not p or not param_name then
-    lubyk.error("Invalid path format '"..path.."'")
+-- Set a single parameter
+function lib:setParam(lubyk, p, param_name, value)
+  local node, err = self:findByPath(p)
+  if node then
+    node:setParam(param_name, value)
   else
-    local node = self:findByPath(p)
-    if node then
-      node:setParam(param_name, value)
-    else
-      lubyk.warn("Could not find node at path '"..path.."'")
-    end
+    lubyk.log('error', err)
   end
 end
 
