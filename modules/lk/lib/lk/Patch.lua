@@ -430,7 +430,7 @@ function private:setNodes(nodes_definition)
         nodes[name] = node
       end
       -- update
-      node:set(def, false)
+      node:set(def, true)
       local links = def.links
       if links then to_link[node] = links end
     end

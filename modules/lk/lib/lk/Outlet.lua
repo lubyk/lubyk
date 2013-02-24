@@ -25,11 +25,6 @@ setmetatable(lib, {
     links = {},
     -- Connection inlets
     inlets = {},
-    -- Message (or function to get message) to send on connection
-    -- (this is called when the inlet becomes real: not pending).
-    connect_msg = connect_msg,
-    -- Message (or function to get message) to send on disconnection.
-    disconnect_msg = disconnect_msg,
   }
 
   function self.send(...)

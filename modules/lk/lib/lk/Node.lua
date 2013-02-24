@@ -232,7 +232,7 @@ end
 function private:setLink(out_name, target_url, process)
   local outlet = self.outlets[out_name]
   if not outlet then
-    self:error("Outlet name '%s' does not exist.", out_name)
+    self:error(string.format("Outlet name '%s' does not exist.", out_name))
   else
     local slot, err = process:get(target_url, lk.Inlet)
     if slot == false then

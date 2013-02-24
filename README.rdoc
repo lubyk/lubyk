@@ -38,7 +38,7 @@ The install script installs a single lua file in '/usr/local/lib/lua/5.1/lubyk.l
 
 Packages require to build and install lubyk:
 
-  cmake uuid uuid-dev libssl-dev libqt4-dev libglc-dev freeglut3-dev libxmu-dev libxi-dev libavahi-client-dev  libasound2-dev
+  build-essential cmake uuid uuid-dev libssl-dev libqt4-dev libglc-dev freeglut3-dev libxmu-dev libxi-dev libavahi-client-dev  libasound2-dev
 
 Will not be needed once we remove legacy gl:
 
