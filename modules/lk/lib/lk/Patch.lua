@@ -275,8 +275,14 @@ function lib:callback(url, ...)
     local data = ...
     -- async call, no return value
     self:set(data)
-    local pdump = self:partialDump(data)
-    self:notify(pdump)
+    -- FIXME: This is an ugly hack related to post-linking. We notify only
+    -- when links are created.
+    local key = {}
+    self[key] = lk.Thread(function()
+      self[key] = nil
+      local pdump = self:partialDump(data)
+      self:notify(pdump)
+    end)
   elseif url == quit_url then
     sched:quit()
   else
@@ -372,7 +378,13 @@ function lib:sync()
   local patch = self:findCode(self:url() .. '/_patch.yml')
   if patch then
     private.loadFromYaml(self, patch)
-    self:notify(self:dump())
+    -- FIXME: This is an ugly hack related to post-linking. We notify only
+    -- when links are created.
+    local key = {}
+    self[key] = lk.Thread(function()
+      self[key] = nil
+      self:notify(self:dump())
+    end)
   else
     print("Could not sync: no _patch.yml")
   end
