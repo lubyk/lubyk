@@ -44,16 +44,16 @@ function should.connectWhenRemoteAppears(t)
   local mars = lk.Service('base:Mars')
 
   -- connected becomes true when 'Mars' appears on the network
-  t:timeout(3000, function()
+  t:timeout(function()
     return venus:connected()
   end)
   assertTrue(venus:connected())
 
-  sleep(20) -- let zmq make connection before sending
+  sleep(0.02) -- let zmq make connection before sending
   mars:notify('One')
   mars:notify('message from Mars')
 
-  t:timeout(3000, function()
+  t:timeout(function()
     return t.continue
   end)
 

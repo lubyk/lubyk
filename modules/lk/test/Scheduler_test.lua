@@ -140,7 +140,7 @@ function should.runWithManyZmqSockets(t)
     }
   end
   -- We yield so that all the req threads get started
-  sleep(10)
+  sleep(0.01)
 
 
   local all_ok
@@ -173,7 +173,7 @@ function should.runWithManySockets(t)
         local data = cli:recvLine()
         --print(string.format("%i SEND %s", cli:fd(), data))
         cli:send(data .. ' OK\n')
-        sleep(100) -- Or sent data is not received. FIXME !!
+        sleep(0.1) -- Or sent data is not received. FIXME !!
         cli:close()
       end)
     end
@@ -219,9 +219,9 @@ function should.try(t)
     assert(false, 'this is an error')
   end, function()
     t.continue = true
-  end, 10)
+  end, 0.01)
 
-  t:timeout(2000, function()
+  t:timeout(function()
     return t.continue
   end)
   assertEqual(4, count)

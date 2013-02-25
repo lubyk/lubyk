@@ -157,6 +157,7 @@ end
 
 function should.spawnProcess(t)
   local tmp_path = fixture.path('lk_spawnProcess.txt')
+  lk.rmFile(tmp_path)
   assertNil(lk.fileType(tmp_path))
   msg = 'Hello Lubyk'
   lk.spawn([[

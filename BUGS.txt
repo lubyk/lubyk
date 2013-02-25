@@ -2,6 +2,7 @@
 
 * Why do fast print messages lock the editor ?
 * Qt crash with retina display (ScaleFactor)
+* Why does the editor take 80% CPU doing nothing ??
 
 ======== LK
 

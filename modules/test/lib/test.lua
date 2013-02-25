@@ -1,6 +1,6 @@
 require 'debug'
 
-local lib = {suites = {}, file_count = 0, TIMEOUT = 35000}
+local lib = {suites = {}, file_count = 0, TIMEOUT = 35}
 lib.__index = lib
 test = lib
 
@@ -18,7 +18,7 @@ function lib:timeout(timeout, func)
   end
   local start = elapsed()
   while not func(elapsed() - start) and elapsed() < start + timeout do
-    sleep(300)
+    sleep(0.3)
   end
 end
 

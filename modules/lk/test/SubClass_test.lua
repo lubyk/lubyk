@@ -27,7 +27,7 @@ end
 
 local Baz = lk.SubClass(Bar)
 Baz.c = 'baz'
-function Bar:init()
+function Baz:init()
   self.baz_init = true
 end
 

@@ -41,7 +41,7 @@ public:
   TimeRef();
   ~TimeRef();
 
-  /** Get current real time in [ms] since the time ref object was created.
+  /** Get current real time in [s] since the time ref object was created.
    */
   double elapsed();
 private:

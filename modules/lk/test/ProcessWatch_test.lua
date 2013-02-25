@@ -40,11 +40,11 @@ function should.callProcessConnected(t)
   local p = pw:process('hello')
   assertFalse(p.online)
   -- get processConnected stuff
-  sleep(200)
+  sleep(0.2)
   t.continue = false
   -- register 'hello'
   local s = lk.Service(Lubyk.zone .. ':hello')
-  t:timeout(3000, function()
+  t:timeout(3, function()
     return t.continue
   end)
   assertTrue(t.continue)

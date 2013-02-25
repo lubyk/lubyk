@@ -1,3 +1,2 @@
 Since the TimeRef class is used in other libraries (like zmq), this
-part is build as a static library so that it can easily be linked
-to.
+part is built as a static library so that it can easily be linked.

@@ -47,8 +47,8 @@ TimeRef::TimeRef() {
   mach_timebase_info_data_t time_base_info;
   reference_ = new TimeRefData;
   mach_timebase_info(&time_base_info);
-  // numer/denom converts to nanoseconds. We multiply by 10^6 to have milliseconds
-  reference_->mach_convert_ = (double)time_base_info.numer / (time_base_info.denom * 1000000);
+  // numer/denom converts to nanoseconds. We divide by 10^9 to have seconds
+  reference_->mach_convert_ = (double)time_base_info.numer / (time_base_info.denom * 1000000000);
   reference_->mach_ref_ = mach_absolute_time();
 }
 

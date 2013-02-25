@@ -42,12 +42,12 @@ TimeRef::~TimeRef() {
   delete reference_;
 }
 
-/** Get current real time in [ms] since the time ref object was created.
+/** Get current real time in [s] since the time ref object was created.
  */
 double TimeRef::elapsed() {
   TimeRefData t;
   clock_gettime(CLOCK_MONOTONIC, &t);
-  return ((t.tv_sec - reference_->tv_sec) * 1000.0) + (t.tv_nsec - reference_->tv_nsec) / 1000000.0;
+  return (t.tv_sec - reference_->tv_sec) + (t.tv_nsec - reference_->tv_nsec) / 1000000000.0;
 }
 
 } // lk

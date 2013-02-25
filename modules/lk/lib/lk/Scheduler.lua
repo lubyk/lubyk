@@ -46,6 +46,11 @@ end
 -- current time (not the logical time). This should not be used as a
 -- timer because it will drift.
 function lib:sleep(delay)
+  -- FIXME: remove warning
+  if delay > 10 then
+    -- We changed interval from milliseconds to seconds.
+    printf("Using interval of %f seconds.\n%s\n", delay, debug.traceback())
+  end
   if delay == 0 then
     coroutine.yield('wait', 0)
   else
@@ -71,6 +76,11 @@ end
 -- logical time. This should be used as a timer because it will not
 -- drift.
 function lib:wait(delay)
+  -- FIXME: remove warning
+  if delay > 10 then
+    -- We changed interval from milliseconds to seconds.
+    printf("Using interval of %f seconds.\n%s\n", interval, debug.traceback())
+  end
   if delay == 0 then
     coroutine.yield('wait', 0)
   else
@@ -222,7 +232,11 @@ function lib:try(count, func, failed, wait)
     -- default count
     count = 4
   end
-  local wait = wait or 1000
+  local wait = wait or 1
+  -- FIXME:
+  if wait > 10 then
+    printf("Using interval of %f seconds.\n%s\n", wait, debug.traceback())
+  end
   return lk.Thread(function()
     local res, err
     for i=1,count do

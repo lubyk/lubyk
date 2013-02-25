@@ -278,11 +278,8 @@ function lib:callback(url, ...)
     -- FIXME: This is an ugly hack related to post-linking. We notify only
     -- when links are created.
     local key = {}
-    self[key] = lk.Thread(function()
-      self[key] = nil
-      local pdump = self:partialDump(data)
-      self:notify(pdump)
-    end)
+    local pdump = self:partialDump(data)
+    self:notify(pdump)
   elseif url == quit_url then
     sched:quit()
   else
@@ -378,13 +375,7 @@ function lib:sync()
   local patch = self:findCode(self:url() .. '/_patch.yml')
   if patch then
     private.loadFromYaml(self, patch)
-    -- FIXME: This is an ugly hack related to post-linking. We notify only
-    -- when links are created.
-    local key = {}
-    self[key] = lk.Thread(function()
-      self[key] = nil
-      self:notify(self:dump())
-    end)
+    self:notify(self:dump())
   else
     print("Could not sync: no _patch.yml")
   end
@@ -448,21 +439,15 @@ function private:setNodes(nodes_definition)
     end
   end
   
-  -- 2. Update links later
-  -- FIXME: This is an ugly hack and should not be necessary...
-  local key = {}
-  self[key] = lk.Thread(function()
-    for node, links in pairs(to_link) do
-      node:setLinks(links)
-    end
-    self[key] = nil
+  -- 2. Update links
+  for node, links in pairs(to_link) do
+    node:setLinks(links)
+  end
 
-    -- 3. Remove nodes
-    for name, node in pairs(to_remove) do
-      node:remove()
-      nodes[name] = nil
-    end
-  end)
-
+  -- 3. Remove nodes
+  for name, node in pairs(to_remove) do
+    node:remove()
+    nodes[name] = nil
+  end
 end
 

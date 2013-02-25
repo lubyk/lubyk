@@ -16,6 +16,11 @@ lk.Timer    = lib
 
 setmetatable(lib, {
   __call = function(lib, interval, func)
+    -- FIXME: remove warning
+    if interval > 10 then
+      -- We changed interval from milliseconds to seconds.
+      printf("Using interval of %f seconds.\n%s\n", interval, debug.traceback())
+    end
     local self = {
       interval = interval,
     }
@@ -57,6 +62,11 @@ function lib:run()
 end  
 
 function lib:setInterval(interval, start_if_stopped)
+  -- FIXME: remove warning
+  if interval > 10 then
+    -- We changed interval from milliseconds to seconds.
+    printf("Using interval of %f seconds.\n%s\n", interval, debug.traceback())
+  end
   if self.thread then
     -- Running timer: remove from scheduler.
     self:stop()

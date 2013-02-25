@@ -102,22 +102,17 @@ public:
   /** Polls for new events and ensures that if we timeout, this is done
    * as precisely as possible (pads with nanosleep).
    * @return true on success, false on interruption.
-   * @param timeout in milliseconds.
+   * @param timeout in seconds.
    */
-  bool poll(float timeout) {
+  bool poll(double timeout) {
     // interruption can occur between poll operations
     if (interrupted_) return false;
-    // printf("============================= %f\n", timeout);
-    // for(int i=0; i<used_count_; ++i) {
-    //   zmq_pollitem_t *item = pollitems_ + i;
-    //   printf("%i: %2i / %p (%i)\n", i, item->fd, item->socket, item->events);
-    // }
 #if POLLER_JITTER_HACK
     if (timeout > 0) {
       double start = time_.elapsed();
       long t = timeout > 2 ? timeout - 2 : timeout;
-      // zmq counts micro seconds
-      event_count_ = zmq_poll(pollitems_, used_count_, t * 1000);
+      // zmq counts micro seconds = 1000000 s
+      event_count_ = zmq_poll(pollitems_, used_count_, t * 1000000);
       if (event_count_ < 0) {
         // error or interruption
         event_count_ = 0;
@@ -129,12 +124,13 @@ public:
       } else if (!event_count_) {
         // timed out
         double remaining = timeout - time_.elapsed() + start;
-        // TODO: We must measure that this 'hack' improves jitter.
-        if (remaining > 0) Thread::millisleep(remaining);
+        // TODO: We must measure if this 'hack' improves jitter.
+        if (remaining > 0) Thread::millisleep(remaining / 1000);
       }
     } else {
       // no timeout or 0
-      event_count_ = zmq_poll(pollitems_, used_count_, timeout);
+      // zmq_poll expects microseconds.
+      event_count_ = zmq_poll(pollitems_, used_count_, timeout * 1000000);
       if (event_count_ < 0) {
         // error or interruption
         event_count_ = 0;
@@ -146,7 +142,8 @@ public:
       }
     }
 #else
-    event_count_ = zmq_poll(pollitems_, used_count_, timeout * 1000);
+    // zmq_poll expects microseconds.
+    event_count_ = zmq_poll(pollitems_, used_count_, timeout * 1000000);
     // printf("===> %i\n", event_count_);
     if (event_count_ < 0) {
       // error or interruption

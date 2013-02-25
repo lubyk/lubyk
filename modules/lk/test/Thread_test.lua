@@ -17,15 +17,15 @@ function should.runThread()
     while true do
       counter = counter + 1
       -- continue until 'timer' is gc or stopped.
-      sleep(40)
+      sleep(0.04)
     end
   end)
 
   -- first trigger now
-  sleep(100)
+  sleep(0.1)
   -- 00, 40, 80
   assertEqual(3, counter)
-  sleep(90)
+  sleep(0.09)
   -- 120, 160 (190)
   assertEqual(5, counter)
   -- Thread is garbage collected here.
@@ -36,7 +36,7 @@ function should.joinThreads()
   local counter = 0
   local thread = lk.Thread(function()
     while counter < 5 do
-      sleep(10)
+      sleep(0.01)
       counter = counter + 1
     end
   end)
@@ -49,10 +49,10 @@ end
 function should.killThreads()
   local thread = lk.Thread(function()
     while true do
-      sleep(30)
+      sleep(0.03)
     end
   end)
-  sleep(20) -- let thread start
+  sleep(0.02) -- let thread start
 
   thread:kill()
 
@@ -70,7 +70,7 @@ local function makeThreads()
       local j = 0
       while j < 10 do
         j = j + 1
-        sleep(20)
+        sleep(0.01)
       end
     end))
   end
@@ -94,6 +94,7 @@ function should.createManyThreadsAndProperlyGc()
   collectgarbage('collect')
   after = collectgarbage('count')
 
+  print(before, after)
   assertTrue(after <= before)
 end
 
@@ -127,11 +128,11 @@ function should.getKilledOnDestroy()
   local thread = lk.Thread(function(runner)
     runOnce = true
     while true do
-      sleep(10)
+      sleep(0.01)
     end
   end)
   -- start thread
-  sleep(10)
+  sleep(0.01)
   -- destroy
   thread = nil
   collectgarbage('collect')

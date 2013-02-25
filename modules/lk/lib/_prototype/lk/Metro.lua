@@ -28,7 +28,7 @@ step = 0.5
 
 if not timer then
   if tempo > 0 then
-    timer = lk.Timer(60000 / tempo)
+    timer = lk.Timer(60 / tempo)
     timer:start()
   else
     timer = lk.Timer(0)
@@ -47,26 +47,13 @@ function p.freq(val)
   p.tempo = val * 60
 end
 
---=============================================== inlets
-function i.tempo(val)
-  setFreq(val)
-  -- notify change.
-  p.freq  = val
-  p.tempo = val * 60
-end
-
 --=============================================== code
 function setFreq(val)
   if val > 0 then
-    -- interval in [ms]
+    -- interval in [s]
     step = 1/val
-    timer:setInterval(1000 * step)
-    if timer.stopped then
-      timer.stopped = nil
-      timer:start()
-    end
+    timer:setInterval(step, true)
   else
-    timer.stopped = true
     timer:stop()
   end
 end

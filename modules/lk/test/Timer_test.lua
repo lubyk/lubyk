@@ -8,7 +8,7 @@
 --]]------------------------------------------------------
 require 'lubyk'
 
-local SLEEP = 40
+local SLEEP = 40 / 1000
 local should = test.Suite('lk.Timer')
 
 function should.loopTimerInExternalThread()
@@ -20,7 +20,7 @@ function should.loopTimerInExternalThread()
   timer:start() -- default = trigger on start
   -- first trigger now
   now = elapsed()
-  sleep(4 * SLEEP + 10)
+  sleep(4 * SLEEP + 0.01)
   -- 00, 20, 40, 60, 80
   assertEqual(5, counter)
   start = elapsed()
@@ -32,12 +32,12 @@ end
 
 function should.setInterval()
   local counter = 0
-  local timer = lk.Timer(10000, function()
+  local timer = lk.Timer(10, function()
     counter = counter + 1
     -- continue until 'timer' is gc or stopped.
   end)
   timer:start(false) -- do not trigger on start
-  sleep(SLEEP - 10) -- 10
+  sleep(SLEEP - 0.01) -- 10
   assertEqual(0, counter)
   timer:setInterval(SLEEP)
   assertEqual(0, counter)
@@ -52,7 +52,7 @@ end
 
 function should.setCallback()
   local counter = 0
-  local timer = lk.Timer(10000)
+  local timer = lk.Timer(0.01)
   function timer:tick()
     counter = counter + 1
     -- continue until 'timer' is gc or stopped.
@@ -73,7 +73,7 @@ end
 
 function should.joinTimer()
   local counter = 0
-  local timer = lk.Timer(10, function()
+  local timer = lk.Timer(0.01, function()
     counter = counter + 1
     if counter == 5 then
       -- stop
@@ -92,7 +92,7 @@ function should.beRegular(t)
   local last
   local min = 9999
   local max = -1
-  local timer = lk.Timer(10, function()
+  local timer = lk.Timer(0.01, function()
     local now = elapsed()
     if last then
       local d = now - last
