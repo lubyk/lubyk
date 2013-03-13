@@ -7,12 +7,8 @@
   state machine made of current triggers and transitions.
 
 --]]------------------------------------------------------
-local lib = {}
+local lib     = class 'lk.Doc'
 local private = {}
-lib.__index = lib
-lk.Doc = lib
-
-setmetatable(lib, {__call = function(lib, ...) return lib.new(...) end})
 
 -- Parse the content of a file given by *path* and return a lk.Doc object 
 -- containing the documentation of the class.

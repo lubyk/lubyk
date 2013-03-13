@@ -17,3 +17,18 @@ function lk.bitTest(flags, bit)
   -- 13 % (2*bit) => remove all bits above bit.
   return flags % (2*bit) >= bit
 end
+
+local CALL_TO_NEW = {__call = function(lib, ...) return lib.new(...) end}
+function class(class_name)
+  local lib = { type = class_name }
+  lib.__index = lib
+
+  local base, klass = string.match(class_name, '^(.+)%.(.+)$')
+  klass = klass or class_name
+
+  if base and _G[base] then
+    _G[base][klass] = lib
+  end
+
+  return setmetatable(lib, CALL_TO_NEW)
+end
