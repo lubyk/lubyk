@@ -1,23 +1,26 @@
 --[[------------------------------------------------------
 
-h1. test.DocTest
+  h1. Documentation Tester
 
-This file is a simple test to describe the different documenting options
-available with lk.Doc. This first paragraph is output as "summary".
+  This file is a simple test to describe the different documenting options
+  available with lk.Doc. This first paragraph is output as "summary".
 
-The following paragraphs up to the end of the preamble comment block define the
-"description".
+  The following paragraphs up to the end of the preamble comment block define the
+  "description".
 
-A second paragraph in the "description" with an auto link: lk.Doc. And here is
-a custom link "lubyk":http://lubyk.org. And some formatting: *strong* _emphasis_.
+  A second paragraph in the "description" with an auto link: doc.DocTest. And here is
+  a custom link "lubyk":http://lubyk.org. And some formatting: *strong* _emphasis_.
 
-Some lists:
+  Some lists:
 
-* foo
-** bar
-* baz
+  * foo
+  ** bar
+  * baz
 
-Finally, some latex [math]\inf[/math].
+  Finally, some inline math [math]\infty[/math] with more text. And now some more
+  math in its own paragraph:
+
+  [math]\frac{\partial}{\partial\theta_j}J(\theta) = \frac{1}{m}\sum_{i=1}^m(\theta^{T}x^{(i)}-y^{(i)})x_j^{(i)}[/math]
 
 --]]------------------------------------------------------
 
@@ -72,7 +75,7 @@ end
 --]]
 
 
---[[ A long description for a very complex function, blah and this and that. I
+--[[ A long description for a very complex function, blah and this and that. In
   order to help people understand all the details for something very complex.
 
   Second paragraph before the function.

@@ -256,12 +256,12 @@ function lk.join(list, sep)
   return res
 end
 
--------------------------------- lk.insertSorted(table, string, [key])
--- Insert a string into a table, keeping entries sorted.
-function lk.insertSorted(list, str, key)
+-------------------------------- lk.insertSorted(table, elem, [key])
+-- Insert an element into a table, keeping entries sorted.
+function lk.insertSorted(list, elem, key)
   local pos = -1
   for i, n in ipairs(list) do
-    local a, b = n, str
+    local a, b = n, elem
     if key then
       a = a[key]
       b = b[key]
@@ -272,9 +272,9 @@ function lk.insertSorted(list, str, key)
     end
   end
   if pos == -1 then
-    table.insert(list, str)
+    table.insert(list, elem)
   else
-    table.insert(list, pos, str)
+    table.insert(list, pos, elem)
   end
 end
 

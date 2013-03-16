@@ -20,7 +20,7 @@ end
 
 function should.extractTitle()
   local doc = lk.Doc(fixture.path('doc/DocTest.lua'))
-  assertEqual('test.DocTest', doc.name)
+  assertEqual('DocTest', doc.name)
 end
 
 function should.extractSummary()
@@ -39,24 +39,25 @@ function should.extractDescription()
   local description = doc.sections[1][2]
   assertValueEqual({
     'The following paragraphs up to the end of the preamble comment block define the "description".',
-    'A second paragraph in the "description" with an auto link: lk.Doc. And here is a custom link "lubyk":http://lubyk.org. And some formatting: *strong* _emphasis_.',
+    'A second paragraph in the "description" with an auto link: doc.DocTest. And here is a custom link "lubyk":http://lubyk.org. And some formatting: *strong* _emphasis_.',
     'Some lists:',
     [[* foo
 ** bar
 * baz]],
-    'Finally, some latex [math]\\inf[/math].',
+    'Finally, some inline math [math]\\infty[/math] with more text. And now some more math in its own paragraph:',
   }, description)
 end
 
 function should.convertToHtml()
   local doc = lk.Doc(fixture.path('doc/DocTest.lua'))
-  assertMatch('<title>test.DocTest</title>', doc:toHtml())
+  assertMatch('<title>Documentation Tester</title>', doc:toHtml())
 end
 
 function should.makeDoc()
   lk.Doc.make {
     sources = {
       fixture.path('doc/DocTest.lua'),
+      fixture.path('doc/Other.lua'),
     },
     target = tmp,
     format = 'html',
