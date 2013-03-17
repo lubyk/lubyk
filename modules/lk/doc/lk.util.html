@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Lubyk utilities</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+  src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
+
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/docs.css" rel="stylesheet">
+  </head>
+
+  <body>
+  <div class="container">
+
+    <div class="row">
+      <div class="span2 bs-docs-sidebar local-nav">
+        <ul class="nav nav-list bs-docs-sidenav affix">
+                    <li><a href='#util'><i class='icon-chevron-right'></i> lk.util</a></li>
+                    <li><a href='#Script'><i class='icon-chevron-right'></i> Script</a></li>
+                    <li><a href='#Filesystem'><i class='icon-chevron-right'></i> Filesystem</a></li>
+                    <li><a href='#Strings,-Arrays'><i class='icon-chevron-right'></i> Strings, Arrays</a></li>
+                    <li><a href='#Debugging'><i class='icon-chevron-right'></i> Debugging</a></li>
+                    <li><a href='#Miscellanous'><i class='icon-chevron-right'></i> Miscellanous</a></li>
+                  </ul>
+      </div>
+
+      <div class="span7">
+
+                <section id='util'>
+          <h2 class='section'>Lubyk utilities</h2>
+
+                    
+                      <p class='summary'>Miscellanous utility functions.</p>
+                            </section>
+                <section id='Script'>
+          <h2 class='section'>Script</h2>
+
+                    
+                                        <a name='scriptSource'></a>
+          <h4 class='method'>scriptSource <code>(level)</code></h4>
+          
+                      <p>Find the source of the current file or the file up x levels in the call chain (-1 = up one level).</p>
+                                        <a name='scriptPath'></a>
+          <h4 class='method'>scriptPath <code>(level)</code></h4>
+          
+                      <p>Find the path of the current script or the script up x levels in the call chain (-1 = up one level). The path is relative to the current directory.</p>
+                      <p><pre class='prettyprint lang-lua'>-- get path of running script
+local my_path = lk.scriptPath()
+--> 'test/lk_test.lua'
+</pre></p>
+                      <p>If you need an absolute path, use <a href='#absolutizePath'>absolutizePath</a>.</p>
+                                        <a name='scriptDir'></a>
+          <h4 class='method'>scriptDir <code>(level)</code></h4>
+          
+                      <p>Find the directory of the current script or the directory of the script up x levels in the call chain (-1 = up one level). This is the same as <a href='#scriptPath'>scriptPath</a> but it returns the parent directory.</p>
+                                        <a name='deprecation'></a>
+          <h4 class='method'>deprecation <code>(lib_name, old, new, ...)</code></h4>
+          
+                      <p>Declare a method as being deprecated. This should be used when method names are changed to avoid breaking code without warnings. The syntax is:</p>
+                      <p><pre class='prettyprint lang-lua'>function lib.badName(...)
+  return lib.deprecation('lk', 'badName', 'betterName', ...)
+end
+</pre></p>
+                      <p>When someone uses the "badName" method, a deprecation warning is printed:</p>
+                      <p><pre class='prettyprint lang-lua'>[DEPRECATION] {traceback}
+    'lk.badName' is deprecated. Please use 'lk.betterName' instead.</pre></p>
+                            </section>
+                <section id='Filesystem'>
+          <h2 class='section'>Filesystem</h2>
+
+                    
+                                        <a name='fileType'></a>
+          <h4 class='method'>fileType <code>(path)</code></h4>
+          
+                      <p>Test for file/directory existence at <code>path</code>. If the element exists, returns the file type such as <strong>'directory'</strong> or <strong>'file'</strong>. Returns nil if there is nothing at the given path.</p>
+                                        <a name='exist'></a>
+          <h4 class='method'>exist <code>(path)</code></h4>
+          
+                      <p>Return true if the file or folder pointed by <code>path</code> exists.</p>
+                                        <a name='content'></a>
+          <h4 class='method'>content <code>(basepath, path)</code></h4>
+          
+                      <p>Return the content of a file as a lua string (not suitable for very long content where parsing the file chunks by chunks is better). The method accepts either a single <code>path</code> argument or a <code>basepath</code> and relative <code>path</code>.</p>
+                                        <a name='writeall'></a>
+          <h4 class='method'>writeall <code>(filepath, data, check_diff)</code></h4>
+          
+                      <p>Write <code>data</code> to <code>filepath</code>, creating path folders if necessary. If <code>check_diff</code> is true, only write if the content has changed to avoid changing stat information on the file.</p>
+                                        <a name='makePath'></a>
+          <h4 class='method'>makePath <code>(path)</code></h4>
+          
+                      <p>Build necessary folders to create a given <code>path</code>.</p>
+                                        <a name='move'></a>
+          <h4 class='method'>move <code>(path, new_path)</code></h4>
+          
+                      <p>Move a file or directory from <code>path</code> to <code>new_path</code>. This is like "os.rename" but it also builds necessary path components in new_path.</p>
+                                        <a name='rmFile'></a>
+          <h4 class='method'>rmFile <code>(path)</code></h4>
+          
+                      <p>Delete the file located at <code>path</code>. Does nothing if the element at <code>path</code> does not exist (already removed).</p>
+                                        <a name='rmTree'></a>
+          <h4 class='method'>rmTree <code>(path, recursive)</code></h4>
+          
+                      <p>Remove the directory at <code>path</code>. If <code>recursive</code> is true, remove recursively.
+<strong>This is a dangerous method</strong> if the source path is not ensured to be exempt of mistakes.</p>
+                                        <a name='pathDir'></a>
+          <h4 class='method'>pathDir <code>(filepath)</code></h4>
+          
+                      <p>Return the parent folder and filename from a <code>filepath</code>. Usage:</p>
+                      <p><pre class='prettyprint lang-lua'>local base, file = lk.pathDir(filepath)
+</pre></p>
+                      <p>This can also be used on urls.</p>
+                                        <a name='absolutizePath'></a>
+          <h4 class='method'>absolutizePath <code>(path, basepath)</code></h4>
+          
+                      <p>Return an absolute path from a <code>path</code> and optional <code>basepath</code>. If basepath is not provided, the method uses the current directory. This method resolves <code>/../</code> and <code>/./</code> in paths and returns a clean path. Can also be used with urls.</p>
+                      <p>For example:</p>
+                      <p><pre class='prettyprint lang-lua'>local abs_path = lk.absolutizePath('foo/bar/../baz', '/home')
+--> '/home/foo/baz'</pre></p>
+                                        <a name='absToRel'></a>
+          <h4 class='method'>absToRel <code>(abs_string, base)</code></h4>
+          
+                      <p>Transform an absolute path or url to a relative path with given base. For  example:</p>
+                      <p><pre class='prettyprint lang-lua'>local rel = lk.absToRel('/home/foo/bar', '/home/foo/baz')
+--> '/home/foo/bar'
+local rel = lk.absToRel('/home/foo/bar', '/home/foo')
+--> 'bar'</pre></p>
+                            </section>
+                <section id='Strings,-Arrays'>
+          <h2 class='section'>Strings, Arrays</h2>
+
+                    
+                                        <a name='strip'></a>
+          <h4 class='method'>strip <code>(str)</code></h4>
+          
+                      <p>Removes white spaces at the beginning and end of the string <code>str</code>.</p>
+                                        <a name='split'></a>
+          <h4 class='method'>split <code>(str, pat)</code></h4>
+          
+                      <p>Split a string <code>str</code> into elements separated by the pattern <code>pat</code>. The function returns a table.</p>
+                      <p><pre class='prettyprint lang-lua'>local t = lk.split('foo/bar/baz', '/')
+--> {'foo', 'bar', 'baz'}</pre></p>
+                                        <a name='join'></a>
+          <h4 class='method'>join <code>(list, sep)</code></h4>
+          
+                      <p>Join elements of a table <code>list</code> with separator <code>sep</code>. Returns a string.</p>
+                      <p><pre class='prettyprint lang-lua'>local x = lk.join({'foo', 'bar', 'baz'}, '.')
+--> 'foo.bar.baz'</pre></p>
+                                        <a name='insertSorted'></a>
+          <h4 class='method'>insertSorted <code>(list, elem, key)</code></h4>
+          
+                      <p>Insert <code>elem</code> into a <code>list</code>, keeping entries in "list" sorted. If elem is not a string, the <code>elem[key]</code> is used to get a string for sorting.</p>
+                                        <a name='deepMerge'></a>
+          <h4 class='method'>deepMerge <code>(base, key, value)</code></h4>
+          
+                      <p>Deep merge <code>value</code> into <code>base</code> at <code>key</code>. Returns true if <strong>base</strong> has been changed. For example:</p>
+                      <p><pre class='prettyprint lang-lua'>local base = {a = { b = 4, c = 5 }}
+lk.deepMerge(base, 'a', { c = 5 })
+--> false (nothing changed)
+
+lk.deepMerge(base, 'a', { c = 6 })
+--> true, base = {a = { b = 4, c = 6 }}</pre></p>
+                            </section>
+                <section id='Debugging'>
+          <h2 class='section'>Debugging</h2>
+
+                    
+                                        <a name='traceRequire'></a>
+          <h4 class='method'>traceRequire <code>()</code></h4>
+          
+                      <p>Print calls to <code>require</code>. This can be used to list all code dependencies. Usage:</p>
+                      <p><pre class='prettyprint lang-lua'>lk.traceRequire()
+-- From now on, all require statements are printed.
+</pre></p>
+                      <p>If you simply want to make sure no require is not called to autoload code after some point, you should use <a href='Autoload.html#strict'>Autoload.strict</a>.</p>
+                                        <a name='log'></a>
+          <h4 class='method'>log <code>(...)</code></h4>
+          
+                      <p>Print a log message with the current file name and line. This is better then using "print" because it gives us some information on the context of the  print statement.</p>
+                      <p><pre class='prettyprint lang-lua'>lk.log('foo')
+--> lk/util.lua:426:  foo</pre></p>
+                            </section>
+                <section id='Miscellanous'>
+          <h2 class='section'>Miscellanous</h2>
+
+                    
+                                        <a name='spawn'></a>
+          <h4 class='method'>spawn <code>(code, ...)</code></h4>
+          
+                      <p>Start a new process with <code>code</code>, encoding arguments with yaml.</p>
+                      <p>Here is an example that passes a table of arguments.</p>
+                      <p><pre class='prettyprint lang-lua'>
+local pid = lk.spawn([[
+  require 'lubyk'
+  lk.Doc.make(%s)
+]], {target = 'doc', sources = 'lib', format = 'html'})</pre></p>
+                                        <a name='shellQuote'></a>
+          <h4 class='method'>shellQuote <code>(str)</code></h4>
+          
+                      <p>Quote string <code>str</code> so that it can be inserted in a shell command. Example:</p>
+                      <p><pre class='prettyprint lang-lua'>os.execute(string.format('latex %s', lk.shellQuote(filepath)))</pre></p>
+                            </section>
+              </div>
+
+      <div class="span3 bs-docs-sidebar global-nav">
+        <ul class="nav nav-list bs-docs-sidenav">
+                    <li class='module'><a href='lk.html'>lk</a></li>
+                              <li><a href='lk.Client.html'>lk.Client</a></li>
+                    <li><a href='lk.Command.html'>lk.Command</a></li>
+                    <li><a href='lk.DavMorph.html'>lk.DavMorph</a></li>
+                    <li><a href='lk.DavServer.html'>lk.DavServer</a></li>
+                    <li><a href='lk.Debug.html'>lk.Debug</a></li>
+                    <li><a href='lk.Dir.html'>lk.Dir</a></li>
+                    <li><a href='lk.Doc.html'>lk.Doc</a></li>
+                    <li><a href='lk.Environment.html'>lk.Environment</a></li>
+                    <li><a href='lk.FileResource.html'>lk.FileResource</a></li>
+                    <li><a href='lk.Inlet.html'>lk.Inlet</a></li>
+                    <li><a href='lk.InletMethod.html'>lk.InletMethod</a></li>
+                    <li><a href='lk.Lubyk.html'>lk.Lubyk</a></li>
+                    <li><a href='lk.Morph.html'>lk.Morph</a></li>
+                    <li><a href='lk.Node.html'>lk.Node</a></li>
+                    <li><a href='lk.Observer.html'>lk.Observer</a></li>
+                    <li><a href='lk.Outlet.html'>lk.Outlet</a></li>
+                    <li><a href='lk.OutletMethod.html'>lk.OutletMethod</a></li>
+                    <li><a href='lk.ParamMethod.html'>lk.ParamMethod</a></li>
+                    <li><a href='lk.Patch.html'>lk.Patch</a></li>
+                    <li><a href='lk.Process.html'>lk.Process</a></li>
+                    <li><a href='lk.ProcessWatch.html'>lk.ProcessWatch</a></li>
+                    <li><a href='lk.Properties.html'>lk.Properties</a></li>
+                    <li><a href='lk.RemoteProcess.html'>lk.RemoteProcess</a></li>
+                    <li><a href='lk.Scheduler.html'>lk.Scheduler</a></li>
+                    <li><a href='lk.SelectCallback.html'>lk.SelectCallback</a></li>
+                    <li><a href='lk.Service.html'>lk.Service</a></li>
+                    <li><a href='lk.ServiceBrowser.html'>lk.ServiceBrowser</a></li>
+                    <li><a href='lk.Settings.html'>lk.Settings</a></li>
+                    <li><a href='lk.Socket.html'>lk.Socket</a></li>
+                    <li><a href='lk.Socket2.html'>lk.Socket2</a></li>
+                    <li><a href='lk.StemCell.html'>lk.StemCell</a></li>
+                    <li><a href='lk.SubClass.html'>lk.SubClass</a></li>
+                    <li><a href='lk.TCPSocket.html'>lk.TCPSocket</a></li>
+                    <li><a href='lk.Thread.html'>lk.Thread</a></li>
+                    <li><a href='lk.Timer.html'>lk.Timer</a></li>
+                    <li><a href='lk.UDPSocket.html'>lk.UDPSocket</a></li>
+                    <li><a href='lk.WebServer.html'>lk.WebServer</a></li>
+                    <li><a href='lk.crypto.html'>lk.crypto</a></li>
+                    <li><a href='lk.more.html'>lk.more</a></li>
+                    <li class='active'><a href='lk.util.html'>lk.util</a></li>
+                  </ul>
+      </div>
+    </div>
+  </div>
+
+    <footer class="footer">
+      <div class="container">
+      </div>
+    </footer>
+
+    <!-- Placed at the end of the document so the pages load faster -->
+    <!--
+    <script src="assets/js/jquery.js"></script>
+    <script src="assets/js/bootstrap-transition.js"></script>
+    <script src="assets/js/bootstrap-alert.js"></script>
+    <script src="assets/js/bootstrap-modal.js"></script>
+    <script src="assets/js/bootstrap-dropdown.js"></script>
+    <script src="assets/js/bootstrap-scrollspy.js"></script>
+    <script src="assets/js/bootstrap-tab.js"></script>
+    <script src="assets/js/bootstrap-tooltip.js"></script>
+    <script src="assets/js/bootstrap-popover.js"></script>
+    <script src="assets/js/bootstrap-button.js"></script>
+    <script src="assets/js/bootstrap-collapse.js"></script>
+    <script src="assets/js/bootstrap-carousel.js"></script>
+    <script src="assets/js/bootstrap-typeahead.js"></script>
+    <script src="assets/js/bootstrap-affix.js"></script>
+    -->
+
+    
+    <script src='http://code.jquery.com/jquery.js'></script>
+    <script src='js/bootstrap.min.js'></script>
+  </body>
+</html>

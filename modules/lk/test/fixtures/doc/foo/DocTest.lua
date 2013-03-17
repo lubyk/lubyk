@@ -1,6 +1,6 @@
 --[[------------------------------------------------------
 
-  h1. Documentation Tester
+  # Documentation Tester
 
   This file is a simple test to describe the different documenting options
   available with lk.Doc. This first paragraph is output as "summary".
@@ -22,29 +22,66 @@
 
   [math]\frac{\partial}{\partial\theta_j}J(\theta) = \frac{1}{m}\sum_{i=1}^m(\theta^{T}x^{(i)}-y^{(i)})x_j^{(i)}[/math]
 
+  And some more text after math. With an image (the path is relative to the
+  output directory).
+
+  ![Dummy example image](img/box.jpg)
+
 --]]------------------------------------------------------
 
 local lib = class 'lk.DocTest'
 
 
--- h2. Create
+-- # Create
 
 -- Creating an lk.DocTest is done by providing a table of parameters. 
 --
--- The *sources* paramter lists file paths to Lua files parse and document. The
--- *target* parameter is the path to the directory where all the output files
--- will be written. *format* is the type of output desired. Possible values are
--- "html" or "latex".
+-- Usage example:
+--
+--   require 'lubyk'
+--   local doc = lk.Doc('path/to/File.lua', {target = 'doc'})
+--   lk.writeall('doc/File.html', doc:toHtml())
+--
+-- When documenting multiple files it is better to use #make.
 function lib.new(params)
 end
 
 
--- h2. Validation
+-- Generate the documentation for multiple files.
+--
+-- The @sources@ parameter lists file paths to Lua files parse and document. The
+-- @target@ parameter is the path to the directory where all the output files
+-- will be written. @format@ is the type of output desired. Possible values are
+-- "html" or "latex".
+--
+-- TODO: an example of a todo inside the comments.
+--
+-- Usage:
+--
+--   require 'lubyk'
+--   lk.Doc.make {
+--     sources = {
+--       'lib/doc/DocTest.lua',
+--       'lib/doc/Other.lua',
+--     },
+--     target = 'doc',
+--     format = 'html',
+--   }
+function lib.make(def)
+end
+
+-- TODO: An orphan todo.
+
+-- # Validation
 -- 
 -- This is a long description of the new validation section. We can write tons
 -- of text here as long as we do not get out of the Lua comments.
 --
+-- ## Sub-title
+--
 -- A second paragraph describing the section.
+--
+-- FIXME: Something to do for validations.
 
 
 -- Return true if all the documentation went fine. Possible causes of failure
@@ -52,21 +89,22 @@ end
 function lib:isOK()
 end
 
+-- This comment will be ignored.
 
--- Append a new paragraph to the description.
+-- Append the @str@ string to the description.
 function lib:append(str)
 end
 
 
 -- This definition documents an out of file function. This function takes
--- a *one* and *two* and makes something interesting with these two parameters.
+-- a @one@ and @two@ and makes something interesting with these two parameters.
 --
 -- With a second paragraph to describe the out of file function.
--- f. outOfFile(one, two)
+-- function lib:outOfFile(one, two)
 
 
 --[[
-  h2. Multi line comment
+  # Multi line comment
 
   We can also use a multi-line comment block to define a section with many
   paragraphs.

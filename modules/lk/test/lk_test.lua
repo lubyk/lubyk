@@ -6,13 +6,6 @@ function should.readAll()
   assertEqual('Hello Lubyk!', lk.content(fixture.path('io.txt')))
 end
 
-function should.changeDir()
-  local current = lk.scriptDir()
-  lk.withDirectory(current .. '/fixtures', function()
-    assertMatch(current .. '/fixtures$', lfs.currentdir())
-  end)
-end
-
 function should.absolutizePath()
   assertEqual(lfs.currentdir() .. '/foo/bar', lk.absolutizePath('foo/bar'))
   assertEqual('/foo/bar', lk.absolutizePath('/foo/bar'))
@@ -84,11 +77,6 @@ function should.writeall()
   lk.writeall(tmp_path, 'This is the message')
   assertEqual('This is the message', lk.content(tmp_path))
   lk.rmTree(foo, true)
-end
-
-function should.change_dir_before_dofile()
-  dofile(fixture.path('dofile.lua'))
-  assertEqual(2, lk_test_dofile_val)
 end
 
 function should.split()

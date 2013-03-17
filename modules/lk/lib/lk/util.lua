@@ -1,43 +1,64 @@
 --[[------------------------------------------------------
 
-  lk.util
-  -------
+  # Lubyk utilities
 
-  Loads utility functions inside 'lk'.
+  Miscellanous utility functions.
 
 --]]------------------------------------------------------
+local lib     = lk
+local private = {}
 
-local spawn = lk.spawn
---- We use yaml to pass arguments from one process to the other.
--- See lk_test.lua for a usage example.
-function lk.spawn(code, ...)
-  local dump = yaml.dump(...)
-  local sep = ''
-  -- Make sure the literal string in the yaml dump is not finished too soon by the
-  -- text in the dump.
-  while dump:match(string.format('%%]%s%%]', sep)) do
-    sep = sep .. '='
-  end
+local spawn = lib.spawn
 
-  local args = string.format("yaml.load [%s[\n%s\n]%s]", sep, dump, sep)
-  return spawn(string.format(code, args))
+-- # Script
+
+-- Find the source of the current file or the file up x levels in the call
+-- chain (-1 = up one level).
+function lib.scriptSource(level)
+  local level = level or 0
+  return debug.getinfo(2 - level).source
 end
 
---- Return the parent folder and filename from a filepath.
-function lk.pathDir(filepath)
-  local base, file = string.match(filepath, '(.*)/(.*)$')
-  if not base then
-    return '.', filepath
-  elseif base == '' then
-    -- '/' == root ?
-    return '/', file
+-- Find the path of the current script or the script up x levels in the call
+-- chain (-1 = up one level). The path is relative to the current directory.
+--
+--   -- get path of running script
+--   local my_path = lk.scriptPath()
+--   --> 'test/lk_test.lua'
+-- 
+-- If you need an absolute path, use #absolutizePath.
+function lib.scriptPath(level)
+  local level = level or 0
+  return string.match(lib.scriptSource(level - 1), '^@(.*)$')
+end
+
+-- Find the directory of the current script or the directory of the script up x
+-- levels in the call chain (-1 = up one level). This is the same as #scriptPath
+-- but it returns the parent directory.
+function lib.scriptDir(level)
+  local level = level or 0
+  local file = lib.scriptPath(level - 1)
+  assert(file, "Cannot use lk.scriptDir here because of a tail call optimization.")
+  if string.match(file, '/') then
+    return string.gsub(lib.scriptPath(level - 1), '/[^/]+$', '')
   else
-    return base, file
+    return '.'
   end
 end
 
-function lk.deprecation(lib_name, old, new, ...)
-  local trace = lk.split(debug.traceback(), '\n\t')[4]
+-- Declare a method as being deprecated. This should be used when method names
+-- are changed to avoid breaking code without warnings. The syntax is:
+--
+--   function lib.badName(...)
+--     return lib.deprecation('lk', 'badName', 'betterName', ...)
+--   end
+-- 
+-- When someone uses the "badName" method, a deprecation warning is printed:
+--
+--   [DEPRECATION] {traceback}
+--       'lk.badName' is deprecated. Please use 'lk.betterName' instead.
+function lib.deprecation(lib_name, old, new, ...)
+  local trace = lib.split(debug.traceback(), '\n\t')[4]
   local arg = ...
   if arg then
     print(string.format("[DEPRECATION] %s\n\t'%s.%s' is deprecated. Please use '%s.%s' instead.", trace, lib_name, old, lib_name, new))
@@ -47,12 +68,30 @@ function lk.deprecation(lib_name, old, new, ...)
   end
 end
 
---- Read all the content from a given path (or basepath and path).
-function lk.readAll(...)
-  return lk.deprecation('lk', 'readAll', 'content', ...)
+-- # Filesystem
+
+-- Test for file/directory existence at @path@. If the element exists, returns
+-- the file type such as *'directory'* or *'file'*. Returns nil if there is
+-- nothing at the given path.
+function lib.fileType(path)
+  if not path then return nil end
+  local attrs = lfs.attributes(path)
+  return attrs and attrs.mode
 end
 
-function lk.content(basepath, path)
+-- Return true if the file or folder pointed by @path@ exists.
+-- function lib.exist(path)
+lib.exist = lib.fileType
+
+-- nodoc
+function lib.readAll(...)
+  return lib.deprecation('lk', 'readAll', 'content', ...)
+end
+
+-- Return the content of a file as a lua string (not suitable for very long
+-- content where parsing the file chunks by chunks is better). The method
+-- accepts either a single @path@ argument or a @basepath@ and relative @path@.
+function lib.content(basepath, path)
   if path then
     path = string.format('%s/%s', basepath, path)
   else
@@ -64,12 +103,101 @@ function lk.content(basepath, path)
   return s
 end
 
-function lk.absolutizePath(path, base)
+-- Write @data@ to @filepath@, creating path folders if necessary. If
+-- @check_diff@ is true, only write if the content has changed to avoid
+-- changing stat information on the file.
+function lib.writeall(filepath, data, check_diff)
+  -- get base directory and build components if necessary
+  lib.makePath(lib.pathDir(filepath))
+  if check_diff and lib.exist(filepath) then
+    if data == lib.content(filepath) then
+      return true
+    end
+  end
+  local f = assert(io.open(filepath, 'wb'))
+  local s = f:write(data)
+  f:close()
+  return s
+end
+
+-- Build necessary folders to create a given @path@.
+function lib.makePath(path)
+  local fullpath = lib.absolutizePath(path)
+  private.makePathPart(fullpath, fullpath)
+end
+
+-- Move a file or directory from @path@ to @new_path@. This is like "os.rename"
+-- but it also builds necessary path components in new_path.
+function lib.move(path, new_path)
+  local base = lib.pathDir(new_path)
+  lib.makePath(base)
+  return os.rename(path, new_path)
+end
+
+-- Delete the file located at @path@. Does nothing if the element at @path@ does
+-- not exist (already removed).
+function lib.rmFile(path)
+  local typ = lib.fileType(path)
+  if not typ then return end
+  assert(typ == 'file', string.format("Cannot remove '%s': it is a %s.", path, typ))
+  os.remove(path)
+end
+
+-- Remove the directory at @path@. If @recursive@ is true, remove recursively.
+-- *This is a dangerous method* if the source path is not ensured to be exempt
+-- of mistakes.
+function lib.rmTree(path, recursive)
+  local fullpath = lib.absolutizePath(path)
+  if not lib.exist(fullpath) then
+    return true
+  end
+  if fullpath ~= '/' and fullpath ~= '' then
+    -- bug paranoia
+    if not recursive then
+      return lfs.rmdir(fullpath)
+    else
+      local code = string.format('rm -r %s', lib.shellQuote(fullpath))
+      if os.execute(code) == 0 then
+        return true
+      else
+        return false
+      end
+    end
+  end
+end
+
+-- Return the parent folder and filename from a @filepath@. Usage:
+--
+--   local base, file = lk.pathDir(filepath)
+-- 
+-- This can also be used on urls.
+function lib.pathDir(filepath)
+  local base, file = string.match(filepath, '(.*)/(.*)$')
+  if not base then
+    return '.', filepath
+  elseif base == '' then
+    -- '/' == root ?
+    return '/', file
+  else
+    return base, file
+  end
+end
+
+-- Return an absolute path from a @path@ and optional @basepath@. If basepath is
+-- not provided, the method uses the current directory. This method
+-- resolves @/../@ and @/./@ in paths and returns a clean path. Can also be
+-- used with urls.
+--
+-- For example:
+--
+--   local abs_path = lk.absolutizePath('foo/bar/../baz', '/home')
+--   --> '/home/foo/baz'
+function lib.absolutizePath(path, basepath)
   if not string.match(path, '^/') then
-    path = string.format('%s/%s', base or lfs.currentdir(), path)
+    path = string.format('%s/%s', basepath or lfs.currentdir(), path)
   end
   -- resolve '/./' and '/../'
-  local parts = lk.split(path, '/')
+  local parts = lib.split(path, '/')
   local path = {}
   for i, part in ipairs(parts) do
     if part == '.' then
@@ -84,135 +212,43 @@ function lk.absolutizePath(path, base)
       table.insert(path, part)
     end
   end
-  return lk.join(path, '/')
+  return lib.join(path, '/')
 end
 
-local function deepMerge(base, key, value)
-  local base_v = base[key]
-  if type(value) == 'table' then
-    if not base_v then
-      base[key] = value
-      return true
+-- Transform an absolute path or url to a relative path with given base. For 
+-- example:
+--
+--   local rel = lk.absToRel('/home/foo/bar', '/home/foo/baz')
+--   --> '/home/foo/bar'
+--   local rel = lk.absToRel('/home/foo/bar', '/home/foo')
+--   --> 'bar'
+function lib.absToRel(abs_string, base)
+  local l = string.len(base)
+  local s = string.sub(abs_string, 1, l)
+  if s == base then
+    if base == abs_string then
+      return abs_string
     else
-      -- merge
-      local changed = false
-      for k, v in pairs(value) do
-        changed = deepMerge(base_v, k, v) or changed
-      end
-      return changed
+      return string.sub(abs_string, l+2, -1)
     end
-  elseif base_v == value then
-    -- nothing changed
-    return false
   else
-    base[key] = value
-    return true
-  end
-end
-lk.deepMerge = deepMerge
-
-local function makePathPart(path, fullpath)
-  local file_type = lk.fileType(path)
-  if file_type == 'file' then
-    error(string.format("Could not build path '%s' ('%s' is a file).", fullpath, path))
-  elseif file_type == 'directory' then
-    return -- done
-  else
-    local base = lk.pathDir(path)
-    makePathPart(base, fullpath)
-    -- base should exist or an error has been raised
-    lfs.mkdir(path)
-    -- done
+    return abs_string
   end
 end
 
---- Build necessary folders to create the given path.
-function lk.makePath(path)
-  local fullpath = lk.absolutizePath(path)
-  makePathPart(fullpath, fullpath)
-end
+-- # Strings, Arrays
 
-local function shellQuote(str)
-  str = string.gsub(str, '\\', '\\\\')
-  return '"' .. string.gsub(str, '"', '\\"') .. '"'
-end
-
-lk.shellQuote = shellQuote
-
---- Remove a directory recursively
-function lk.rmTree(path, recursive)
-  local fullpath = lk.absolutizePath(path)
-  if not lk.exist(fullpath) then
-    return true
-  end
-  if fullpath ~= '/' and fullpath ~= '' then
-    -- bug paranoia
-    if not recursive then
-      return lfs.rmdir(fullpath)
-    else
-      local code = string.format('rm -r %s', shellQuote(fullpath))
-      if os.execute(code) == 0 then
-        return true
-      else
-        return false
-      end
-    end
-  end
-end
-
--- Move a file or directory
-function lk.move(path, new_path)
-  local base = lk.pathDir(new_path)
-  lk.makePath(base)
-  return os.rename(path, new_path)
-end
-
-function lk.rmFile(path)
-  if lk.fileType(path) == 'file' then
-    os.remove(path)
-  end
-end
-
---- Write data to a filepath, creating path folder if necessary. If check_diff
--- is true, only write if the content has changed.
-function lk.writeall(filepath, data, check_diff)
-  -- get base directory and build components if necessary
-  lk.makePath(lk.pathDir(filepath))
-  if check_diff and lk.exist(filepath) then
-    if data == lk.content(filepath) then
-      return true
-    end
-  end
-  local f = assert(io.open(filepath, 'wb'))
-  local s = f:write(data)
-  f:close()
-  return s
-end
-
--------------------------------- lk.withDirectory(directory, func)
-
-function lk.withDirectory(new_dir, func)
-  local cur_path = lfs.currentdir()
-  local abs_path = lk.absolutizePath(new_dir)
-  -- change into the loaded file's directory before reading
-  lfs.chdir(abs_path)
-  -- load file
-  local ok, err = pcall(func)
-  -- change back to actual directory
-  lfs.chdir(cur_path)
-  assert(ok, string.format("%s (with current path '%s')", err or '', abs_path))
-end
-
--------------------------------- lk.strip(string)
--- Removes white spaces at the beginning and end of the string.
-function lk.strip(str)
+-- Removes white spaces at the beginning and end of the string @str@.
+function lib.strip(str)
   return string.match(str, '^[ \t\n\r]*(.-)[ \t\n\r]*$')
 end
 
--------------------------------- lk.split(string, sep)
--- Split a string into elements.
--- Compatibility: Lua-5.1
-function lk.split(str, pat)
+-- Split a string @str@ into elements separated by the pattern @pat@. The
+-- function returns a table.
+--
+--   local t = lk.split('foo/bar/baz', '/')
+--   --> {'foo', 'bar', 'baz'}
+function lib.split(str, pat)
   local t = {}  -- NOTE: use {n = 0} in Lua-5.0
   if not pat then
     local i = 1
@@ -242,9 +278,11 @@ function lk.split(str, pat)
   return t
 end
 
--------------------------------- lk.join(list, sep)
--- Join elements of a table with a separator
-function lk.join(list, sep)
+-- Join elements of a table @list@ with separator @sep@. Returns a string.
+--
+--   local x = lk.join({'foo', 'bar', 'baz'}, '.')
+--   --> 'foo.bar.baz'
+function lib.join(list, sep)
   local res = nil
   for _, part in ipairs(list) do
     if not res then
@@ -256,9 +294,9 @@ function lk.join(list, sep)
   return res
 end
 
--------------------------------- lk.insertSorted(table, elem, [key])
--- Insert an element into a table, keeping entries sorted.
-function lk.insertSorted(list, elem, key)
+-- Insert @elem@ into a @list@, keeping entries in "list" sorted. If elem is not
+-- a string, the @elem[key]@ is used to get a string for sorting.
+function lib.insertSorted(list, elem, key)
   local pos = -1
   for i, n in ipairs(list) do
     local a, b = n, elem
@@ -278,35 +316,66 @@ function lk.insertSorted(list, elem, key)
   end
 end
 
--------------------------------- lk.absToRel(abs_string, base)
--- Transform an absolute url to a relative with given base
-function lk.absToRel(abs_string, base)
-  local l = string.len(base)
-  local s = string.sub(abs_string, 1, l)
-  if s == base then
-    if base == abs_string then
-      return abs_string
+local function deepMerge(base, key, value)
+  local base_v = base[key]
+  if type(value) == 'table' then
+    if not base_v then
+      base[key] = value
+      return true
     else
-      return string.sub(abs_string, l+2, -1)
+      -- merge
+      local changed = false
+      for k, v in pairs(value) do
+        changed = deepMerge(base_v, k, v) or changed
+      end
+      return changed
     end
+  elseif base_v == value then
+    -- nothing changed
+    return false
   else
-    return abs_string
+    base[key] = value
+    return true
+  end
+end
+lib.deepMerge = deepMerge
+
+-- Deep merge @value@ into @base@ at @key@. Returns true if *base* has been
+-- changed. For example:
+--
+--   local base = {a = { b = 4, c = 5 }}
+--   lk.deepMerge(base, 'a', { c = 5 })
+--   --> false (nothing changed)
+--
+--   lk.deepMerge(base, 'a', { c = 6 })
+--   --> true, base = {a = { b = 4, c = 6 }}
+-- function lib.deepMerge(base, key, value)
+-- # Debugging
+
+local orig_req = require
+-- Print calls to @require@. This can be used to list all code dependencies.
+-- Usage:
+--
+--   lk.traceRequire()
+--   -- From now on, all require statements are printed.
+-- 
+-- If you simply want to make sure no require is not called to autoload code
+-- after some point, you should use [Autoload.strict](Autoload.html#strict).
+function lib.traceRequire()
+  require = function(path)
+    print("require '"..path.."'")
+    return orig_req(path)
   end
 end
 
--------------------------------- lk.scriptSource()
--- Find the source of the current file or the
--- file up x levels in the call chain (-1 = up
--- one level).
-function lk.scriptSource(level)
-  local level = level or 0
-  return debug.getinfo(2 - level).source
-end
-
--------------------------------- lk.log(...)
--- Print a log message with the current file name and line.
-function lk.log(...)
-  local trace = lk.split(debug.traceback(), '\n\t')[3]
+-- Print a log message with the current file name and line. This is better then
+-- using "print" because it gives us some information on the context of the 
+-- print statement.
+--
+--   lk.log('foo')
+--   --> lk/util.lua:426:  foo
+function lib.log(...)
+  local trace = lib.split(debug.traceback(), '\n\t')[3]
   local file, line = string.match(trace, '^([^:]+):([^:]+):')
   if file and line then
     print(string.format('%s:%i:', file, line), ...)
@@ -315,86 +384,57 @@ function lk.log(...)
   end
 end
 
--------------------------------- lk.scriptPath(level = 0)
--- Find the the current file or the
--- file up x levels in the call chain (-1 = up
--- one level).
-function lk.scriptPath(level)
-  local level = level or 0
-  return string.match(lk.scriptSource(level - 1), '^@(.*)$')
-end
 
--------------------------------- lk.scriptDir()
--- Find the directory of the current file or the
--- directory of the file up x levels in the call
--- chain (-1 = up one level).
-function lk.scriptDir(level)
-  local level = level or 0
-  local file = lk.scriptPath(level - 1)
-  assert(file, "Cannot use lk.scriptDir here because of a tail call optimization.")
-  if string.match(file, '/') then
-    return string.gsub(lk.scriptPath(level - 1), '/[^/]+$', '')
-  else
-    return '.'
-  end
-end
+-- # Miscellanous
 
--------------------------------- lk.fileType(path)
--- Test for file/directory existence and/or type.
-function lk.fileType(filepath)
-  if not filepath then return nil end
-  local attrs = lfs.attributes(filepath)
-  return attrs and attrs.mode
-end
-
-lk.exist = lk.fileType
-
--------------------------------- lk.dofile(path)
--- Load a file relative to the current file.
-function lk.dofile(path)
-  return dofile(lk.scriptDir(-1) .. '/' .. path, path)
-end
-
--------------------------------- lk.traceRequire()
--- Print out require statements as they occur.
-local orig_req = require
-function lk.traceRequire()
-  require = function(path)
-    print("require '"..path.."'")
-    return orig_req(path)
-  end
-end
--------------------------------- lk.findCode(class_name)
--- Find source code from a given class name of the
--- form 'lubyk.Metro' or 'my.super.complicated.Thing'. The
--- loader searches locally first and then into package.paths.
--- 
--- TODO: REMOVE
-function lk.findCode(basedir, class_name)
-  assert(false, "lk.findCode will be removed")
-  if not class_name then
-    class_name = basedir
-    basedir = lfs.currentdir()
-  end
-  -- FIXME: Beware to only optimize this by storing fullpaths
-  local path = string.gsub(class_name, '%.', '/') .. '.lua'
-  local fullpath = basedir .. '/lib/' .. path
-  if lk.fileType(fullpath) == 'file' then
-    -- Found local file relative to patch
-    return lk.content(fullpath)
-  else
-    -- Search in lib paths
-    local file = lk.findFile(class_name)
-    if file then
-      return lk.content(file)
-    else
-      return nil
-    end
-  end
-end
-
--------------------------------- printf(format, ...)
--- Print with formating
+-- nodoc
 function printf(format, ...)
-  print(string.format(format, ...))
+  return lib.deprecation('lk', 'printf', 'print', string.format(format, ...))
 end
+
+lib.print = print
+
+-- Start a new process with @code@, encoding arguments with yaml.
+--
+-- Here is an example that passes a table of arguments.
+--   
+--   local pid = lk.spawn([[
+--     require 'lubyk'
+--     lk.Doc.make(%s)
+--   ]], {target = 'doc', sources = 'lib', format = 'html'})
+function lib.spawn(code, ...)
+  local dump = yaml.dump(...)
+  local sep = ''
+  -- Make sure the literal string in the yaml dump is not finished too soon by the
+  -- text in the dump.
+  while dump:match(string.format('%%]%s%%]', sep)) do
+    sep = sep .. '='
+  end
+
+  local args = string.format("yaml.load [%s[\n%s\n]%s]", sep, dump, sep)
+  return spawn(string.format(code, args))
+end
+
+-- Quote string @str@ so that it can be inserted in a shell command. Example:
+--
+--   os.execute(string.format('latex %s', lk.shellQuote(filepath)))
+function lib.shellQuote(str)
+  str = string.gsub(str, '\\', '\\\\')
+  return '"' .. string.gsub(str, '"', '\\"') .. '"'
+end
+
+function private.makePathPart(path, fullpath)
+  local file_type = lib.fileType(path)
+  if file_type == 'file' then
+    error(string.format("Could not build path '%s' ('%s' is a file).", fullpath, path))
+  elseif file_type == 'directory' then
+    return -- done
+  else
+    local base = lib.pathDir(path)
+    private.makePathPart(base, fullpath)
+    -- base should exist or an error has been raised
+    lfs.mkdir(path)
+    -- done
+  end
+end
+
