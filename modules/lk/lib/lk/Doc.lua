@@ -145,17 +145,46 @@ function lib.new(path, def)
     target = def.target,
     header = def.header,
     footer = def.footer or DEFAULT_FOOTER,
-    navigation = def.navigation or {},
-    sections = {
-   --   {name='create'}, {name='compute'}
-    },
-    -- This is the 'section' that describes the class itself.
-    info = {},
+    navigation = def.navigation,
+    children   = def.children,
+    sections = {},
   }
-  self.module, self.name, self.fullname = private.getName(path)
+  
+  if self.navigation then
+    self.module   = self.navigation.__fullname
+    self.name     = self.children.__name
+    if self.navigation.__fullname then
+      self.fullname = self.navigation.__fullname .. '.' .. self.name
+    else
+      self.fullname = self.name
+    end
+  else
+    self.module, self.name, self.fullname = private.getName(path)
+  end
 
   setmetatable(self, lib)
-  private.parseFile(self, path)
+  if path then
+    private.parseFile(self, path)
+  else
+    -- make dummy doc
+    private.newSection(self, 0, self.name)
+    table.insert(self.group, {text = '', class = 'summary'})
+  end
+
+  if #self.children > 0 then
+    local children = self.children
+    local section = self.section
+    for _, name in ipairs(children) do
+      local child = children[name]
+      -- Insert a new group. Using 'class' key for sub-elements.
+      table.insert(section, {
+        class = child.__fullname,
+        name  = child.__name,
+        { text = child.__summary },
+      })
+    end
+  end
+
   if self.todo then
     table.insert(self.sections, self.todo)
   end
@@ -205,44 +234,23 @@ function lib.make(def)
   -- Copy assets
   private.copyAssets[def.format](def.target)
 
-  -- Parse all files
-  local modules = {}
+  -- Parse all files and create a tree from the directories and
+  -- files to parse.
+  -- { name = 'xxxx', sub, { name = 'xxx', subsub }}.
+  local tree = {}
   for _, mpath in ipairs(def.sources) do
     local path
     if lk.fileType(mpath) == 'directory' then
       for path in lk.Dir(mpath):glob '%.lua' do
-        private.addPathToModules(modules, path, mpath)
+        private.insertInTree(tree, path, mpath)
       end
     else
-      private.addPathToModules(modules, mpath, mpath)
+      private.insertInTree(tree, mpath, lk.pathDir(mpath))
     end
   end
+  print(yaml.dump(tree))
 
-  for _, module_name in ipairs(modules) do
-    local module = modules[module_name]
-    local base_def = {
-      navigation = module,
-      target  = def.target,
-      modules = modules,
-      header  = def.header,
-      footer  = def.footer or DEFAULT_FOOTER,
-    }
-    for _, fullname in ipairs(module) do
-      local path = module[fullname]
-      local doc = lib.new(path, base_def)
-      module[fullname] = {
-        fullname = doc.fullname,
-        name     = doc.name,
-        title    = doc.sections[1].title,
-        summary  = doc.sections[1][1][1].text,
-      }
-      local trg = def.target .. '/' .. doc.fullname .. '.' .. format
-      lk.writeall(trg, output(doc, def.template))
-    end
-    -- Create module page
-    local trg = def.target .. '/' .. module.name .. '.' .. format
-    lk.writeall(trg, mod_output(module, def, modules))
-  end
+  private.makeDoc(tree, def)
 end
 
 -- # Methods
@@ -255,46 +263,68 @@ function lib:toHtml(template)
   return private.output.html(self, template)
 end
 
-function private.addPathToModules(modules, path, base)
-  local module, name, fullname = private.getName(path, base)
-  if not name then
-    -- This is the module's lua file. We should parse it but for
-    -- now, we simply ignore it.
-    return
+function private.insertInTree(tree, fullpath, base)
+  -- Remove base from path
+  local path = string.sub(fullpath, string.len(base) + 2, -1)
+  local curr = tree
+  local list = lk.split(path, '/')
+  local last = #list
+  for i, part in ipairs(list) do
+    if i == last then
+      -- Remove extension
+      print(part)
+      part = string.match(part, '(.*)%.lua$')
+    end
+
+    if not curr[part] then
+      local fullname
+      if curr.__fullname then
+        fullname = curr.__fullname .. '.' .. part
+      else
+        fullname = part
+      end
+      curr[part] = { __name = part, __fullname = fullname}
+      lk.insertSorted(curr, part)
+    end
+    curr = curr[part]
+
+    if i == last then
+      curr.__file = fullpath
+    end
   end
-  local list = modules[module]
-  if not list then
-    list = {name = module}
-    modules[module] = list
-    lk.insertSorted(modules, module)
-  end
-  lk.insertSorted(list, fullname)
-  list[fullname] = path
 end
 
-function private.getName(path, base)
+function private.makeDoc(tree, def)
+  for _, elem_name in ipairs(tree) do
+    local elem = tree[elem_name]
+    -- Depth first so that we collect all titles and summary first.
+    private.makeDoc(elem, def)
+
+    local doc = lib.new(elem.__file, {
+      -- Parent & siblings navigation (right menu)
+      navigation = tree,
+      -- Children navigation (listed in main div)
+      children   = elem,
+      target     = def.target,
+      header     = def.header,
+      footer     = def.footer or DEFAULT_FOOTER,
+    })
+    elem.__title   = doc.sections[1].title
+    elem.__summary = doc.sections[1][1][1].text
+    local trg = def.target .. '/' .. doc.fullname .. '.' .. def.format
+    lk.writeall(trg, private.output[def.format](doc, def.template))
+  end
+end
+
+
+function private.getName(path)
   local name, module, fullname
-  if not base then
-    name = assert(string.match(path, '([^/]+)%.lua$'), "Invalid path '"..path.."'.")
-    module = string.match(path, '([^/]+)/[^/]+$')
-    if module then
-      fullname = module .. '.' .. name
-    else
-      fullname = name
-    end
+  name = assert(string.match(path, '([^/]+)%.lua$'), "Invalid path '"..path.."'.")
+  module = string.match(path, '([^/]+)/[^/]+$')
+  if module then
+    fullname = module .. '.' .. name
   else
-    path = string.sub(path, string.len(base) + 2, -1)
-    module = assert(string.match(path, '^([^/]+)'), path)
-    if module == path then
-      -- This is the module's lua file. We should parse it but for
-      -- now, we simply ignore it.
-      module = string.sub(path, 1, -5)
-      name   = nil
-      fullname = module
-    else
-      name = string.gsub(string.sub(path, string.len(module) + 2, -5), '/', '.')
-      fullname = module .. '.' .. name
-    end
+    fullname = name
   end
   
   return module, name, fullname
@@ -438,6 +468,17 @@ function private:addToParaN(i, d)
   end
 end
 
+function private:addToList(i, depth, text)
+  if not self.para then
+    self.para = {list = {}}
+  elseif not self.para.list then
+    private.flushPara(self)
+    self.para = {list = {}}
+  end
+  local para = self.para
+  table.insert(para.list, text)
+end
+
 function private:newSection(i, title)
   private.flushPara(self)
   self.group = {}
@@ -539,8 +580,8 @@ parser.mgroup = {
     move  = function() return parser.mmath, true end,
   },
   -- List
-  { match = '^ *(%*.+)$',
-    output = private.addToParaN,
+  { match = '^ *(%*+) +(.+)$',
+    output = private.addToList,
   },
   -- Normal paragraph
   { match = '^ *(.+)$',
@@ -720,8 +761,8 @@ parser.group = {
     output = private.todoFixme,
   },
   -- List
-  { match = '^%-%- *(%*.+)$',
-    output = private.addToParaN,
+  { match = '^%-%- *(%*+) +(.+)$',
+    output = private.addToList,
   },
   -- Normal paragraph
   { match = '^%-%- *(.+)$',
@@ -740,7 +781,7 @@ parser.end_comment = {
     output = private.newFunction,
   },
   -- global function
-  { match  = '^function ([^%(]+) *(%(.-%))',
+  { match  = '^function ([^:%.%(]+) *(%(.-%))',
     output = function(self, i, name, params)
       private.newFunction(self, i, '', name, params)
     end
@@ -840,7 +881,7 @@ function private.copyAssets.html(target)
   end
 end
 
-function private:paraToHtml(para, inline)
+function private:paraToHtml(para)
   local text = para.text or ''
   if para.class then
     return "<p class='"..para.class.."'>"..private.textToHtml(self, text).."</p>"
@@ -862,7 +903,7 @@ function private:paraToHtml(para, inline)
       "</pre></p>"
   elseif para.span then
     return "<p><span class='"..para.span.."'><span>"..string.upper(para.span).."</span> "..private.textToHtml(self, text).."</span></p>"
-  elseif not inline and string.match(text, '^%*') then
+  elseif para.list then
     -- render list
     return private.listToHtml(self, para)
   else
@@ -910,9 +951,8 @@ end
 
 function private:listToHtml(para)
   local out = '<ul>\n'
-  for _, line in ipairs(lk.split(para.text, '\n')) do
-    local depth, text = string.match(line, '^(%*+) (.*)$')
-    out = out .. '<li>' .. private.paraToHtml(self, text, true) .. '</li>\n'
+  for _, line in ipairs(para.list) do
+    out = out .. '<li>' .. private.textToHtml(self, line) .. '</li>\n'
   end
   return out .. '</ul>'
 end

@@ -1,18 +1,17 @@
 --[[------------------------------------------------------
 
-  h1. lk.Metro
+  # Metronome prototype
 
   Triggers regular bangs out of it's unique outlet.
 
-  Inlets
-  --------------------------------------------------------
-  [tempo]    Set the tempo in beats per minute.
-  [freq]     Set the frequency in Hz.
+  ## Inlets
 
+  * @tempo@ sets the tempo in beats per minute.
+  * @freq@ sets the frequency in Hz.
 
-  Outlets
-  --------------------------------------------------------
-  [bang]     Sends 'true'.
+  ## Outlets
+  
+  * @bang@ sends the step value at regular intervals.
 
 --]]
 local i, o, p, print = lubyk()
@@ -48,6 +47,7 @@ function p.freq(val)
 end
 
 --=============================================== code
+
 function setFreq(val)
   if val > 0 then
     -- interval in [s]

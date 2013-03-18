@@ -37,7 +37,7 @@
           </ul>
         </div>
 
-        <div class="span7">
+        <div class='main span7'>
 
           {% for _, section in ipairs(self.sections) do %}
           <section id='{{section.name}}'>
@@ -71,8 +71,10 @@
             {% if self.module then %}
             <li class='module'><a href='{{self.module}}.html'>{{self.module}}</a></li>
             {% end %}
-            {% for _, fullname in ipairs(self.navigation) do %}
-            <li{{ fullname == self.fullname and " class='active'" or "" }}><a href='{{fullname}}.html'>{{fullname}}</a></li>
+            {% for _, name in ipairs(self.navigation) do 
+              local fullname = self.navigation[name].__fullname
+            %}
+            <li{{ fullname == self.fullname and " class='active'" or "" }}><a href='{{fullname}}.html'>{{name}}</a></li>
             {% end %}
           </ul>
         </div>

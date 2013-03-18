@@ -1,8 +1,13 @@
 --[[------------------------------------------------------
 
-  h1. lk.Param
+  # Pipe to parameter
 
-  Transforms a pipe into a parameter.
+  Transform a pipe into a parameter (notifies all traversing
+  values).
+
+  ## Inlets
+
+  * @input@ receives the value to store as parameter and notify.
 
 --]]------------------------------------------------------
 local i, o, p, print = lubyk()

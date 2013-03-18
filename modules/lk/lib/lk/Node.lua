@@ -539,9 +539,18 @@ end
 lib.DEFAULT_CODE = [=[
 --[[------------------------------------------------------
 
-  h1. TITLE
+  # Title
 
-  DESCRIPTION
+  Summary
+
+  ## Inlets
+
+  * @foo@ does this.
+  * @bar@ does that.
+
+  ## Outlets
+  
+  * @bang@ does blah.
 
 --]]------------------------------------------------------
 local i, o, p, print = lubyk()

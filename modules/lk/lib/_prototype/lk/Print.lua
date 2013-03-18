@@ -1,8 +1,12 @@
 --[[------------------------------------------------------
 
-  h1.Print
+  # Print content
 
   Print incomming values.
+
+  ## Inlets
+
+  * @print@ receives values to print.
 
 --]]------------------------------------------------------
 local i, o, p, print = lubyk()
