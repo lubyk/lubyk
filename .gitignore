@@ -44,3 +44,5 @@
 /modules/lk/src/lua/vendor_jit/src/lj_recdef.h
 /modules/lk/src/lua/vendor_jit/src/lj_vm.s
 /modules/lk/src/lua/vendor_jit/src/luajit
+/gh-pages
+/doc

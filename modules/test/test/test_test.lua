@@ -1,7 +1,6 @@
 require 'lubyk'
-require 'test'
-
-local should = test.Suite('test')
+                                  -- not full coverage
+local should = test.Suite('test', false)
 local run = ''
 local base = lk.scriptDir()
 

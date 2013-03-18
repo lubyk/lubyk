@@ -1,24 +1,25 @@
 --[[------------------------------------------------------
 
-  lk.Dir
-  --------
+  # Directory helper
 
-  This is a helper to access/glob directory trees.
+  This is a helper to access/glob directory trees. It requires
+  'lfs' (lua filesystem).
 
 --]]------------------------------------------------------
 require 'lfs'
 
-local lib = {sep = '/', ignore_pattern = '^[.]', type='lk.Dir'}
-lib.__index = lib
-lk.Dir = lib
+local lib = class('lk.Dir', {
+  sep = '/',
+  ignore_pattern = '^[.]'
+})
 
-setmetatable(lib, {
-  -- new method
- __call = function(lib, path)
+-- # Class functions
+
+-- Create a new directory helper pointing at @path.
+function lib.new(path)
   local self = {path = path}
-  setmetatable(self, lib)
-  return self
-end})
+  return setmetatable(self, lib)
+end
 
 local function glob_list(base, pattern)
   for file in lfs.dir(base) do
@@ -36,7 +37,18 @@ local function glob_list(base, pattern)
   end
 end
 
---- Recursively parse the directory to find files matching the pattern.
+-- # Methods
+
+-- Return an iterator to recursively find files matching @pattern@ in the
+-- directory. The pattern syntax is the same as string.match.
+--
+--   -- Find files ending in ".lua".
+--   for file in lk.Dir('lib'):glob '%.lua$' do
+--     print(file)
+--   end
+--   --> lib/lk/Dir.lua
+--   --> lib/lk/Doc.lua
+--   --> ...
 function lib:glob(pattern)
   local co = coroutine.create(glob_list)
   --glob_list(self.path, pattern, list)
@@ -58,8 +70,15 @@ local function list_files(self)
     end
 	end
 end
---- Return an iterator over the paths in the directory.
--- The returned values are paths, not just filenames.
+
+-- Return an iterator over the paths in the directory. The returned values are
+-- paths, not just filenames.
+--
+--   for file in lk.Dir('lib'):list() do
+--     print(file)
+--   end
+--   --> lib/lk
+--   --> lib/lk.lua
 function lib:list()
   local co = coroutine.create(list_files)
   return function()
@@ -72,11 +91,14 @@ function lib:list()
   end
 end
 
-function lib:contains(patt)
+-- Return true if there is at least one child in the directory that matches
+-- @pattern@.
+function lib:contains(pattern)
   for file in lfs.dir(self.path) do
-    if string.match(file, patt) then
+    if string.match(file, pattern) then
       return true
     end
 	end
+  return false
 end
 

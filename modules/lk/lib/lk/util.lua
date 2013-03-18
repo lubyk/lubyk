@@ -2,7 +2,7 @@
 
   # Lubyk utilities
 
-  Miscellanous utility functions.
+  Miscellanous utility functions in *lk* module.
 
 --]]------------------------------------------------------
 local lib     = lk
@@ -291,7 +291,7 @@ function lib.join(list, sep)
       res = res .. sep .. part
     end
   end
-  return res
+  return res or ''
 end
 
 -- Insert @elem@ into a @list@, keeping entries in "list" sorted. If elem is not

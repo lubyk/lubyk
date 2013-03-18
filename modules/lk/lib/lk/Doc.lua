@@ -123,8 +123,10 @@
 local lib     = class 'lk.Doc'
 local private = {}
 local parser  = {}
+local DEFAULT_FOOTER = [[ made with <a href='http://doc.lubyk.org/lk.Doc.html'>lk.Doc</a> ]]
 
--- # Methods
+
+-- # Class functions
 
 -- Parse the content of a file given by @path@ and return an lk.Doc object 
 -- containing the documentation of the class.
@@ -141,6 +143,8 @@ function lib.new(path, def)
   local self = {
     path   = path,
     target = def.target,
+    header = def.header,
+    footer = def.footer or DEFAULT_FOOTER,
     navigation = def.navigation or {},
     sections = {
    --   {name='create'}, {name='compute'}
@@ -171,6 +175,9 @@ end
 -- output files will be written. @format@ is the type of output desired.
 -- Only 'html' format is supported for now.
 --
+-- You can also provide some html code for @header@ and @footer@ that will be
+-- inserted in every html output page.
+--
 -- Usage:
 --
 --   require 'lubyk'
@@ -181,6 +188,13 @@ end
 --     },
 --     target = 'doc',
 --     format = 'html',
+--     header = [[
+--       <a href='http://lubyk.org'>
+--         <img alt='lubyk logo' src='img/logo.png'/>
+--         <h1>Lubyk documentation</h1>
+--       </a>
+--     ]],
+--     footer = [[ made with <a href='lk.Doc.html'>lk.Doc</a> ]],
 --   }
 function lib.make(def)
   local format = def.format or 'html'
@@ -206,9 +220,16 @@ function lib.make(def)
 
   for _, module_name in ipairs(modules) do
     local module = modules[module_name]
+    local base_def = {
+      navigation = module,
+      target  = def.target,
+      modules = modules,
+      header  = def.header,
+      footer  = def.footer or DEFAULT_FOOTER,
+    }
     for _, fullname in ipairs(module) do
       local path = module[fullname]
-      local doc = lib.new(path, {target = def.target, navigation = module, modules = modules})
+      local doc = lib.new(path, base_def)
       module[fullname] = {
         fullname = doc.fullname,
         name     = doc.name,
@@ -220,9 +241,11 @@ function lib.make(def)
     end
     -- Create module page
     local trg = def.target .. '/' .. module.name .. '.' .. format
-    lk.writeall(trg, mod_output(module, def.template, modules))
+    lk.writeall(trg, mod_output(module, def, modules))
   end
 end
+
+-- # Methods
 
 -- Render the documentation as html. If a @template@ is provided, it is used
 -- instead of the default one. This is mainly used for testing since you usually
@@ -366,10 +389,12 @@ function private:newFunction(i, typ, fun, params)
   end
 
   -- Store last group as function definition
-  if typ == '.' then
+  if typ == ':' then
     self.group.fun = fun
-  else
+  elseif typ == '.' then
     self.group.class_fun = fun
+  else
+    self.group.global_fun = fun
   end
   self.group.params = params
   if self.section[#self.section] ~= self.group then
@@ -710,8 +735,15 @@ parser.group = {
 
 -- This is called just after the comment block ends.
 parser.end_comment = {
-  { match  = '^function lib([:%.])([^%(]+)(.*)$',
+  -- lib function
+  { match  = '^function lib([:%.])([^%(]+) *(%(.-%))',
     output = private.newFunction,
+  },
+  -- global function
+  { match  = '^function ([^%(]+) *(%(.-%))',
+    output = function(self, i, name, params)
+      private.newFunction(self, i, '', name, params)
+    end
   },
   -- Match anything moves to raw code
   { match = '',
@@ -720,7 +752,7 @@ parser.end_comment = {
 }
 
 parser.lua = {
-  { match  = '^function lib([:%.])([^%(]+)(.*)$',
+  { match  = '^function lib([:%.])([^%(]+) *(%(.-%))',
     output = function(self, i, typ, fun, params)
       self.group = {}
       local text = string.format("MISSING DOCUMENTATION FOR #%s.", fun)
@@ -754,14 +786,19 @@ private.mod_output = {}
 
 private.copyAssets = {}
 
+function private.getTemplate(format)
+  local filename = 'template.'..format
+  return lk.content(lk.scriptDir()..'/doc/'..filename)
+end
+
 --=============================================== HTML TEMPLATE
 function private.output:html(template)
-  local tmplt = dub.Template(template or private.HTML_TEMPLATE)
+  local tmplt = dub.Template(template or private.getTemplate('html'))
   return tmplt:run {self = self, private = private}
 end
 
-function private.mod_output.html(module, template, modules)
-  local tmplt = dub.Template(template or private.HTML_TEMPLATE)
+function private.mod_output.html(module, def, modules)
+  local tmplt = dub.Template(def.template or private.getTemplate('html'))
   -- Create a pseudo class with classes as methods and class summary
   -- as method documentation.
   local self = {
@@ -770,6 +807,8 @@ function private.mod_output.html(module, template, modules)
     fullname = module.name,
     sections = {},
     navigation = modules,
+    header = def.header,
+    footer = def.footer or DEFAULT_FOOTER,
   }
   local section = {name = modules.name, title = module.name}
   table.insert(self.sections, section)
@@ -806,11 +845,21 @@ function private:paraToHtml(para, inline)
   if para.class then
     return "<p class='"..para.class.."'>"..private.textToHtml(self, text).."</p>"
   elseif para.heading then
-    return "<h3 class='sub-title'>"..private.textToHtml(self, text).."</h3>"
+    return "<h4 class='sub-title'>"..private.textToHtml(self, text).."</h4>"
   elseif para.math then
     return "<p>"..private.mathjaxTag(self, para).."</p>"
   elseif para.code then
-    return "<p><pre class='prettyprint lang-"..para.code.."'>"..string.gsub(text, '%%%%', '').."</pre></p>"
+    return "<p><pre class='prettyprint lang-"..para.code.."'>"..
+      string.gsub(
+      string.gsub(
+      string.gsub(text,
+        '<', '&lt;'
+      ),
+        '>', '&gt;'
+      ),
+        '%%%%', ''
+      )..
+      "</pre></p>"
   elseif para.span then
     return "<p><span class='"..para.span.."'><span>"..string.upper(para.span).."</span> "..private.textToHtml(self, text).."</span></p>"
   elseif not inline and string.match(text, '^%*') then
@@ -940,123 +989,6 @@ function private:latexImageTag(para)
   lk.rmTree(tempf, true)
   return string.format("<code id='c%s' class='prettyprint lang-tex' style='display:none'>%s</code><img class='latex' id='%s' onclick='$(\"#c%s\").toggle()' src='latex/%s'/>", img_id, latex, img_id, img_id, img_name)
 end
-
-private.HTML_TEMPLATE = [=[
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>{{self.sections[1].title}}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
-
-    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
-
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-        config: ["MMLorHTML.js"],
-        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
-        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
-        TeX: {
-          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
-        },
-        menuSettings: {
-          zoom: "Hover",
-          mpContext: true,
-          mpMouse: true
-        },
-      });
-    </script>
-    <script type="text/javascript"
-  src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
-
-    <link href="css/bootstrap.css" rel="stylesheet">
-    <link href="css/bootstrap-responsive.css" rel="stylesheet">
-    <link href="css/docs.css" rel="stylesheet">
-  </head>
-
-  <body>
-  <div class="container">
-
-    <div class="row">
-      <div class="span2 bs-docs-sidebar local-nav">
-        <ul class="nav nav-list bs-docs-sidenav affix">
-          {% for i, section in ipairs(self.sections) do %}
-          <li><a href='#{{section.name}}'><i class='icon-chevron-right'></i> {{i == 1 and self.fullname or section.title}}</a></li>
-          {% end %}
-        </ul>
-      </div>
-
-      <div class="span7">
-
-        {% for _, section in ipairs(self.sections) do %}
-        <section id='{{section.name}}'>
-          <h2 class='section'>{{section.title}}</h2>
-
-          {% for _, group in ipairs(section) do %}
-          {% if group.class then %}
-          <a name='{{string.gsub(group.class, '.', '-')}}'></a>
-          <h4 class='klass'><a href='{{group.class}}.html'>{{group.name}}</a></h4>
-          {% elseif group.fun then %}
-          <a name='{{group.fun}}'></a>
-          <h4 class='method'>{{group.fun}} <code>{{group.params}}</code></h4>
-          {% elseif group.class_fun then %}
-          <a name='{{group.class_fun}}'></a>
-          <h4 class='function'>{{group.class_fun}} <code>{{group.params}}</code></h4>
-          {% end %}
-
-          {% for _, para in ipairs(group) do %}
-            {{private.paraToHtml(self, para)}}
-          {% end %}
-          {% end %}
-        </section>
-        {% end %}
-      </div>
-
-      <div class="span3 bs-docs-sidebar global-nav">
-        <ul class="nav nav-list bs-docs-sidenav">
-          {% if self.module then %}
-          <li class='module'><a href='{{self.module}}.html'>{{self.module}}</a></li>
-          {% end %}
-          {% for _, fullname in ipairs(self.navigation) do %}
-          <li{{ fullname == self.fullname and " class='active'" or "" }}><a href='{{fullname}}.html'>{{fullname}}</a></li>
-          {% end %}
-        </ul>
-      </div>
-    </div>
-  </div>
-
-    <footer class="footer">
-      <div class="container">
-      </div>
-    </footer>
-
-    <!-- Placed at the end of the document so the pages load faster -->
-    <!--
-    <script src="assets/js/jquery.js"></script>
-    <script src="assets/js/bootstrap-transition.js"></script>
-    <script src="assets/js/bootstrap-alert.js"></script>
-    <script src="assets/js/bootstrap-modal.js"></script>
-    <script src="assets/js/bootstrap-dropdown.js"></script>
-    <script src="assets/js/bootstrap-scrollspy.js"></script>
-    <script src="assets/js/bootstrap-tab.js"></script>
-    <script src="assets/js/bootstrap-tooltip.js"></script>
-    <script src="assets/js/bootstrap-popover.js"></script>
-    <script src="assets/js/bootstrap-button.js"></script>
-    <script src="assets/js/bootstrap-collapse.js"></script>
-    <script src="assets/js/bootstrap-carousel.js"></script>
-    <script src="assets/js/bootstrap-typeahead.js"></script>
-    <script src="assets/js/bootstrap-affix.js"></script>
-    -->
-
-    
-    <script src='http://code.jquery.com/jquery.js'></script>
-    <script src='js/bootstrap.min.js'></script>
-  </body>
-</html>
-]=]
 
 private.LATEX_IMG_TEMPLATE = [=[
 \documentclass[10pt]{article}
