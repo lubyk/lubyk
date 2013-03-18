@@ -27,6 +27,7 @@ p span.todo  {background:#cc4; padding:3px; border:2px solid #880;}
 p span.todo span {color:white;}
 p span.fixme {background:#f99; padding:3px; border:2px solid #f00;}
 p span.fixme span {color:white;}
+h4.function span, h4.method span { color:#999;}
 
 
 /* Body and structure

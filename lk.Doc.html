@@ -52,6 +52,7 @@
         <ul class="nav nav-list bs-docs-sidenav affix">
                     <li><a href='#Doc'><i class='icon-chevron-right'></i> lk.Doc</a></li>
                     <li><a href='#Usage'><i class='icon-chevron-right'></i> Usage</a></li>
+                    <li><a href='#Class-functions'><i class='icon-chevron-right'></i> Class functions</a></li>
                     <li><a href='#Methods'><i class='icon-chevron-right'></i> Methods</a></li>
                     <li><a href='#TODO'><i class='icon-chevron-right'></i> TODO</a></li>
                     <li><a href='#FIXME'><i class='icon-chevron-right'></i> FIXME</a></li>
@@ -149,12 +150,12 @@ FIXME This is a fixme
                       <p><span class='todo'><span>TODO</span> This is a todo definition</span></p>
                       <p><span class='fixme'><span>FIXME</span> This is a fixme</span></p>
                             </section>
-                <section id='Methods'>
-          <h2 class='section'>Methods</h2>
+                <section id='Class-functions'>
+          <h2 class='section'>Class functions</h2>
 
                     
                                         <a name='new'></a>
-          <h4 class='method'>new <code>(path, def)</code></h4>
+          <h4 class='function'><span>.</span>new <code>(path, def)</code></h4>
           
                       <p>Parse the content of a file given by <code>path</code> and return an <a href='lk.Doc.html'>lk.Doc</a> object  containing the documentation of the class.</p>
                       <p>Usage example:</p>
@@ -164,7 +165,7 @@ lk.writeall('doc/File.html', doc:toHtml())
 </pre></p>
                       <p>When documenting multiple files it is better to use <a href='#make'>make</a>.</p>
                                         <a name='make'></a>
-          <h4 class='method'>make <code>(def)</code></h4>
+          <h4 class='function'><span>.</span>make <code>(def)</code></h4>
           
                       <p>Generate the documentation for multiple files.</p>
                       <p>The <code>sources</code> parameter lists paths to Lua files or directories to parse and document. The <code>target</code> parameter is the path to the directory where all the output files will be written. <code>format</code> is the type of output desired. Only 'html' format is supported for now.</p>
@@ -186,8 +187,13 @@ lk.Doc.make {
   ]],
   footer = [[ made with &lt;a href='lk.Doc.html'&gt;lk.Doc&lt;/a&gt; ]],
 }</pre></p>
+                            </section>
+                <section id='Methods'>
+          <h2 class='section'>Methods</h2>
+
+                    
                                         <a name='toHtml'></a>
-          <h4 class='function'>toHtml <code>(template)</code></h4>
+          <h4 class='method'><span>:</span>toHtml <code>(template)</code></h4>
           
                       <p>Render the documentation as html. If a <code>template</code> is provided, it is used instead of the default one. This is mainly used for testing since you usually want to have some navigation menus which are extracted by creating the documentation in batch mode with <a href='#make'>make</a>.</p>
                             </section>

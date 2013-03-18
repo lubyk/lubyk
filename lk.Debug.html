@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>lk.Debug</title>
+    <title>Debugging facility</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -51,44 +51,50 @@
       <div class="span2 bs-docs-sidebar local-nav">
         <ul class="nav nav-list bs-docs-sidenav affix">
                     <li><a href='#Debug'><i class='icon-chevron-right'></i> lk.Debug</a></li>
+                    <li><a href='#Class-functions'><i class='icon-chevron-right'></i> Class functions</a></li>
                   </ul>
       </div>
 
       <div class="span7">
 
                 <section id='Debug'>
-          <h2 class='section'>lk.Debug</h2>
+          <h2 class='section'>Debugging facility</h2>
 
-                              <a name='logExecution'></a>
-          <h4 class='method'>logExecution <code>(prefix, hook_type)</code></h4>
+                    
+                      <p class='summary'>This is a helper to display information on object creation and destruction. Pass any information when creating the object and this information will be printed out on destruction.</p>
+                      <p>The core of this class is written in C++ to use finalizers.</p>
+                            </section>
+                <section id='Class-functions'>
+          <h2 class='section'>Class functions</h2>
+
+                    
+                                        <a name='new'></a>
+          <h4 class='function'><span>.</span>new <code>(name, ...)</code></h4>
           
-                      <p class='summary'></p>
-                      <p>local lib = lk.Debug_core <a href='lk.Debug.html'>lk.Debug</a>  = lib</p>
-                      <p>if type(elem) == 'table' then</p>
-                      <p><pre class='prettyprint lang-lua'>for k,v in pairs(elem) do
-  print(k, v)
-  if type(v) == 'table' then
-    for k2, v2 in pairs(v) do
-      print('', k2, v2)
-    end
-  end
+                      <p>Create a new debug object with a name and some more arguments to be printed.</p>
+                      <p><pre class='prettyprint lang-lua'>obj.debug = lk.Debug("an obj", obj.id, obj.type)
+-- optional callback function
+function obj.debug:callback()
+  -- do something here
 end</pre></p>
-                      <p>elseif type(elem) == 'userdata' then</p>
-                      <p><pre class='prettyprint lang-lua'>local typ, ptr = lk.Debug_userdata(elem)
-print(string.format('&lt;%s: %s&gt;', typ, ptr))</pre></p>
-                      <p>end end</p>
-                      <p>--- Class method to start logging execution if hook_type == false then</p>
-                      <p><pre class='prettyprint lang-lua'>-- disable logging
-debug.sethook()
-print(string.format('%16s ============================ END', prefix))</pre></p>
-                      <p>else</p>
-                      <p><pre class='prettyprint lang-lua'>local hook_type = hook_type or 'l'
-function trace(event, line)
-  local s = debug.getinfo(2).short_src
-  print(string.format('%16s %s:%i', prefix, s, line))
-end
-debug.sethook(trace, hook_type)
-print(string.format('%16s ============================', prefix))</pre></p>
+                                        <a name='inspect'></a>
+          <h4 class='function'><span>.</span>inspect <code>(elem)</code></h4>
+          
+                      <p>Printout inspect information on a table or userdata.</p>
+                                        <a name='userdata'></a>
+          <h4 class='function'><span>.</span>userdata <code>(udata)</code></h4>
+          
+                      <p>Return userdata type and pointer value.</p>
+                                        <a name='logExecution'></a>
+          <h4 class='function'><span>.</span>logExecution <code>(prefix, hook_type)</code></h4>
+          
+                      <p>Start logging program execution. The <code>hook_type</code> can be 'l' (log every line), 'r' (log return from function) or 'c' (log function calls = default).</p>
+                      <p>Usage:</p>
+                      <p><pre class='prettyprint lang-lua'>-- start logging
+lk.Debug.logExecution('trial')
+testFunction()
+-- stop logging
+lk.Debug.logExecution('trial', false)</pre></p>
                             </section>
               </div>
 

@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>lk.Dir</title>
+    <title>Directory helper</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -51,59 +51,56 @@
       <div class="span2 bs-docs-sidebar local-nav">
         <ul class="nav nav-list bs-docs-sidenav affix">
                     <li><a href='#Dir'><i class='icon-chevron-right'></i> lk.Dir</a></li>
+                    <li><a href='#Class-functions'><i class='icon-chevron-right'></i> Class functions</a></li>
+                    <li><a href='#Methods'><i class='icon-chevron-right'></i> Methods</a></li>
                   </ul>
       </div>
 
       <div class="span7">
 
                 <section id='Dir'>
-          <h2 class='section'>lk.Dir</h2>
+          <h2 class='section'>Directory helper</h2>
 
-                              <a name='contains'></a>
-          <h4 class='function'>contains <code>(patt)</code></h4>
+                    
+                      <p class='summary'>This is a helper to access/glob directory trees. It requires 'lfs' (lua filesystem).</p>
+                            </section>
+                <section id='Class-functions'>
+          <h2 class='section'>Class functions</h2>
+
+                    
+                                        <a name='new'></a>
+          <h4 class='function'><span>.</span>new <code>(path)</code></h4>
           
-                      <p class='summary'></p>
-                      <p>require 'lfs'</p>
-                      <p>local lib = {sep = '/', ignore<em>pattern = '^[.]', type='lk.Dir'} lib.</em>_index = lib <a href='lk.Dir.html'>lk.Dir</a> = lib</p>
-                      <p>setmetatable(lib, { -- new method <em></em>call = function(lib, path) local self = {path = path} setmetatable(self, lib) return self end})</p>
-                      <p>local function glob_list(base, pattern) for file in lfs.dir(base) do</p>
-                      <p><pre class='prettyprint lang-lua'>if not string.match(file, lib.ignore_pattern) then
-  local fullpath = base..lib.sep..file
-  local attrs = lfs.attributes(fullpath)
-  if attrs and attrs.mode == 'file' then
-    if not pattern or string.match(fullpath, pattern) then
-      coroutine.yield(fullpath)
-    end
-  elseif attrs and attrs.mode == 'directory' then
-    glob_list(fullpath, pattern)
-  end
-end</pre></p>
-                      <p>end end</p>
-                      <p>--- Recursively parse the directory to find files matching the pattern. local co = coroutine.create(glob<em>list) --glob</em>list(self.path, pattern, list) return function()</p>
-                      <p><pre class='prettyprint lang-lua'>local ok, value = coroutine.resume(co, self.path, pattern)
-if ok then
-  return value
-else
-  return nil
-end</pre></p>
-                      <p>end end</p>
-                      <p>local function list_files(self) local base = self.path for file in lfs.dir(base) do</p>
-                      <p><pre class='prettyprint lang-lua'>if not string.match(file, self.ignore_pattern) then
-  coroutine.yield(base..self.sep..file)
-end</pre></p>
-                      <p>	end end --- Return an iterator over the paths in the directory. -- The returned values are paths, not just filenames. local co = coroutine.create(list_files) return function()</p>
-                      <p><pre class='prettyprint lang-lua'>local ok, value = coroutine.resume(co, self)
-if ok then
-  return value
-else
-  return nil
-end</pre></p>
-                      <p>end end</p>
-                      <p>for file in lfs.dir(self.path) do</p>
-                      <p><pre class='prettyprint lang-lua'>if string.match(file, patt) then
-  return true
-end</pre></p>
-                      <p>	end end</p>
+                      <p>Create a new directory helper pointing at @path.</p>
+                            </section>
+                <section id='Methods'>
+          <h2 class='section'>Methods</h2>
+
+                    
+                                        <a name='glob'></a>
+          <h4 class='method'><span>:</span>glob <code>(pattern)</code></h4>
+          
+                      <p>Return an iterator to recursively find files matching <code>pattern</code> in the directory. The pattern syntax is the same as string.match.</p>
+                      <p><pre class='prettyprint lang-lua'>-- Find files ending in ".lua".
+for file in lk.Dir('lib'):glob '%.lua$' do
+  print(file)
+end
+--&gt; lib/lk/Dir.lua
+--&gt; lib/lk/Doc.lua
+--&gt; ...</pre></p>
+                                        <a name='list'></a>
+          <h4 class='method'><span>:</span>list <code>()</code></h4>
+          
+                      <p>Return an iterator over the paths in the directory. The returned values are paths, not just filenames.</p>
+                      <p><pre class='prettyprint lang-lua'>for file in lk.Dir('lib'):list() do
+  print(file)
+end
+--&gt; lib/lk
+--&gt; lib/lk.lua</pre></p>
+                                        <a name='contains'></a>
+          <h4 class='method'><span>:</span>contains <code>(pattern)</code></h4>
+          
+                      <p>Return true if there is at least one child in the directory that matches <code>pattern</code>.</p>
                             </section>
               </div>
 
