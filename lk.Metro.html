@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>lk.Metro</title>
+    <title>Metronome prototype</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -35,33 +35,23 @@
                       </ul>
         </div>
 
-        <div class="span7">
+        <div class='main span7'>
 
                     <section id='Metro'>
-          <h2 class='section'>lk.Metro</h2>
+          <h2 class='section'>Metronome prototype</h2>
 
                     
-                    <p class='summary'></p>
-                    <p>local i, o, p, print = lubyk()</p>
-                    <p>o.bang = {}</p>
-                    <p>p { tempo = 120, -- in beats per minute freq  = 2,   -- in Hz }</p>
-                    <p>step = 0.5</p>
-                    <p>if not timer then if tempo > 0 then</p>
-                    <p><pre class='prettyprint lang-lua'>timer = lk.Timer(60 / tempo)
-timer:start()</pre></p>
-                    <p>else</p>
-                    <p><pre class='prettyprint lang-lua'>timer = lk.Timer(0)</pre></p>
-                    <p>end end</p>
-                    <p>--=============================================== params</p>
-                    <p>function p.tempo(val) setFreq(val / 60) p.freq = val / 60 end</p>
-                    <p>function p.freq(val) setFreq(val) p.tempo = val * 60 end</p>
-                    <p>--=============================================== code function setFreq(val) if val > 0 then</p>
-                    <p><pre class='prettyprint lang-lua'>-- interval in [s]
-step = 1/val
-timer:setInterval(step, true)</pre></p>
-                    <p>else</p>
-                    <p><pre class='prettyprint lang-lua'>timer:stop()</pre></p>
-                    <p>end end</p>
+                    <p class='summary'>Triggers regular bangs out of it's unique outlet.</p>
+                    <h4 class='sub-title'>Inlets</h4>
+                    <ul>
+<li><code>tempo</code> sets the tempo in beats per minute.</li>
+<li><code>freq</code> sets the frequency in Hz.</li>
+</ul>
+                    <h4 class='sub-title'>Outlets</h4>
+                    <p> </p>
+                    <ul>
+<li><code>bang</code> sends the step value at regular intervals.</li>
+</ul>
                               </section>
                   </div>
 

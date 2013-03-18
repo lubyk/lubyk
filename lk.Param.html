@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>lk.Param</title>
+    <title>Pipe to parameter</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -35,19 +35,17 @@
                       </ul>
         </div>
 
-        <div class="span7">
+        <div class='main span7'>
 
                     <section id='Param'>
-          <h2 class='section'>lk.Param</h2>
+          <h2 class='section'>Pipe to parameter</h2>
 
                     
-                    <p class='summary'></p>
-                    <p>local i, o, p, print = lubyk()</p>
-                    <p>p { -- Declare a in/out parameter s = 0, }</p>
-                    <p>-- Declare an output o.output = { -- On connection, send current param value. connect = function() return s end, }</p>
-                    <p>-- On parameter change, send new value out. function p.s(v) o.output(v) end</p>
-                    <p>-- On input change, set param and notify value. function i.input(v) -- Set param and notify p.s = v</p>
-                    <p>-- Pass value to output o.output(v) end</p>
+                    <p class='summary'>Transform a pipe into a parameter (notifies all traversing values).</p>
+                    <h4 class='sub-title'>Inlets</h4>
+                    <ul>
+<li><code>input</code> receives the value to store as parameter and notify.</li>
+</ul>
                               </section>
                   </div>
 

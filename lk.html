@@ -31,16 +31,24 @@
 
         <div class='span3'>
           <ul class='nav nav-tabs nav-stacked local-nav affix'>
-                        <li><a href='#'><i class='icon-chevron-right'></i> lk</a></li>
+                        <li><a href='#lk'><i class='icon-chevron-right'></i> lk</a></li>
                       </ul>
         </div>
 
-        <div class="span7">
+        <div class='main span7'>
 
-                    <section id=''>
+                    <section id='lk'>
           <h2 class='section'>lk</h2>
 
-                              <a name='---------'></a>
+                    
+                    <p class='summary'></p>
+                    <p>--=============================================== LOAD PATHS</p>
+                    <p>-- These paths already come loaded with lubyk lib path -- through the lubyk loader "require 'lubyk'" local lua<em>paths  = package.path local lua</em>cpaths = package.cpath</p>
+                    <p>-- 1. local lib (foo.lua or lib/foo.lua) package.path  = './?.lua;./lib/?.lua;' package.cpath = './?.so;./lib/?.so;'</p>
+                    <p>-- 2. user libs for _, path in ipairs(Lubyk.paths or {}) do package.path = package.path .. path .. '/?.lua;' end</p>
+                    <p>for _, cpath in ipairs(Lubyk.cpaths or {}) do package.cpath = package.cpath .. cpath .. '/?.so;' end</p>
+                    <p>-- 3. Installed lubyk libs and lua paths package.path  = package.path  .. lua<em>paths package.cpath = package.cpath .. lua</em>cpaths</p>
+                                        <a name='---------'></a>
           <h4 class='klass'><a href='lk.Client.html'>Client</a></h4>
           
                     <p></p>
@@ -217,8 +225,10 @@
 
         <div class='span2'>
           <ul class='nav nav-tabs nav-stacked'>
-                                    <li><a href='_prototype.html'>_prototype</a></li>
+                                    <li><a href='Autoload.html'>Autoload</a></li>
+                        <li><a href='_prototype.html'>_prototype</a></li>
                         <li><a href='dub.html'>dub</a></li>
+                        <li><a href='fixture.html'>fixture</a></li>
                         <li class='active'><a href='lk.html'>lk</a></li>
                         <li><a href='test.html'>test</a></li>
                       </ul>
