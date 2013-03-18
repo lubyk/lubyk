@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>lk.Service</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+  src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
+
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/docs.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class='row'>
+          <div class='span12'>
+             <a href='http://lubyk.org'><img alt='lubyk logo' src='img/lubyk.png'/> <h1>Lubyk documentation</h1></a> 
+          </div>
+        </div>
+      </div>
+    </div>
+
+  <div class="container">
+
+    <div class="row">
+
+      <div class="span2 bs-docs-sidebar local-nav">
+        <ul class="nav nav-list bs-docs-sidenav affix">
+                    <li><a href='#Service'><i class='icon-chevron-right'></i> lk.Service</a></li>
+                  </ul>
+      </div>
+
+      <div class="span7">
+
+                <section id='Service'>
+          <h2 class='section'>lk.Service</h2>
+
+                              <a name='new'></a>
+          <h4 class='method'>new <code>(...)</code></h4>
+          
+                      <p class='summary'></p>
+                      <p>local lib = {type='lk.Service'} lib.<em></em>index = lib <a href='lk.Service.html'>lk.Service</a>  = lib</p>
+                      <p>setmetatable(lib, { <em></em>call = function(lib, ...)</p>
+                      <p><pre class='prettyprint lang-lua'>return lib.new(...)</pre></p>
+                      <p>end })</p>
+                      <p>if type(opts) == 'function' then</p>
+                      <p><pre class='prettyprint lang-lua'>opts = {callback = opts}</pre></p>
+                      <p>elseif not opts then</p>
+                      <p><pre class='prettyprint lang-lua'>opts = {}</pre></p>
+                      <p>end local service<em>type, callback, type</em>name = opts.service<em>type, opts.callback, opts.type type</em>name = type<em>name or lib.type service</em>type = service<em>type or lubyk.service</em>type if not callback then</p>
+                      <p><pre class='prettyprint lang-lua'>-- dummy
+callback = function()
+  return nil
+end</pre></p>
+                      <p>end local info = opts.info or {} info.type = type_name local self = {name = name, callback = callback, info = (opts.info or {})}</p>
+                      <p>--======================================= PUB server self.pub = zmq.Pub() self.info.pub = self.pub:port()</p>
+                      <p>--======================================= REP server (sync) -- FIXME: REMOVE (risk of hanging) self.rep = zmq.SimpleRep(callback)</p>
+                      <p>--======================================= PULL server (async) self.pull = zmq.SimplePull(callback)</p>
+                      <p>self.info.pull = self.pull:port()</p>
+                      <p>--======================================= announce REP server self.registration = mdns.Registration(service<em>type, name, self.rep:port(), self.info, opts.registration</em>callback) -- TODO: act on name change ....</p>
+                      <p>return setmetatable(self, lib) end</p>
+                      <p>self.pub:send(...) end</p>
+                      <p>self.rep:join(...) self.pull:join(...) end</p>
+                      <p>self.registration:kill() self.registration = nil self.rep:kill(...) self.pull:kill(...) end</p>
+                      <p>self.rep:quit(...) self.pull:quit(...) end</p>
+                            </section>
+              </div>
+
+      <div class="span3 bs-docs-sidebar global-nav">
+        <ul class="nav nav-list bs-docs-sidenav">
+                    <li class='module'><a href='lk.html'>lk</a></li>
+                              <li><a href='lk.Client.html'>lk.Client</a></li>
+                    <li><a href='lk.Command.html'>lk.Command</a></li>
+                    <li><a href='lk.DavMorph.html'>lk.DavMorph</a></li>
+                    <li><a href='lk.DavServer.html'>lk.DavServer</a></li>
+                    <li><a href='lk.Debug.html'>lk.Debug</a></li>
+                    <li><a href='lk.Dir.html'>lk.Dir</a></li>
+                    <li><a href='lk.Doc.html'>lk.Doc</a></li>
+                    <li><a href='lk.Environment.html'>lk.Environment</a></li>
+                    <li><a href='lk.FileResource.html'>lk.FileResource</a></li>
+                    <li><a href='lk.Inlet.html'>lk.Inlet</a></li>
+                    <li><a href='lk.InletMethod.html'>lk.InletMethod</a></li>
+                    <li><a href='lk.Lubyk.html'>lk.Lubyk</a></li>
+                    <li><a href='lk.Morph.html'>lk.Morph</a></li>
+                    <li><a href='lk.Node.html'>lk.Node</a></li>
+                    <li><a href='lk.Observer.html'>lk.Observer</a></li>
+                    <li><a href='lk.Outlet.html'>lk.Outlet</a></li>
+                    <li><a href='lk.OutletMethod.html'>lk.OutletMethod</a></li>
+                    <li><a href='lk.ParamMethod.html'>lk.ParamMethod</a></li>
+                    <li><a href='lk.Patch.html'>lk.Patch</a></li>
+                    <li><a href='lk.Process.html'>lk.Process</a></li>
+                    <li><a href='lk.ProcessWatch.html'>lk.ProcessWatch</a></li>
+                    <li><a href='lk.Properties.html'>lk.Properties</a></li>
+                    <li><a href='lk.RemoteProcess.html'>lk.RemoteProcess</a></li>
+                    <li><a href='lk.Scheduler.html'>lk.Scheduler</a></li>
+                    <li><a href='lk.SelectCallback.html'>lk.SelectCallback</a></li>
+                    <li class='active'><a href='lk.Service.html'>lk.Service</a></li>
+                    <li><a href='lk.ServiceBrowser.html'>lk.ServiceBrowser</a></li>
+                    <li><a href='lk.Settings.html'>lk.Settings</a></li>
+                    <li><a href='lk.Socket.html'>lk.Socket</a></li>
+                    <li><a href='lk.Socket2.html'>lk.Socket2</a></li>
+                    <li><a href='lk.StemCell.html'>lk.StemCell</a></li>
+                    <li><a href='lk.SubClass.html'>lk.SubClass</a></li>
+                    <li><a href='lk.TCPSocket.html'>lk.TCPSocket</a></li>
+                    <li><a href='lk.Thread.html'>lk.Thread</a></li>
+                    <li><a href='lk.Timer.html'>lk.Timer</a></li>
+                    <li><a href='lk.UDPSocket.html'>lk.UDPSocket</a></li>
+                    <li><a href='lk.WebServer.html'>lk.WebServer</a></li>
+                    <li><a href='lk.crypto.html'>lk.crypto</a></li>
+                    <li><a href='lk.more.html'>lk.more</a></li>
+                    <li><a href='lk.util.html'>lk.util</a></li>
+                  </ul>
+      </div>
+    </div>
+  </div>
+
+    <footer class="footer">
+      <div class="container">
+         made with <a href='lk.Doc.html'>lk.Doc</a> 
+      </div>
+    </footer>
+
+    <!-- Placed at the end of the document so the pages load faster -->
+    <!--
+    <script src="assets/js/jquery.js"></script>
+    <script src="assets/js/bootstrap-transition.js"></script>
+    <script src="assets/js/bootstrap-alert.js"></script>
+    <script src="assets/js/bootstrap-modal.js"></script>
+    <script src="assets/js/bootstrap-dropdown.js"></script>
+    <script src="assets/js/bootstrap-scrollspy.js"></script>
+    <script src="assets/js/bootstrap-tab.js"></script>
+    <script src="assets/js/bootstrap-tooltip.js"></script>
+    <script src="assets/js/bootstrap-popover.js"></script>
+    <script src="assets/js/bootstrap-button.js"></script>
+    <script src="assets/js/bootstrap-collapse.js"></script>
+    <script src="assets/js/bootstrap-carousel.js"></script>
+    <script src="assets/js/bootstrap-typeahead.js"></script>
+    <script src="assets/js/bootstrap-affix.js"></script>
+    -->
+
+    
+    <script src='http://code.jquery.com/jquery.js'></script>
+    <script src='js/bootstrap.min.js'></script>
+  </body>
+</html>

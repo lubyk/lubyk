@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>lk.ServiceBrowser</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+  src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
+
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/docs.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class='row'>
+          <div class='span12'>
+             <a href='http://lubyk.org'><img alt='lubyk logo' src='img/lubyk.png'/> <h1>Lubyk documentation</h1></a> 
+          </div>
+        </div>
+      </div>
+    </div>
+
+  <div class="container">
+
+    <div class="row">
+
+      <div class="span2 bs-docs-sidebar local-nav">
+        <ul class="nav nav-list bs-docs-sidenav affix">
+                    <li><a href='#ServiceBrowser'><i class='icon-chevron-right'></i> lk.ServiceBrowser</a></li>
+                  </ul>
+      </div>
+
+      <div class="span7">
+
+                <section id='ServiceBrowser'>
+          <h2 class='section'>lk.ServiceBrowser</h2>
+
+                              <a name='addDelegate'></a>
+          <h4 class='function'>addDelegate <code>(delegate)</code></h4>
+          
+                      <p class='summary'></p>
+                      <p>local lib = {type='lk.ServiceBrowser'} lib.<em></em>index = lib <a href='lk.ServiceBrowser.html'>lk.ServiceBrowser</a>  = lib</p>
+                      <p>local browsers = setmetatable({}, {<em></em>mode='v'})</p>
+                      <p>--- Creates an instance of the ServiceBrowser -- Keep a hash of created browser by service<em>type -- Always return the same browser for the given service</em>type -- setmetatable(lib, { -- new method <em></em>call = function(lib, service<em>type) local self = browsers[service</em>type] if self then</p>
+                      <p><pre class='prettyprint lang-lua'>return self</pre></p>
+                      <p>end self = {</p>
+                      <p><pre class='prettyprint lang-lua'>service_type = service_type,
+pending  = {},
+services = {},</pre></p>
+                      <p>}</p>
+                      <p>self.finalizer = lk.Finalizer(function()</p>
+                      <p><pre class='prettyprint lang-lua'>browsers[service_type] = nil</pre></p>
+                      <p>end)</p>
+                      <p>self.browser = mdns.Browser(service<em>type) self.browser.delegates = setmetatable({}, {</em><em>mode='v'}) function self.browser.addDevice(browser, remote</em>service)</p>
+                      <p><pre class='prettyprint lang-lua'>remote_service.fullname = remote_service.name
+local found_service = self.services[remote_service.fullname]
+if not found_service then
+  self.services[remote_service.fullname] = remote_service
+  -- start a new thread to announce object (so we do not risk crashing the
+  -- listening thread)
+  remote_service.announce_thread = lk.Thread(function()
+    remote_service.req = zmq.Req()
+    -- new device
+    remote_service.url = string.format('tcp://%s:%i', remote_service.ip, remote_service.port)
+    remote_service.req:connect(remote_service.url)
+    remote_service.info = remote_service.txt
+    if not remote_service.info then
+      -- Missing TXT record ?
+      -- remote_service.info = remote_service.req:request(lubyk.info_url)
+      -- error ?
+      return
+    end
+    remote_service.sub_url  = string.format('tcp://%s:%i', remote_service.ip, remote_service.info.pub)
+    remote_service.push_url = string.format('tcp://%s:%i', remote_service.ip, remote_service.info.pull)
+    remote_service.push = zmq.Push()
+    -- do not keep unsent messages on quit
+    remote_service.push:setsockopt(zmq.LINGER, 0)
+    remote_service.push:connect(remote_service.push_url)
+    for _, delegate in ipairs(browser.delegates) do
+      delegate:addDevice(remote_service)
+    end
+    remote_service.announce_thread = nil
+  end)
+end</pre></p>
+                      <p>end</p>
+                      <p>function self.browser.removeDevice(browser, remote_service)</p>
+                      <p><pre class='prettyprint lang-lua'>remote_service.fullname = remote_service.name
+local found_service = self.services[remote_service.fullname]
+if found_service then
+  -- removed device. Start a new thread in case an error occurs to avoid 
+  -- crashing the listening thread.
+  found_service.announce_thread = lk.Thread(function()
+    for k, delegate in ipairs(browser.delegates) do
+      delegate:removeDevice(remote_service)
+    end
+    self.services[remote_service.fullname] = nil
+  end)
+end</pre></p>
+                      <p>end browsers[service_type] = self setmetatable(self, lib) return self end})</p>
+                            </section>
+              </div>
+
+      <div class="span3 bs-docs-sidebar global-nav">
+        <ul class="nav nav-list bs-docs-sidenav">
+                    <li class='module'><a href='lk.html'>lk</a></li>
+                              <li><a href='lk.Client.html'>lk.Client</a></li>
+                    <li><a href='lk.Command.html'>lk.Command</a></li>
+                    <li><a href='lk.DavMorph.html'>lk.DavMorph</a></li>
+                    <li><a href='lk.DavServer.html'>lk.DavServer</a></li>
+                    <li><a href='lk.Debug.html'>lk.Debug</a></li>
+                    <li><a href='lk.Dir.html'>lk.Dir</a></li>
+                    <li><a href='lk.Doc.html'>lk.Doc</a></li>
+                    <li><a href='lk.Environment.html'>lk.Environment</a></li>
+                    <li><a href='lk.FileResource.html'>lk.FileResource</a></li>
+                    <li><a href='lk.Inlet.html'>lk.Inlet</a></li>
+                    <li><a href='lk.InletMethod.html'>lk.InletMethod</a></li>
+                    <li><a href='lk.Lubyk.html'>lk.Lubyk</a></li>
+                    <li><a href='lk.Morph.html'>lk.Morph</a></li>
+                    <li><a href='lk.Node.html'>lk.Node</a></li>
+                    <li><a href='lk.Observer.html'>lk.Observer</a></li>
+                    <li><a href='lk.Outlet.html'>lk.Outlet</a></li>
+                    <li><a href='lk.OutletMethod.html'>lk.OutletMethod</a></li>
+                    <li><a href='lk.ParamMethod.html'>lk.ParamMethod</a></li>
+                    <li><a href='lk.Patch.html'>lk.Patch</a></li>
+                    <li><a href='lk.Process.html'>lk.Process</a></li>
+                    <li><a href='lk.ProcessWatch.html'>lk.ProcessWatch</a></li>
+                    <li><a href='lk.Properties.html'>lk.Properties</a></li>
+                    <li><a href='lk.RemoteProcess.html'>lk.RemoteProcess</a></li>
+                    <li><a href='lk.Scheduler.html'>lk.Scheduler</a></li>
+                    <li><a href='lk.SelectCallback.html'>lk.SelectCallback</a></li>
+                    <li><a href='lk.Service.html'>lk.Service</a></li>
+                    <li class='active'><a href='lk.ServiceBrowser.html'>lk.ServiceBrowser</a></li>
+                    <li><a href='lk.Settings.html'>lk.Settings</a></li>
+                    <li><a href='lk.Socket.html'>lk.Socket</a></li>
+                    <li><a href='lk.Socket2.html'>lk.Socket2</a></li>
+                    <li><a href='lk.StemCell.html'>lk.StemCell</a></li>
+                    <li><a href='lk.SubClass.html'>lk.SubClass</a></li>
+                    <li><a href='lk.TCPSocket.html'>lk.TCPSocket</a></li>
+                    <li><a href='lk.Thread.html'>lk.Thread</a></li>
+                    <li><a href='lk.Timer.html'>lk.Timer</a></li>
+                    <li><a href='lk.UDPSocket.html'>lk.UDPSocket</a></li>
+                    <li><a href='lk.WebServer.html'>lk.WebServer</a></li>
+                    <li><a href='lk.crypto.html'>lk.crypto</a></li>
+                    <li><a href='lk.more.html'>lk.more</a></li>
+                    <li><a href='lk.util.html'>lk.util</a></li>
+                  </ul>
+      </div>
+    </div>
+  </div>
+
+    <footer class="footer">
+      <div class="container">
+         made with <a href='lk.Doc.html'>lk.Doc</a> 
+      </div>
+    </footer>
+
+    <!-- Placed at the end of the document so the pages load faster -->
+    <!--
+    <script src="assets/js/jquery.js"></script>
+    <script src="assets/js/bootstrap-transition.js"></script>
+    <script src="assets/js/bootstrap-alert.js"></script>
+    <script src="assets/js/bootstrap-modal.js"></script>
+    <script src="assets/js/bootstrap-dropdown.js"></script>
+    <script src="assets/js/bootstrap-scrollspy.js"></script>
+    <script src="assets/js/bootstrap-tab.js"></script>
+    <script src="assets/js/bootstrap-tooltip.js"></script>
+    <script src="assets/js/bootstrap-popover.js"></script>
+    <script src="assets/js/bootstrap-button.js"></script>
+    <script src="assets/js/bootstrap-collapse.js"></script>
+    <script src="assets/js/bootstrap-carousel.js"></script>
+    <script src="assets/js/bootstrap-typeahead.js"></script>
+    <script src="assets/js/bootstrap-affix.js"></script>
+    -->
+
+    
+    <script src='http://code.jquery.com/jquery.js'></script>
+    <script src='js/bootstrap.min.js'></script>
+  </body>
+</html>

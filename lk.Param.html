@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>lk.Param</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+  src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
+
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/docs.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class='row'>
+          <div class='span12'>
+             <a href='http://lubyk.org'><img alt='lubyk logo' src='img/lubyk.png'/> <h1>Lubyk documentation</h1></a> 
+          </div>
+        </div>
+      </div>
+    </div>
+
+  <div class="container">
+
+    <div class="row">
+
+      <div class="span2 bs-docs-sidebar local-nav">
+        <ul class="nav nav-list bs-docs-sidenav affix">
+                    <li><a href='#Param'><i class='icon-chevron-right'></i> lk.Param</a></li>
+                  </ul>
+      </div>
+
+      <div class="span7">
+
+                <section id='Param'>
+          <h2 class='section'>lk.Param</h2>
+
+                    
+                      <p class='summary'></p>
+                      <p>local i, o, p, print = lubyk()</p>
+                      <p>p { -- Declare a in/out parameter s = 0, }</p>
+                      <p>-- Declare an output o.output = { -- On connection, send current param value. connect = function() return s end, }</p>
+                      <p>-- On parameter change, send new value out. function p.s(v) o.output(v) end</p>
+                      <p>-- On input change, set param and notify value. function i.input(v) -- Set param and notify p.s = v</p>
+                      <p>-- Pass value to output o.output(v) end</p>
+                            </section>
+              </div>
+
+      <div class="span3 bs-docs-sidebar global-nav">
+        <ul class="nav nav-list bs-docs-sidenav">
+                    <li class='module'><a href='lk.html'>lk</a></li>
+                              <li><a href='_prototype.lk.Metro.html'>_prototype.lk.Metro</a></li>
+                    <li><a href='_prototype.lk.Param.html'>_prototype.lk.Param</a></li>
+                    <li><a href='_prototype.lk.Print.html'>_prototype.lk.Print</a></li>
+                  </ul>
+      </div>
+    </div>
+  </div>
+
+    <footer class="footer">
+      <div class="container">
+         made with <a href='lk.Doc.html'>lk.Doc</a> 
+      </div>
+    </footer>
+
+    <!-- Placed at the end of the document so the pages load faster -->
+    <!--
+    <script src="assets/js/jquery.js"></script>
+    <script src="assets/js/bootstrap-transition.js"></script>
+    <script src="assets/js/bootstrap-alert.js"></script>
+    <script src="assets/js/bootstrap-modal.js"></script>
+    <script src="assets/js/bootstrap-dropdown.js"></script>
+    <script src="assets/js/bootstrap-scrollspy.js"></script>
+    <script src="assets/js/bootstrap-tab.js"></script>
+    <script src="assets/js/bootstrap-tooltip.js"></script>
+    <script src="assets/js/bootstrap-popover.js"></script>
+    <script src="assets/js/bootstrap-button.js"></script>
+    <script src="assets/js/bootstrap-collapse.js"></script>
+    <script src="assets/js/bootstrap-carousel.js"></script>
+    <script src="assets/js/bootstrap-typeahead.js"></script>
+    <script src="assets/js/bootstrap-affix.js"></script>
+    -->
+
+    
+    <script src='http://code.jquery.com/jquery.js'></script>
+    <script src='js/bootstrap.min.js'></script>
+  </body>
+</html>

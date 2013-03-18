@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>lk.Node</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+  src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
+
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/docs.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class='row'>
+          <div class='span12'>
+             <a href='http://lubyk.org'><img alt='lubyk logo' src='img/lubyk.png'/> <h1>Lubyk documentation</h1></a> 
+          </div>
+        </div>
+      </div>
+    </div>
+
+  <div class="container">
+
+    <div class="row">
+
+      <div class="span2 bs-docs-sidebar local-nav">
+        <ul class="nav nav-list bs-docs-sidenav affix">
+                    <li><a href='#Node'><i class='icon-chevron-right'></i> lk.Node</a></li>
+                  </ul>
+      </div>
+
+      <div class="span7">
+
+                <section id='Node'>
+          <h2 class='section'>lk.Node</h2>
+
+                              <a name='new'></a>
+          <h4 class='method'>new <code>(k, value)</code></h4>
+          
+                      <p class='summary'></p>
+                      <p>-- node metatable local lib   = {type='lk.Node'} lib.<em></em>index = lib <a href='lk.Node.html'>lk.Node</a>     = lib</p>
+                      <p>-- node's environment metatable local env<em>mt= {} local private = {} local lubyk</em>mt = {} lubyk<em>mt.</em><em>index = lubyk</em>mt</p>
+                      <p>setmetatable(lib, { <em></em>call = function(lib, ...) return lib.new(...) end })</p>
+                      <p>local env  = {} -- new node local self = {</p>
+                      <p><pre class='prettyprint lang-lua'>-- Find inlet by name. Inlets not in slots.inlets are removed on GC.
+-- Do not change this field name: it is used by editor.Node.
+inlets  = setmetatable({}, {__mode = 'v'}),
+-- Find outlet by name. Outlets not in slots.outlets are removed on GC.
+-- Do not change this field name: it is used by editor.Node.
+outlets = setmetatable({}, {__mode = 'v'}),
+-- GC protection of inlets and outlets. Here the slots are ordered.
+slots = {
+  inlets  = {},
+  outlets = {},
+},
+accessors = {},
+env       = env,
+errors    = {},
+name      = name,
+process   = process,</pre></p>
+                      <p>} setmetatable(self, lib)</p>
+                      <p>-- Table to declare and access outlets self.outlet_method = lk.OutletMethod(self)</p>
+                      <p>-- env has read access to <em>G setmetatable(env, env</em>mt) env.lubyk = setmetatable({</p>
+                      <p><pre class='prettyprint lang-lua'>-- Table to declare inlets.
+i = lk.InletMethod(self),
+-- Table to declare and access outlets.
+o = self.outlet_method,
+-- Table to declare and access parameters.
+p = lk.ParamMethod(self),
+-- Print to remote GUI
+print = function(...) self:log('info', ...) end,
+-- Log error or warning to GUI
+log = function(...) self:log(...) end,
+
+-- PRIVATE
+_node = self,</pre></p>
+                      <p>}, lubyk_mt)</p>
+                      <p>process.nodes[name] = self -- pending connection resolution self.pending<em>inlets = process.pending</em>nodes[name] or {} process.pending<em>nodes[name] = nil if code</em>str then</p>
+                      <p><pre class='prettyprint lang-lua'>self:eval(code_str)</pre></p>
+                      <p>end return self end</p>
+                      <p>-- metatable for the new global env in each -- node function env<em>mt.</em><em>index(env, name) -- if the variable exists in original </em>G, -- cache locally local gvar = _G[name] rawset(env, name, gvar) return gvar end</p>
+                      <p>if self.parent then</p>
+                      <p><pre class='prettyprint lang-lua'>return self.parent:url() .. '/' .. self.name</pre></p>
+                      <p>else</p>
+                      <p><pre class='prettyprint lang-lua'>return self.process:url() .. '/' .. self.name</pre></p>
+                      <p>end end</p>
+                      <p>-- function to reload code local code, err = loadstring(code_str, self:url()) if not code then</p>
+                      <p><pre class='prettyprint lang-lua'>self:error(err)
+return</pre></p>
+                      <p>end</p>
+                      <p>-- In case of error, we rollback local old_slots = self.slots</p>
+                      <p>-- Reset list of GC protected slots. self.slots = {</p>
+                      <p><pre class='prettyprint lang-lua'>inlets  = {},
+outlets = {},</pre></p>
+                      <p>}</p>
+                      <p>-- Clear cached outlet functions self.outlet_method:clear()</p>
+                      <p>local old_accessors = self.accessors self.accessors = {}</p>
+                      <p>-- code will execute in node's environment setfenv(code, self.env) -- We use sched pcall to enable yield during code eval (to -- launch mimas for example). local ok, err = sched:pcall(code) if not ok then</p>
+                      <p><pre class='prettyprint lang-lua'>self.slots = old_slots
+self.accessors = old_accessors
+self:error(err)</pre></p>
+                      <p>else</p>
+                      <p><pre class='prettyprint lang-lua'>self:log('info', 'Script OK')
+self.code = code_str
+-- Unused inlets and outlets will be collected by the GC.</pre></p>
+                      <p>end self.process.need_cleanup = true end</p>
+                      <p>if definition.code and definition.code ~= self.code then</p>
+                      <p><pre class='prettyprint lang-lua'>self:eval(definition.code)</pre></p>
+                      <p>elseif definition.class then</p>
+                      <p><pre class='prettyprint lang-lua'>local code = self.process:findClass(definition.class)
+
+if code then
+  -- Once the prototype is resolved, we remove 'class' information.
+  definition.class = nil
+  definition.code  = code
+  self:eval(code)
+else
+  -- FIXME: set error on Node
+  error(string.format("Could not find source code for '%s'.", self:url()))
+end</pre></p>
+                      <p>elseif not self.code then</p>
+                      <p><pre class='prettyprint lang-lua'>-- Try to find code
+local code = self.process:findCode(self:url() .. '.lua' )
+if code then
+  self:eval(code)
+else
+  -- FIXME: set error on Node
+  error(string.format("Could not find source code for '%s'.", self:url()))
+end</pre></p>
+                      <p>end</p>
+                      <p>for k, v in pairs(definition) do</p>
+                      <p><pre class='prettyprint lang-lua'>if k == '_' then
+  -- load params after evaluating script code (so that
+  -- allowed params and inlets are defined).
+  local params = definition._
+  if params then
+    self:setParams(params)
+  end
+elseif k == 'source' or
+       k == 'links' then
+  -- ignore (we want to run these in a specific order)
+else
+  self[k] = v
+end</pre></p>
+                      <p>end</p>
+                      <p>if not ignore_links then</p>
+                      <p><pre class='prettyprint lang-lua'>local links = definition.links
+if links then
+  self:setLinks(links)
+end</pre></p>
+                      <p>end end</p>
+                      <p>self:log('error', ...) end</p>
+                      <p>local fmt = string.format local all = {...} local f = all[1] local msg = '' if type(f) == 'table' then</p>
+                      <p><pre class='prettyprint lang-lua'>if f.__tostring then
+  msg = tostring(f)
+else
+  msg = tostring(f)
+end</pre></p>
+                      <p>elseif <a href='#all'>all</a> > 1 then</p>
+                      <p><pre class='prettyprint lang-lua'>for i, v in ipairs(all) do
+  if i == 1 then
+    msg = tostring(v)
+  else
+    msg = msg .. '\t'..tostring(v)
+  end
+end</pre></p>
+                      <p>else</p>
+                      <p><pre class='prettyprint lang-lua'>msg = tostring(f)</pre></p>
+                      <p>end   self.process:notify {</p>
+                      <p><pre class='prettyprint lang-lua'>log = {
+  url = self:url(),
+  msg = msg,
+  typ = typ,
+}</pre></p>
+                      <p>} end</p>
+                      <p>if string.match(url, '^/') then</p>
+                      <p><pre class='prettyprint lang-lua'>return url</pre></p>
+                      <p>else</p>
+                      <p><pre class='prettyprint lang-lua'>return (self.parent or self.process):url() .. '/' .. url</pre></p>
+                      <p>end end</p>
+                      <p>function private:setLink(out<em>name, target</em>url, process) local outlet = self.outlets[out_name] if not outlet then</p>
+                      <p><pre class='prettyprint lang-lua'>self:error(string.format("Outlet name '%s' does not exist.", out_name))</pre></p>
+                      <p>else</p>
+                      <p><pre class='prettyprint lang-lua'>local slot, err = process:get(target_url, lk.Inlet)
+if slot == false then
+  -- error
+  self:error(err)
+elseif not slot then
+  -- slot not found
+  -- If the slot does not exist yet, make a draft to be used
+  -- when the node creates the real inlet.
+  slot, err = process:pendingInlet(target_url)
+  if not slot then
+    -- FIXME: store absolute path for 'target_url' in process pending list
+    -- and resolve this list on node creation
+    self:error(err)
+    return
+  end
+end
+-- connect to real or pending slot
+outlet:connect(slot)</pre></p>
+                      <p>end end</p>
+                      <p>function private:removeLink(out<em>name, target</em>url) print('REMOVE<em>LINK', out</em>name, target<em>url) local outlet = self.outlets[out</em>name] if outlet then</p>
+                      <p><pre class='prettyprint lang-lua'>outlet:disconnect(target_url)</pre></p>
+                      <p>end end</p>
+                      <p>local process = self.process for out<em>name, links in pairs(all</em>links) do</p>
+                      <p><pre class='prettyprint lang-lua'>if type(links) == 'string' then
+  private.setLink(self, out_name, links, process)
+else
+  for target_url, link_def in pairs(links) do
+    if link_def then
+      private.setLink(self, out_name, target_url, process)
+    else
+      private.removeLink(self, out_name, target_url)
+    end
+  end
+end</pre></p>
+                      <p>end end</p>
+                      <p>local function dumpSlots(list, links) local res = {} for _,slot in ipairs(list) do</p>
+                      <p><pre class='prettyprint lang-lua'>table.insert(res, slot:dump(links))</pre></p>
+                      <p>end return res end</p>
+                      <p>return {</p>
+                      <p><pre class='prettyprint lang-lua'>name = self.name,
+hue  = self.hue,
+x    = self.x,
+y    = self.y,
+code = self.code,
+--- Params
+_    = private.dumpParams(self, true),
+inlets  = dumpSlots(self.slots.inlets),
+outlets = dumpSlots(self.slots.outlets),</pre></p>
+                      <p>} end</p>
+                      <p>local res = {} for k, v in pairs(data) do</p>
+                      <p><pre class='prettyprint lang-lua'>if k == '_' then
+  res[k] = private.dumpParams(self, v)
+elseif k ~= 'inlets' and k ~= 'outlets' and k ~= 'name' then
+  -- 'inlets' and 'outlets' should never be in the data
+  res[k] = self[k]
+end</pre></p>
+                      <p>end</p>
+                      <p>if data.code or data.links then</p>
+                      <p><pre class='prettyprint lang-lua'>-- code changes can alter slots: dump them
+
+res.has_all_slots = true
+res.inlets  = dumpSlots(self.slots.inlets)
+res.outlets = dumpSlots(self.slots.outlets, data.links)
+res._       = private.dumpParams(self, true)</pre></p>
+                      <p>end return res end</p>
+                      <p>--- Node has been removed from patch, remove links and gc. -- self.fin = lk.Finalizer(function() --   print('<strong></strong><strong></strong><strong></strong><strong></strong><strong></strong><strong></strong><strong></strong><strong></strong><strong></strong>* DELETED', self.name) -- end) -- Disconnect all links for _, outlet in ipairs(self.slots.outlets) do</p>
+                      <p><pre class='prettyprint lang-lua'>outlet:disconnectAll()</pre></p>
+                      <p>end -- Remove from notification center self.process:onNotify(self, nil) self.env = nil self.process.need_cleanup = true end</p>
+                      <p>local defaults = {} self.defaults = defaults local env = self.env local accessors = self.accessors for k, v in pairs(hash) do</p>
+                      <p><pre class='prettyprint lang-lua'>if type(k) ~= 'string' then
+  self:error("Default keys must be strings.")
+end
+if type(v) == 'table' then
+  -- Transform foo = {x = 3} to
+  -- 'foo.x' =&gt; accessor
+  local base = env[k]
+  if not base then
+    base = {}
+    env[k] = base
+  end
+  -- Only one level deep.
+  for sk, sv in pairs(v) do
+    if type(sk) ~= 'string' then
+      self:error(string.format("Default in '%s' must be a string.", k))
+    end
+    local pname = k .. '.' .. sk
+    if not accessors[pname] then
+      accessors[pname] = function(value)
+        -- This is executed during setParams.
+        local rbase = env[k]
+        if rbase then
+          rbase[sk] = value
+          -- So that param dump sees this value.
+          env._pdump[pname] = rbase[sk]
+        end
+        local recv = accessors[k]
+        if recv then
+          recv(rbase)
+        end
+      end
+    end
+    -- This is done just once to set default values.
+    defaults[pname] = sv
+    env[pname] = sv
+    if base[sk] == nil then
+      base[sk] = sv
+    end
+  end
+else
+  defaults[k] = v
+  if env[k] == nil then
+    -- Do not overwrite current values on script reload.
+    env[k] = v
+    local recv = accessors[k]
+    if recv then
+      recv(v)
+    end
+  end
+end</pre></p>
+                      <p>end end</p>
+                      <p>local p<em>node, p</em>params = {}, {}</p>
+                      <p>local function doSetParams() local self, params = p<em>node, p</em>params -- Prepare for partial dump local pdump    = {} self.pdump     = pdump self.pdump<em>params = params local env      = self.env -- Special pos.x accessors need to register -- set value in pdump directly. env.</em>pdump     = pdump local accessors= self.accessors local defaults = self.defaults or {} if params == true then</p>
+                      <p><pre class='prettyprint lang-lua'>-- Query asked for a dump of the params.
+pdump = defaults</pre></p>
+                      <p>else</p>
+                      <p><pre class='prettyprint lang-lua'>for k, value in pairs(params) do
+  if not defaults[k] then
+    -- Error notification: Invalid param.
+    self:error(string.format("Trying to set invalid parameter '%s'.", k))
+  else
+    env[k] = value
+    local recv = accessors[k]
+    if recv then
+      recv(value)
+      -- 'receive' might set _pdump directly
+      pdump[k] = pdump[k] or env[k]
+    else
+      pdump[k] = value
+    end
+  end
+end</pre></p>
+                      <p>end -- Call 'param.changed' function in env if -- it exists. local func = accessors.changed if func then</p>
+                      <p><pre class='prettyprint lang-lua'>func(params)</pre></p>
+                      <p>end end</p>
+                      <p>--- Receive control events: update setting. p<em>node, p</em>params = self, params local ok, err = pcall(doSetParams) if not ok then</p>
+                      <p><pre class='prettyprint lang-lua'>p_node:error(err)</pre></p>
+                      <p>end end</p>
+                      <p>--- Receive a single param change from a source inside the process so -- we need to notify. local defaults  = self.defaults or {} local accessors = self.accessors if not defaults[k] then</p>
+                      <p><pre class='prettyprint lang-lua'>-- Error notification: Invalid param.
+self:error(string.format("Trying to set invalid parameter '%s'.", k))</pre></p>
+                      <p>else</p>
+                      <p><pre class='prettyprint lang-lua'>self.env[k] = value
+local recv = accessors[k]
+if recv then
+  recv(value)
+end
+-- Call 'param.changed' function in env if
+-- it exists.
+local func = accessors.changed
+if func then
+  func({k = value})
+end</pre></p>
+                      <p>end self.process:notify {</p>
+                      <p><pre class='prettyprint lang-lua'>-- YUCK ! FIXME: Why don't we use an alternative messaging method with
+-- string urls: notify('/foo/bar/_/baz', value) ?
+nodes = {
+  [self.name] = {
+    _ = {[k] = value},
+  },
+},</pre></p>
+                      <p>} end</p>
+                      <p>function private:dumpParams(params) if params == self.pdump_params then</p>
+                      <p><pre class='prettyprint lang-lua'>-- Optimization, send partial dump back.
+return self.pdump</pre></p>
+                      <p>else</p>
+                      <p><pre class='prettyprint lang-lua'>local defaults = self.defaults
+if defaults then
+  local env = self.env
+  local res = {}
+  if params == true then
+    -- Dump all
+    for k, _ in pairs(defaults) do
+      res[k] = env[k]
+    end
+  else
+    for k, _ in pairs(params) do
+      -- Invalid param ?
+      if not defaults[k] then
+        -- Mark as invalid
+        res[k] = {}
+      else
+        res[k] = env[k]
+      end
+    end
+  end
+  return res
+else 
+  return nil
+end</pre></p>
+                      <p>end end</p>
+                      <p>-- lubyk() function lubyk<em>mt:</em>_call() return self.i, self.o, self.p, self.print end</p>
+                      <p>function lubyk<em>mt:setParam(...) self.</em>node.process:setParam(self, ...) end</p>
+                      <p>function lubyk_mt:info() return {</p>
+                      <p><pre class='prettyprint lang-lua'>name = self.node.name,
+url = self.node:url(),</pre></p>
+                      <p>} end</p>
+                      <p>-- register a function that should be called if there is a -- notification function lubyk<em>mt:onNotify(callback) self.</em>node.process:onNotify(self.node, callback) end</p>
+                      <p>lib.DEFAULT_CODE = [=[ --[[------------------------------------------------------</p>
+                      <p>h1. TITLE</p>
+                      <p>DESCRIPTION</p>
+                            </section>
+              </div>
+
+      <div class="span3 bs-docs-sidebar global-nav">
+        <ul class="nav nav-list bs-docs-sidenav">
+                    <li class='module'><a href='lk.html'>lk</a></li>
+                              <li><a href='lk.Client.html'>lk.Client</a></li>
+                    <li><a href='lk.Command.html'>lk.Command</a></li>
+                    <li><a href='lk.DavMorph.html'>lk.DavMorph</a></li>
+                    <li><a href='lk.DavServer.html'>lk.DavServer</a></li>
+                    <li><a href='lk.Debug.html'>lk.Debug</a></li>
+                    <li><a href='lk.Dir.html'>lk.Dir</a></li>
+                    <li><a href='lk.Doc.html'>lk.Doc</a></li>
+                    <li><a href='lk.Environment.html'>lk.Environment</a></li>
+                    <li><a href='lk.FileResource.html'>lk.FileResource</a></li>
+                    <li><a href='lk.Inlet.html'>lk.Inlet</a></li>
+                    <li><a href='lk.InletMethod.html'>lk.InletMethod</a></li>
+                    <li><a href='lk.Lubyk.html'>lk.Lubyk</a></li>
+                    <li><a href='lk.Morph.html'>lk.Morph</a></li>
+                    <li class='active'><a href='lk.Node.html'>lk.Node</a></li>
+                    <li><a href='lk.Observer.html'>lk.Observer</a></li>
+                    <li><a href='lk.Outlet.html'>lk.Outlet</a></li>
+                    <li><a href='lk.OutletMethod.html'>lk.OutletMethod</a></li>
+                    <li><a href='lk.ParamMethod.html'>lk.ParamMethod</a></li>
+                    <li><a href='lk.Patch.html'>lk.Patch</a></li>
+                    <li><a href='lk.Process.html'>lk.Process</a></li>
+                    <li><a href='lk.ProcessWatch.html'>lk.ProcessWatch</a></li>
+                    <li><a href='lk.Properties.html'>lk.Properties</a></li>
+                    <li><a href='lk.RemoteProcess.html'>lk.RemoteProcess</a></li>
+                    <li><a href='lk.Scheduler.html'>lk.Scheduler</a></li>
+                    <li><a href='lk.SelectCallback.html'>lk.SelectCallback</a></li>
+                    <li><a href='lk.Service.html'>lk.Service</a></li>
+                    <li><a href='lk.ServiceBrowser.html'>lk.ServiceBrowser</a></li>
+                    <li><a href='lk.Settings.html'>lk.Settings</a></li>
+                    <li><a href='lk.Socket.html'>lk.Socket</a></li>
+                    <li><a href='lk.Socket2.html'>lk.Socket2</a></li>
+                    <li><a href='lk.StemCell.html'>lk.StemCell</a></li>
+                    <li><a href='lk.SubClass.html'>lk.SubClass</a></li>
+                    <li><a href='lk.TCPSocket.html'>lk.TCPSocket</a></li>
+                    <li><a href='lk.Thread.html'>lk.Thread</a></li>
+                    <li><a href='lk.Timer.html'>lk.Timer</a></li>
+                    <li><a href='lk.UDPSocket.html'>lk.UDPSocket</a></li>
+                    <li><a href='lk.WebServer.html'>lk.WebServer</a></li>
+                    <li><a href='lk.crypto.html'>lk.crypto</a></li>
+                    <li><a href='lk.more.html'>lk.more</a></li>
+                    <li><a href='lk.util.html'>lk.util</a></li>
+                  </ul>
+      </div>
+    </div>
+  </div>
+
+    <footer class="footer">
+      <div class="container">
+         made with <a href='lk.Doc.html'>lk.Doc</a> 
+      </div>
+    </footer>
+
+    <!-- Placed at the end of the document so the pages load faster -->
+    <!--
+    <script src="assets/js/jquery.js"></script>
+    <script src="assets/js/bootstrap-transition.js"></script>
+    <script src="assets/js/bootstrap-alert.js"></script>
+    <script src="assets/js/bootstrap-modal.js"></script>
+    <script src="assets/js/bootstrap-dropdown.js"></script>
+    <script src="assets/js/bootstrap-scrollspy.js"></script>
+    <script src="assets/js/bootstrap-tab.js"></script>
+    <script src="assets/js/bootstrap-tooltip.js"></script>
+    <script src="assets/js/bootstrap-popover.js"></script>
+    <script src="assets/js/bootstrap-button.js"></script>
+    <script src="assets/js/bootstrap-collapse.js"></script>
+    <script src="assets/js/bootstrap-carousel.js"></script>
+    <script src="assets/js/bootstrap-typeahead.js"></script>
+    <script src="assets/js/bootstrap-affix.js"></script>
+    -->
+
+    
+    <script src='http://code.jquery.com/jquery.js'></script>
+    <script src='js/bootstrap.min.js'></script>
+  </body>
+</html>
