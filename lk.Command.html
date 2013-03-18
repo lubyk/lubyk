@@ -8,25 +8,6 @@
     <meta name="author" content="">
 
 
-    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
-
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-        config: ["MMLorHTML.js"],
-        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
-        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
-        TeX: {
-          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
-        },
-        menuSettings: {
-          zoom: "Hover",
-          mpContext: true,
-          mpMouse: true
-        },
-      });
-    </script>
-    <script type="text/javascript"
-  src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
 
     <link href="css/bootstrap.css" rel="stylesheet">
     <link href="css/bootstrap-responsive.css" rel="stylesheet">
@@ -44,35 +25,35 @@
       </div>
     </div>
 
-  <div class="container">
+    <div class="container">
 
-    <div class="row">
+      <div class="row">
 
-      <div class="span2 bs-docs-sidebar local-nav">
-        <ul class="nav nav-list bs-docs-sidenav affix">
-                    <li><a href='#Command'><i class='icon-chevron-right'></i> lk.Command</a></li>
-                  </ul>
-      </div>
+        <div class='span3'>
+          <ul class='nav nav-tabs nav-stacked local-nav affix'>
+                        <li><a href='#Command'><i class='icon-chevron-right'></i> lk.Command</a></li>
+                      </ul>
+        </div>
 
-      <div class="span7">
+        <div class="span7">
 
-                <section id='Command'>
+                    <section id='Command'>
           <h2 class='section'>lk.Command</h2>
 
                               <a name='processDisconnected'></a>
           <h4 class='method'><span>:</span>processDisconnected <code>(process)</code></h4>
           
-                      <p class='summary'></p>
-                      <p>local lib     = {type='lk.Command'} lib.<em></em>index   = lib <a href='lk.Command.html'>lk.Command</a>    = lib local private = {}</p>
-                      <p>--private local getTarget</p>
-                      <p>setmetatable(lib, { -- new method <em></em>call = function(lib, url, ...)</p>
-                      <p>local self = {</p>
-                      <p><pre class='prettyprint lang-lua'>processes = {},
+                    <p class='summary'></p>
+                    <p>local lib     = {type='lk.Command'} lib.<em></em>index   = lib <a href='lk.Command.html'>lk.Command</a>    = lib local private = {}</p>
+                    <p>--private local getTarget</p>
+                    <p>setmetatable(lib, { -- new method <em></em>call = function(lib, url, ...)</p>
+                    <p>local self = {</p>
+                    <p><pre class='prettyprint lang-lua'>processes = {},
 -- private flag to find more processes
 find_more = true,</pre></p>
-                      <p>} setmetatable(self, lib)</p>
-                      <p>if url then</p>
-                      <p><pre class='prettyprint lang-lua'>url = private.specialCommand(self, url, ...)
+                    <p>} setmetatable(self, lib)</p>
+                    <p>if url then</p>
+                    <p><pre class='prettyprint lang-lua'>url = private.specialCommand(self, url, ...)
 if not url then
   -- done
 else
@@ -80,9 +61,9 @@ else
   self.target = target
   self.cmd = {cmd, ...}
 end</pre></p>
-                      <p>end</p>
-                      <p>self.thread = lk.Thread(function()</p>
-                      <p><pre class='prettyprint lang-lua'>if self.find_more then
+                    <p>end</p>
+                    <p>self.thread = lk.Thread(function()</p>
+                    <p><pre class='prettyprint lang-lua'>if self.find_more then
   self.process_watch = lk.ProcessWatch():addDelegate(self)
   while self.find_more do
     self.find_more = nil
@@ -95,141 +76,144 @@ end</pre></p>
 end
 
 self.thread = nil</pre></p>
-                      <p>end)</p>
-                      <p>return self end})</p>
-                      <p>function getTarget(url) return string.match(url, '^/([^/]<strong>)(.</strong>)$') end</p>
-                      <p>-- TODO: Transform this to a command line that we could use to do everything that -- we can do with the GUI. -- -- For now simply enable the "-e" (exec) mode with the command to halt all local processes related to -- lubyk: -- > lubyk --zone default '/<strong>/lk/quit' -- Which is the same as -- > lubyk --zone default quit -- Or (by using .lubykrc for default zone) -- > lubyk quit -- -- To stop only process "a" -- > lubyk --zone default /a/lk/quit -- > lubyk --zone default quit a -- -- Command format: -- /[URL] {arg, ...} -- -- CMD {target (default=</strong>)} {arg, ...} -- == -- /target/lk/CMD {arg, ...} local target<em>name, cmd = getTarget(url) if target</em>name == '*' then</p>
-                      <p><pre class='prettyprint lang-lua'>for _, process in pairs(self.processes) do
+                    <p>end)</p>
+                    <p>return self end})</p>
+                    <p>function getTarget(url) return string.match(url, '^/([^/]<strong>)(.</strong>)$') end</p>
+                    <p>-- TODO: Transform this to a command line that we could use to do everything that -- we can do with the GUI. -- -- For now simply enable the "-e" (exec) mode with the command to halt all local processes related to -- lubyk: -- > lubyk --zone default '/<strong>/lk/quit' -- Which is the same as -- > lubyk --zone default quit -- Or (by using .lubykrc for default zone) -- > lubyk quit -- -- To stop only process "a" -- > lubyk --zone default /a/lk/quit -- > lubyk --zone default quit a -- -- Command format: -- /[URL] {arg, ...} -- -- CMD {target (default=</strong>)} {arg, ...} -- == -- /target/lk/CMD {arg, ...} local target<em>name, cmd = getTarget(url) if target</em>name == '*' then</p>
+                    <p><pre class='prettyprint lang-lua'>for _, process in pairs(self.processes) do
   private.runCmd(self, process, cmd, ...)
 end</pre></p>
-                      <p>elseif target_name then</p>
-                      <p><pre class='prettyprint lang-lua'>local process = self.processes[target_name]
+                    <p>elseif target_name then</p>
+                    <p><pre class='prettyprint lang-lua'>local process = self.processes[target_name]
 if process then
   private.runCmd(self, process, cmd, ...)
 else
   print(string.format("Process '%s' not found.", target_name))
 end</pre></p>
-                      <p>else</p>
-                      <p><pre class='prettyprint lang-lua'>print(string.format("Bad url '%s' (could not find process name).", url))</pre></p>
-                      <p>end end</p>
-                      <p>--================================================== <a href='lk.ProcessWatch.html'>lk.ProcessWatch</a> delegate</p>
-                      <p>self.find_more = true self.processes[process.name] = process if process.name == self.target or self.target == '*' then</p>
-                      <p><pre class='prettyprint lang-lua'>private.runCmd(self, process, unpack(self.cmd))
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>print(string.format("Bad url '%s' (could not find process name).", url))</pre></p>
+                    <p>end end</p>
+                    <p>--================================================== <a href='lk.ProcessWatch.html'>lk.ProcessWatch</a> delegate</p>
+                    <p>self.find_more = true self.processes[process.name] = process if process.name == self.target or self.target == '*' then</p>
+                    <p><pre class='prettyprint lang-lua'>private.runCmd(self, process, unpack(self.cmd))
 self.abort = self.target == process.name</pre></p>
-                      <p>end end</p>
-                      <p>self.processes[process.name] = nil end</p>
-                      <p>--=============================================== PRIVATE</p>
-                      <p>function private:specialCommand(cmd, ...) if cmd == '--test' then</p>
-                      <p><pre class='prettyprint lang-lua'>local all = test.all
+                    <p>end end</p>
+                    <p>self.processes[process.name] = nil end</p>
+                    <p>--=============================================== PRIVATE</p>
+                    <p>function private:specialCommand(cmd, ...) if cmd == '--test' then</p>
+                    <p><pre class='prettyprint lang-lua'>local all = test.all
 test.all = function() end -- dummy
 test.loadAll(...)
 all()
 return nil</pre></p>
-                      <p>elseif cmd == '--debug' then</p>
-                      <p><pre class='prettyprint lang-lua'>remdebug.controller()</pre></p>
-                      <p>elseif cmd == '--testInstall' then</p>
-                      <p><pre class='prettyprint lang-lua'>app = mimas.Application()
+                    <p>elseif cmd == '--debug' then</p>
+                    <p><pre class='prettyprint lang-lua'>remdebug.controller()</pre></p>
+                    <p>elseif cmd == '--testInstall' then</p>
+                    <p><pre class='prettyprint lang-lua'>app = mimas.Application()
 dlg = editor.SimpleDialog {
   message = 'Lubyk works!',</pre></p>
-                      <p>--      cancel = 'Test more',</p>
-                      <p><pre class='prettyprint lang-lua'>  ok = 'Ok',
+                    <p>--      cancel = 'Test more',</p>
+                    <p><pre class='prettyprint lang-lua'>  ok = 'Ok',
 }
 function dlg.ok()
   dlg:close()
   self.find_more = false
 end</pre></p>
-                      <p>--    function dlg.cancel() --      self:specialCommand('--test') --    end</p>
-                      <p><pre class='prettyprint lang-lua'>dlg:resize(200,200)
+                    <p>--    function dlg.cancel() --      self:specialCommand('--test') --    end</p>
+                    <p><pre class='prettyprint lang-lua'>dlg:resize(200,200)
 dlg:move(10, 10)
 dlg:show()
 app:exec()
 return nil</pre></p>
-                      <p>elseif cmd == 'halt' then</p>
-                      <p><pre class='prettyprint lang-lua'>return '/*/lk/quit'</pre></p>
-                      <p>elseif cmd == 'start' then</p>
-                      <p><pre class='prettyprint lang-lua'>morph = lk.DavMorph(...)
+                    <p>elseif cmd == 'halt' then</p>
+                    <p><pre class='prettyprint lang-lua'>return '/*/lk/quit'</pre></p>
+                    <p>elseif cmd == 'start' then</p>
+                    <p><pre class='prettyprint lang-lua'>morph = lk.DavMorph(...)
 run()
 return nil</pre></p>
-                      <p>else</p>
-                      <p><pre class='prettyprint lang-lua'>return cmd</pre></p>
-                      <p>end end</p>
-                            </section>
-              </div>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>return cmd</pre></p>
+                    <p>end end</p>
+                              </section>
+                  </div>
 
-      <div class="span3 bs-docs-sidebar global-nav">
-        <ul class="nav nav-list bs-docs-sidenav">
-                    <li class='module'><a href='lk.html'>lk</a></li>
-                              <li><a href='lk.Client.html'>lk.Client</a></li>
-                    <li class='active'><a href='lk.Command.html'>lk.Command</a></li>
-                    <li><a href='lk.DavMorph.html'>lk.DavMorph</a></li>
-                    <li><a href='lk.DavServer.html'>lk.DavServer</a></li>
-                    <li><a href='lk.Debug.html'>lk.Debug</a></li>
-                    <li><a href='lk.Dir.html'>lk.Dir</a></li>
-                    <li><a href='lk.Doc.html'>lk.Doc</a></li>
-                    <li><a href='lk.Environment.html'>lk.Environment</a></li>
-                    <li><a href='lk.FileResource.html'>lk.FileResource</a></li>
-                    <li><a href='lk.Inlet.html'>lk.Inlet</a></li>
-                    <li><a href='lk.InletMethod.html'>lk.InletMethod</a></li>
-                    <li><a href='lk.Lubyk.html'>lk.Lubyk</a></li>
-                    <li><a href='lk.Morph.html'>lk.Morph</a></li>
-                    <li><a href='lk.Node.html'>lk.Node</a></li>
-                    <li><a href='lk.Observer.html'>lk.Observer</a></li>
-                    <li><a href='lk.Outlet.html'>lk.Outlet</a></li>
-                    <li><a href='lk.OutletMethod.html'>lk.OutletMethod</a></li>
-                    <li><a href='lk.ParamMethod.html'>lk.ParamMethod</a></li>
-                    <li><a href='lk.Patch.html'>lk.Patch</a></li>
-                    <li><a href='lk.Process.html'>lk.Process</a></li>
-                    <li><a href='lk.ProcessWatch.html'>lk.ProcessWatch</a></li>
-                    <li><a href='lk.Properties.html'>lk.Properties</a></li>
-                    <li><a href='lk.RemoteProcess.html'>lk.RemoteProcess</a></li>
-                    <li><a href='lk.Scheduler.html'>lk.Scheduler</a></li>
-                    <li><a href='lk.SelectCallback.html'>lk.SelectCallback</a></li>
-                    <li><a href='lk.Service.html'>lk.Service</a></li>
-                    <li><a href='lk.ServiceBrowser.html'>lk.ServiceBrowser</a></li>
-                    <li><a href='lk.Settings.html'>lk.Settings</a></li>
-                    <li><a href='lk.Socket.html'>lk.Socket</a></li>
-                    <li><a href='lk.Socket2.html'>lk.Socket2</a></li>
-                    <li><a href='lk.StemCell.html'>lk.StemCell</a></li>
-                    <li><a href='lk.SubClass.html'>lk.SubClass</a></li>
-                    <li><a href='lk.TCPSocket.html'>lk.TCPSocket</a></li>
-                    <li><a href='lk.Thread.html'>lk.Thread</a></li>
-                    <li><a href='lk.Timer.html'>lk.Timer</a></li>
-                    <li><a href='lk.UDPSocket.html'>lk.UDPSocket</a></li>
-                    <li><a href='lk.WebServer.html'>lk.WebServer</a></li>
-                    <li><a href='lk.crypto.html'>lk.crypto</a></li>
-                    <li><a href='lk.more.html'>lk.more</a></li>
-                    <li><a href='lk.util.html'>lk.util</a></li>
-                  </ul>
+        <div class='span2'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='lk.html'>lk</a></li>
+                                    <li><a href='lk.Client.html'>lk.Client</a></li>
+                        <li class='active'><a href='lk.Command.html'>lk.Command</a></li>
+                        <li><a href='lk.DavMorph.html'>lk.DavMorph</a></li>
+                        <li><a href='lk.DavServer.html'>lk.DavServer</a></li>
+                        <li><a href='lk.Debug.html'>lk.Debug</a></li>
+                        <li><a href='lk.Dir.html'>lk.Dir</a></li>
+                        <li><a href='lk.Doc.html'>lk.Doc</a></li>
+                        <li><a href='lk.Environment.html'>lk.Environment</a></li>
+                        <li><a href='lk.FileResource.html'>lk.FileResource</a></li>
+                        <li><a href='lk.Finalizer.html'>lk.Finalizer</a></li>
+                        <li><a href='lk.Inlet.html'>lk.Inlet</a></li>
+                        <li><a href='lk.InletMethod.html'>lk.InletMethod</a></li>
+                        <li><a href='lk.Lubyk.html'>lk.Lubyk</a></li>
+                        <li><a href='lk.Morph.html'>lk.Morph</a></li>
+                        <li><a href='lk.Node.html'>lk.Node</a></li>
+                        <li><a href='lk.Observer.html'>lk.Observer</a></li>
+                        <li><a href='lk.Outlet.html'>lk.Outlet</a></li>
+                        <li><a href='lk.OutletMethod.html'>lk.OutletMethod</a></li>
+                        <li><a href='lk.ParamMethod.html'>lk.ParamMethod</a></li>
+                        <li><a href='lk.Patch.html'>lk.Patch</a></li>
+                        <li><a href='lk.Process.html'>lk.Process</a></li>
+                        <li><a href='lk.ProcessWatch.html'>lk.ProcessWatch</a></li>
+                        <li><a href='lk.Properties.html'>lk.Properties</a></li>
+                        <li><a href='lk.RemoteProcess.html'>lk.RemoteProcess</a></li>
+                        <li><a href='lk.Scheduler.html'>lk.Scheduler</a></li>
+                        <li><a href='lk.SelectCallback.html'>lk.SelectCallback</a></li>
+                        <li><a href='lk.Service.html'>lk.Service</a></li>
+                        <li><a href='lk.ServiceBrowser.html'>lk.ServiceBrowser</a></li>
+                        <li><a href='lk.Settings.html'>lk.Settings</a></li>
+                        <li><a href='lk.Socket.html'>lk.Socket</a></li>
+                        <li><a href='lk.Socket2.html'>lk.Socket2</a></li>
+                        <li><a href='lk.StemCell.html'>lk.StemCell</a></li>
+                        <li><a href='lk.SubClass.html'>lk.SubClass</a></li>
+                        <li><a href='lk.TCPSocket.html'>lk.TCPSocket</a></li>
+                        <li><a href='lk.Thread.html'>lk.Thread</a></li>
+                        <li><a href='lk.TimeRef.html'>lk.TimeRef</a></li>
+                        <li><a href='lk.Timer.html'>lk.Timer</a></li>
+                        <li><a href='lk.UDPSocket.html'>lk.UDPSocket</a></li>
+                        <li><a href='lk.WebServer.html'>lk.WebServer</a></li>
+                        <li><a href='lk.core.html'>lk.core</a></li>
+                        <li><a href='lk.crypto.html'>lk.crypto</a></li>
+                        <li><a href='lk.more.html'>lk.more</a></li>
+                        <li><a href='lk.util.html'>lk.util</a></li>
+                      </ul>
+        </div>
       </div>
     </div>
-  </div>
 
     <footer class="footer">
-      <div class="container">
-         made with <a href='lk.Doc.html'>lk.Doc</a> 
-      </div>
+    <div class="container">
+       made with <a href='http://doc.lubyk.org/lk.Doc.html'>lk.Doc</a> 
+    </div>
     </footer>
 
-    <!-- Placed at the end of the document so the pages load faster -->
-    <!--
-    <script src="assets/js/jquery.js"></script>
-    <script src="assets/js/bootstrap-transition.js"></script>
-    <script src="assets/js/bootstrap-alert.js"></script>
-    <script src="assets/js/bootstrap-modal.js"></script>
-    <script src="assets/js/bootstrap-dropdown.js"></script>
-    <script src="assets/js/bootstrap-scrollspy.js"></script>
-    <script src="assets/js/bootstrap-tab.js"></script>
-    <script src="assets/js/bootstrap-tooltip.js"></script>
-    <script src="assets/js/bootstrap-popover.js"></script>
-    <script src="assets/js/bootstrap-button.js"></script>
-    <script src="assets/js/bootstrap-collapse.js"></script>
-    <script src="assets/js/bootstrap-carousel.js"></script>
-    <script src="assets/js/bootstrap-typeahead.js"></script>
-    <script src="assets/js/bootstrap-affix.js"></script>
-    -->
-
-    
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
     <script src='http://code.jquery.com/jquery.js'></script>
     <script src='js/bootstrap.min.js'></script>
   </body>
 </html>
+

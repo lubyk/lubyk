@@ -8,25 +8,6 @@
     <meta name="author" content="">
 
 
-    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
-
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-        config: ["MMLorHTML.js"],
-        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
-        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
-        TeX: {
-          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
-        },
-        menuSettings: {
-          zoom: "Hover",
-          mpContext: true,
-          mpMouse: true
-        },
-      });
-    </script>
-    <script type="text/javascript"
-  src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
 
     <link href="css/bootstrap.css" rel="stylesheet">
     <link href="css/bootstrap-responsive.css" rel="stylesheet">
@@ -44,35 +25,35 @@
       </div>
     </div>
 
-  <div class="container">
+    <div class="container">
 
-    <div class="row">
+      <div class="row">
 
-      <div class="span2 bs-docs-sidebar local-nav">
-        <ul class="nav nav-list bs-docs-sidenav affix">
-                    <li><a href='#Debug'><i class='icon-chevron-right'></i> lk.Debug</a></li>
-                    <li><a href='#Class-functions'><i class='icon-chevron-right'></i> Class functions</a></li>
-                  </ul>
-      </div>
+        <div class='span3'>
+          <ul class='nav nav-tabs nav-stacked local-nav affix'>
+                        <li><a href='#Debug'><i class='icon-chevron-right'></i> lk.Debug</a></li>
+                        <li><a href='#Class-functions'><i class='icon-chevron-right'></i> Class functions</a></li>
+                      </ul>
+        </div>
 
-      <div class="span7">
+        <div class="span7">
 
-                <section id='Debug'>
+                    <section id='Debug'>
           <h2 class='section'>Debugging facility</h2>
 
                     
-                      <p class='summary'>This is a helper to display information on object creation and destruction. Pass any information when creating the object and this information will be printed out on destruction.</p>
-                      <p>The core of this class is written in C++ to use finalizers.</p>
-                            </section>
-                <section id='Class-functions'>
+                    <p class='summary'>This is a helper to display information on object creation and destruction. Pass any information when creating the object and this information will be printed out on destruction.</p>
+                    <p>The core of this class is written in C++ to use finalizers.</p>
+                              </section>
+                    <section id='Class-functions'>
           <h2 class='section'>Class functions</h2>
 
                     
                                         <a name='new'></a>
           <h4 class='function'><span>.</span>new <code>(name, ...)</code></h4>
           
-                      <p>Create a new debug object with a name and some more arguments to be printed.</p>
-                      <p><pre class='prettyprint lang-lua'>obj.debug = lk.Debug("an obj", obj.id, obj.type)
+                    <p>Create a new debug object with a name and some more arguments to be printed.</p>
+                    <p><pre class='prettyprint lang-lua'>obj.debug = lk.Debug("an obj", obj.id, obj.type)
 -- optional callback function
 function obj.debug:callback()
   -- do something here
@@ -80,98 +61,101 @@ end</pre></p>
                                         <a name='inspect'></a>
           <h4 class='function'><span>.</span>inspect <code>(elem)</code></h4>
           
-                      <p>Printout inspect information on a table or userdata.</p>
+                    <p>Printout inspect information on a table or userdata.</p>
                                         <a name='userdata'></a>
           <h4 class='function'><span>.</span>userdata <code>(udata)</code></h4>
           
-                      <p>Return userdata type and pointer value.</p>
+                    <p>Return userdata type and pointer value.</p>
                                         <a name='logExecution'></a>
           <h4 class='function'><span>.</span>logExecution <code>(prefix, hook_type)</code></h4>
           
-                      <p>Start logging program execution. The <code>hook_type</code> can be 'l' (log every line), 'r' (log return from function) or 'c' (log function calls = default).</p>
-                      <p>Usage:</p>
-                      <p><pre class='prettyprint lang-lua'>-- start logging
+                    <p>Start logging program execution. The <code>hook_type</code> can be 'l' (log every line), 'r' (log return from function) or 'c' (log function calls = default).</p>
+                    <p>Usage:</p>
+                    <p><pre class='prettyprint lang-lua'>-- start logging
 lk.Debug.logExecution('trial')
 testFunction()
 -- stop logging
 lk.Debug.logExecution('trial', false)</pre></p>
-                            </section>
-              </div>
+                              </section>
+                  </div>
 
-      <div class="span3 bs-docs-sidebar global-nav">
-        <ul class="nav nav-list bs-docs-sidenav">
-                    <li class='module'><a href='lk.html'>lk</a></li>
-                              <li><a href='lk.Client.html'>lk.Client</a></li>
-                    <li><a href='lk.Command.html'>lk.Command</a></li>
-                    <li><a href='lk.DavMorph.html'>lk.DavMorph</a></li>
-                    <li><a href='lk.DavServer.html'>lk.DavServer</a></li>
-                    <li class='active'><a href='lk.Debug.html'>lk.Debug</a></li>
-                    <li><a href='lk.Dir.html'>lk.Dir</a></li>
-                    <li><a href='lk.Doc.html'>lk.Doc</a></li>
-                    <li><a href='lk.Environment.html'>lk.Environment</a></li>
-                    <li><a href='lk.FileResource.html'>lk.FileResource</a></li>
-                    <li><a href='lk.Inlet.html'>lk.Inlet</a></li>
-                    <li><a href='lk.InletMethod.html'>lk.InletMethod</a></li>
-                    <li><a href='lk.Lubyk.html'>lk.Lubyk</a></li>
-                    <li><a href='lk.Morph.html'>lk.Morph</a></li>
-                    <li><a href='lk.Node.html'>lk.Node</a></li>
-                    <li><a href='lk.Observer.html'>lk.Observer</a></li>
-                    <li><a href='lk.Outlet.html'>lk.Outlet</a></li>
-                    <li><a href='lk.OutletMethod.html'>lk.OutletMethod</a></li>
-                    <li><a href='lk.ParamMethod.html'>lk.ParamMethod</a></li>
-                    <li><a href='lk.Patch.html'>lk.Patch</a></li>
-                    <li><a href='lk.Process.html'>lk.Process</a></li>
-                    <li><a href='lk.ProcessWatch.html'>lk.ProcessWatch</a></li>
-                    <li><a href='lk.Properties.html'>lk.Properties</a></li>
-                    <li><a href='lk.RemoteProcess.html'>lk.RemoteProcess</a></li>
-                    <li><a href='lk.Scheduler.html'>lk.Scheduler</a></li>
-                    <li><a href='lk.SelectCallback.html'>lk.SelectCallback</a></li>
-                    <li><a href='lk.Service.html'>lk.Service</a></li>
-                    <li><a href='lk.ServiceBrowser.html'>lk.ServiceBrowser</a></li>
-                    <li><a href='lk.Settings.html'>lk.Settings</a></li>
-                    <li><a href='lk.Socket.html'>lk.Socket</a></li>
-                    <li><a href='lk.Socket2.html'>lk.Socket2</a></li>
-                    <li><a href='lk.StemCell.html'>lk.StemCell</a></li>
-                    <li><a href='lk.SubClass.html'>lk.SubClass</a></li>
-                    <li><a href='lk.TCPSocket.html'>lk.TCPSocket</a></li>
-                    <li><a href='lk.Thread.html'>lk.Thread</a></li>
-                    <li><a href='lk.Timer.html'>lk.Timer</a></li>
-                    <li><a href='lk.UDPSocket.html'>lk.UDPSocket</a></li>
-                    <li><a href='lk.WebServer.html'>lk.WebServer</a></li>
-                    <li><a href='lk.crypto.html'>lk.crypto</a></li>
-                    <li><a href='lk.more.html'>lk.more</a></li>
-                    <li><a href='lk.util.html'>lk.util</a></li>
-                  </ul>
+        <div class='span2'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='lk.html'>lk</a></li>
+                                    <li><a href='lk.Client.html'>lk.Client</a></li>
+                        <li><a href='lk.Command.html'>lk.Command</a></li>
+                        <li><a href='lk.DavMorph.html'>lk.DavMorph</a></li>
+                        <li><a href='lk.DavServer.html'>lk.DavServer</a></li>
+                        <li class='active'><a href='lk.Debug.html'>lk.Debug</a></li>
+                        <li><a href='lk.Dir.html'>lk.Dir</a></li>
+                        <li><a href='lk.Doc.html'>lk.Doc</a></li>
+                        <li><a href='lk.Environment.html'>lk.Environment</a></li>
+                        <li><a href='lk.FileResource.html'>lk.FileResource</a></li>
+                        <li><a href='lk.Finalizer.html'>lk.Finalizer</a></li>
+                        <li><a href='lk.Inlet.html'>lk.Inlet</a></li>
+                        <li><a href='lk.InletMethod.html'>lk.InletMethod</a></li>
+                        <li><a href='lk.Lubyk.html'>lk.Lubyk</a></li>
+                        <li><a href='lk.Morph.html'>lk.Morph</a></li>
+                        <li><a href='lk.Node.html'>lk.Node</a></li>
+                        <li><a href='lk.Observer.html'>lk.Observer</a></li>
+                        <li><a href='lk.Outlet.html'>lk.Outlet</a></li>
+                        <li><a href='lk.OutletMethod.html'>lk.OutletMethod</a></li>
+                        <li><a href='lk.ParamMethod.html'>lk.ParamMethod</a></li>
+                        <li><a href='lk.Patch.html'>lk.Patch</a></li>
+                        <li><a href='lk.Process.html'>lk.Process</a></li>
+                        <li><a href='lk.ProcessWatch.html'>lk.ProcessWatch</a></li>
+                        <li><a href='lk.Properties.html'>lk.Properties</a></li>
+                        <li><a href='lk.RemoteProcess.html'>lk.RemoteProcess</a></li>
+                        <li><a href='lk.Scheduler.html'>lk.Scheduler</a></li>
+                        <li><a href='lk.SelectCallback.html'>lk.SelectCallback</a></li>
+                        <li><a href='lk.Service.html'>lk.Service</a></li>
+                        <li><a href='lk.ServiceBrowser.html'>lk.ServiceBrowser</a></li>
+                        <li><a href='lk.Settings.html'>lk.Settings</a></li>
+                        <li><a href='lk.Socket.html'>lk.Socket</a></li>
+                        <li><a href='lk.Socket2.html'>lk.Socket2</a></li>
+                        <li><a href='lk.StemCell.html'>lk.StemCell</a></li>
+                        <li><a href='lk.SubClass.html'>lk.SubClass</a></li>
+                        <li><a href='lk.TCPSocket.html'>lk.TCPSocket</a></li>
+                        <li><a href='lk.Thread.html'>lk.Thread</a></li>
+                        <li><a href='lk.TimeRef.html'>lk.TimeRef</a></li>
+                        <li><a href='lk.Timer.html'>lk.Timer</a></li>
+                        <li><a href='lk.UDPSocket.html'>lk.UDPSocket</a></li>
+                        <li><a href='lk.WebServer.html'>lk.WebServer</a></li>
+                        <li><a href='lk.core.html'>lk.core</a></li>
+                        <li><a href='lk.crypto.html'>lk.crypto</a></li>
+                        <li><a href='lk.more.html'>lk.more</a></li>
+                        <li><a href='lk.util.html'>lk.util</a></li>
+                      </ul>
+        </div>
       </div>
     </div>
-  </div>
 
     <footer class="footer">
-      <div class="container">
-         made with <a href='lk.Doc.html'>lk.Doc</a> 
-      </div>
+    <div class="container">
+       made with <a href='http://doc.lubyk.org/lk.Doc.html'>lk.Doc</a> 
+    </div>
     </footer>
 
-    <!-- Placed at the end of the document so the pages load faster -->
-    <!--
-    <script src="assets/js/jquery.js"></script>
-    <script src="assets/js/bootstrap-transition.js"></script>
-    <script src="assets/js/bootstrap-alert.js"></script>
-    <script src="assets/js/bootstrap-modal.js"></script>
-    <script src="assets/js/bootstrap-dropdown.js"></script>
-    <script src="assets/js/bootstrap-scrollspy.js"></script>
-    <script src="assets/js/bootstrap-tab.js"></script>
-    <script src="assets/js/bootstrap-tooltip.js"></script>
-    <script src="assets/js/bootstrap-popover.js"></script>
-    <script src="assets/js/bootstrap-button.js"></script>
-    <script src="assets/js/bootstrap-collapse.js"></script>
-    <script src="assets/js/bootstrap-carousel.js"></script>
-    <script src="assets/js/bootstrap-typeahead.js"></script>
-    <script src="assets/js/bootstrap-affix.js"></script>
-    -->
-
-    
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
     <script src='http://code.jquery.com/jquery.js'></script>
     <script src='js/bootstrap.min.js'></script>
   </body>
 </html>
+

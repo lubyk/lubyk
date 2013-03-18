@@ -8,25 +8,6 @@
     <meta name="author" content="">
 
 
-    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
-
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-        config: ["MMLorHTML.js"],
-        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
-        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
-        TeX: {
-          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
-        },
-        menuSettings: {
-          zoom: "Hover",
-          mpContext: true,
-          mpMouse: true
-        },
-      });
-    </script>
-    <script type="text/javascript"
-  src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
 
     <link href="css/bootstrap.css" rel="stylesheet">
     <link href="css/bootstrap-responsive.css" rel="stylesheet">
@@ -44,54 +25,54 @@
       </div>
     </div>
 
-  <div class="container">
+    <div class="container">
 
-    <div class="row">
+      <div class="row">
 
-      <div class="span2 bs-docs-sidebar local-nav">
-        <ul class="nav nav-list bs-docs-sidenav affix">
-                    <li><a href='#StemCell'><i class='icon-chevron-right'></i> lk.StemCell</a></li>
-                  </ul>
-      </div>
+        <div class='span3'>
+          <ul class='nav nav-tabs nav-stacked local-nav affix'>
+                        <li><a href='#StemCell'><i class='icon-chevron-right'></i> lk.StemCell</a></li>
+                      </ul>
+        </div>
 
-      <div class="span7">
+        <div class="span7">
 
-                <section id='StemCell'>
+                    <section id='StemCell'>
           <h2 class='section'>lk.StemCell</h2>
 
                               <a name='quit'></a>
           <h4 class='method'><span>:</span>quit <code>()</code></h4>
           
-                      <p class='summary'></p>
-                      <p>local lib = {type='lk.StemCell'} lib.<em></em>index = lib <a href='lk.StemCell.html'>lk.StemCell</a> = lib</p>
-                      <p>local private = {}</p>
-                      <p>setmetatable(lib, { -- new method <em></em>call = function(lib) local self = {</p>
-                      <p><pre class='prettyprint lang-lua'>-- Machine name
+                    <p class='summary'></p>
+                    <p>local lib = {type='lk.StemCell'} lib.<em></em>index = lib <a href='lk.StemCell.html'>lk.StemCell</a> = lib</p>
+                    <p>local private = {}</p>
+                    <p>setmetatable(lib, { -- new method <em></em>call = function(lib) local self = {</p>
+                    <p><pre class='prettyprint lang-lua'>-- Machine name
 name = Lubyk.host,
 -- List of pids in case we must restart a process.
 processes = {},</pre></p>
-                      <p>} setmetatable(self, lib)</p>
-                      <p>private.start(self) return self end})</p>
-                      <p>--============================================= <a href='lk.Service.html'>lk.Service</a> delegate</p>
-                      <p>local execute<em>url,        quit</em>url = </p>
-                      <p><pre class='prettyprint lang-lua'>  lubyk.execute_url,  lubyk.quit_url
+                    <p>} setmetatable(self, lib)</p>
+                    <p>private.start(self) return self end})</p>
+                    <p>--============================================= <a href='lk.Service.html'>lk.Service</a> delegate</p>
+                    <p>local execute<em>url,        quit</em>url = </p>
+                    <p><pre class='prettyprint lang-lua'>  lubyk.execute_url,  lubyk.quit_url
 </pre></p>
-                      <p>if url == execute_url then</p>
-                      <p><pre class='prettyprint lang-lua'>return private.execute(self, ...)</pre></p>
-                      <p>elseif url == quit_url then</p>
-                      <p><pre class='prettyprint lang-lua'>self:quit()</pre></p>
-                      <p>else</p>
-                      <p><pre class='prettyprint lang-lua'>-- ignore
+                    <p>if url == execute_url then</p>
+                    <p><pre class='prettyprint lang-lua'>return private.execute(self, ...)</pre></p>
+                    <p>elseif url == quit_url then</p>
+                    <p><pre class='prettyprint lang-lua'>self:quit()</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>-- ignore
 self:error("Invalid url '%s'.", url)</pre></p>
-                      <p>end end</p>
-                      <p>-- TODO: notify errors. printf(...) end</p>
-                      <p>-- The stem cell is the parent of the following processes, it cannot die -- before them. for name, pid in pairs(self.processes) do</p>
-                      <p><pre class='prettyprint lang-lua'>private.kill(pid)</pre></p>
-                      <p>end</p>
-                      <p>sched:quit() end</p>
-                      <p>--=============================================== PRIVATE --- Start service. private.actions = {}</p>
-                      <p>function private:start() local srv_opts = {</p>
-                      <p><pre class='prettyprint lang-lua'>callback = function(...)
+                    <p>end end</p>
+                    <p>-- TODO: notify errors. printf(...) end</p>
+                    <p>-- The stem cell is the parent of the following processes, it cannot die -- before them. for name, pid in pairs(self.processes) do</p>
+                    <p><pre class='prettyprint lang-lua'>private.kill(pid)</pre></p>
+                    <p>end</p>
+                    <p>sched:quit() end</p>
+                    <p>--=============================================== PRIVATE --- Start service. private.actions = {}</p>
+                    <p>function private:start() local srv_opts = {</p>
+                    <p><pre class='prettyprint lang-lua'>callback = function(...)
   return self:callback(...)
 end,
 registration_callback = function(req, service)
@@ -101,99 +82,102 @@ type = 'lk.StemCell',
 quit = function()
   self:quit()
 end,</pre></p>
-                      <p>} self.service = lk.Service(Lubyk.zone .. ':@' .. self.name , srv_opts) end</p>
-                      <p>function private:registrationCallback(service) if (Lubyk.zone .. ':@' .. self.name) ~= service.name then</p>
-                      <p><pre class='prettyprint lang-lua'>-- We do not want to have two stem cells with the same name running
+                    <p>} self.service = lk.Service(Lubyk.zone .. ':@' .. self.name , srv_opts) end</p>
+                    <p>function private:registrationCallback(service) if (Lubyk.zone .. ':@' .. self.name) ~= service.name then</p>
+                    <p><pre class='prettyprint lang-lua'>-- We do not want to have two stem cells with the same name running
 printf("Another stem cell with name '%s' exists in zone '%s'. Quit.", self.name, Lubyk.zone)
 self:quit()</pre></p>
-                      <p>end end</p>
-                      <p>function private:execute(action, ...) local func = private.actions[action] if func then</p>
-                      <p><pre class='prettyprint lang-lua'>func(self, ...)</pre></p>
-                      <p>else</p>
-                      <p><pre class='prettyprint lang-lua'>printf("Unknown action '%s'.", action)</pre></p>
-                      <p>end end</p>
-                      <p>--=============================================== ACTIONS</p>
-                      <p>-- Spawn a new process that will callback to get data (yml definition, assets). function private.actions:spawn(name) -- Spawn Process. If a process dies, the stem cell will restart it. self.processes[name] = lk.spawn([[ require 'lubyk' process = lk.Process(%s) run() ]], name) -- the process will find the morph's ip/port by it's own service discovery end</p>
-                      <p>-- Restart a given process (kill and let morph restart). function private.actions:kill(name) local pid = self.processes[name] -- kill if pid then</p>
-                      <p><pre class='prettyprint lang-lua'>private.kill(pid)</pre></p>
-                      <p>end -- The process will be restarted. end</p>
-                            </section>
-              </div>
+                    <p>end end</p>
+                    <p>function private:execute(action, ...) local func = private.actions[action] if func then</p>
+                    <p><pre class='prettyprint lang-lua'>func(self, ...)</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>printf("Unknown action '%s'.", action)</pre></p>
+                    <p>end end</p>
+                    <p>--=============================================== ACTIONS</p>
+                    <p>-- Spawn a new process that will callback to get data (yml definition, assets). function private.actions:spawn(name) -- Spawn Process. If a process dies, the stem cell will restart it. self.processes[name] = lk.spawn([[ require 'lubyk' process = lk.Process(%s) run() ]], name) -- the process will find the morph's ip/port by it's own service discovery end</p>
+                    <p>-- Restart a given process (kill and let morph restart). function private.actions:kill(name) local pid = self.processes[name] -- kill if pid then</p>
+                    <p><pre class='prettyprint lang-lua'>private.kill(pid)</pre></p>
+                    <p>end -- The process will be restarted. end</p>
+                              </section>
+                  </div>
 
-      <div class="span3 bs-docs-sidebar global-nav">
-        <ul class="nav nav-list bs-docs-sidenav">
-                    <li class='module'><a href='lk.html'>lk</a></li>
-                              <li><a href='lk.Client.html'>lk.Client</a></li>
-                    <li><a href='lk.Command.html'>lk.Command</a></li>
-                    <li><a href='lk.DavMorph.html'>lk.DavMorph</a></li>
-                    <li><a href='lk.DavServer.html'>lk.DavServer</a></li>
-                    <li><a href='lk.Debug.html'>lk.Debug</a></li>
-                    <li><a href='lk.Dir.html'>lk.Dir</a></li>
-                    <li><a href='lk.Doc.html'>lk.Doc</a></li>
-                    <li><a href='lk.Environment.html'>lk.Environment</a></li>
-                    <li><a href='lk.FileResource.html'>lk.FileResource</a></li>
-                    <li><a href='lk.Inlet.html'>lk.Inlet</a></li>
-                    <li><a href='lk.InletMethod.html'>lk.InletMethod</a></li>
-                    <li><a href='lk.Lubyk.html'>lk.Lubyk</a></li>
-                    <li><a href='lk.Morph.html'>lk.Morph</a></li>
-                    <li><a href='lk.Node.html'>lk.Node</a></li>
-                    <li><a href='lk.Observer.html'>lk.Observer</a></li>
-                    <li><a href='lk.Outlet.html'>lk.Outlet</a></li>
-                    <li><a href='lk.OutletMethod.html'>lk.OutletMethod</a></li>
-                    <li><a href='lk.ParamMethod.html'>lk.ParamMethod</a></li>
-                    <li><a href='lk.Patch.html'>lk.Patch</a></li>
-                    <li><a href='lk.Process.html'>lk.Process</a></li>
-                    <li><a href='lk.ProcessWatch.html'>lk.ProcessWatch</a></li>
-                    <li><a href='lk.Properties.html'>lk.Properties</a></li>
-                    <li><a href='lk.RemoteProcess.html'>lk.RemoteProcess</a></li>
-                    <li><a href='lk.Scheduler.html'>lk.Scheduler</a></li>
-                    <li><a href='lk.SelectCallback.html'>lk.SelectCallback</a></li>
-                    <li><a href='lk.Service.html'>lk.Service</a></li>
-                    <li><a href='lk.ServiceBrowser.html'>lk.ServiceBrowser</a></li>
-                    <li><a href='lk.Settings.html'>lk.Settings</a></li>
-                    <li><a href='lk.Socket.html'>lk.Socket</a></li>
-                    <li><a href='lk.Socket2.html'>lk.Socket2</a></li>
-                    <li class='active'><a href='lk.StemCell.html'>lk.StemCell</a></li>
-                    <li><a href='lk.SubClass.html'>lk.SubClass</a></li>
-                    <li><a href='lk.TCPSocket.html'>lk.TCPSocket</a></li>
-                    <li><a href='lk.Thread.html'>lk.Thread</a></li>
-                    <li><a href='lk.Timer.html'>lk.Timer</a></li>
-                    <li><a href='lk.UDPSocket.html'>lk.UDPSocket</a></li>
-                    <li><a href='lk.WebServer.html'>lk.WebServer</a></li>
-                    <li><a href='lk.crypto.html'>lk.crypto</a></li>
-                    <li><a href='lk.more.html'>lk.more</a></li>
-                    <li><a href='lk.util.html'>lk.util</a></li>
-                  </ul>
+        <div class='span2'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='lk.html'>lk</a></li>
+                                    <li><a href='lk.Client.html'>lk.Client</a></li>
+                        <li><a href='lk.Command.html'>lk.Command</a></li>
+                        <li><a href='lk.DavMorph.html'>lk.DavMorph</a></li>
+                        <li><a href='lk.DavServer.html'>lk.DavServer</a></li>
+                        <li><a href='lk.Debug.html'>lk.Debug</a></li>
+                        <li><a href='lk.Dir.html'>lk.Dir</a></li>
+                        <li><a href='lk.Doc.html'>lk.Doc</a></li>
+                        <li><a href='lk.Environment.html'>lk.Environment</a></li>
+                        <li><a href='lk.FileResource.html'>lk.FileResource</a></li>
+                        <li><a href='lk.Finalizer.html'>lk.Finalizer</a></li>
+                        <li><a href='lk.Inlet.html'>lk.Inlet</a></li>
+                        <li><a href='lk.InletMethod.html'>lk.InletMethod</a></li>
+                        <li><a href='lk.Lubyk.html'>lk.Lubyk</a></li>
+                        <li><a href='lk.Morph.html'>lk.Morph</a></li>
+                        <li><a href='lk.Node.html'>lk.Node</a></li>
+                        <li><a href='lk.Observer.html'>lk.Observer</a></li>
+                        <li><a href='lk.Outlet.html'>lk.Outlet</a></li>
+                        <li><a href='lk.OutletMethod.html'>lk.OutletMethod</a></li>
+                        <li><a href='lk.ParamMethod.html'>lk.ParamMethod</a></li>
+                        <li><a href='lk.Patch.html'>lk.Patch</a></li>
+                        <li><a href='lk.Process.html'>lk.Process</a></li>
+                        <li><a href='lk.ProcessWatch.html'>lk.ProcessWatch</a></li>
+                        <li><a href='lk.Properties.html'>lk.Properties</a></li>
+                        <li><a href='lk.RemoteProcess.html'>lk.RemoteProcess</a></li>
+                        <li><a href='lk.Scheduler.html'>lk.Scheduler</a></li>
+                        <li><a href='lk.SelectCallback.html'>lk.SelectCallback</a></li>
+                        <li><a href='lk.Service.html'>lk.Service</a></li>
+                        <li><a href='lk.ServiceBrowser.html'>lk.ServiceBrowser</a></li>
+                        <li><a href='lk.Settings.html'>lk.Settings</a></li>
+                        <li><a href='lk.Socket.html'>lk.Socket</a></li>
+                        <li><a href='lk.Socket2.html'>lk.Socket2</a></li>
+                        <li class='active'><a href='lk.StemCell.html'>lk.StemCell</a></li>
+                        <li><a href='lk.SubClass.html'>lk.SubClass</a></li>
+                        <li><a href='lk.TCPSocket.html'>lk.TCPSocket</a></li>
+                        <li><a href='lk.Thread.html'>lk.Thread</a></li>
+                        <li><a href='lk.TimeRef.html'>lk.TimeRef</a></li>
+                        <li><a href='lk.Timer.html'>lk.Timer</a></li>
+                        <li><a href='lk.UDPSocket.html'>lk.UDPSocket</a></li>
+                        <li><a href='lk.WebServer.html'>lk.WebServer</a></li>
+                        <li><a href='lk.core.html'>lk.core</a></li>
+                        <li><a href='lk.crypto.html'>lk.crypto</a></li>
+                        <li><a href='lk.more.html'>lk.more</a></li>
+                        <li><a href='lk.util.html'>lk.util</a></li>
+                      </ul>
+        </div>
       </div>
     </div>
-  </div>
 
     <footer class="footer">
-      <div class="container">
-         made with <a href='lk.Doc.html'>lk.Doc</a> 
-      </div>
+    <div class="container">
+       made with <a href='http://doc.lubyk.org/lk.Doc.html'>lk.Doc</a> 
+    </div>
     </footer>
 
-    <!-- Placed at the end of the document so the pages load faster -->
-    <!--
-    <script src="assets/js/jquery.js"></script>
-    <script src="assets/js/bootstrap-transition.js"></script>
-    <script src="assets/js/bootstrap-alert.js"></script>
-    <script src="assets/js/bootstrap-modal.js"></script>
-    <script src="assets/js/bootstrap-dropdown.js"></script>
-    <script src="assets/js/bootstrap-scrollspy.js"></script>
-    <script src="assets/js/bootstrap-tab.js"></script>
-    <script src="assets/js/bootstrap-tooltip.js"></script>
-    <script src="assets/js/bootstrap-popover.js"></script>
-    <script src="assets/js/bootstrap-button.js"></script>
-    <script src="assets/js/bootstrap-collapse.js"></script>
-    <script src="assets/js/bootstrap-carousel.js"></script>
-    <script src="assets/js/bootstrap-typeahead.js"></script>
-    <script src="assets/js/bootstrap-affix.js"></script>
-    -->
-
-    
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
     <script src='http://code.jquery.com/jquery.js'></script>
     <script src='js/bootstrap.min.js'></script>
   </body>
 </html>
+

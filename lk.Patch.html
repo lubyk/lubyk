@@ -8,25 +8,6 @@
     <meta name="author" content="">
 
 
-    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
-
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-        config: ["MMLorHTML.js"],
-        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
-        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
-        TeX: {
-          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
-        },
-        menuSettings: {
-          zoom: "Hover",
-          mpContext: true,
-          mpMouse: true
-        },
-      });
-    </script>
-    <script type="text/javascript"
-  src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
 
     <link href="css/bootstrap.css" rel="stylesheet">
     <link href="css/bootstrap-responsive.css" rel="stylesheet">
@@ -44,62 +25,62 @@
       </div>
     </div>
 
-  <div class="container">
+    <div class="container">
 
-    <div class="row">
+      <div class="row">
 
-      <div class="span2 bs-docs-sidebar local-nav">
-        <ul class="nav nav-list bs-docs-sidenav affix">
-                    <li><a href='#Patch'><i class='icon-chevron-right'></i> lk.Patch</a></li>
-                    <li><a href='#TODO'><i class='icon-chevron-right'></i> TODO</a></li>
-                    <li><a href='#FIXME'><i class='icon-chevron-right'></i> FIXME</a></li>
-                  </ul>
-      </div>
+        <div class='span3'>
+          <ul class='nav nav-tabs nav-stacked local-nav affix'>
+                        <li><a href='#Patch'><i class='icon-chevron-right'></i> lk.Patch</a></li>
+                        <li><a href='#TODO'><i class='icon-chevron-right'></i> TODO</a></li>
+                        <li><a href='#FIXME'><i class='icon-chevron-right'></i> FIXME</a></li>
+                      </ul>
+        </div>
 
-      <div class="span7">
+        <div class="span7">
 
-                <section id='Patch'>
+                    <section id='Patch'>
           <h2 class='section'>lk.Patch</h2>
 
                               <a name='findCode'></a>
           <h4 class='method'><span>:</span>findCode <code>(url)</code></h4>
           
-                      <p class='summary'></p>
-                      <p>local lib     = {type='lk.Patch'} lib.<em></em>index   = lib <a href='lk.Patch.html'>lk.Patch</a>      = lib local private = {}</p>
-                      <p>Lubyk.mimas<em>quit</em>on_close = false</p>
-                      <p>-- PRIVATE local ALLOWED_KEYS = { nodes  = true, x      = true, y      = true, w      = true, h      = true, hue    = true, name   = true, }</p>
-                      <p>-- PUBLIC</p>
-                      <p>setmetatable(lib, { -- new method <em></em>call = function(lib, name) local self  = {</p>
-                      <p><pre class='prettyprint lang-lua'>name          = name,
+                    <p class='summary'></p>
+                    <p>local lib     = {type='lk.Patch'} lib.<em></em>index   = lib <a href='lk.Patch.html'>lk.Patch</a>      = lib local private = {}</p>
+                    <p>Lubyk.mimas<em>quit</em>on_close = false</p>
+                    <p>-- PRIVATE local ALLOWED_KEYS = { nodes  = true, x      = true, y      = true, w      = true, h      = true, hue    = true, name   = true, }</p>
+                    <p>-- PUBLIC</p>
+                    <p>setmetatable(lib, { -- new method <em></em>call = function(lib, name) local self  = {</p>
+                    <p><pre class='prettyprint lang-lua'>name          = name,
 nodes         = {},
 pending_nodes = {},
 on_notify     = setmetatable({}, {__mode = 'k'}),</pre></p>
-                      <p>} sched.patch = name setmetatable(self, lib)</p>
-                      <p>return self end})</p>
-                      <p>-- When we load from morph, we must set file loader to be the -- remote morph server. (find code) self.is_process = true</p>
-                      <p>-- Create processes watch before loading code (to resolve remote -- processes). -- --- Watch for other processes on the network and create -- <a href='lk.RemoteProcess.html'>lk.RemoteProcess</a> proxies when needed. self.process_watch = lk.ProcessWatch():addDelegate(self) end</p>
-                      <p>--print(string.format("================================= <a href='lk.Patch.html'>lk.Patch</a> %s\n%s", self.name, yaml.dump(definitions))) --print("================================= <a href='lk.Patch.html'>lk.Patch</a> ]") for k, v in pairs(definitions) do</p>
-                      <p><pre class='prettyprint lang-lua'>if k == 'nodes' then
+                    <p>} sched.patch = name setmetatable(self, lib)</p>
+                    <p>return self end})</p>
+                    <p>-- When we load from morph, we must set file loader to be the -- remote morph server. (find code) self.is_process = true</p>
+                    <p>-- Create processes watch before loading code (to resolve remote -- processes). -- --- Watch for other processes on the network and create -- <a href='lk.RemoteProcess.html'>lk.RemoteProcess</a> proxies when needed. self.process_watch = lk.ProcessWatch():addDelegate(self) end</p>
+                    <p>--print(string.format("================================= <a href='lk.Patch.html'>lk.Patch</a> %s\n%s", self.name, yaml.dump(definitions))) --print("================================= <a href='lk.Patch.html'>lk.Patch</a> ]") for k, v in pairs(definitions) do</p>
+                    <p><pre class='prettyprint lang-lua'>if k == 'nodes' then
   private.setNodes(self, v)
 elseif ALLOWED_KEYS[k] then
   self[k] = v
 end</pre></p>
-                      <p>end if self.need_cleanup then</p>
-                      <p><pre class='prettyprint lang-lua'>self.need_cleanup = nil
+                    <p>end if self.need_cleanup then</p>
+                    <p><pre class='prettyprint lang-lua'>self.need_cleanup = nil
 collectgarbage('collect')
 collectgarbage('collect')</pre></p>
-                      <p>end end</p>
-                      <p>--- Create a pending inlet from an url relative to this process (nearly the same -- as <a href='editor.Process.html#pendingInlet'>editor.Process.pendingInlet</a>). local inlet<em>url = lk.absToRel(inlet</em>abs<em>url, self:url()) -- inlet</em>url example: --   node/in/slot local parts = lk.split(inlet<em>url, '/') local node</em>name, inlet_name if <a href='#parts'>parts</a> == 3 and parts[2] == 'in' then</p>
-                      <p><pre class='prettyprint lang-lua'>node_name, inlet_name = parts[1], parts[3]</pre></p>
-                      <p>else</p>
-                      <p><pre class='prettyprint lang-lua'>return nil, string.format("Invalid pendingInlet url '%s'.")</pre></p>
-                      <p>end</p>
-                      <p>local node = self.nodes[node_name] local inlet = nil if node then</p>
-                      <p><pre class='prettyprint lang-lua'>-- inlet not created yet
+                    <p>end end</p>
+                    <p>--- Create a pending inlet from an url relative to this process (nearly the same -- as <a href='editor.Process.html#pendingInlet'>editor.Process.pendingInlet</a>). local inlet<em>url = lk.absToRel(inlet</em>abs<em>url, self:url()) -- inlet</em>url example: --   node/in/slot local parts = lk.split(inlet<em>url, '/') local node</em>name, inlet_name if <a href='#parts'>parts</a> == 3 and parts[2] == 'in' then</p>
+                    <p><pre class='prettyprint lang-lua'>node_name, inlet_name = parts[1], parts[3]</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>return nil, string.format("Invalid pendingInlet url '%s'.")</pre></p>
+                    <p>end</p>
+                    <p>local node = self.nodes[node_name] local inlet = nil if node then</p>
+                    <p><pre class='prettyprint lang-lua'>-- inlet not created yet
 inlet = lk.Inlet(inlet_abs_url, inlet_name)
 node.pending_inlets[inlet_name] = inlet</pre></p>
-                      <p>else</p>
-                      <p><pre class='prettyprint lang-lua'>-- node not created yet
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>-- node not created yet
 local pending_node = self.pending_nodes[node_name]
 if not pending_node then
   pending_node = {}
@@ -111,16 +92,16 @@ if not inlet then
   inlet = lk.Inlet(inlet_abs_url, inlet_name)
   pending_node[inlet_name] = inlet
 end</pre></p>
-                      <p>end return inlet end</p>
-                      <p>-- Find an element from an url. An url -- is something like --     /process name/[parent node name]<strong>/node name/in/inlet name -- or  /process name/[parent node name]</strong>/node name -- or  [parent node name]<strong>/node name -- -- ALSO USED BY <a href='editor.Process.html'>editor.Process</a> -- TODO: cache result by full url ? -- not greedy regexp local process_name, path = string.match(url, '^/([^/]</strong>)/(.*)$')</p>
-                      <p>local process if process_name then</p>
-                      <p><pre class='prettyprint lang-lua'>process = self:findProcess(process_name)</pre></p>
-                      <p>else</p>
-                      <p><pre class='prettyprint lang-lua'>process = self
+                    <p>end return inlet end</p>
+                    <p>-- Find an element from an url. An url -- is something like --     /process name/[parent node name]<strong>/node name/in/inlet name -- or  /process name/[parent node name]</strong>/node name -- or  [parent node name]<strong>/node name -- -- ALSO USED BY <a href='editor.Process.html'>editor.Process</a> -- TODO: cache result by full url ? -- not greedy regexp local process_name, path = string.match(url, '^/([^/]</strong>)/(.*)$')</p>
+                    <p>local process if process_name then</p>
+                    <p><pre class='prettyprint lang-lua'>process = self:findProcess(process_name)</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>process = self
 path    = url</pre></p>
-                      <p>end</p>
-                      <p>local res = process:findByPath(path) local res<em>mt = getmetatable(res) if res and mt and mt ~= res</em>mt then</p>
-                      <p><pre class='prettyprint lang-lua'>local msg = ''
+                    <p>end</p>
+                    <p>local res = process:findByPath(path) local res<em>mt = getmetatable(res) if res and mt and mt ~= res</em>mt then</p>
+                    <p><pre class='prettyprint lang-lua'>local msg = ''
 if mt.type and res_mt.type then
   msg = string.format('expected %s, found %s', mt.type, res_mt.type)
 elseif res.__tostring then
@@ -131,12 +112,12 @@ else
   msg = 'found ?'
 end
 return false, string.format("Invalid object at '%s' (%s).", url, msg)</pre></p>
-                      <p>else</p>
-                      <p><pre class='prettyprint lang-lua'>return res</pre></p>
-                      <p>end end</p>
-                      <p>-- ALSO USED BY <a href='editor.Process.html'>editor.Process</a> local parts = lk.split(path, '/') -- current object local c = self local c_next = 'node'</p>
-                      <p>for i, name in ipairs(parts) do</p>
-                      <p><pre class='prettyprint lang-lua'>if c_next == 'node' then
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>return res</pre></p>
+                    <p>end end</p>
+                    <p>-- ALSO USED BY <a href='editor.Process.html'>editor.Process</a> local parts = lk.split(path, '/') -- current object local c = self local c_next = 'node'</p>
+                    <p>for i, name in ipairs(parts) do</p>
+                    <p><pre class='prettyprint lang-lua'>if c_next == 'node' then
   -- Find node
   if name == 'in' then
     c, c_next = c.inlets, 'slot'
@@ -156,9 +137,9 @@ end
 if c == nil then
   return nil, string.format("Cannot find '%s' while resolving '%s'.", name, path)
 end</pre></p>
-                      <p>end return c end</p>
-                      <p>--- Serialize current patch as a lua table. If a -- data table is provided, only dump parts that contain -- keys in the table. local res = {nodes = {}} for k, <em> in pairs(ALLOWED</em>KEYS) do</p>
-                      <p><pre class='prettyprint lang-lua'>if k == 'nodes' then
+                    <p>end return c end</p>
+                    <p>--- Serialize current patch as a lua table. If a -- data table is provided, only dump parts that contain -- keys in the table. local res = {nodes = {}} for k, <em> in pairs(ALLOWED</em>KEYS) do</p>
+                    <p><pre class='prettyprint lang-lua'>if k == 'nodes' then
   local nodes = {}
   res.nodes = nodes
   for k, node in pairs(self.nodes) do
@@ -170,9 +151,9 @@ else
     res[k] = v
   end
 end</pre></p>
-                      <p>end return res end</p>
-                      <p>--- Serialize part of the current patch as a lua table by only returning -- data for parts that contain keys in the given table. local res = {} local nodes = self.nodes for k, v in pairs(data) do</p>
-                      <p><pre class='prettyprint lang-lua'>if k == 'nodes' then
+                    <p>end return res end</p>
+                    <p>--- Serialize part of the current patch as a lua table by only returning -- data for parts that contain keys in the given table. local res = {} local nodes = self.nodes for k, v in pairs(data) do</p>
+                    <p><pre class='prettyprint lang-lua'>if k == 'nodes' then
   res.nodes = {}
   local res_nodes = res.nodes
   for k, node_data in pairs(v) do
@@ -186,10 +167,10 @@ end</pre></p>
 elseif ALLOWED_KEYS[k] then
   res[k] = self[k]
 end</pre></p>
-                      <p>end return res end</p>
-                      <p>--- Find source code for the node at the given url (patch<em>name/[parent</em>node/]node_name). --[[</p>
-                      <p>Path organization (local filesystem or remote on Mnémosyne server):</p>
-                      <p><pre class='prettyprint lang-lua'>... &lt;== base project directory. This is the current dir for the process
+                    <p>end return res end</p>
+                    <p>--- Find source code for the node at the given url (patch<em>name/[parent</em>node/]node_name). --[[</p>
+                    <p>Path organization (local filesystem or remote on Mnémosyne server):</p>
+                    <p><pre class='prettyprint lang-lua'>... &lt;== base project directory. This is the current dir for the process
 .../A              &lt;== Everything for process with role "A"
 .../A/_patch.yml   &lt;== Patch for process with role "A"
 .../B              &lt;== Everything for process with role "B"
@@ -200,152 +181,155 @@ end</pre></p>
                                         <a name='findClass'></a>
           <h4 class='method'><span>:</span>findClass <code>(class_name)</code></h4>
           
-                      <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION</span></p>
+                    <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION</span></p>
                                         <a name='callback'></a>
           <h4 class='method'><span>:</span>callback <code>(url, ...)</code></h4>
           
-                      <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION</span></p>
+                    <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION</span></p>
                                         <a name='error'></a>
           <h4 class='method'><span>:</span>error <code>(...)</code></h4>
           
-                      <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION</span></p>
+                    <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION</span></p>
                                         <a name='notify'></a>
           <h4 class='method'><span>:</span>notify <code>(...)</code></h4>
           
-                      <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION</span></p>
+                    <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION</span></p>
                                         <a name='onNotify'></a>
           <h4 class='method'><span>:</span>onNotify <code>(key, callback)</code></h4>
           
-                      <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION</span></p>
+                    <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION</span></p>
                                         <a name='setParam'></a>
           <h4 class='method'><span>:</span>setParam <code>(lubyk, p, param_name, value)</code></h4>
           
-                      <p>Set a single parameter</p>
+                    <p>Set a single parameter</p>
                                         <a name='control'></a>
           <h4 class='method'><span>:</span>control <code>(url, value)</code></h4>
           
-                      <p>Set a parameter from a relative url like "metro/@tempo".</p>
-                      <p><span class='fixme'><span>FIXME</span> Is this used ?</span></p>
+                    <p>Set a parameter from a relative url like "metro/@tempo".</p>
+                    <p><span class='fixme'><span>FIXME</span> Is this used ?</span></p>
                                         <a name='findProcess'></a>
           <h4 class='method'><span>:</span>findProcess <code>(name)</code></h4>
           
-                      <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION</span></p>
+                    <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION</span></p>
                                         <a name='url'></a>
           <h4 class='method'><span>:</span>url <code>()</code></h4>
           
-                      <p>nodes.</p>
+                    <p>nodes.</p>
                                         <a name='setMorph'></a>
           <h4 class='method'><span>:</span>setMorph <code>(process)</code></h4>
           
-                      <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION</span></p>
+                    <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION</span></p>
                                         <a name='sync'></a>
           <h4 class='method'><span>:</span>sync <code>()</code></h4>
           
-                      <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION</span></p>
+                    <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION</span></p>
                                         <a name='processConnected'></a>
           <h4 class='method'><span>:</span>processConnected <code>(remote_process)</code></h4>
           
-                      <p>Callback on found process in ProcessWatch. Not used for the moment.</p>
+                    <p>Callback on found process in ProcessWatch. Not used for the moment.</p>
                                         <a name='processDisconnected'></a>
           <h4 class='method'><span>:</span>processDisconnected <code>(remote_process)</code></h4>
           
-                      <p>Callback on removed process in ProcessWatch. Not used for the moment.</p>
-                            </section>
-                <section id='TODO'>
+                    <p>Callback on removed process in ProcessWatch. Not used for the moment.</p>
+                              </section>
+                    <section id='TODO'>
           <h2 class='section'>TODO</h2>
 
                     
-                      <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION FOR <a href='#findClass'>findClass</a>.</span></p>
-                      <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION FOR <a href='#callback'>callback</a>.</span></p>
-                      <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION FOR <a href='#error'>error</a>.</span></p>
-                      <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION FOR <a href='#notify'>notify</a>.</span></p>
-                      <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION FOR <a href='#onNotify'>onNotify</a>.</span></p>
-                      <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION FOR <a href='#findProcess'>findProcess</a>.</span></p>
-                      <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION FOR <a href='#setMorph'>setMorph</a>.</span></p>
-                      <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION FOR <a href='#sync'>sync</a>.</span></p>
-                            </section>
-                <section id='FIXME'>
+                    <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION FOR <a href='#findClass'>findClass</a>.</span></p>
+                    <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION FOR <a href='#callback'>callback</a>.</span></p>
+                    <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION FOR <a href='#error'>error</a>.</span></p>
+                    <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION FOR <a href='#notify'>notify</a>.</span></p>
+                    <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION FOR <a href='#onNotify'>onNotify</a>.</span></p>
+                    <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION FOR <a href='#findProcess'>findProcess</a>.</span></p>
+                    <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION FOR <a href='#setMorph'>setMorph</a>.</span></p>
+                    <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION FOR <a href='#sync'>sync</a>.</span></p>
+                              </section>
+                    <section id='FIXME'>
           <h2 class='section'>FIXME</h2>
 
                     
-                      <p><span class='fixme'><span>FIXME</span> Is this used ?</span></p>
-                            </section>
-              </div>
+                    <p><span class='fixme'><span>FIXME</span> Is this used ?</span></p>
+                              </section>
+                  </div>
 
-      <div class="span3 bs-docs-sidebar global-nav">
-        <ul class="nav nav-list bs-docs-sidenav">
-                    <li class='module'><a href='lk.html'>lk</a></li>
-                              <li><a href='lk.Client.html'>lk.Client</a></li>
-                    <li><a href='lk.Command.html'>lk.Command</a></li>
-                    <li><a href='lk.DavMorph.html'>lk.DavMorph</a></li>
-                    <li><a href='lk.DavServer.html'>lk.DavServer</a></li>
-                    <li><a href='lk.Debug.html'>lk.Debug</a></li>
-                    <li><a href='lk.Dir.html'>lk.Dir</a></li>
-                    <li><a href='lk.Doc.html'>lk.Doc</a></li>
-                    <li><a href='lk.Environment.html'>lk.Environment</a></li>
-                    <li><a href='lk.FileResource.html'>lk.FileResource</a></li>
-                    <li><a href='lk.Inlet.html'>lk.Inlet</a></li>
-                    <li><a href='lk.InletMethod.html'>lk.InletMethod</a></li>
-                    <li><a href='lk.Lubyk.html'>lk.Lubyk</a></li>
-                    <li><a href='lk.Morph.html'>lk.Morph</a></li>
-                    <li><a href='lk.Node.html'>lk.Node</a></li>
-                    <li><a href='lk.Observer.html'>lk.Observer</a></li>
-                    <li><a href='lk.Outlet.html'>lk.Outlet</a></li>
-                    <li><a href='lk.OutletMethod.html'>lk.OutletMethod</a></li>
-                    <li><a href='lk.ParamMethod.html'>lk.ParamMethod</a></li>
-                    <li class='active'><a href='lk.Patch.html'>lk.Patch</a></li>
-                    <li><a href='lk.Process.html'>lk.Process</a></li>
-                    <li><a href='lk.ProcessWatch.html'>lk.ProcessWatch</a></li>
-                    <li><a href='lk.Properties.html'>lk.Properties</a></li>
-                    <li><a href='lk.RemoteProcess.html'>lk.RemoteProcess</a></li>
-                    <li><a href='lk.Scheduler.html'>lk.Scheduler</a></li>
-                    <li><a href='lk.SelectCallback.html'>lk.SelectCallback</a></li>
-                    <li><a href='lk.Service.html'>lk.Service</a></li>
-                    <li><a href='lk.ServiceBrowser.html'>lk.ServiceBrowser</a></li>
-                    <li><a href='lk.Settings.html'>lk.Settings</a></li>
-                    <li><a href='lk.Socket.html'>lk.Socket</a></li>
-                    <li><a href='lk.Socket2.html'>lk.Socket2</a></li>
-                    <li><a href='lk.StemCell.html'>lk.StemCell</a></li>
-                    <li><a href='lk.SubClass.html'>lk.SubClass</a></li>
-                    <li><a href='lk.TCPSocket.html'>lk.TCPSocket</a></li>
-                    <li><a href='lk.Thread.html'>lk.Thread</a></li>
-                    <li><a href='lk.Timer.html'>lk.Timer</a></li>
-                    <li><a href='lk.UDPSocket.html'>lk.UDPSocket</a></li>
-                    <li><a href='lk.WebServer.html'>lk.WebServer</a></li>
-                    <li><a href='lk.crypto.html'>lk.crypto</a></li>
-                    <li><a href='lk.more.html'>lk.more</a></li>
-                    <li><a href='lk.util.html'>lk.util</a></li>
-                  </ul>
+        <div class='span2'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='lk.html'>lk</a></li>
+                                    <li><a href='lk.Client.html'>lk.Client</a></li>
+                        <li><a href='lk.Command.html'>lk.Command</a></li>
+                        <li><a href='lk.DavMorph.html'>lk.DavMorph</a></li>
+                        <li><a href='lk.DavServer.html'>lk.DavServer</a></li>
+                        <li><a href='lk.Debug.html'>lk.Debug</a></li>
+                        <li><a href='lk.Dir.html'>lk.Dir</a></li>
+                        <li><a href='lk.Doc.html'>lk.Doc</a></li>
+                        <li><a href='lk.Environment.html'>lk.Environment</a></li>
+                        <li><a href='lk.FileResource.html'>lk.FileResource</a></li>
+                        <li><a href='lk.Finalizer.html'>lk.Finalizer</a></li>
+                        <li><a href='lk.Inlet.html'>lk.Inlet</a></li>
+                        <li><a href='lk.InletMethod.html'>lk.InletMethod</a></li>
+                        <li><a href='lk.Lubyk.html'>lk.Lubyk</a></li>
+                        <li><a href='lk.Morph.html'>lk.Morph</a></li>
+                        <li><a href='lk.Node.html'>lk.Node</a></li>
+                        <li><a href='lk.Observer.html'>lk.Observer</a></li>
+                        <li><a href='lk.Outlet.html'>lk.Outlet</a></li>
+                        <li><a href='lk.OutletMethod.html'>lk.OutletMethod</a></li>
+                        <li><a href='lk.ParamMethod.html'>lk.ParamMethod</a></li>
+                        <li class='active'><a href='lk.Patch.html'>lk.Patch</a></li>
+                        <li><a href='lk.Process.html'>lk.Process</a></li>
+                        <li><a href='lk.ProcessWatch.html'>lk.ProcessWatch</a></li>
+                        <li><a href='lk.Properties.html'>lk.Properties</a></li>
+                        <li><a href='lk.RemoteProcess.html'>lk.RemoteProcess</a></li>
+                        <li><a href='lk.Scheduler.html'>lk.Scheduler</a></li>
+                        <li><a href='lk.SelectCallback.html'>lk.SelectCallback</a></li>
+                        <li><a href='lk.Service.html'>lk.Service</a></li>
+                        <li><a href='lk.ServiceBrowser.html'>lk.ServiceBrowser</a></li>
+                        <li><a href='lk.Settings.html'>lk.Settings</a></li>
+                        <li><a href='lk.Socket.html'>lk.Socket</a></li>
+                        <li><a href='lk.Socket2.html'>lk.Socket2</a></li>
+                        <li><a href='lk.StemCell.html'>lk.StemCell</a></li>
+                        <li><a href='lk.SubClass.html'>lk.SubClass</a></li>
+                        <li><a href='lk.TCPSocket.html'>lk.TCPSocket</a></li>
+                        <li><a href='lk.Thread.html'>lk.Thread</a></li>
+                        <li><a href='lk.TimeRef.html'>lk.TimeRef</a></li>
+                        <li><a href='lk.Timer.html'>lk.Timer</a></li>
+                        <li><a href='lk.UDPSocket.html'>lk.UDPSocket</a></li>
+                        <li><a href='lk.WebServer.html'>lk.WebServer</a></li>
+                        <li><a href='lk.core.html'>lk.core</a></li>
+                        <li><a href='lk.crypto.html'>lk.crypto</a></li>
+                        <li><a href='lk.more.html'>lk.more</a></li>
+                        <li><a href='lk.util.html'>lk.util</a></li>
+                      </ul>
+        </div>
       </div>
     </div>
-  </div>
 
     <footer class="footer">
-      <div class="container">
-         made with <a href='lk.Doc.html'>lk.Doc</a> 
-      </div>
+    <div class="container">
+       made with <a href='http://doc.lubyk.org/lk.Doc.html'>lk.Doc</a> 
+    </div>
     </footer>
 
-    <!-- Placed at the end of the document so the pages load faster -->
-    <!--
-    <script src="assets/js/jquery.js"></script>
-    <script src="assets/js/bootstrap-transition.js"></script>
-    <script src="assets/js/bootstrap-alert.js"></script>
-    <script src="assets/js/bootstrap-modal.js"></script>
-    <script src="assets/js/bootstrap-dropdown.js"></script>
-    <script src="assets/js/bootstrap-scrollspy.js"></script>
-    <script src="assets/js/bootstrap-tab.js"></script>
-    <script src="assets/js/bootstrap-tooltip.js"></script>
-    <script src="assets/js/bootstrap-popover.js"></script>
-    <script src="assets/js/bootstrap-button.js"></script>
-    <script src="assets/js/bootstrap-collapse.js"></script>
-    <script src="assets/js/bootstrap-carousel.js"></script>
-    <script src="assets/js/bootstrap-typeahead.js"></script>
-    <script src="assets/js/bootstrap-affix.js"></script>
-    -->
-
-    
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
     <script src='http://code.jquery.com/jquery.js'></script>
     <script src='js/bootstrap.min.js'></script>
   </body>
 </html>
+

@@ -8,25 +8,6 @@
     <meta name="author" content="">
 
 
-    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
-
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-        config: ["MMLorHTML.js"],
-        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
-        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
-        TeX: {
-          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
-        },
-        menuSettings: {
-          zoom: "Hover",
-          mpContext: true,
-          mpMouse: true
-        },
-      });
-    </script>
-    <script type="text/javascript"
-  src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
 
     <link href="css/bootstrap.css" rel="stylesheet">
     <link href="css/bootstrap-responsive.css" rel="stylesheet">
@@ -44,31 +25,31 @@
       </div>
     </div>
 
-  <div class="container">
+    <div class="container">
 
-    <div class="row">
+      <div class="row">
 
-      <div class="span2 bs-docs-sidebar local-nav">
-        <ul class="nav nav-list bs-docs-sidenav affix">
-                    <li><a href='#Scheduler'><i class='icon-chevron-right'></i> lk.Scheduler</a></li>
-                  </ul>
-      </div>
+        <div class='span3'>
+          <ul class='nav nav-tabs nav-stacked local-nav affix'>
+                        <li><a href='#Scheduler'><i class='icon-chevron-right'></i> lk.Scheduler</a></li>
+                      </ul>
+        </div>
 
-      <div class="span7">
+        <div class="span7">
 
-                <section id='Scheduler'>
+                    <section id='Scheduler'>
           <h2 class='section'>lk.Scheduler</h2>
 
                               <a name='pcall'></a>
           <h4 class='method'><span>:</span>pcall <code>(f, errorHandler)</code></h4>
           
-                      <p class='summary'></p>
-                      <p>require 'zmq' local lib     = {type = 'lk.Scheduler'} lib.<em></em>index   = lib <a href='lk.Scheduler.html'>lk.Scheduler</a>  = lib local private = {} local elapsed = elapsed</p>
-                      <p>setmetatable(lib, { <em></em>call = function(lib, ...)</p>
-                      <p><pre class='prettyprint lang-lua'>return lib.new(...)</pre></p>
-                      <p>end })</p>
-                      <p>local self = {</p>
-                      <p><pre class='prettyprint lang-lua'>now        = 0,
+                    <p class='summary'></p>
+                    <p>require 'zmq' local lib     = {type = 'lk.Scheduler'} lib.<em></em>index   = lib <a href='lk.Scheduler.html'>lk.Scheduler</a>  = lib local private = {} local elapsed = elapsed</p>
+                    <p>setmetatable(lib, { <em></em>call = function(lib, ...)</p>
+                    <p><pre class='prettyprint lang-lua'>return lib.new(...)</pre></p>
+                    <p>end })</p>
+                    <p>local self = {</p>
+                    <p><pre class='prettyprint lang-lua'>now        = 0,
 -- This is used by widgets to detect volontary close vs
 -- quit close.
 should_run = true,
@@ -83,48 +64,48 @@ idx_to_thread = {},
 finalizers    = {},
 -- Using zmq for polling
 poller        = zmq.Poller(),</pre></p>
-                      <p>} return setmetatable(self, lib) end</p>
-                      <p>--- Sleeps a given number of milliseconds starting from the -- current time (not the logical time). This should not be used as a -- timer because it will drift. -- FIXME: remove warning if delay > 10 then</p>
-                      <p><pre class='prettyprint lang-lua'>-- We changed interval from milliseconds to seconds.
+                    <p>} return setmetatable(self, lib) end</p>
+                    <p>--- Sleeps a given number of milliseconds starting from the -- current time (not the logical time). This should not be used as a -- timer because it will drift. -- FIXME: remove warning if delay > 10 then</p>
+                    <p><pre class='prettyprint lang-lua'>-- We changed interval from milliseconds to seconds.
 printf("Using interval of %f seconds.\n%s\n", delay, debug.traceback())</pre></p>
-                      <p>end if delay == 0 then</p>
-                      <p><pre class='prettyprint lang-lua'>coroutine.yield('wait', 0)</pre></p>
-                      <p>else</p>
-                      <p><pre class='prettyprint lang-lua'>coroutine.yield('wait', elapsed() + delay)</pre></p>
-                      <p>end end</p>
-                      <p>function sleep(delay) sched:sleep(delay) end</p>
-                      <p>self.should_run = false return true end</p>
-                      <p>--- Make it easy to rewrite logger. print(typ, msg) end</p>
-                      <p>--- Waits a given number of milliseconds starting from the -- logical time. This should be used as a timer because it will not -- drift. -- FIXME: remove warning if delay > 10 then</p>
-                      <p><pre class='prettyprint lang-lua'>-- We changed interval from milliseconds to seconds.
+                    <p>end if delay == 0 then</p>
+                    <p><pre class='prettyprint lang-lua'>coroutine.yield('wait', 0)</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>coroutine.yield('wait', elapsed() + delay)</pre></p>
+                    <p>end end</p>
+                    <p>function sleep(delay) sched:sleep(delay) end</p>
+                    <p>self.should_run = false return true end</p>
+                    <p>--- Make it easy to rewrite logger. print(typ, msg) end</p>
+                    <p>--- Waits a given number of milliseconds starting from the -- logical time. This should be used as a timer because it will not -- drift. -- FIXME: remove warning if delay > 10 then</p>
+                    <p><pre class='prettyprint lang-lua'>-- We changed interval from milliseconds to seconds.
 printf("Using interval of %f seconds.\n%s\n", interval, debug.traceback())</pre></p>
-                      <p>end if delay == 0 then</p>
-                      <p><pre class='prettyprint lang-lua'>coroutine.yield('wait', 0)</pre></p>
-                      <p>else</p>
-                      <p><pre class='prettyprint lang-lua'>coroutine.yield('wait', self.now + delay)</pre></p>
-                      <p>end end</p>
-                      <p>coroutine.yield('read', fd) end</p>
-                      <p>coroutine.yield('write', fd) end</p>
-                      <p>coroutine.yield('abort') end</p>
-                      <p>if func then</p>
-                      <p><pre class='prettyprint lang-lua'>self.main = lk.Thread(func)</pre></p>
-                      <p>end</p>
-                      <p>if not rawget(_G, 'mimas') then</p>
-                      <p><pre class='prettyprint lang-lua'>-- without mimas
+                    <p>end if delay == 0 then</p>
+                    <p><pre class='prettyprint lang-lua'>coroutine.yield('wait', 0)</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>coroutine.yield('wait', self.now + delay)</pre></p>
+                    <p>end end</p>
+                    <p>coroutine.yield('read', fd) end</p>
+                    <p>coroutine.yield('write', fd) end</p>
+                    <p>coroutine.yield('abort') end</p>
+                    <p>if func then</p>
+                    <p><pre class='prettyprint lang-lua'>self.main = lk.Thread(func)</pre></p>
+                    <p>end</p>
+                    <p>if not rawget(_G, 'mimas') then</p>
+                    <p><pre class='prettyprint lang-lua'>-- without mimas
 self:loop()</pre></p>
-                      <p>end</p>
-                      <p>if self.should<em>run or self.restart</em>with_mimas then</p>
-                      <p><pre class='prettyprint lang-lua'>self.restart_with_mimas = nil
+                    <p>end</p>
+                    <p>if self.should<em>run or self.restart</em>with_mimas then</p>
+                    <p><pre class='prettyprint lang-lua'>self.restart_with_mimas = nil
 -- restarting
 self.should_run = true
 -- now we are with mimas
 self.mimas = true
 private.usePoller(self, mimas.Poller())
 app:exec()</pre></p>
-                      <p>end private.finalize(self) end</p>
-                      <p>local poller = self.poller local idx<em>to</em>thread = self.idx<em>to</em>thread</p>
-                      <p>--=============================================== MAIN EVENT LOOP while self.should_run do</p>
-                      <p><pre class='prettyprint lang-lua'>local now = elapsed()
+                    <p>end private.finalize(self) end</p>
+                    <p>local poller = self.poller local idx<em>to</em>thread = self.idx<em>to</em>thread</p>
+                    <p>--=============================================== MAIN EVENT LOOP while self.should_run do</p>
+                    <p><pre class='prettyprint lang-lua'>local now = elapsed()
 local now_list = {}
 local timeout = -1
 local next_thread = self.at_next
@@ -184,11 +165,11 @@ end
 if self.garbage then
   private.cleanup(self)
 end</pre></p>
-                      <p>end end</p>
-                      <p>-- We use the wrapper internally so that we do not prevent -- garbage collection. thread.at = at -- sorted insert (next event first) local prev = self local ne = prev.at<em>next local previous</em>at if ne then</p>
-                      <p><pre class='prettyprint lang-lua'>previous_at = ne.at</pre></p>
-                      <p>end while true do</p>
-                      <p><pre class='prettyprint lang-lua'>if not ne then
+                    <p>end end</p>
+                    <p>-- We use the wrapper internally so that we do not prevent -- garbage collection. thread.at = at -- sorted insert (next event first) local prev = self local ne = prev.at<em>next local previous</em>at if ne then</p>
+                    <p><pre class='prettyprint lang-lua'>previous_at = ne.at</pre></p>
+                    <p>end while true do</p>
+                    <p><pre class='prettyprint lang-lua'>if not ne then
   prev.at_next = thread
   thread.at_next = nil
   break
@@ -200,19 +181,19 @@ else
   prev = ne
 end
 ne = prev.at_next</pre></p>
-                      <p>end if self.mimas and self.at<em>next.at ~= previous</em>at then</p>
-                      <p><pre class='prettyprint lang-lua'>-- We need to reschedule because this method can be called from a GUI
+                    <p>end if self.mimas and self.at<em>next.at ~= previous</em>at then</p>
+                    <p><pre class='prettyprint lang-lua'>-- We need to reschedule because this method can be called from a GUI
 -- callback and we won't get back to the loop to do this.
 self.poller:resumeAt(self.at_next.at)</pre></p>
-                      <p>end end</p>
-                      <p>--- Tries to run 'func' count times (retry every 2^n seconds) and calls -- 'failed' function on failure. if type(count) == 'function' then</p>
-                      <p><pre class='prettyprint lang-lua'>func, failed, wait = count, func, failed
+                    <p>end end</p>
+                    <p>--- Tries to run 'func' count times (retry every 2^n seconds) and calls -- 'failed' function on failure. if type(count) == 'function' then</p>
+                    <p><pre class='prettyprint lang-lua'>func, failed, wait = count, func, failed
 -- default count
 count = 4</pre></p>
-                      <p>end local wait = wait or 1 -- FIXME: if wait > 10 then</p>
-                      <p><pre class='prettyprint lang-lua'>printf("Using interval of %f seconds.\n%s\n", wait, debug.traceback())</pre></p>
-                      <p>end return lk.Thread(function()</p>
-                      <p><pre class='prettyprint lang-lua'>local res, err
+                    <p>end local wait = wait or 1 -- FIXME: if wait > 10 then</p>
+                    <p><pre class='prettyprint lang-lua'>printf("Using interval of %f seconds.\n%s\n", wait, debug.traceback())</pre></p>
+                    <p>end return lk.Thread(function()</p>
+                    <p><pre class='prettyprint lang-lua'>local res, err
 for i=1,count do
   res, err = self:pcall(func)
   if res then
@@ -222,25 +203,25 @@ for i=1,count do
   end
 end
 failed(err)</pre></p>
-                      <p>end) end</p>
-                      <p>-- This is called by <a href='lk.Thread.html'>lk.Thread</a> when the thread is garbage collected. -- We will cleanup any filedescriptor in the main thread (not now or -- we crash because we call C from the garbage collector). if thread.idx then</p>
-                      <p><pre class='prettyprint lang-lua'>self.idx_to_thread[thread.idx] = nil</pre></p>
-                      <p>end if thread.fd then</p>
-                      <p><pre class='prettyprint lang-lua'>if not self.garbage then
+                    <p>end) end</p>
+                    <p>-- This is called by <a href='lk.Thread.html'>lk.Thread</a> when the thread is garbage collected. -- We will cleanup any filedescriptor in the main thread (not now or -- we crash because we call C from the garbage collector). if thread.idx then</p>
+                    <p><pre class='prettyprint lang-lua'>self.idx_to_thread[thread.idx] = nil</pre></p>
+                    <p>end if thread.fd then</p>
+                    <p><pre class='prettyprint lang-lua'>if not self.garbage then
   self.garbage = {thread}
 else
   table.insert(self.garbage, thread)
 end</pre></p>
-                      <p>end self:removeFd(thread) thread.t.t = nil end</p>
-                      <p>local fd = thread.fd if thread.idx then</p>
-                      <p><pre class='prettyprint lang-lua'>self.idx_to_thread[thread.idx] = nil</pre></p>
-                      <p>end if fd then</p>
-                      <p><pre class='prettyprint lang-lua'>self.poller:remove(thread.idx)
+                    <p>end self:removeFd(thread) thread.t.t = nil end</p>
+                    <p>local fd = thread.fd if thread.idx then</p>
+                    <p><pre class='prettyprint lang-lua'>self.idx_to_thread[thread.idx] = nil</pre></p>
+                    <p>end if fd then</p>
+                    <p><pre class='prettyprint lang-lua'>self.poller:remove(thread.idx)
 thread.fd  = nil
 self.fd_count = self.fd_count - 1</pre></p>
-                      <p>end thread.idx = nil end</p>
-                      <p>errorHandler = errorHandler or private.errorHandler local co = coroutine.create(f) while true do</p>
-                      <p><pre class='prettyprint lang-lua'>local status, a, b = coroutine.resume(co)
+                    <p>end thread.idx = nil end</p>
+                    <p>errorHandler = errorHandler or private.errorHandler local co = coroutine.create(f) while true do</p>
+                    <p><pre class='prettyprint lang-lua'>local status, a, b = coroutine.resume(co)
 if coroutine.status(co) == 'suspended' then
   coroutine.yield(a, b)   -- suspend across `mypcall'
 elseif not status then
@@ -250,16 +231,16 @@ else
   -- ended normally
   return status, a, b   -- error or normal return
 end</pre></p>
-                      <p>end end</p>
-                      <p>--=============================================== PRIVATE</p>
-                      <p>local zmq<em>POLLIN, zmq</em>POLLOUT = zmq.POLLIN, zmq.POLLOUT local zmq<em>const = {read = zmq</em>POLLIN, write = zmq_POLLOUT}</p>
-                      <p>function private:usePoller(new<em>poller) self.poller = new</em>poller local idx<em>to</em>thread = self.idx<em>to</em>thread self.idx<em>to</em>thread = {} -- add all filedescriptors for idx, thread in pairs(idx<em>to</em>thread) do</p>
-                      <p><pre class='prettyprint lang-lua'>thread.idx = new_poller:add(thread.fd, thread.event)
+                    <p>end end</p>
+                    <p>--=============================================== PRIVATE</p>
+                    <p>local zmq<em>POLLIN, zmq</em>POLLOUT = zmq.POLLIN, zmq.POLLOUT local zmq<em>const = {read = zmq</em>POLLIN, write = zmq_POLLOUT}</p>
+                    <p>function private:usePoller(new<em>poller) self.poller = new</em>poller local idx<em>to</em>thread = self.idx<em>to</em>thread self.idx<em>to</em>thread = {} -- add all filedescriptors for idx, thread in pairs(idx<em>to</em>thread) do</p>
+                    <p><pre class='prettyprint lang-lua'>thread.idx = new_poller:add(thread.fd, thread.event)
 self.idx_to_thread[thread.idx] = thread</pre></p>
-                      <p>end end</p>
-                      <p>-- FIXME: If fd == zmq.Socket, we never gc because 'self' is in -- the zmq socket thread (even if we do not use it). -- -- What objects really need their own thread (+userdata env) ? --   <strong> Mimas widgets --   </strong> Nothing else</p>
-                      <p>function private:runThread(thread) -- get <a href='lk.Thread.html'>lk.Thread</a> from wrap local t = thread.t.t if not t or not t.co then</p>
-                      <p><pre class='prettyprint lang-lua'>-- has been killed or gc
+                    <p>end end</p>
+                    <p>-- FIXME: If fd == zmq.Socket, we never gc because 'self' is in -- the zmq socket thread (even if we do not use it). -- -- What objects really need their own thread (+userdata env) ? --   <strong> Mimas widgets --   </strong> Nothing else</p>
+                    <p>function private:runThread(thread) -- get <a href='lk.Thread.html'>lk.Thread</a> from wrap local t = thread.t.t if not t or not t.co then</p>
+                    <p><pre class='prettyprint lang-lua'>-- has been killed or gc
 if thread.fd then
   self:removeFd(thread)
   thread.fd = nil
@@ -269,19 +250,19 @@ if t then
   t:finalize(self)
 end
 return</pre></p>
-                      <p>end if thread.at and thread.at > 0 then</p>
-                      <p><pre class='prettyprint lang-lua'>-- logical time
+                    <p>end if thread.at and thread.at > 0 then</p>
+                    <p><pre class='prettyprint lang-lua'>-- logical time
 sched.now = thread.at
 -- This does not work. Think better and make something that works.
 -- if elapsed() &gt; thread.at + 2 then
 --   -- 2 == jitter between realtime and logical time.
 --   print("OUT OF REAL TIME", elapsed() - thread.at)
 -- end</pre></p>
-                      <p>else</p>
-                      <p><pre class='prettyprint lang-lua'>sched.now = elapsed()</pre></p>
-                      <p>end thread.at = nil local ok, a, b = coroutine.resume(t.co) local event = zmq_const[a]</p>
-                      <p>if not ok then</p>
-                      <p><pre class='prettyprint lang-lua'>-- a = error in thread
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>sched.now = elapsed()</pre></p>
+                    <p>end thread.at = nil local ok, a, b = coroutine.resume(t.co) local event = zmq_const[a]</p>
+                    <p>if not ok then</p>
+                    <p><pre class='prettyprint lang-lua'>-- a = error in thread
 if t.error then
   -- Thread has an error handler, call it
   t.error(a, debug.traceback(t.co))
@@ -301,8 +282,8 @@ else
   t.co = nil
   t:finalize(self)
 end</pre></p>
-                      <p>elseif event then</p>
-                      <p><pre class='prettyprint lang-lua'>if thread.fd then
+                    <p>elseif event then</p>
+                    <p><pre class='prettyprint lang-lua'>if thread.fd then
   if thread.fd == b then
     -- same
     self.poller:modify(thread.idx, event)
@@ -329,130 +310,133 @@ else
 end
 -- We need this information in case we change poller.
 thread.event = event</pre></p>
-                      <p>elseif a == 'join' then</p>
-                      <p><pre class='prettyprint lang-lua'>if thread.fd then
+                    <p>elseif a == 'join' then</p>
+                    <p><pre class='prettyprint lang-lua'>if thread.fd then
   self:removeFd(thread)
 end
 b:addJoin(thread)</pre></p>
-                      <p>elseif a == 'wait' then</p>
-                      <p><pre class='prettyprint lang-lua'>if thread.fd then
+                    <p>elseif a == 'wait' then</p>
+                    <p><pre class='prettyprint lang-lua'>if thread.fd then
   self:removeFd(thread)
 end
 -- b = at
 -- a value of 0 == execute again as soon as possible
 self:scheduleAt(b, thread)</pre></p>
-                      <p>elseif not t.co or coroutine.status(t.co) == 'dead' or a == 'abort' then</p>
-                      <p><pre class='prettyprint lang-lua'>if thread.fd then
+                    <p>elseif not t.co or coroutine.status(t.co) == 'dead' or a == 'abort' then</p>
+                    <p><pre class='prettyprint lang-lua'>if thread.fd then
   self:removeFd(thread)
 end
 -- let it repose in peace
 thread.fd = nil
 t.co = nil
 t:finalize(self)</pre></p>
-                      <p>elseif a == 'mimas' then</p>
-                      <p><pre class='prettyprint lang-lua'>self.should_run = false
+                    <p>elseif a == 'mimas' then</p>
+                    <p><pre class='prettyprint lang-lua'>self.should_run = false
 self.restart_with_mimas = true
 -- restart as soon as we have restarted mimas scheduler
 self:scheduleAt(0, thread)</pre></p>
-                      <p>else</p>
-                      <p><pre class='prettyprint lang-lua'>if thread.fd then
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>if thread.fd then
   self:removeFd(thread)
 end
 print('BAD YIELD:', a, b)</pre></p>
-                      <p>end end</p>
-                      <p>function private:finalize() for _, func in ipairs(self.finalizers) do</p>
-                      <p><pre class='prettyprint lang-lua'>-- if one fails, should not crash all finalizers...
+                    <p>end end</p>
+                    <p>function private:finalize() for _, func in ipairs(self.finalizers) do</p>
+                    <p><pre class='prettyprint lang-lua'>-- if one fails, should not crash all finalizers...
 pcall(func)</pre></p>
-                      <p>end end</p>
-                      <p>-- FIXME: traceback not working good enough function private.errorHandler(err, co) if true then</p>
-                      <p><pre class='prettyprint lang-lua'>return err .. '\n' .. debug.traceback(co)</pre></p>
-                      <p>end local tb = lk.split(debug.traceback(co), '\n') local max_i = 5 local message = err for i = 4,#tb do</p>
-                      <p><pre class='prettyprint lang-lua'>if string.find(tb[i], 'lubyk/lib/test.lua') then
+                    <p>end end</p>
+                    <p>-- FIXME: traceback not working good enough function private.errorHandler(err, co) if true then</p>
+                    <p><pre class='prettyprint lang-lua'>return err .. '\n' .. debug.traceback(co)</pre></p>
+                    <p>end local tb = lk.split(debug.traceback(co), '\n') local max_i = 5 local message = err for i = 4,#tb do</p>
+                    <p><pre class='prettyprint lang-lua'>if string.find(tb[i], 'lubyk/lib/test.lua') then
   max_i = i - 2
   break
 end</pre></p>
-                      <p>end for i = 4,max_i do</p>
-                      <p><pre class='prettyprint lang-lua'>message = message .. '\n' .. tb[i]</pre></p>
-                      <p>end return message end</p>
-                      <p>--- After each iteration, cleanup any dead thread. function private:cleanup() for _, thread in ipairs(self.garbage) do</p>
-                      <p><pre class='prettyprint lang-lua'>self:removeFd(thread)</pre></p>
-                            </section>
-              </div>
+                    <p>end for i = 4,max_i do</p>
+                    <p><pre class='prettyprint lang-lua'>message = message .. '\n' .. tb[i]</pre></p>
+                    <p>end return message end</p>
+                    <p>--- After each iteration, cleanup any dead thread. function private:cleanup() for _, thread in ipairs(self.garbage) do</p>
+                    <p><pre class='prettyprint lang-lua'>self:removeFd(thread)</pre></p>
+                              </section>
+                  </div>
 
-      <div class="span3 bs-docs-sidebar global-nav">
-        <ul class="nav nav-list bs-docs-sidenav">
-                    <li class='module'><a href='lk.html'>lk</a></li>
-                              <li><a href='lk.Client.html'>lk.Client</a></li>
-                    <li><a href='lk.Command.html'>lk.Command</a></li>
-                    <li><a href='lk.DavMorph.html'>lk.DavMorph</a></li>
-                    <li><a href='lk.DavServer.html'>lk.DavServer</a></li>
-                    <li><a href='lk.Debug.html'>lk.Debug</a></li>
-                    <li><a href='lk.Dir.html'>lk.Dir</a></li>
-                    <li><a href='lk.Doc.html'>lk.Doc</a></li>
-                    <li><a href='lk.Environment.html'>lk.Environment</a></li>
-                    <li><a href='lk.FileResource.html'>lk.FileResource</a></li>
-                    <li><a href='lk.Inlet.html'>lk.Inlet</a></li>
-                    <li><a href='lk.InletMethod.html'>lk.InletMethod</a></li>
-                    <li><a href='lk.Lubyk.html'>lk.Lubyk</a></li>
-                    <li><a href='lk.Morph.html'>lk.Morph</a></li>
-                    <li><a href='lk.Node.html'>lk.Node</a></li>
-                    <li><a href='lk.Observer.html'>lk.Observer</a></li>
-                    <li><a href='lk.Outlet.html'>lk.Outlet</a></li>
-                    <li><a href='lk.OutletMethod.html'>lk.OutletMethod</a></li>
-                    <li><a href='lk.ParamMethod.html'>lk.ParamMethod</a></li>
-                    <li><a href='lk.Patch.html'>lk.Patch</a></li>
-                    <li><a href='lk.Process.html'>lk.Process</a></li>
-                    <li><a href='lk.ProcessWatch.html'>lk.ProcessWatch</a></li>
-                    <li><a href='lk.Properties.html'>lk.Properties</a></li>
-                    <li><a href='lk.RemoteProcess.html'>lk.RemoteProcess</a></li>
-                    <li class='active'><a href='lk.Scheduler.html'>lk.Scheduler</a></li>
-                    <li><a href='lk.SelectCallback.html'>lk.SelectCallback</a></li>
-                    <li><a href='lk.Service.html'>lk.Service</a></li>
-                    <li><a href='lk.ServiceBrowser.html'>lk.ServiceBrowser</a></li>
-                    <li><a href='lk.Settings.html'>lk.Settings</a></li>
-                    <li><a href='lk.Socket.html'>lk.Socket</a></li>
-                    <li><a href='lk.Socket2.html'>lk.Socket2</a></li>
-                    <li><a href='lk.StemCell.html'>lk.StemCell</a></li>
-                    <li><a href='lk.SubClass.html'>lk.SubClass</a></li>
-                    <li><a href='lk.TCPSocket.html'>lk.TCPSocket</a></li>
-                    <li><a href='lk.Thread.html'>lk.Thread</a></li>
-                    <li><a href='lk.Timer.html'>lk.Timer</a></li>
-                    <li><a href='lk.UDPSocket.html'>lk.UDPSocket</a></li>
-                    <li><a href='lk.WebServer.html'>lk.WebServer</a></li>
-                    <li><a href='lk.crypto.html'>lk.crypto</a></li>
-                    <li><a href='lk.more.html'>lk.more</a></li>
-                    <li><a href='lk.util.html'>lk.util</a></li>
-                  </ul>
+        <div class='span2'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='lk.html'>lk</a></li>
+                                    <li><a href='lk.Client.html'>lk.Client</a></li>
+                        <li><a href='lk.Command.html'>lk.Command</a></li>
+                        <li><a href='lk.DavMorph.html'>lk.DavMorph</a></li>
+                        <li><a href='lk.DavServer.html'>lk.DavServer</a></li>
+                        <li><a href='lk.Debug.html'>lk.Debug</a></li>
+                        <li><a href='lk.Dir.html'>lk.Dir</a></li>
+                        <li><a href='lk.Doc.html'>lk.Doc</a></li>
+                        <li><a href='lk.Environment.html'>lk.Environment</a></li>
+                        <li><a href='lk.FileResource.html'>lk.FileResource</a></li>
+                        <li><a href='lk.Finalizer.html'>lk.Finalizer</a></li>
+                        <li><a href='lk.Inlet.html'>lk.Inlet</a></li>
+                        <li><a href='lk.InletMethod.html'>lk.InletMethod</a></li>
+                        <li><a href='lk.Lubyk.html'>lk.Lubyk</a></li>
+                        <li><a href='lk.Morph.html'>lk.Morph</a></li>
+                        <li><a href='lk.Node.html'>lk.Node</a></li>
+                        <li><a href='lk.Observer.html'>lk.Observer</a></li>
+                        <li><a href='lk.Outlet.html'>lk.Outlet</a></li>
+                        <li><a href='lk.OutletMethod.html'>lk.OutletMethod</a></li>
+                        <li><a href='lk.ParamMethod.html'>lk.ParamMethod</a></li>
+                        <li><a href='lk.Patch.html'>lk.Patch</a></li>
+                        <li><a href='lk.Process.html'>lk.Process</a></li>
+                        <li><a href='lk.ProcessWatch.html'>lk.ProcessWatch</a></li>
+                        <li><a href='lk.Properties.html'>lk.Properties</a></li>
+                        <li><a href='lk.RemoteProcess.html'>lk.RemoteProcess</a></li>
+                        <li class='active'><a href='lk.Scheduler.html'>lk.Scheduler</a></li>
+                        <li><a href='lk.SelectCallback.html'>lk.SelectCallback</a></li>
+                        <li><a href='lk.Service.html'>lk.Service</a></li>
+                        <li><a href='lk.ServiceBrowser.html'>lk.ServiceBrowser</a></li>
+                        <li><a href='lk.Settings.html'>lk.Settings</a></li>
+                        <li><a href='lk.Socket.html'>lk.Socket</a></li>
+                        <li><a href='lk.Socket2.html'>lk.Socket2</a></li>
+                        <li><a href='lk.StemCell.html'>lk.StemCell</a></li>
+                        <li><a href='lk.SubClass.html'>lk.SubClass</a></li>
+                        <li><a href='lk.TCPSocket.html'>lk.TCPSocket</a></li>
+                        <li><a href='lk.Thread.html'>lk.Thread</a></li>
+                        <li><a href='lk.TimeRef.html'>lk.TimeRef</a></li>
+                        <li><a href='lk.Timer.html'>lk.Timer</a></li>
+                        <li><a href='lk.UDPSocket.html'>lk.UDPSocket</a></li>
+                        <li><a href='lk.WebServer.html'>lk.WebServer</a></li>
+                        <li><a href='lk.core.html'>lk.core</a></li>
+                        <li><a href='lk.crypto.html'>lk.crypto</a></li>
+                        <li><a href='lk.more.html'>lk.more</a></li>
+                        <li><a href='lk.util.html'>lk.util</a></li>
+                      </ul>
+        </div>
       </div>
     </div>
-  </div>
 
     <footer class="footer">
-      <div class="container">
-         made with <a href='lk.Doc.html'>lk.Doc</a> 
-      </div>
+    <div class="container">
+       made with <a href='http://doc.lubyk.org/lk.Doc.html'>lk.Doc</a> 
+    </div>
     </footer>
 
-    <!-- Placed at the end of the document so the pages load faster -->
-    <!--
-    <script src="assets/js/jquery.js"></script>
-    <script src="assets/js/bootstrap-transition.js"></script>
-    <script src="assets/js/bootstrap-alert.js"></script>
-    <script src="assets/js/bootstrap-modal.js"></script>
-    <script src="assets/js/bootstrap-dropdown.js"></script>
-    <script src="assets/js/bootstrap-scrollspy.js"></script>
-    <script src="assets/js/bootstrap-tab.js"></script>
-    <script src="assets/js/bootstrap-tooltip.js"></script>
-    <script src="assets/js/bootstrap-popover.js"></script>
-    <script src="assets/js/bootstrap-button.js"></script>
-    <script src="assets/js/bootstrap-collapse.js"></script>
-    <script src="assets/js/bootstrap-carousel.js"></script>
-    <script src="assets/js/bootstrap-typeahead.js"></script>
-    <script src="assets/js/bootstrap-affix.js"></script>
-    -->
-
-    
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
     <script src='http://code.jquery.com/jquery.js'></script>
     <script src='js/bootstrap.min.js'></script>
   </body>
 </html>
+

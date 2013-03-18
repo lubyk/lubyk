@@ -8,25 +8,6 @@
     <meta name="author" content="">
 
 
-    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
-
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-        config: ["MMLorHTML.js"],
-        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
-        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
-        TeX: {
-          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
-        },
-        menuSettings: {
-          zoom: "Hover",
-          mpContext: true,
-          mpMouse: true
-        },
-      });
-    </script>
-    <script type="text/javascript"
-  src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
 
     <link href="css/bootstrap.css" rel="stylesheet">
     <link href="css/bootstrap-responsive.css" rel="stylesheet">
@@ -44,28 +25,28 @@
       </div>
     </div>
 
-  <div class="container">
+    <div class="container">
 
-    <div class="row">
+      <div class="row">
 
-      <div class="span2 bs-docs-sidebar local-nav">
-        <ul class="nav nav-list bs-docs-sidenav affix">
-                    <li><a href='#FileResource'><i class='icon-chevron-right'></i> lk.FileResource</a></li>
-                  </ul>
-      </div>
+        <div class='span3'>
+          <ul class='nav nav-tabs nav-stacked local-nav affix'>
+                        <li><a href='#FileResource'><i class='icon-chevron-right'></i> lk.FileResource</a></li>
+                      </ul>
+        </div>
 
-      <div class="span7">
+        <div class="span7">
 
-                <section id='FileResource'>
+                    <section id='FileResource'>
           <h2 class='section'>lk.FileResource</h2>
 
                               <a name='moveChild'></a>
           <h4 class='method'><span>:</span>moveChild <code>(child, dest_parent, dest_name)</code></h4>
           
-                      <p class='summary'></p>
-                      <p>local lib = {type='lk.FileResource', IGNORE = '^%.'} lib.<em></em>index = lib <a href='lk.FileResource.html'>lk.FileResource</a> = lib -- Only store in cache if the body is less then this local CACHE<em>MAX</em>SIZE = 30000 local private = {}</p>
-                      <p>setmetatable(lib, { -- new method -- Create a FileResource. The path <strong>MUST</strong> be relative to root -- if root is provided and must start with a '/'. <em></em>call = function(lib, url, root) local self if root then</p>
-                      <p><pre class='prettyprint lang-lua'>self = root.cache[url]
+                    <p class='summary'></p>
+                    <p>local lib = {type='lk.FileResource', IGNORE = '^%.'} lib.<em></em>index = lib <a href='lk.FileResource.html'>lk.FileResource</a> = lib -- Only store in cache if the body is less then this local CACHE<em>MAX</em>SIZE = 30000 local private = {}</p>
+                    <p>setmetatable(lib, { -- new method -- Create a FileResource. The path <strong>MUST</strong> be relative to root -- if root is provided and must start with a '/'. <em></em>call = function(lib, url, root) local self if root then</p>
+                    <p><pre class='prettyprint lang-lua'>self = root.cache[url]
 if self then
   return self
 end
@@ -73,69 +54,69 @@ self = {
   root = root,
   path = root.path .. url,
   url = url,</pre></p>
-                      <p><pre class='prettyprint lang-lua'>self = {
+                    <p><pre class='prettyprint lang-lua'>self = {
   path = url,
   url = '',
 }
 self.root = self
 -- keep all resources cached
 self.cache = {}</pre></p>
-                      <p>end if not lk.exist(self.path) then</p>
-                      <p><pre class='prettyprint lang-lua'>return nil</pre></p>
-                      <p>else</p>
-                      <p><pre class='prettyprint lang-lua'>self.root.cache[self.url] = self</pre></p>
-                      <p>end self.callbacks = {} setmetatable(self, lib) return self:sync() end})</p>
-                      <p>-- accessor for WebDAV properties lib.davProperty = rawget</p>
-                      <p>local stat, err = lfs.attributes(self.path) if not stat then</p>
-                      <p><pre class='prettyprint lang-lua'>-- does not exist (removed)
+                    <p>end if not lk.exist(self.path) then</p>
+                    <p><pre class='prettyprint lang-lua'>return nil</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>self.root.cache[self.url] = self</pre></p>
+                    <p>end self.callbacks = {} setmetatable(self, lib) return self:sync() end})</p>
+                    <p>-- accessor for WebDAV properties lib.davProperty = rawget</p>
+                    <p>local stat, err = lfs.attributes(self.path) if not stat then</p>
+                    <p><pre class='prettyprint lang-lua'>-- does not exist (removed)
 return nil</pre></p>
-                      <p>end self.name = string.match(self.path, '/([^/]+)$') self.children<em>list = nil self.body</em>cache    = nil local url = self.url if self.root == self then</p>
-                      <p><pre class='prettyprint lang-lua'>self.url = ''
+                    <p>end self.name = string.match(self.path, '/([^/]+)$') self.children<em>list = nil self.body</em>cache    = nil local url = self.url if self.root == self then</p>
+                    <p><pre class='prettyprint lang-lua'>self.url = ''
 self.cache[self.url] = self</pre></p>
-                      <p>else</p>
-                      <p><pre class='prettyprint lang-lua'>self.url = string.sub(self.path, string.len(self.root.path) + 1)
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>self.url = string.sub(self.path, string.len(self.root.path) + 1)
 if url ~= self.url then
   if self.root.cache[url] == self then
     self.root.cache[url] = nil
   end
   self.root.cache[self.url] = self
 end</pre></p>
-                      <p>end if stat.mode == 'directory' then</p>
-                      <p><pre class='prettyprint lang-lua'>self.is_dir = true
+                    <p>end if stat.mode == 'directory' then</p>
+                    <p><pre class='prettyprint lang-lua'>self.is_dir = true
 self.resourcetype = {xml = 'collection'}
 -- TODO: we could keep the getlastmodified in sync (must change
 -- on add/removal of children and/or subchildren)
 self.getlastmodified  = stat.modification
 -- FIXME: find creation date through lfs ?
 self.creationdate     = self.getlastmodified</pre></p>
-                      <p>else</p>
-                      <p><pre class='prettyprint lang-lua'>self.is_dir = false
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>self.is_dir = false
 self.resourcetype     = nil
 self.contenttype      = private.contentType(self)
 self.getcontentlength = stat.size
 self.getlastmodified  = stat.modification
 -- FIXME: find creation date through lfs ?
 self.creationdate     = self.getlastmodified</pre></p>
-                      <p>end return self end</p>
-                      <p>if self.body_cache then</p>
-                      <p><pre class='prettyprint lang-lua'>return self.body_cache</pre></p>
-                      <p>elseif self.getcontentlength < CACHE<em>MAX</em>SIZE then</p>
-                      <p><pre class='prettyprint lang-lua'>self.body_cache = lk.content(self.path)
+                    <p>end return self end</p>
+                    <p>if self.body_cache then</p>
+                    <p><pre class='prettyprint lang-lua'>return self.body_cache</pre></p>
+                    <p>elseif self.getcontentlength < CACHE<em>MAX</em>SIZE then</p>
+                    <p><pre class='prettyprint lang-lua'>self.body_cache = lk.content(self.path)
 return self.body_cache</pre></p>
-                      <p>else</p>
-                      <p><pre class='prettyprint lang-lua'>-- TODO: something that reads by chunks... (io.read func wrapper?)
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>-- TODO: something that reads by chunks... (io.read func wrapper?)
 return lk.content(self.path)</pre></p>
-                      <p>end end</p>
-                      <p>if self.is_dir then</p>
-                      <p><pre class='prettyprint lang-lua'>return false</pre></p>
-                      <p>else</p>
-                      <p><pre class='prettyprint lang-lua'>lk.writeall(self.path, content or '')
+                    <p>end end</p>
+                    <p>if self.is_dir then</p>
+                    <p><pre class='prettyprint lang-lua'>return false</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>lk.writeall(self.path, content or '')
 self:sync()
 self:triggerCallbacks('update')
 return true</pre></p>
-                      <p>end end</p>
-                      <p>if self.is_dir then</p>
-                      <p><pre class='prettyprint lang-lua'>lk.rmTree(self.path, true)
+                    <p>end end</p>
+                    <p>if self.is_dir then</p>
+                    <p><pre class='prettyprint lang-lua'>lk.rmTree(self.path, true)
 local url = self.url
 local len = string.len(url)
 for surl, _ in pairs(self.root.cache) do
@@ -143,31 +124,31 @@ for surl, _ in pairs(self.root.cache) do
     self.root.cache[surl] = nil
   end
 end</pre></p>
-                      <p>else</p>
-                      <p><pre class='prettyprint lang-lua'>lk.rmFile(self.path)
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>lk.rmFile(self.path)
 self.root.cache[self.url] = nil</pre></p>
-                      <p>end return true end</p>
-                      <p>if lk.move(self.path, new_path) then</p>
-                      <p><pre class='prettyprint lang-lua'>self.path = new_path
+                    <p>end return true end</p>
+                    <p>if lk.move(self.path, new_path) then</p>
+                    <p><pre class='prettyprint lang-lua'>self.path = new_path
 self:sync()
 return true</pre></p>
-                      <p>end return false end</p>
-                      <p>--- LOCK the resource. The lock has a default timeout of -- FileResource.LOCK_TIMEOUT in ms and is linked to a user.  -- -- @return 'nil' if the lock cannot be granted (already locked, parent lock) --          a new lock token on succes end</p>
-                      <p>end</p>
-                      <p>--=============================================== Callbacks -- These are manually triggered by the controllers (typically -- the WebDAV controller when it updates files.</p>
-                      <p>local clb = {...} table.insert(clb, self) local callbacks = self.callbacks[op] if not callbacks then</p>
-                      <p><pre class='prettyprint lang-lua'>callbacks = {}
+                    <p>end return false end</p>
+                    <p>--- LOCK the resource. The lock has a default timeout of -- FileResource.LOCK_TIMEOUT in ms and is linked to a user.  -- -- @return 'nil' if the lock cannot be granted (already locked, parent lock) --          a new lock token on succes end</p>
+                    <p>end</p>
+                    <p>--=============================================== Callbacks -- These are manually triggered by the controllers (typically -- the WebDAV controller when it updates files.</p>
+                    <p>local clb = {...} table.insert(clb, self) local callbacks = self.callbacks[op] if not callbacks then</p>
+                    <p><pre class='prettyprint lang-lua'>callbacks = {}
 self.callbacks[op] = callbacks</pre></p>
-                      <p>end table.insert(callbacks, {func, clb}) end</p>
-                      <p>local callbacks = self.callbacks[op] if callbacks then</p>
-                      <p><pre class='prettyprint lang-lua'>for _, clbk in ipairs(callbacks) do
+                    <p>end table.insert(callbacks, {func, clb}) end</p>
+                    <p>local callbacks = self.callbacks[op] if callbacks then</p>
+                    <p><pre class='prettyprint lang-lua'>for _, clbk in ipairs(callbacks) do
   clbk[1](unpack(clbk[2]))
 end</pre></p>
-                      <p>end end</p>
-                      <p>--=============================================== Children if not self.is_dir or not lk.exist(self.path) then</p>
-                      <p><pre class='prettyprint lang-lua'>return {}</pre></p>
-                      <p>end local list = self.children_list if not list then</p>
-                      <p><pre class='prettyprint lang-lua'>-- build and store in cache
+                    <p>end end</p>
+                    <p>--=============================================== Children if not self.is_dir or not lk.exist(self.path) then</p>
+                    <p><pre class='prettyprint lang-lua'>return {}</pre></p>
+                    <p>end local list = self.children_list if not list then</p>
+                    <p><pre class='prettyprint lang-lua'>-- build and store in cache
 list = {}
 self.children_list = list
 for file in lfs.dir(self.path) do
@@ -177,105 +158,108 @@ for file in lfs.dir(self.path) do
     table.insert(list, lib(f, self.root))
   end
 end</pre></p>
-                      <p>end return list end</p>
-                      <p>local fullpath = self.path .. '/' .. name if body then</p>
-                      <p><pre class='prettyprint lang-lua'>lk.writeall(fullpath, body)</pre></p>
-                      <p>else</p>
-                      <p><pre class='prettyprint lang-lua'>lk.makePath(fullpath)</pre></p>
-                      <p>end self:sync() return lk.FileResource(self.url .. '/' .. name, self.root) end</p>
-                      <p>local rez  if type(res<em>or</em>name) == 'string' then</p>
-                      <p><pre class='prettyprint lang-lua'>local url = self.url.. '/' .. res_or_name
+                    <p>end return list end</p>
+                    <p>local fullpath = self.path .. '/' .. name if body then</p>
+                    <p><pre class='prettyprint lang-lua'>lk.writeall(fullpath, body)</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>lk.makePath(fullpath)</pre></p>
+                    <p>end self:sync() return lk.FileResource(self.url .. '/' .. name, self.root) end</p>
+                    <p>local rez  if type(res<em>or</em>name) == 'string' then</p>
+                    <p><pre class='prettyprint lang-lua'>local url = self.url.. '/' .. res_or_name
 rez = lib(url, self.root)</pre></p>
-                      <p>else</p>
-                      <p><pre class='prettyprint lang-lua'>rez = res_or_name</pre></p>
-                      <p>end if not rez or rez:delete() then</p>
-                      <p><pre class='prettyprint lang-lua'>self:sync()
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>rez = res_or_name</pre></p>
+                    <p>end if not rez or rez:delete() then</p>
+                    <p><pre class='prettyprint lang-lua'>self:sync()
 return true</pre></p>
-                      <p>end return false end</p>
-                      <p>local new<em>path = dest</em>parent.path .. '/' .. dest<em>name if child:move(new</em>path) then</p>
-                      <p><pre class='prettyprint lang-lua'>self:sync()
+                    <p>end return false end</p>
+                    <p>local new<em>path = dest</em>parent.path .. '/' .. dest<em>name if child:move(new</em>path) then</p>
+                    <p><pre class='prettyprint lang-lua'>self:sync()
 dest_parent:sync()
 return true</pre></p>
-                      <p>end return false end</p>
-                      <p>--=============================================== PRIVATE</p>
-                      <p>local EXT<em>TO</em>CONTENT_TYPE = { lkp = 'text/yaml', yml = 'text/yaml', lua = 'text/plain', }</p>
-                            </section>
-              </div>
+                    <p>end return false end</p>
+                    <p>--=============================================== PRIVATE</p>
+                    <p>local EXT<em>TO</em>CONTENT_TYPE = { lkp = 'text/yaml', yml = 'text/yaml', lua = 'text/plain', }</p>
+                              </section>
+                  </div>
 
-      <div class="span3 bs-docs-sidebar global-nav">
-        <ul class="nav nav-list bs-docs-sidenav">
-                    <li class='module'><a href='lk.html'>lk</a></li>
-                              <li><a href='lk.Client.html'>lk.Client</a></li>
-                    <li><a href='lk.Command.html'>lk.Command</a></li>
-                    <li><a href='lk.DavMorph.html'>lk.DavMorph</a></li>
-                    <li><a href='lk.DavServer.html'>lk.DavServer</a></li>
-                    <li><a href='lk.Debug.html'>lk.Debug</a></li>
-                    <li><a href='lk.Dir.html'>lk.Dir</a></li>
-                    <li><a href='lk.Doc.html'>lk.Doc</a></li>
-                    <li><a href='lk.Environment.html'>lk.Environment</a></li>
-                    <li class='active'><a href='lk.FileResource.html'>lk.FileResource</a></li>
-                    <li><a href='lk.Inlet.html'>lk.Inlet</a></li>
-                    <li><a href='lk.InletMethod.html'>lk.InletMethod</a></li>
-                    <li><a href='lk.Lubyk.html'>lk.Lubyk</a></li>
-                    <li><a href='lk.Morph.html'>lk.Morph</a></li>
-                    <li><a href='lk.Node.html'>lk.Node</a></li>
-                    <li><a href='lk.Observer.html'>lk.Observer</a></li>
-                    <li><a href='lk.Outlet.html'>lk.Outlet</a></li>
-                    <li><a href='lk.OutletMethod.html'>lk.OutletMethod</a></li>
-                    <li><a href='lk.ParamMethod.html'>lk.ParamMethod</a></li>
-                    <li><a href='lk.Patch.html'>lk.Patch</a></li>
-                    <li><a href='lk.Process.html'>lk.Process</a></li>
-                    <li><a href='lk.ProcessWatch.html'>lk.ProcessWatch</a></li>
-                    <li><a href='lk.Properties.html'>lk.Properties</a></li>
-                    <li><a href='lk.RemoteProcess.html'>lk.RemoteProcess</a></li>
-                    <li><a href='lk.Scheduler.html'>lk.Scheduler</a></li>
-                    <li><a href='lk.SelectCallback.html'>lk.SelectCallback</a></li>
-                    <li><a href='lk.Service.html'>lk.Service</a></li>
-                    <li><a href='lk.ServiceBrowser.html'>lk.ServiceBrowser</a></li>
-                    <li><a href='lk.Settings.html'>lk.Settings</a></li>
-                    <li><a href='lk.Socket.html'>lk.Socket</a></li>
-                    <li><a href='lk.Socket2.html'>lk.Socket2</a></li>
-                    <li><a href='lk.StemCell.html'>lk.StemCell</a></li>
-                    <li><a href='lk.SubClass.html'>lk.SubClass</a></li>
-                    <li><a href='lk.TCPSocket.html'>lk.TCPSocket</a></li>
-                    <li><a href='lk.Thread.html'>lk.Thread</a></li>
-                    <li><a href='lk.Timer.html'>lk.Timer</a></li>
-                    <li><a href='lk.UDPSocket.html'>lk.UDPSocket</a></li>
-                    <li><a href='lk.WebServer.html'>lk.WebServer</a></li>
-                    <li><a href='lk.crypto.html'>lk.crypto</a></li>
-                    <li><a href='lk.more.html'>lk.more</a></li>
-                    <li><a href='lk.util.html'>lk.util</a></li>
-                  </ul>
+        <div class='span2'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='lk.html'>lk</a></li>
+                                    <li><a href='lk.Client.html'>lk.Client</a></li>
+                        <li><a href='lk.Command.html'>lk.Command</a></li>
+                        <li><a href='lk.DavMorph.html'>lk.DavMorph</a></li>
+                        <li><a href='lk.DavServer.html'>lk.DavServer</a></li>
+                        <li><a href='lk.Debug.html'>lk.Debug</a></li>
+                        <li><a href='lk.Dir.html'>lk.Dir</a></li>
+                        <li><a href='lk.Doc.html'>lk.Doc</a></li>
+                        <li><a href='lk.Environment.html'>lk.Environment</a></li>
+                        <li class='active'><a href='lk.FileResource.html'>lk.FileResource</a></li>
+                        <li><a href='lk.Finalizer.html'>lk.Finalizer</a></li>
+                        <li><a href='lk.Inlet.html'>lk.Inlet</a></li>
+                        <li><a href='lk.InletMethod.html'>lk.InletMethod</a></li>
+                        <li><a href='lk.Lubyk.html'>lk.Lubyk</a></li>
+                        <li><a href='lk.Morph.html'>lk.Morph</a></li>
+                        <li><a href='lk.Node.html'>lk.Node</a></li>
+                        <li><a href='lk.Observer.html'>lk.Observer</a></li>
+                        <li><a href='lk.Outlet.html'>lk.Outlet</a></li>
+                        <li><a href='lk.OutletMethod.html'>lk.OutletMethod</a></li>
+                        <li><a href='lk.ParamMethod.html'>lk.ParamMethod</a></li>
+                        <li><a href='lk.Patch.html'>lk.Patch</a></li>
+                        <li><a href='lk.Process.html'>lk.Process</a></li>
+                        <li><a href='lk.ProcessWatch.html'>lk.ProcessWatch</a></li>
+                        <li><a href='lk.Properties.html'>lk.Properties</a></li>
+                        <li><a href='lk.RemoteProcess.html'>lk.RemoteProcess</a></li>
+                        <li><a href='lk.Scheduler.html'>lk.Scheduler</a></li>
+                        <li><a href='lk.SelectCallback.html'>lk.SelectCallback</a></li>
+                        <li><a href='lk.Service.html'>lk.Service</a></li>
+                        <li><a href='lk.ServiceBrowser.html'>lk.ServiceBrowser</a></li>
+                        <li><a href='lk.Settings.html'>lk.Settings</a></li>
+                        <li><a href='lk.Socket.html'>lk.Socket</a></li>
+                        <li><a href='lk.Socket2.html'>lk.Socket2</a></li>
+                        <li><a href='lk.StemCell.html'>lk.StemCell</a></li>
+                        <li><a href='lk.SubClass.html'>lk.SubClass</a></li>
+                        <li><a href='lk.TCPSocket.html'>lk.TCPSocket</a></li>
+                        <li><a href='lk.Thread.html'>lk.Thread</a></li>
+                        <li><a href='lk.TimeRef.html'>lk.TimeRef</a></li>
+                        <li><a href='lk.Timer.html'>lk.Timer</a></li>
+                        <li><a href='lk.UDPSocket.html'>lk.UDPSocket</a></li>
+                        <li><a href='lk.WebServer.html'>lk.WebServer</a></li>
+                        <li><a href='lk.core.html'>lk.core</a></li>
+                        <li><a href='lk.crypto.html'>lk.crypto</a></li>
+                        <li><a href='lk.more.html'>lk.more</a></li>
+                        <li><a href='lk.util.html'>lk.util</a></li>
+                      </ul>
+        </div>
       </div>
     </div>
-  </div>
 
     <footer class="footer">
-      <div class="container">
-         made with <a href='lk.Doc.html'>lk.Doc</a> 
-      </div>
+    <div class="container">
+       made with <a href='http://doc.lubyk.org/lk.Doc.html'>lk.Doc</a> 
+    </div>
     </footer>
 
-    <!-- Placed at the end of the document so the pages load faster -->
-    <!--
-    <script src="assets/js/jquery.js"></script>
-    <script src="assets/js/bootstrap-transition.js"></script>
-    <script src="assets/js/bootstrap-alert.js"></script>
-    <script src="assets/js/bootstrap-modal.js"></script>
-    <script src="assets/js/bootstrap-dropdown.js"></script>
-    <script src="assets/js/bootstrap-scrollspy.js"></script>
-    <script src="assets/js/bootstrap-tab.js"></script>
-    <script src="assets/js/bootstrap-tooltip.js"></script>
-    <script src="assets/js/bootstrap-popover.js"></script>
-    <script src="assets/js/bootstrap-button.js"></script>
-    <script src="assets/js/bootstrap-collapse.js"></script>
-    <script src="assets/js/bootstrap-carousel.js"></script>
-    <script src="assets/js/bootstrap-typeahead.js"></script>
-    <script src="assets/js/bootstrap-affix.js"></script>
-    -->
-
-    
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
     <script src='http://code.jquery.com/jquery.js'></script>
     <script src='js/bootstrap.min.js'></script>
   </body>
 </html>
+

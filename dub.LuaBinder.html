@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>dub.LuaBinder</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+
+
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/docs.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class='row'>
+          <div class='span12'>
+             <a href='http://lubyk.org'><img alt='lubyk logo' src='img/lubyk.png'/> <h1>Lubyk documentation</h1></a> 
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="row">
+
+        <div class='span3'>
+          <ul class='nav nav-tabs nav-stacked local-nav affix'>
+                        <li><a href='#LuaBinder'><i class='icon-chevron-right'></i> dub.LuaBinder</a></li>
+                      </ul>
+        </div>
+
+        <div class="span7">
+
+                    <section id='LuaBinder'>
+          <h2 class='section'>dub.LuaBinder</h2>
+
+                              <a name='decisionTree'></a>
+          <h4 class='method'><span>:</span>decisionTree <code>(list)</code></h4>
+          
+                    <p class='summary'></p>
+                    <p>local format  = string.format local lib     = { type = 'dub.LuaBinder', SELF = 'self', -- By default, we try to access userdata in field 'super'. This is not -- slower then checkudata if the element passed is a userdata. TYPE<em>ACCESSOR = 'checksdata', -- By default does an strcmp to ensure correct attribute key. ASSERT</em>ATTR<em>KEY = true, LUA</em>STACK<em>SIZE</em>NAME = 'LuaStackSize', CHECK<em>TO</em>NATIVE = {</p>
+                    <p><pre class='prettyprint lang-lua'>-- default is to use the same type (number = 'number')
+int        = 'number',</pre></p>
+                    <p>}, TYPE<em>TO</em>CHECK = {</p>
+                    <p><pre class='prettyprint lang-lua'>double       = 'number',
+float        = 'number',
+size_t       = 'int',
+int          = 'int',
+uint         = 'int',
+uint8        = 'int',
+uint16       = 'int',
+uint32       = 'int',
+int8_t       = 'int',
+int16_t      = 'int',
+int32_t      = 'int',
+uint8_t      = 'int',
+uint16_t     = 'int',
+uint32_t     = 'int',
+char         = 'int',
+short        = 'int',
+LuaStackSize = 'int',
+['unsigned char']  = 'int',
+['signed int']     = 'int',
+['unsigned int']   = 'int',
+['signed short']   = 'int',
+['unsigned short'] = 'int',
+
+bool       = 'boolean',
+
+['char *'] = 'string',
+['unsigned char *'] = 'string',
+['std::string'] = {
+  type   = 'std::string',
+  -- Get value from Lua.
+  pull   = function(name, position, prefix)
+    return format('size_t %s_sz_;\nconst char *%s = %schecklstring(L, %i, &%s_sz_);',
+                  name, name, prefix, position, name)
+  end,
+  -- Push value in Lua
+  push   = function(name)
+    return format('lua_pushlstring(L, %s.data(), %s.length());', name, name)
+  end,
+  -- Cast value
+  cast   = function(name)
+    return format('std::string(%s, %s_sz_)', name, name)
+  end,
+},</pre></p>
+                    <p>}, -- Native Lua operators LUA<em>NATIVE</em>OP = {</p>
+                    <p><pre class='prettyprint lang-lua'>add   = true,
+sub   = true,
+unm   = true,
+mul   = true,
+div   = true,
+eq    = true,
+lt    = true,
+le    = true,
+call  = true,
+index = true,</pre></p>
+                    <p>}, -- Lua type constants NATIVE<em>TO</em>TLUA = {</p>
+                    <p><pre class='prettyprint lang-lua'>number  = 'LUA_TNUMBER',
+boolean = 'LUA_TBOOLEAN',</pre></p>
+                    <p>}, -- Relative path to copy dub headers and cpp files. Must be -- relative to the bindings output directory. COPY<em>DUB</em>PATH  = '', COMPILER       = 'g++', COMPILER_FLAGS = {</p>
+                    <p><pre class='prettyprint lang-lua'>macosx = '-g -Wall -Wl,-headerpad_max_install_names -flat_namespace -undefined suppress -dynamic -bundle -fPIC',
+linux  = '-g -Wall -Wl,-headerpad_max_install_names -shared -fPIC',</pre></p>
+                    <p>} } local private = {} lib.<em></em>index   = lib <a href='dub.LuaBinder.html'>dub.LuaBinder</a> = lib</p>
+                    <p>--=============================================== dub.LuaBinder() setmetatable(lib, { <em></em>call = function(lib, options)</p>
+                    <p><pre class='prettyprint lang-lua'>local self = {
+  options         = options or {},
+  extra_headers   = {},
+  custom_bindings = {},
+}
+self.header_base = {'^'..lfs.currentdir()..'/(.*)$'}
+return setmetatable(self, lib)</pre></p>
+                    <p>end })</p>
+                    <p>--=============================================== PUBLIC METHODS -- Add xml headers to the database self.options = options if options.header_base then</p>
+                    <p><pre class='prettyprint lang-lua'>if type(options.header_base) == 'string' then
+  options.header_base = {options.header_base}
+end
+self.header_base = {}
+for i, base in ipairs(options.header_base) do
+  self.header_base[i] = '^'..lk.absolutizePath(base)..'/(.*)$'
+end</pre></p>
+                    <p>end self.extra<em>headers = {} private.parseExtraHeadersList(self, nil, options.extra</em>headers)   local namespace<em>name = options.namespace or options.single</em>lib if namespace_name then</p>
+                    <p><pre class='prettyprint lang-lua'>self.namespace = inspector:find(namespace_name)</pre></p>
+                    <p>end if options.single_lib then</p>
+                    <p><pre class='prettyprint lang-lua'>-- default is to:
+--   * prefix mt types with lib name if we do not have a namespace
+--   * not prefix if we have a namespace
+if self.namespace then
+  -- in a namespace. Leave lib_prefix to nil or false.
+else
+  if options.lib_prefix == false then
+    options.lib_prefix = nil
+  else
+    options.lib_prefix = options.lib_prefix or options.single_lib
+  end
+end</pre></p>
+                    <p>end</p>
+                    <p>if options.lib_prefix then</p>
+                    <p><pre class='prettyprint lang-lua'>-- This is the root of all classes.
+inspector.db.name = options.lib_prefix</pre></p>
+                    <p>end</p>
+                    <p>self.output<em>directory = self.output</em>directory or options.output_directory</p>
+                    <p>if options.custom_bindings then</p>
+                    <p><pre class='prettyprint lang-lua'>self:parseCustomBindings(options.custom_bindings)</pre></p>
+                    <p>end</p>
+                    <p>self.ins = inspector local bound = {} if options.only then</p>
+                    <p><pre class='prettyprint lang-lua'>for _,name in ipairs(options.only) do
+  local elem = inspector:find(name)
+  if elem then
+    table.insert(bound, elem)
+    private.bindElem(self, elem, options)
+  else
+    print(string.format("Could not bind '%s' (not found).", name))
+  end
+end</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>local ignore = {}
+if options.ignore then
+  for _, name in ipairs(options.ignore) do
+    ignore[name] = true
+  end
+end
+
+private.bindAll(self, inspector, bound, ignore)</pre></p>
+                    <p>end</p>
+                    <p>if options.single_lib then</p>
+                    <p><pre class='prettyprint lang-lua'>private.makeLibFile(self, options.single_lib, bound)</pre></p>
+                    <p>end private.copyDubFiles(self) end</p>
+                    <p>local work<em>dir = opts.work</em>dir or lfs.currentdir() local files = '' for _, e in ipairs(opts.inputs) do</p>
+                    <p><pre class='prettyprint lang-lua'>files = files .. ' ' .. e</pre></p>
+                    <p>end local flags = ' -I.' for _, e in ipairs(opts.includes or {}) do</p>
+                    <p><pre class='prettyprint lang-lua'>flags = flags .. ' -I' .. e</pre></p>
+                    <p>end if opts.flags then</p>
+                    <p><pre class='prettyprint lang-lua'>flags = flags .. ' ' .. opts.flags</pre></p>
+                    <p>end local cmd = 'cd ' .. work<em>dir .. ' && ' cmd = cmd .. self.COMPILER .. ' '  cmd = cmd .. self.COMPILER</em>FLAGS[Lubyk.plat] .. ' ' cmd = cmd .. flags .. ' ' cmd = cmd .. '-o ' .. opts.output .. ' ' cmd = cmd .. files if opts.verbose then</p>
+                    <p><pre class='prettyprint lang-lua'>print(cmd)</pre></p>
+                    <p>end local pipe = io.popen(cmd) local res = pipe:read('*a') if res ~= '' then</p>
+                    <p><pre class='prettyprint lang-lua'>print(res)</pre></p>
+                    <p>end end</p>
+                    <p>--- Return a string containing the Lua bindings for a class. private.expandClass(self, class) if not self.class_template then</p>
+                    <p><pre class='prettyprint lang-lua'>-- path to current file
+local dir = lk.scriptDir()
+self.class_template = dub.Template {path = dir .. '/lua/class.cpp'}</pre></p>
+                    <p>end return self.class_template:run {class = class, self = self} end</p>
+                    <p>for k, v in pairs(list) do</p>
+                    <p><pre class='prettyprint lang-lua'>if type(v) == 'table' and not v.type then
+  v.type = k
+end
+self.TYPE_TO_CHECK[k] = v</pre></p>
+                    <p>end end</p>
+                    <p>local strip = lk.strip if type(custom) == 'string' then</p>
+                    <p><pre class='prettyprint lang-lua'>-- This is a directory. Build table.
+local dir = lk.Dir(custom)
+custom = {}
+for yaml_file in dir:glob('%.yml') do
+  -- Class or global function name.
+  local elem_name = string.match(yaml_file, '([^/]+)%.yml$')
+  local lua = yaml.load(lk.content(yaml_file)).lua
+  for _, group in pairs(lua) do
+    -- attributes, methods
+    for name, value in pairs(group) do
+      -- each attribute or method
+      if type(value) == 'string' then
+        -- strip last newline
+        group[name] = {body = strip(value)}
+      else
+        for k, v in pairs(value) do
+          value[k] = strip(v)
+        end
+      end
+    end
+  end
+  custom[elem_name] = lua
+end</pre></p>
+                    <p>end self.custom_bindings = custom or {} end</p>
+                    <p>--- Create the body of the bindings for a given method/function. if not method then</p>
+                    <p><pre class='prettyprint lang-lua'>-- Just one parameter: global function. When creating method, we need the
+-- class because it could be a superclass method we are biding and thus the
+-- parent is not the correct one.
+method = parent
+parent = method.parent</pre></p>
+                    <p>end</p>
+                    <p>-- Resolve C++ types to native lua types. self:resolveTypes(method) local custom = private.customMetBinding(self, parent, method) local res = ''</p>
+                    <p>if method.dtor then</p>
+                    <p><pre class='prettyprint lang-lua'>res = res .. format('DubUserdata *userdata = ((DubUserdata*)dub_checksdata_d(L, 1, "%s"));\n', self:libName(parent))
+if custom and custom.body then
+  res = res .. custom.body
+else
+  res = res .. 'if (userdata-&gt;gc) {\n'
+  res = res .. format('  %sself = (%s)userdata-&gt;ptr;\n', parent.create_name, parent.create_name)
+  if custom and custom.cleanup then
+    res = res .. '  ' .. string.gsub(custom.cleanup, '\n', '\n  ')
+  end
+  local dtor = parent.dub.destructor or method.parent.dub.destructor
+  if dtor then
+    res = res .. format('  self-&gt;%s();\n', dtor)
+  else
+    res = res .. '  delete self;\n'
+  end
+  res = res .. '}\n'
+  res = res .. 'userdata-&gt;gc = false;\n'
+  res = res .. 'return 0;'
+end</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>local param_delta = 0
+if method.member then
+  -- We need self
+  res = res .. private.getSelf(self, parent, method, method.is_get_attr)
+  param_delta = 1
+end
+if method.has_defaults then
+  -- We need arg count
+end
+
+if method.is_set_attr then
+  res = res .. private.switch(self, parent, method, param_delta, private.setAttrBody, parent.attributes)
+elseif method.is_get_attr then
+  res = res .. private.switch(self, parent, method, param_delta, private.getAttrBody, parent.attributes)
+elseif method.is_cast then
+  res = res .. private.switch(self, parent, method, param_delta, private.castBody, parent.superclasses)
+elseif method.overloaded then
+  local tree, need_top = self:decisionTree(method.overloaded)
+  if need_top then
+    res = res .. 'int top__ = lua_gettop(L);\n'
+  end
+  res = res .. private.expandTree(self, tree, parent, param_delta, '')
+elseif method.has_defaults then
+  res = res .. 'int top__ = lua_gettop(L);\n'
+  local last, first = #method.params_list, method.first_default - 1
+  for i=last, first, -1 do
+    if i ~= last then
+      res = res .. '} else '
+    end
+    if i == first then
+      res = res .. '{\n'
+    else
+      res = res .. format('if (top__ &gt;= %i) {\n', param_delta + i)
+    end
+    res = res .. '  ' .. private.callWithParams(self, parent, method, param_delta, '  ', custom and custom['arg'..i], i) .. '\n'
+  end
+  res = res .. '}'
+else
+  res = res .. private.callWithParams(self, parent, method, param_delta, '', custom and custom.body)
+end</pre></p>
+                    <p>end return res end</p>
+                    <p>--=============================================== PRIVATE</p>
+                    <p>function private:callWithParams(class, method, param<em>delta, indent, custom, max</em>arg) local max<em>arg = max</em>arg or <a href='#method'>method</a>.params_list local res = '' for param in method:params() do</p>
+                    <p><pre class='prettyprint lang-lua'>if param.position &gt; max_arg then
+  break
+end
+res = res .. private.getParamVar(self, method, param, param_delta)</pre></p>
+                    <p>end if custom then</p>
+                    <p><pre class='prettyprint lang-lua'>res = res .. custom
+if not string.match(custom, 'return[ ]+[^ ]') then
+  res = res .. '\nreturn 0;'
+end</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>if method.array_get or method.array_set then
+  local i_name = method.params_list[1].name
+  res = res .. format('if (!%s || %s &gt; %s) return 0;\n', i_name, i_name, method.array_dim)
+end
+if method.array_set then
+  -- C array attribute set
+  local i_name = method.params_list[1].name
+  res = res .. 'self-&gt;' .. method.name .. '[' .. i_name .. '-1] = '
+  res = res .. private.paramForCall(method.params_list[2]) .. ';\n'
+  res = res .. 'return 0;'
+else
+  local call = private.doCall(self, class, method, max_arg)
+  res = res .. private.pushReturnValue(self, class, method, call)
+end</pre></p>
+                    <p>end return string.gsub(res, '\n', '\n' .. indent) end</p>
+                    <p>function private:detectType(pos, type<em>name) local k = self.NATIVE</em>TO<em>TLUA[type</em>name] if k then</p>
+                    <p><pre class='prettyprint lang-lua'>return format('type__ == %s', k), false</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>return format('dub_issdata(L, %i, "%s", type__)', pos, type_name), true</pre></p>
+                    <p>end end</p>
+                    <p>function private:expandTreeByType(tree, class, param<em>delta, indent, max</em>arg) local pos = tree.pos local res = '' local keys = {} local type_count = 0 for k, v in pairs(tree.map) do</p>
+                    <p><pre class='prettyprint lang-lua'>-- collect keys, sorted by native type first
+-- because they are easier to detect with lua_type
+if self.NATIVE_TO_TLUA[k] then
+  table.insert(keys, 1, k)
+else
+  table.insert(keys, k)
+end</pre></p>
+                    <p>end local last<em>key = <a href='#keys'>keys</a> if last</em>key == 1 then</p>
+                    <p><pre class='prettyprint lang-lua'>-- single entry in decision, just go deeper
+return private.expandTreeByType(self, tree.map[keys[1]], class, param_delta, indent, max_arg)</pre></p>
+                    <p>end</p>
+                    <p>res = res .. format('int type<em></em> = lua<em>type(L, %i);\n', param</em>delta + pos) local ptr<em>for</em>pos = tree.ptr<em>for</em>pos if not ptr<em>for</em>pos then</p>
+                    <p><pre class='prettyprint lang-lua'>ptr_for_pos = {}
+tree.ptr_for_pos = ptr_for_pos</pre></p>
+                    <p>end local clauses = {}</p>
+                    <p>-- Parse types once to make sure we declare the ptri<em></em> pointers before -- we start using them in the type tests. for i, type_name in ipairs(keys) do</p>
+                    <p><pre class='prettyprint lang-lua'>if i == last_key then
+  -- Never needed
+  break
+end
+local clause, need_ptr = private.detectType(self, param_delta + pos, type_name)
+if need_ptr then
+  local ptr_name = format('ptr%i__', param_delta + pos)
+  if not ptr_for_pos[param_delta + pos] then
+    ptr_for_pos[param_delta + pos] = ptr_name
+    res = res .. format('void **%s;\n', ptr_name)
+  end
+
+  -- This ensures that we only use the ptr if there was a dub_issdata clause
+  -- before (pointer is up-to-date).
+  ptr_for_pos[format('%s-%i', type_name, param_delta + pos)] = ptr_name
+
+  clauses[i] = format(' (%s = %s) ', ptr_name, clause)
+else
+  clauses[i] = clause
+end</pre></p>
+                    <p>end</p>
+                    <p>for i, type_name in ipairs(keys) do</p>
+                    <p><pre class='prettyprint lang-lua'>local elem = tree.map[type_name]
+if i &gt; 1 then
+  res = res .. '} else '
+end
+if i == last_key then
+  res = res .. '{\n'
+else
+  res = res .. format('if (%s) {\n', clauses[i])
+end
+if elem.type == 'dub.Function' then
+  -- done
+  elem.ptr_for_pos = ptr_for_pos
+  res = res .. '  ' .. private.callWithParams(self, class, elem, param_delta, '  ', nil, max_arg) .. '\n'
+else
+  -- continue expanding
+  res = res .. '  ' .. private.expandTreeByType(self, elem, class, param_delta, '  ', max_arg) .. '\n'
+end</pre></p>
+                    <p>end res = res .. '}' return string.gsub(res, '\n', '\n' .. indent) end -- expandTreeByTyp</p>
+                    <p>function private:expandTree(tree, class, param<em>delta, indent) local res = '' local keys = {} local type</em>count = 0 for k, v in pairs(tree.map) do</p>
+                    <p><pre class='prettyprint lang-lua'>-- cast to number
+local nb = k + 0
+local done
+for i, ek in ipairs(keys) do
+  -- insert biggest first
+  if nb &gt; ek then
+    table.insert(keys, i, nb)
+    done = true
+    break
+  end
+end
+if not done then
+  -- insert at the end
+  table.insert(keys, nb)
+end</pre></p>
+                    <p>end</p>
+                    <p>local last<em>key = <a href='#keys'>keys</a> if last</em>key == 1 then</p>
+                    <p><pre class='prettyprint lang-lua'>-- single entry in decision, just go deeper
+return private.expandTreeByType(self, tree.map[keys[1]..''], class, param_delta, indent)</pre></p>
+                    <p>end</p>
+                    <p>for i, arg_count in ipairs(keys) do</p>
+                    <p><pre class='prettyprint lang-lua'>local elem = tree.map[arg_count..'']
+if i &gt; 1 then
+  res = res .. '} else '
+end
+if i == last_key then
+  res = res .. '{\n'
+else
+  res = res .. format('if (top__ &gt;= %i) {\n', param_delta + arg_count)
+end
+if elem.type == 'dub.Function' then
+  -- done
+  res = res .. '  ' .. private.callWithParams(self, class, elem, param_delta, '  ', nil, arg_count) .. '\n'
+else
+  -- continue expanding
+  res = res .. '  ' .. private.expandTreeByType(self, elem, class, param_delta, '  ', arg_count) .. '\n'
+end</pre></p>
+                    <p>end res = res .. '}' return string.gsub(res, '\n', '\n' .. indent) end -- expandTree (by position)</p>
+                    <p>local name = method.name local dname = method.dub.name if dname then</p>
+                    <p><pre class='prettyprint lang-lua'>-- This is to let users define custom binding name (overwrite '+'
+-- methods for example).
+return dname</pre></p>
+                    <p>end if method.ctor then</p>
+                    <p><pre class='prettyprint lang-lua'>return 'new'</pre></p>
+                    <p>elseif method.dtor then</p>
+                    <p><pre class='prettyprint lang-lua'>return '__gc'</pre></p>
+                    <p>elseif method.is<em>set</em>attr then</p>
+                    <p><pre class='prettyprint lang-lua'>return '__newindex'</pre></p>
+                    <p>elseif method.is<em>get</em>attr then</p>
+                    <p><pre class='prettyprint lang-lua'>return '__index'</pre></p>
+                    <p>elseif string.match(name, '^operator') then</p>
+                    <p><pre class='prettyprint lang-lua'>local op = string.match(method.cname, '^operator_(.+)$')
+if self.LUA_NATIVE_OP[op] then
+  return '__' .. op
+else
+  -- remove ending 'e'
+  return string.sub(op, 1, -2)
+end</pre></p>
+                    <p>elseif name == '' then</p>
+                    <p><pre class='prettyprint lang-lua'>-- ??</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>return method.name</pre></p>
+                    <p>end end</p>
+                    <p>-- Return an iterator over the header of the element plus any -- extra header defined via 'extra_headers'. local headers if elem then</p>
+                    <p><pre class='prettyprint lang-lua'>local fullname = elem:fullname()
+headers  = self.extra_headers[fullname] or {}</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>headers = self.extra_headers['::'] or {}</pre></p>
+                    <p>end local co = coroutine.create(function()</p>
+                    <p><pre class='prettyprint lang-lua'>-- Extra headers
+for _, h in ipairs(headers) do
+  coroutine.yield(h)
+end
+if elem then
+  -- Class header
+  coroutine.yield(elem.header)
+else
+  -- No element, binding library
+  for h in self.ins.db:headers(self.bound_classes) do
+    -- Iterates over all bound_classes, global functions and
+    -- constants.
+    coroutine.yield(h)
+  end
+end</pre></p>
+                    <p>end) return function()</p>
+                    <p><pre class='prettyprint lang-lua'>local ok, elem = coroutine.resume(co)
+if ok then
+  return elem
+end</pre></p>
+                    <p>end end --=============================================== Methods that can be customized</p>
+                    <p>-- Output the header for a class by removing the current path -- or 'header<em>base', for </em>, base in ipairs(self.header_base) do</p>
+                    <p><pre class='prettyprint lang-lua'>local h = string.match(header, base)
+if h then
+  return h
+end</pre></p>
+                    <p>end return header end</p>
+                    <p>if method:neverThrows() then</p>
+                    <p><pre class='prettyprint lang-lua'>return 'dub_checksdata_n'</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>return private.checkPrefix(self, method) .. self.TYPE_ACCESSOR</pre></p>
+                    <p>end end</p>
+                    <p>-- Return the 'public' name to use for the element in the -- bindings. This can be used to rename classes or namespaces. Instead -- of rewriting this method, users can also use the 'name<em>filter' option. local func = self.options.name</em>filter if func then</p>
+                    <p><pre class='prettyprint lang-lua'>return func(elem)</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>return elem.name</pre></p>
+                    <p>end end</p>
+                    <p>-- Return the 'lua<em>open' name to use for the element in the -- bindings. if not self.options.single</em>lib then</p>
+                    <p><pre class='prettyprint lang-lua'>return self:name(elem)</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>return string.gsub(self:libName(elem), '%.', '_')</pre></p>
+                    <p>end end</p>
+                    <p>-- Return the 'public' name to use for a constant. Instead of rewriting this -- method, users can also use the 'const<em>name</em>filter' option. local func = self.options.const<em>name</em>filter if func then</p>
+                    <p><pre class='prettyprint lang-lua'>return func(name)</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>return name</pre></p>
+                    <p>end end</p>
+                    <p>-- Return the 'public' name to use for an attribute. Instead of rewriting this -- method, users can also use the 'attr<em>name</em>filter' option. local func = self.options.attr<em>name</em>filter if func then</p>
+                    <p><pre class='prettyprint lang-lua'>return func(elem)</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>return elem.name</pre></p>
+                    <p>end end</p>
+                    <p>-- default name for <a href='dub.MemoryStorage.html'>dub.MemoryStorage</a> if not elem.name then</p>
+                    <p><pre class='prettyprint lang-lua'>return '_G'</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>local res = ''
+while elem and elem.name do
+  if res ~= '' then
+    res = '.' .. res
+  end
+  res = (self:name(elem) or elem.name) .. res
+  elem = elem.parent
+end
+return res</pre></p>
+                    <p>end end</p>
+                    <p>local rtype = parent.db:resolveType(parent, ctype.name)</p>
+                    <p>if rtype and rtype.type == 'dub.Class' then</p>
+                    <p><pre class='prettyprint lang-lua'>-- userdata
+local mt_name = self:libName(rtype)
+return {
+  type = 'userdata',
+  -- Resolved type
+  rtype   = rtype,
+  mt_name = mt_name,
+}</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>-- If the database cannot resolve type, use provided ctype.
+rtype = rtype or ctype
+
+-- Is it a native lua type ?
+local check
+if ctype.ptr then
+  check = self.TYPE_TO_CHECK[rtype.name..' *']
+else
+  check = self.TYPE_TO_CHECK[rtype.name]
+end
+if check then
+  if type(check) == 'table' then
+    check.rtype = check
+    return check
+  else
+    return {
+      type  = self.CHECK_TO_NATIVE[check] or check,
+      check = check,
+      -- Resolved type
+      rtype = rtype,
+    }
+  end
+else
+  -- Not a native type and not known to the db: treat as 
+  -- an unknown userdata type.
+  local mt_name = self:libName(ctype)
+  if mt_name ~= 'void' and mt_name ~= 'lua_State' then
+    if rtype.ptr then
+      dub.warn(5, "Using unknown type '%s *' (parent = %s).", mt_name, parent and parent.name or '??')
+    else
+      dub.warn(5, "Using unknown type '%s' (parent = %s).", mt_name, parent and parent.name or '??')
+    end
+  end
+  -- Cache userdata type
+  ctype.rtype = ctype.rtype or {
+    type = 'userdata',
+    -- Resolved type
+    rtype   = private.makeType(ctype.name .. ' *'),
+    mt_name = mt_name,
+  }
+  return ctype.rtype
+end</pre></p>
+                    <p>end end</p>
+                    <p>local dummy<em>to</em>string_method = { neverThrows = function()</p>
+                    <p><pre class='prettyprint lang-lua'>return true</pre></p>
+                    <p>end, } local res = '' -- We need self res = res .. private.getSelf(self, class, dummy<em>to</em>string<em>method, false) if class.dub.string</em>format then</p>
+                    <p><pre class='prettyprint lang-lua'>local args = class.dub.string_args
+if type(args) == 'table' then
+  args = lk.join(args, ', ')
+end
+res = res .. format("lua_pushfstring(L, \"%s: p (%s)\", %s, %s);\n",
+                    self:libName(class),
+                    class.dub.string_format,
+                    self.SELF,
+                    args)</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>local fmt
+if class.dub.destroy == 'free' then
+  fmt = "lua_pushfstring(L, \"%s: p (full)\", %s);\n"
+else
+  fmt = "lua_pushfstring(L, \"%s: p\", %s);\n"
+end
+res = res .. format(fmt, self:libName(class), self.SELF)</pre></p>
+                    <p>end return res end</p>
+                    <p>--=============================================== PRIVATE</p>
+                    <p>-- if this method does never throw, we can use luaL_check... function private:checkPrefix(method) if self.options.exceptions == false or</p>
+                    <p><pre class='prettyprint lang-lua'> method:neverThrows() then
+return 'luaL_'</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>return 'dub_'</pre></p>
+                    <p>end end --- Find the userdata from the current lua<em>State. The userdata can -- be directly passed as first parameter or it can be inside a table as -- 'super'. function private.getSelf(self, class, method, need</em>mt) local nmt local fmt = '%s%s = <strong>((%s</strong>)%s(L, 1, "%s"%s));\n' if need_mt then</p>
+                    <p><pre class='prettyprint lang-lua'>-- Type accessor should leave metatable on stack.
+nmt = ', true'</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>nmt = ''</pre></p>
+                    <p>end return format(fmt, class.create<em>name, self.SELF, class.create</em>name, self:customTypeAccessor(method), self:libName(class), nmt) end</p>
+                    <p>--- Prepare a variable with a function parameter. function private:getParamVar(method, param, delta) if param.ctype.create<em>name == 'lua</em>State *' then</p>
+                    <p><pre class='prettyprint lang-lua'>if param.name == 'L' then
+  return ''
+else
+  return "lua_State * ".. param.name .. ' = L;\n'
+end</pre></p>
+                    <p>end local p = private.getParam(self, method, param, delta) local lua = param.lua local rtype = lua.rtype if lua.push then</p>
+                    <p><pre class='prettyprint lang-lua'>-- special push/pull type
+return p .. '\n'</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>-- native type
+return format('%s%s = %s;\n', rtype.create_name, param.name, p)</pre></p>
+                    <p>end end</p>
+                    <p>--- Resolve all parameters and return value for Lua bindings. if base.resolved_for == 'lua' then</p>
+                    <p><pre class='prettyprint lang-lua'>-- done
+return</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>base.resolved_for = 'lua'</pre></p>
+                    <p>end if base.index_op then</p>
+                    <p><pre class='prettyprint lang-lua'>self:resolveTypes(base.index_op)</pre></p>
+                    <p>end</p>
+                    <p>local list = base.overloaded or {base} for _, method in ipairs(list) do</p>
+                    <p><pre class='prettyprint lang-lua'>local parent = method.parent
+local sign = ''
+assert(method.params_list)
+for i, param in ipairs(method.params_list) do
+  if i &gt; 1 then
+    sign = sign .. ', '
+  end
+  param.lua = self:luaType(parent, param.ctype)
+  if param.lua.type == 'userdata' then
+    sign = sign .. param.lua.rtype.name
+  else
+    sign = sign .. param.lua.type
+  end
+end
+if method.return_value then
+  method.return_value.lua = self:luaType(parent, method.return_value)
+end
+method.lua_signature = sign</pre></p>
+                    <p>end end</p>
+                    <p>-- Retrieve a parameter and detect native type/userdata in param. function private:getParam(method, param, delta) local lua = param.lua local ctype = param.ctype -- Resolved ctype local rtype = lua.rtype if lua.mt<em>name and method.ptr</em>for_pos then</p>
+                    <p><pre class='prettyprint lang-lua'>local ptr = method.ptr_for_pos[format('%s-%i', lua.mt_name, delta + param.position)]
+if ptr then
+  -- Only use ptr once (the first entry
+  return format('*((%s*)%s)',
+    rtype.create_name, ptr)
+end</pre></p>
+                    <p>end   if lua.type == 'userdata' then</p>
+                    <p><pre class='prettyprint lang-lua'>-- userdata
+type_method = self:customTypeAccessor(method)
+return format('*((%s*)%s(L, %i, "%s"))',
+  rtype.create_name, type_method, param.position + delta, lua.mt_name)</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>-- native lua type
+local prefix = private.checkPrefix(self, method)
+if lua.pull then
+  -- special accessor
+  return lua.pull(param.name, param.position + delta, prefix)
+elseif rtype.cast then
+  return format('(%s)%scheck%s(L, %i)', rtype.cast, prefix, lua.check, param.position + delta)
+else
+  return format('%scheck%s(L, %i)', prefix, lua.check, param.position + delta)
+end</pre></p>
+                    <p>end end</p>
+                    <p>function private.paramForCall(param) local lua = param.lua local res = '' if lua.cast then</p>
+                    <p><pre class='prettyprint lang-lua'>-- Special accessor
+res = res .. lua.cast(param.name)</pre></p>
+                    <p>elseif lua.type == 'userdata' then</p>
+                    <p><pre class='prettyprint lang-lua'>-- custom type
+if param.ctype.ptr then
+  res = res .. param.name
+else
+  res = res .. '*' .. param.name
+end</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>-- native type
+res = res .. param.name</pre></p>
+                    <p>end return res end</p>
+                    <p>function private:doCall(parent, method, max<em>arg) local max</em>arg = max<em>arg or <a href='#method'>method</a>.params</em>list local res if method.array_get then</p>
+                    <p><pre class='prettyprint lang-lua'>-- C array attribute get
+i_name = method.params_list[1].name
+res = method.name .. '[' .. i_name .. '-1]'</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>if method.ctor then
+  res = string.sub(parent.create_name, 1, -3) .. '('
+else
+  res = method.name .. '('
+end
+local first = true
+for param in method:params() do
+  if param.position &gt; max_arg then
+    break
+  end
+  local lua = param.lua
+  if not first then
+    res = res .. ', '
+  else
+    first = false
+  end
+  res = res .. private.paramForCall(param)
+end
+res = res .. ')'</pre></p>
+                    <p>end if method.ctor then</p>
+                    <p><pre class='prettyprint lang-lua'>res = 'new ' .. res</pre></p>
+                    <p>elseif method.member then</p>
+                    <p><pre class='prettyprint lang-lua'>res = self.SELF .. '-&gt;' .. res</pre></p>
+                    <p>elseif parent.is_scope then</p>
+                    <p><pre class='prettyprint lang-lua'>res = parent.name .. '::' .. res</pre></p>
+                    <p>end   return res; end</p>
+                    <p>function private:pushReturnValue(class, method, value) local res = '' local return<em>value = method.return</em>value if return_value then</p>
+                    <p><pre class='prettyprint lang-lua'>if return_value.name == self.LUA_STACK_SIZE_NAME then
+  res = res .. 'return ' .. value .. ';'
+else
+  res = res .. private.pushValue(self, method, value, return_value)
+end</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>res = res .. value .. ';\n'
+res = res .. 'return 0;'</pre></p>
+                    <p>end return res end</p>
+                    <p>function private:pushValue(method, value, return<em>value) local res local lua = return</em>value.lua local ctype = return_value if lua.push then</p>
+                    <p><pre class='prettyprint lang-lua'>res = lua.push(value)</pre></p>
+                    <p>elseif lua.type == 'userdata' then</p>
+                    <p><pre class='prettyprint lang-lua'>-- resolved value
+local rtype = lua.rtype
+local gc
+
+if not ctype.ptr then
+  -- Call return value is not a pointer. This should never happen with
+  -- a type that uses a custom push method.
+  assert(not rtype.dub or not rtype.dub.push,
+    string.format("Types with @dub 'push' setting should not be passed as values (%s).", method:fullname()))
+  if method.is_get_attr then
+    if ctype.const then
+      if self.options.read_const_member == 'copy' then
+        -- copy
+        res = format('dub_pushudata(L, new %s(%s), "%s", true);', rtype.name, value, lua.mt_name)
+      else
+        -- cast
+        res = format('dub_pushudata(L, const_cast&lt;%s*&gt;(&%s), "%s", false);', rtype.name, value, lua.mt_name)
+      end
+    else
+      res = format('dub_pushudata(L, &%s, "%s", false);', value, lua.mt_name)
+    end
+  elseif return_value.ref then
+    -- Return value is a reference.
+    if ctype.const then
+      if self.options.read_const_member == 'copy' then
+        -- copy
+        res = format('dub_pushudata(L, new %s(%s), "%s", true);', rtype.name, value, lua.mt_name)
+      else
+        -- cast
+        res = format('dub_pushudata(L, const_cast&lt;%s*&gt;(&%s), "%s", false);', rtype.name, value, lua.mt_name)
+      end
+    else
+      -- not const ref
+      res = format('dub_pushudata(L, &%s, "%s", false);', value, lua.mt_name)
+    end
+  else
+    -- Return by value.
+    if method.parent.dub and method.parent.dub.destroy == 'free' then
+      res = format('dub_pushfulldata&lt;%s&gt;(L, %s, "%s");', rtype.name, value, lua.mt_name)
+    else
+      -- Allocate on the heap.
+      res = format('dub_pushudata(L, new %s(%s), "%s", true);', rtype.name, value, lua.mt_name)
+    end
+  end
+else
+  -- Return value is a pointer.
+  res = format('%s%sretval__ = %s;\n', 
+    (ctype.const and 'const ') or '',
+    rtype.create_name, value)
+  if not method.ctor then
+    res = res .. 'if (!retval__) return 0;\n'
+  end
+  local push_method = rtype.dub and rtype.dub.push
+  local custom_push
+  if push_method then
+    custom_push = true
+    push_method = 'retval__-&gt;'.. push_method
+  else
+    push_method = 'dub_pushudata'
+  end
+  if ctype.const then
+    assert(not custom_push, string.format("Types with @dub 'push' setting should not be passed as const types (%s).", method:fullname()))
+    if self.options.read_const_member == 'copy' then
+      -- copy
+      res = res .. format('%s(L, new %s(*retval__), "%s", true);',
+                          push_method, rtype.name, lua.mt_name)
+    else
+      -- cast
+      res = res .. format('%s(L, const_cast&lt;%s*&gt;(retval__), "%s", false);',
+                          push_method, rtype.name, lua.mt_name)
+    end
+  else
+    -- We should only GC in constructor.
+    if method.ctor or (method.dub and method.dub.gc) then
+      res = res .. format('%s(L, retval__, "%s", true);',
+                          push_method, lua.mt_name)
+    else
+      res = res .. format('%s(L, retval__, "%s", false);',
+                          push_method, lua.mt_name)
+    end
+  end
+end</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>-- native type
+res = format('lua_push%s(L, %s);', lua.type, value)</pre></p>
+                    <p>end if string.match(res, '^return ') then</p>
+                    <p><pre class='prettyprint lang-lua'>return res</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>return res .. '\nreturn 1;'</pre></p>
+                    <p>end end</p>
+                    <p>function private:copyDubFiles() local dub<em>path = self.COPY</em>DUB<em>PATH if dub</em>path then</p>
+                    <p><pre class='prettyprint lang-lua'>local base_path = self.output_directory .. dub_path
+os.execute(format("mkdir -p '%s'", base_path))
+-- path to current file
+local dir = lk.scriptDir()
+local dub_dir = dir .. '/lua/dub'
+for file in lfs.dir(dub_dir) do
+  local res = lk.content(dub_dir .. '/' .. file)
+  lk.writeall(base_path .. '/dub/' .. file, res, true)
+end</pre></p>
+                    <p>end end</p>
+                    <p>-- function body to set a variable. function private:setAttrBody(class, method, attr, delta) local custom = private.customAttrBinding(self, class, attr) if custom and custom.set then</p>
+                    <p><pre class='prettyprint lang-lua'>if custom.set:match(';') then
+  -- Full custom binding definition
+  return custom.set
+else
+  -- Alias to a function call
+  local met = class:method(custom.set) or attr.parent:method(custom.set)
+  assert(met, format("Custom attribute binding for '%s' but '%s' method not found.", attr.name, custom.set))
+  self:resolveTypes(met)
+  return private.callWithParams(self, class, met, delta + 1, '')
+end</pre></p>
+                    <p>end</p>
+                    <p>local name = attr.name local res = '' local param = {</p>
+                    <p><pre class='prettyprint lang-lua'>name     = name,
+ctype    = attr.ctype,
+position = 2,</pre></p>
+                    <p>} local lua = self:luaType(class, param.ctype) param.lua = lua local p = private.getParam(self, method, param, delta) if type(lua.cast) == 'function' then</p>
+                    <p><pre class='prettyprint lang-lua'>-- TODO: move this into getParam ?
+res = res .. p
+p = lua.cast(name)</pre></p>
+                    <p>elseif lua.type == 'userdata' then</p>
+                    <p><pre class='prettyprint lang-lua'>-- custom type
+if not param.ctype.ptr then
+  p = '*' .. p
+else
+  -- protect from gc
+  res = res .. format('dub_protect(L, 1, %i, "%s");\n', param.position + delta, param.name)
+end</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>-- native type</pre></p>
+                    <p>end if attr.static then</p>
+                    <p><pre class='prettyprint lang-lua'>res = res .. format('%s::%s = %s;\n', attr.parent.name, name, p)</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>res = res .. format('self-&gt;%s = %s;\n', name, p)</pre></p>
+                    <p>end res = res .. 'return 0;' return res end</p>
+                    <p>-- function body to set a variable. function private:castBody(class, method, super, delta) if not super.should_cast then</p>
+                    <p><pre class='prettyprint lang-lua'>return</pre></p>
+                    <p>end local name = super.create<em>name local res = '' res = res .. format('*retval</em><em> = static</em>cast<%s>(self);\n', name) res = res .. 'return 1;' return res end</p>
+                    <p>-- function body to get a variable. function private:getAttrBody(class, method, attr, delta) if attr.ctype.const and self.options.read<em>const</em>member == 'no' then</p>
+                    <p><pre class='prettyprint lang-lua'>return nil</pre></p>
+                    <p>end local custom = private.customAttrBinding(self, class, attr) if custom and custom.get then</p>
+                    <p><pre class='prettyprint lang-lua'>if custom.get:match(';') then
+  -- Full custom binding definition
+  return custom.get
+else
+  -- Alias to a function call
+  local met = class:method(custom.get) or attr.parent:method(custom.get)
+  assert(met, format("Custom attribute binding for '%s' but '%s' method not found.", attr.name, custom.get))
+  self:resolveTypes(met)
+  return private.callWithParams(self, class, met, delta, '')
+end</pre></p>
+                    <p>end</p>
+                    <p>local lua = self:luaType(class, attr.ctype) attr.ctype.lua = lua local accessor if attr.static then</p>
+                    <p><pre class='prettyprint lang-lua'>accessor = format('%s::%s', attr.parent.name, attr.name)</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>accessor = format('self-&gt;%s', attr.name)</pre></p>
+                    <p>end return private.pushValue(self, method, accessor, attr.ctype) end</p>
+                    <p>function private:switch(class, method, delta, bfunc, iterator) local res = '' -- get key local param = {</p>
+                    <p><pre class='prettyprint lang-lua'>name     = 'key',
+ctype    = private.makeType('const char *'),
+position = 1,</pre></p>
+                    <p>} param.lua = self:luaType(class, param.ctype) if method.index_op then</p>
+                    <p><pre class='prettyprint lang-lua'>-- operator[]
+res = res .. format('if (lua_type(L, %i) != LUA_TSTRING) {\n', delta + 1)
+method.index_op.name = 'operator[]'
+res = res .. '  ' .. private.callWithParams(self, class, method.index_op, delta, '  ') .. '\n'
+res = res .. '}\n'
+if not class:hasVariables() then
+  res = res .. 'return 0;'
+  return res
+else
+  res = res .. '\n'
+end</pre></p>
+                    <p>end res = res .. private.getParamVar(self, method, param, delta) if method.is<em>get</em>attr then</p>
+                    <p><pre class='prettyprint lang-lua'>res = res .. '// &lt;self&gt; "key" &lt;mt&gt;\n'
+res = res .. '// rawget(mt, key)\n'
+res = res .. 'lua_pushvalue(L, 2);\n'
+res = res .. '// &lt;self&gt; "key" &lt;mt&gt; "key"\n'
+res = res .. 'lua_rawget(L, -2);\n'
+res = res .. 'if (!lua_isnil(L, -1)) {\n'
+res = res .. '  // Found method.\n'
+res = res .. '  return 1;\n'
+res = res .. '} else {\n'
+res = res .. '  // Not in mt = attribute access.\n'
+res = res .. '  lua_pop(L, 2);\n'
+res = res .. '}\n'</pre></p>
+                    <p>elseif method.is_cast then</p>
+                    <p><pre class='prettyprint lang-lua'>res = res .. 'void **retval__ = (void**)lua_newuserdata(L, sizeof(void*));\n'</pre></p>
+                    <p>end</p>
+                    <p>local filter</p>
+                    <p>if method.is_cast then</p>
+                    <p><pre class='prettyprint lang-lua'>filter = function(elem)
+  return self:libName(elem)
+end</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>filter = function(elem)
+  return self:attrName(elem)
+end</pre></p>
+                    <p>end</p>
+                    <p>local filtered_iterator = function()</p>
+                    <p><pre class='prettyprint lang-lua'>local function new_iterator()
+  for elem in iterator(class) do
+    local name = filter(elem)
+    if name then
+      coroutine.yield(name)
+    end
+  end
+end
+return coroutine.wrap(new_iterator)</pre></p>
+                    <p>end</p>
+                    <p>-- get key hash local sz = dub.minHash(class, filtered_iterator) if not sz then</p>
+                    <p><pre class='prettyprint lang-lua'>-- get/set without any public variables but using
+-- suffix code</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>res = res .. format('int key_h = dub_hash(key, %i);\n', sz)
+-- switch
+res = res .. 'switch(key_h) {\n'
+for elem in iterator(class) do
+  local lua_name = filter(elem)
+  if lua_name then
+    local body = bfunc(self, class, method, elem, delta)
+    if body then
+      res = res .. format('  case %s: {\n', dub.hash(lua_name, sz))
+      -- get or set value
+      res = res .. format('    if (DUB_ASSERT_KEY(key, "%s")) break;\n', lua_name)
+      res = res .. '    ' .. string.gsub(body, '\n', '\n    ') .. '\n  }\n'
+    end
+  end
+end
+res = res .. '}\n'</pre></p>
+                    <p>end</p>
+                    <p>local custom = self.custom<em>bindings[method.parent.name] or {} if method.is</em>set_attr then</p>
+                    <p><pre class='prettyprint lang-lua'>if custom.set_suffix then
+  res = res .. custom.set_suffix
+else
+  res = res .. 'if (lua_istable(L, 1)) {\n'
+  -- &lt;tbl&gt; &lt;'key'&gt; &lt;value&gt;
+  res = res .. '  lua_rawset(L, 1);\n'
+  res = res .. '} else {\n'
+  res = res .. '  luaL_error(L, KEY_EXCEPTION_MSG, key);\n'
+  res = res .. '}\n'
+  -- If &lt;self&gt; is a table, write there
+end</pre></p>
+                    <p>elseif method.is<em>get</em>attr then</p>
+                    <p><pre class='prettyprint lang-lua'>if custom.get_suffix then
+  res = res .. custom.get_suffix
+end</pre></p>
+                    <p>end res = res .. 'return 0;' return res end</p>
+                    <p>function private:bindAll(parent, bound, ignore) for elem in parent:children() do</p>
+                    <p><pre class='prettyprint lang-lua'>if elem.type == 'dub.Class' then
+  if not ignore[elem.name] and
+     not (elem.dub.bind == false) then
+    table.insert(bound, elem)
+    private.bindElem(self, elem, options)
+  end
+elseif elem.type == 'dub.Namespace' then
+  if not ignore[elem.name] then
+    private.bindAll(self, elem, bound, ignore)
+  end
+end</pre></p>
+                    <p>end end</p>
+                    <p>function private:bindElem(elem, options) if elem.type == 'dub.Class' then</p>
+                    <p><pre class='prettyprint lang-lua'>local path = self.output_directory .. lk.Dir.sep .. self:openName(elem) .. '.cpp'
+lk.writeall(path, self:bindClass(elem), true)</pre></p>
+                    <p>end end</p>
+                    <p>-- See lua<em>simple</em>test for the output of this tree. local res = {count = 0, map = {}} local need<em>top = false for </em>, func in ipairs(list) do</p>
+                    <p><pre class='prettyprint lang-lua'>self:resolveTypes(func)
+for i=func.min_arg_size, #func.params_list do
+  need_top = private.insertByTop(self, res, func, i) or need_top
+end</pre></p>
+                    <p>end return res, need_top end</p>
+                    <p>function private:insertByTop(res, func, index) -- force string keys local top<em>key  = format('%i', index) local map      = res.map local list     = map[top</em>key] local need_top = false if list then</p>
+                    <p><pre class='prettyprint lang-lua'>-- we need to make decision on argument type
+if list.type == 'dub.Function' then
+  local f = list
+  list = {}
+  map[top_key] = list
+  private.insertByArg(self, list, f)
+end
+private.insertByArg(self, list, func, index)</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>map[top_key] = func
+res.count = res.count + 1
+need_top = need_top or res.count &gt; 1</pre></p>
+                    <p>end return need_top end</p>
+                    <p>local function hasMorePositions(skip<em>index, max</em>index) for i=1,max_index do</p>
+                    <p><pre class='prettyprint lang-lua'>if not skip_index[i] then
+  return true
+end</pre></p>
+                    <p>end return false end -- Insert a function into the hash, using the argument at the given -- index to filter function private:insertByArg(res, func, max<em>index, skip</em>index) -- First try existing positions in res (only get type for a few positions). if not res.map then</p>
+                    <p><pre class='prettyprint lang-lua'>-- first element inserted
+res.map = func
+res.list = {func}
+return</pre></p>
+                    <p>elseif max<em>index == 0 or skip</em>index and not hasMorePositions(skip<em>index, max</em>index) then</p>
+                    <p><pre class='prettyprint lang-lua'>dub.warn(1, "No more arguments to decide (index=%i, parent=%s, function=%s)", max_index, func.parent.name, func.name)
+dub.warn(1, func.name .. func.argsstring)
+for _, func in ipairs(res.list) do
+  dub.warn(1, func.name .. func.argsstring)
+end
+return</pre></p>
+                    <p>elseif res.map.type == 'dub.Function' then</p>
+                    <p><pre class='prettyprint lang-lua'>res.list = {res.map, func}</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>table.insert(res.list, func)</pre></p>
+                    <p>end</p>
+                    <p>-- Build a count of differences by available index [1,max<em>index] local diff = {} for </em>, func in ipairs(res.list) do</p>
+                    <p><pre class='prettyprint lang-lua'>for i=1,max_index do
+  if skip_index and skip_index[i] then
+    -- already used, cannot use again
+  else
+    local lua = func.params_list[i].lua
+    local type_name = (lua.type == 'userdata' and lua.mt_name) or lua.type
+    local d = diff[i..'']
+    if not d then
+      diff[i..''] = {position = i, count = 0, map = {}, weight = 0}
+      d = diff[i..'']
+    end
+    local list = d.map[type_name]
+    if not list then
+      d.count = d.count + 1
+      if lua.type ~= 'userdata' then
+        d.weight = d.weight + 1
+      end
+      d.map[type_name] = func
+    else
+      if list.type == 'dub.Function' then
+        list = {list, func}
+        d.map[type_name] = list
+      else
+        table.insert(list, func)
+      end
+    end
+  end
+end</pre></p>
+                    <p>end -- Select best match local match for _, d in pairs(diff) do</p>
+                    <p><pre class='prettyprint lang-lua'>if not match then
+  match = d
+elseif d.weight &gt; match.weight then
+  match = d
+elseif d.weight == match.weight and d.count &gt; match.count then
+  match = d
+end</pre></p>
+                    <p>end</p>
+                    <p>assert(match, func.name.. ' '.. func.header) if match.count < <a href='#res'>res</a>.list then</p>
+                    <p><pre class='prettyprint lang-lua'>local skip_index = skip_index or {}
+skip_index[match.position] = true
+for k, elem in pairs(match.map) do
+  if elem.type == 'dub.Function' then
+    -- OK
+  else
+    local map = {}
+    for _, func in ipairs(elem) do
+      private.insertByArg(self, map, func, max_index, skip_index)
+    end
+    match.map[k] = map
+  end
+end</pre></p>
+                    <p>end</p>
+                    <p>res.pos = match.position res.map = match.map end</p>
+                    <p>function private:makeLibFile(lib<em>name, list) if not self.lib</em>template then</p>
+                    <p><pre class='prettyprint lang-lua'>local dir = lk.scriptDir()
+self.lib_template = dub.Template {path = dir .. '/lua/lib.cpp'}</pre></p>
+                    <p>end self.bound_classes = list -- lib is a namespace local lib = self.namespace if not lib then</p>
+                    <p><pre class='prettyprint lang-lua'>-- lib is the global environment.
+lib = self.ins.db</pre></p>
+                    <p>end local res = self.lib_template:run {</p>
+                    <p><pre class='prettyprint lang-lua'>lib      = lib,
+lib_name = lib_name,
+classes  = list,
+self     = self,</pre></p>
+                    <p>}</p>
+                    <p>local openname = self.options.luaopen or lib<em>name local path = self.output</em>directory .. <a href='lk.Dir.html#sep'>lk.Dir.sep</a> .. openname .. '.cpp' lk.writeall(path, res, true) end</p>
+                    <p>function private:parseExtraHeadersList(base, list) if not list then</p>
+                    <p><pre class='prettyprint lang-lua'>return</pre></p>
+                    <p>end for k, elem in pairs(list) do</p>
+                    <p><pre class='prettyprint lang-lua'>if type(k) == 'number' then
+  local extra_list = self.extra_headers[base or '::']
+  if not extra_list then
+    extra_list = {}
+    self.extra_headers[base or '::'] = extra_list
+  end
+  table.insert(extra_list, elem)
+elseif base then
+  -- sub type
+  private.parseExtraHeadersList(self, base..'::'..k, elem)
+else
+  private.parseExtraHeadersList(self, k, elem)
+end</pre></p>
+                    <p>end end</p>
+                    <p>local function getCustomBinding(custom<em>bindings, parent, key, elem) -- 1. current class local custom = custom</em>bindings[parent.name] custom = custom and custom[key] custom = custom and custom[elem.name] if custom then</p>
+                    <p><pre class='prettyprint lang-lua'>return custom</pre></p>
+                    <p>end -- 2. elem.parent custom = custom_bindings[elem.parent.name] custom = custom and custom[key] custom = custom and custom[elem.name] if custom then</p>
+                    <p><pre class='prettyprint lang-lua'>return custom</pre></p>
+                    <p>end end</p>
+                    <p>-- Try to find a custom attribute binding. Search order: -- 1. current class  (current class being bound: can be a sub-class) -- 2. attr.parent    (class where the attribute/pseudo-attribute is defined) function private:customAttrBinding(parent, attr) return getCustomBinding(self.custom_bindings, parent, 'attributes', attr) end</p>
+                    <p>-- Try to find custom binding definitions. Search order: -- 1. current class   (current class being bound: can be a sub-class) -- 2. method.parent   (class/namespace/db where the method is defined) function private:customMetBinding(parent, method) return getCustomBinding(self.custom_bindings, parent, 'methods', method) end</p>
+                    <p>-- Add extra methods and attributes as needed by settings in  -- custom<em>bindings. function private:expandClass(class) -- Merge pseudo attributes in class variables. local custom = self.custom</em>bindings[class.name] or {} local attrs = custom.attributes if attrs then</p>
+                    <p><pre class='prettyprint lang-lua'>local list = class.variables_list
+local cache = class.cache
+for name, _ in pairs(attrs) do
+  if not cache[name] then
+    class.has_variables = true
+    local attr = {
+      type   = 'dub.PseudoAttribute',
+      name   = name,
+      parent = class,
+      -- dummy type
+      ctype = private.makeType('void'),
+    }
+    table.insert(list, attr)
+    cache[name] = attr
+  end
+end</pre></p>
+                    <p>end <a href='dub.MemoryStorage.html#makeSpecialMethods'>dub.MemoryStorage.makeSpecialMethods</a>(class, self.custom_bindings) end</p>
+                              </section>
+                  </div>
+
+        <div class='span2'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='dub.html'>dub</a></li>
+                                    <li><a href='dub.CTemplate.html'>dub.CTemplate</a></li>
+                        <li><a href='dub.Class.html'>dub.Class</a></li>
+                        <li><a href='dub.Function.html'>dub.Function</a></li>
+                        <li><a href='dub.Inspector.html'>dub.Inspector</a></li>
+                        <li class='active'><a href='dub.LuaBinder.html'>dub.LuaBinder</a></li>
+                        <li><a href='dub.MemoryStorage.html'>dub.MemoryStorage</a></li>
+                        <li><a href='dub.Namespace.html'>dub.Namespace</a></li>
+                        <li><a href='dub.OptParser.html'>dub.OptParser</a></li>
+                        <li><a href='dub.Template.html'>dub.Template</a></li>
+                      </ul>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+    <div class="container">
+       made with <a href='http://doc.lubyk.org/lk.Doc.html'>lk.Doc</a> 
+    </div>
+    </footer>
+
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
+    <script src='http://code.jquery.com/jquery.js'></script>
+    <script src='js/bootstrap.min.js'></script>
+  </body>
+</html>
+

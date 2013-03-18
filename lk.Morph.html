@@ -8,25 +8,6 @@
     <meta name="author" content="">
 
 
-    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
-
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-        config: ["MMLorHTML.js"],
-        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
-        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
-        TeX: {
-          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
-        },
-        menuSettings: {
-          zoom: "Hover",
-          mpContext: true,
-          mpMouse: true
-        },
-      });
-    </script>
-    <script type="text/javascript"
-  src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
 
     <link href="css/bootstrap.css" rel="stylesheet">
     <link href="css/bootstrap-responsive.css" rel="stylesheet">
@@ -44,29 +25,29 @@
       </div>
     </div>
 
-  <div class="container">
+    <div class="container">
 
-    <div class="row">
+      <div class="row">
 
-      <div class="span2 bs-docs-sidebar local-nav">
-        <ul class="nav nav-list bs-docs-sidenav affix">
-                    <li><a href='#Morph'><i class='icon-chevron-right'></i> lk.Morph</a></li>
-                  </ul>
-      </div>
+        <div class='span3'>
+          <ul class='nav nav-tabs nav-stacked local-nav affix'>
+                        <li><a href='#Morph'><i class='icon-chevron-right'></i> lk.Morph</a></li>
+                      </ul>
+        </div>
 
-      <div class="span7">
+        <div class="span7">
 
-                <section id='Morph'>
+                    <section id='Morph'>
           <h2 class='section'>lk.Morph</h2>
 
                               <a name='processDisconnected'></a>
           <h4 class='method'><span>:</span>processDisconnected <code>(service)</code></h4>
           
-                      <p class='summary'></p>
-                      <p>local lib = {type='lk.Morph'} lib.<em></em>index = lib <a href='lk.Morph.html'>lk.Morph</a>    = lib</p>
-                      <p>local private = { -- Actions triggered on a 'set' operation (while reading project). set     = {}, -- Actions triggered on an 'update' operation (update from GUI). update = {}, -- Actions triggered on a (partial) 'dump' operation. dump    = {}, -- Actions related to process handling. process = {}, -- Actions related to node handling. node    = {}, -- Actions related to view handling. view    = {}, }</p>
-                      <p>setmetatable(lib, { -- new method <em></em>call = function(lib, opts) local self = {</p>
-                      <p><pre class='prettyprint lang-lua'>-- Version of lubyk used to create project
+                    <p class='summary'></p>
+                    <p>local lib = {type='lk.Morph'} lib.<em></em>index = lib <a href='lk.Morph.html'>lk.Morph</a>    = lib</p>
+                    <p>local private = { -- Actions triggered on a 'set' operation (while reading project). set     = {}, -- Actions triggered on an 'update' operation (update from GUI). update = {}, -- Actions triggered on a (partial) 'dump' operation. dump    = {}, -- Actions related to process handling. process = {}, -- Actions related to node handling. node    = {}, -- Actions related to view handling. view    = {}, }</p>
+                    <p>setmetatable(lib, { -- new method <em></em>call = function(lib, opts) local self = {</p>
+                    <p><pre class='prettyprint lang-lua'>-- Version of lubyk used to create project
 lubyk      = {version = Lubyk.version},
 -- Holds the list of all the processes that need to be running
 -- for the project to work (not just the ones actually running).
@@ -75,12 +56,12 @@ processes  = {},
 stem_cells = {},
 -- Holds the list of views declared for this project.
 views      = {},</pre></p>
-                      <p>} setmetatable(self, lib)</p>
-                      <p>if opts then</p>
-                      <p><pre class='prettyprint lang-lua'>self:start(opts)</pre></p>
-                      <p>end return self end})</p>
-                      <p>local srv_opts = {</p>
-                      <p><pre class='prettyprint lang-lua'>callback = function(...)
+                    <p>} setmetatable(self, lib)</p>
+                    <p>if opts then</p>
+                    <p><pre class='prettyprint lang-lua'>self:start(opts)</pre></p>
+                    <p>end return self end})</p>
+                    <p>local srv_opts = {</p>
+                    <p><pre class='prettyprint lang-lua'>callback = function(...)
   return self:callback(...)
 end,
 registration_callback = function(reg, service)
@@ -97,80 +78,80 @@ info = opts.info,
 quit = function()
   self:quit()
 end,</pre></p>
-                      <p>} -- Setup ports and publish service self.service = lk.Service(Lubyk.zone .. ':', srv_opts) end</p>
-                      <p>self:close() local base, name = lk.pathDir(filepath) if not lk.exist(filepath) then</p>
-                      <p><pre class='prettyprint lang-lua'>-- New project
+                    <p>} -- Setup ports and publish service self.service = lk.Service(Lubyk.zone .. ':', srv_opts) end</p>
+                    <p>self:close() local base, name = lk.pathDir(filepath) if not lk.exist(filepath) then</p>
+                    <p><pre class='prettyprint lang-lua'>-- New project
 lk.makePath(base)
 lk.writeall(filepath, '')</pre></p>
-                      <p>end local views<em>path = base .. '/</em>views' if not lk.exist(base..'/_views') then</p>
-                      <p><pre class='prettyprint lang-lua'>-- Default view
+                    <p>end local views<em>path = base .. '/</em>views' if not lk.exist(base..'/_views') then</p>
+                    <p><pre class='prettyprint lang-lua'>-- Default view
 lk.makePath(views_path)</pre></p>
-                      <p>end</p>
-                      <p>local dir = lk.Dir(views_path) if not dir:contains('%.lkv$') then</p>
-                      <p><pre class='prettyprint lang-lua'>lk.writeall(views_path .. '/base.lkv', '')</pre></p>
-                      <p>end self.root     = lk.FileResource(base) self.lkp_file = lk.FileResource('/' .. name, self.root) private.readFile(self) end</p>
-                      <p>-- TODO: notify changes (mark old processes with 'false') -- TODO: close all processes in same zone -- clear self.processes = {} self.root = nil end</p>
-                      <p>--- Return the content of the file at the given path in the -- current project. local resource = lk.FileResource(url, self.root) if not resource then</p>
-                      <p><pre class='prettyprint lang-lua'>return nil</pre></p>
-                      <p>end return resource:body() end</p>
-                      <p>local upd = private.update for k, v in pairs(definitions) do</p>
-                      <p><pre class='prettyprint lang-lua'>local func = upd[k]
+                    <p>end</p>
+                    <p>local dir = lk.Dir(views_path) if not dir:contains('%.lkv$') then</p>
+                    <p><pre class='prettyprint lang-lua'>lk.writeall(views_path .. '/base.lkv', '')</pre></p>
+                    <p>end self.root     = lk.FileResource(base) self.lkp_file = lk.FileResource('/' .. name, self.root) private.readFile(self) end</p>
+                    <p>-- TODO: notify changes (mark old processes with 'false') -- TODO: close all processes in same zone -- clear self.processes = {} self.root = nil end</p>
+                    <p>--- Return the content of the file at the given path in the -- current project. local resource = lk.FileResource(url, self.root) if not resource then</p>
+                    <p><pre class='prettyprint lang-lua'>return nil</pre></p>
+                    <p>end return resource:body() end</p>
+                    <p>local upd = private.update for k, v in pairs(definitions) do</p>
+                    <p><pre class='prettyprint lang-lua'>local func = upd[k]
 if func then
   func(self, v)
 end</pre></p>
-                      <p>end end</p>
-                      <p>return self:partialDump {</p>
-                      <p><pre class='prettyprint lang-lua'>-- This is to give the future host on unconnected processes in
+                    <p>end end</p>
+                    <p>return self:partialDump {</p>
+                    <p><pre class='prettyprint lang-lua'>-- This is to give the future host on unconnected processes in
 -- the editor.
 lubyk     = true,
 host      = true,
 name      = true,
 processes = true,
 _views    = true,</pre></p>
-                      <p>} end</p>
-                      <p>local dump = {} local d = private.dump for k, v in pairs(data) do</p>
-                      <p><pre class='prettyprint lang-lua'>local func = d[k]
+                    <p>} end</p>
+                    <p>local dump = {} local d = private.dump for k, v in pairs(data) do</p>
+                    <p><pre class='prettyprint lang-lua'>local func = d[k]
 if func then
   dump[k] = func(self, v)
 end</pre></p>
-                      <p>end return dump end</p>
-                      <p>--============================================= <a href='lk.Service.html'>lk.Service</a> delegate</p>
-                      <p>local dump<em>url,        update</em>url,       get<em>url,       quit</em>url =</p>
-                      <p><pre class='prettyprint lang-lua'>  lubyk.dump_url,  lubyk.update_url, lubyk.get_url, lubyk.quit_url
+                    <p>end return dump end</p>
+                    <p>--============================================= <a href='lk.Service.html'>lk.Service</a> delegate</p>
+                    <p>local dump<em>url,        update</em>url,       get<em>url,       quit</em>url =</p>
+                    <p><pre class='prettyprint lang-lua'>  lubyk.dump_url,  lubyk.update_url, lubyk.get_url, lubyk.quit_url
 </pre></p>
-                      <p>--- Answering requests to Morph. if url == dump_url then</p>
-                      <p><pre class='prettyprint lang-lua'>return self:dump()</pre></p>
-                      <p>elseif url == update_url then</p>
-                      <p><pre class='prettyprint lang-lua'>-- async call, no return value
+                    <p>--- Answering requests to Morph. if url == dump_url then</p>
+                    <p><pre class='prettyprint lang-lua'>return self:dump()</pre></p>
+                    <p>elseif url == update_url then</p>
+                    <p><pre class='prettyprint lang-lua'>-- async call, no return value
 self:update(...)
 local p = self:partialDump(...)
 self.service:notify(p)</pre></p>
-                      <p>elseif url == get_url then</p>
-                      <p><pre class='prettyprint lang-lua'>return self:get(...)</pre></p>
-                      <p>elseif url == quit_url then</p>
-                      <p><pre class='prettyprint lang-lua'>self:quit()</pre></p>
-                      <p>else</p>
-                      <p><pre class='prettyprint lang-lua'>-- ignore
+                    <p>elseif url == get_url then</p>
+                    <p><pre class='prettyprint lang-lua'>return self:get(...)</pre></p>
+                    <p>elseif url == quit_url then</p>
+                    <p><pre class='prettyprint lang-lua'>self:quit()</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>-- ignore
 self:error("Invalid url '%s'.", url)</pre></p>
-                      <p>end end</p>
-                      <p>-- TODO: notify errors. print(msg) end</p>
-                      <p>self.quitting = true for k, process in pairs(self.processes) do</p>
-                      <p><pre class='prettyprint lang-lua'>if process.online then
+                    <p>end end</p>
+                    <p>-- TODO: notify errors. print(msg) end</p>
+                    <p>self.quitting = true for k, process in pairs(self.processes) do</p>
+                    <p><pre class='prettyprint lang-lua'>if process.online then
   process.push:send(lubyk.quit_url)
 end</pre></p>
-                      <p>end if self.stem_fd then</p>
-                      <p><pre class='prettyprint lang-lua'>-- Kill the stem cell that we created.
+                    <p>end if self.stem_fd then</p>
+                    <p><pre class='prettyprint lang-lua'>-- Kill the stem cell that we created.
 local stem = self.stem_cells[Lubyk.host]
 if stem then
   stem.push:send(lubyk.quit_url)
 end</pre></p>
-                      <p>end sched:quit() end</p>
-                      <p>--=============================================== <a href='lk.ProcessWatch.html'>lk.ProcessWatch</a> delegate</p>
-                      <p>--- When services are brought online -- We need to receive notifications from this process so that -- we can write the changes to file. local process = self.processes[remote_process.name] if process then</p>
-                      <p><pre class='prettyprint lang-lua'>-- we are interested in this process
+                    <p>end sched:quit() end</p>
+                    <p>--=============================================== <a href='lk.ProcessWatch.html'>lk.ProcessWatch</a> delegate</p>
+                    <p>--- When services are brought online -- We need to receive notifications from this process so that -- we can write the changes to file. local process = self.processes[remote_process.name] if process then</p>
+                    <p><pre class='prettyprint lang-lua'>-- we are interested in this process
 private.process.connect(self, process, remote_process)</pre></p>
-                      <p>else</p>
-                      <p><pre class='prettyprint lang-lua'>-- Is this a stem cell ?
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>-- Is this a stem cell ?
 local stem_name = string.match(remote_process.name, '^@(.*)$')
 if stem_name then
   -- stem cell
@@ -192,32 +173,32 @@ elseif remote_process.name ~= '' then
   -- Invalid process. Kill.
   remote_process.push:send(lubyk.quit_url)
 end</pre></p>
-                      <p>end end</p>
-                      <p>local name    = service.name local process = self.processes[name] if process and not self.quitting then</p>
-                      <p><pre class='prettyprint lang-lua'>-- Restart process
+                    <p>end end</p>
+                    <p>local name    = service.name local process = self.processes[name] if process and not self.quitting then</p>
+                    <p><pre class='prettyprint lang-lua'>-- Restart process
 process.online = false
 private.process.start(self, process)</pre></p>
-                      <p>elseif self.stem_cells[name] then</p>
-                      <p><pre class='prettyprint lang-lua'>self.stem_cells[name] = nil</pre></p>
-                      <p>end end</p>
-                      <p>--=============================================== PRIVATE</p>
-                      <p>--- Start service and launch processes. function private:start(opts) self.process<em>watch = opts.process</em>watch or lk.ProcessWatch() self.process_watch:addDelegate(self) if opts.path then</p>
-                      <p><pre class='prettyprint lang-lua'>self:openFile(opts.path)</pre></p>
-                      <p>end if opts.start_stem then</p>
-                      <p><pre class='prettyprint lang-lua'>private.startStemCell(self)</pre></p>
-                      <p>end end</p>
-                      <p>-- Reads and parses the content of the lkp file. function private:readFile() -- Safe yaml loading (no alias = no recursion). local def = yaml.load(self.lkp_file:body(), true) if type(def) ~= 'table' then</p>
-                      <p><pre class='prettyprint lang-lua'>def = {}</pre></p>
-                      <p>end local h = private.set for k, func in pairs(private.set) do</p>
-                      <p><pre class='prettyprint lang-lua'>-- private.set.lubyk(self, def.lubyk)
+                    <p>elseif self.stem_cells[name] then</p>
+                    <p><pre class='prettyprint lang-lua'>self.stem_cells[name] = nil</pre></p>
+                    <p>end end</p>
+                    <p>--=============================================== PRIVATE</p>
+                    <p>--- Start service and launch processes. function private:start(opts) self.process<em>watch = opts.process</em>watch or lk.ProcessWatch() self.process_watch:addDelegate(self) if opts.path then</p>
+                    <p><pre class='prettyprint lang-lua'>self:openFile(opts.path)</pre></p>
+                    <p>end if opts.start_stem then</p>
+                    <p><pre class='prettyprint lang-lua'>private.startStemCell(self)</pre></p>
+                    <p>end end</p>
+                    <p>-- Reads and parses the content of the lkp file. function private:readFile() -- Safe yaml loading (no alias = no recursion). local def = yaml.load(self.lkp_file:body(), true) if type(def) ~= 'table' then</p>
+                    <p><pre class='prettyprint lang-lua'>def = {}</pre></p>
+                    <p>end local h = private.set for k, func in pairs(private.set) do</p>
+                    <p><pre class='prettyprint lang-lua'>-- private.set.lubyk(self, def.lubyk)
 func(self, def[k])</pre></p>
-                      <p>end self.views<em>dir = private.findOrMakeResource(self, '/</em>views', true) local dir = lk.Dir(self.views_dir.path) for file in dir:glob('%.lkv') do</p>
-                      <p><pre class='prettyprint lang-lua'>local name = string.match(file, '/([^/]+)%.lkv$')
+                    <p>end self.views<em>dir = private.findOrMakeResource(self, '/</em>views', true) local dir = lk.Dir(self.views_dir.path) for file in dir:glob('%.lkv') do</p>
+                    <p><pre class='prettyprint lang-lua'>local name = string.match(file, '/([^/]+)%.lkv$')
 private.view.add(self, name, {}, true)</pre></p>
-                      <p>end end</p>
-                      <p>function private:writeFile() local dump = self:dump() -- not saved in this file dump.<em>views = nil dump.name   = nil dump.lubyk  = self.lubyk self.lkp</em>file:update(yaml.dump(dump)) end</p>
-                      <p>--- Helper Used while parsing/updating patch definitions. function private.findOrMakeResource(self, url, is_dir) local resource = self.root.cache[url] if not resource then</p>
-                      <p><pre class='prettyprint lang-lua'>local fullpath = self.root.path .. url
+                    <p>end end</p>
+                    <p>function private:writeFile() local dump = self:dump() -- not saved in this file dump.<em>views = nil dump.name   = nil dump.lubyk  = self.lubyk self.lkp</em>file:update(yaml.dump(dump)) end</p>
+                    <p>--- Helper Used while parsing/updating patch definitions. function private.findOrMakeResource(self, url, is_dir) local resource = self.root.cache[url] if not resource then</p>
+                    <p><pre class='prettyprint lang-lua'>local fullpath = self.root.path .. url
 if not lk.exist(fullpath) then
   if is_dir then
     lk.makePath(fullpath)
@@ -227,22 +208,22 @@ if not lk.exist(fullpath) then
   end
 end
 resource = lk.FileResource(url, self.root)</pre></p>
-                      <p>end return resource end</p>
-                      <p>function private:startStemCell() -- This is ugly, but we want to make sure this stem cell is not -- started before we see if there is any on the network. if not self.stem_cells[Lubyk.host] then</p>
-                      <p><pre class='prettyprint lang-lua'>self.stem_fd = lk.spawn([[
+                    <p>end return resource end</p>
+                    <p>function private:startStemCell() -- This is ugly, but we want to make sure this stem cell is not -- started before we see if there is any on the network. if not self.stem_cells[Lubyk.host] then</p>
+                    <p><pre class='prettyprint lang-lua'>self.stem_fd = lk.spawn([[
 require 'lubyk'
 stem = lk.StemCell()
 run()
 ]])</pre></p>
-                      <p>end end</p>
-                      <p>--=============================================== SET</p>
-                      <p>-- Parse Lubyk version information. function private.set:lubyk(lubyk) -- We could check for version compatibility here. if lubyk and lubyk.version then</p>
-                      <p><pre class='prettyprint lang-lua'>self.lubyk = lubyk</pre></p>
-                      <p>else  </p>
-                      <p><pre class='prettyprint lang-lua'>self.lubyk = {version = Lubyk.version}</pre></p>
-                      <p>end end</p>
-                      <p>--- Parse processes machine assignments. function private.set:processes(processes) for name, info in pairs(processes or {}) do</p>
-                      <p><pre class='prettyprint lang-lua'>if type(info) == 'table' then
+                    <p>end end</p>
+                    <p>--=============================================== SET</p>
+                    <p>-- Parse Lubyk version information. function private.set:lubyk(lubyk) -- We could check for version compatibility here. if lubyk and lubyk.version then</p>
+                    <p><pre class='prettyprint lang-lua'>self.lubyk = lubyk</pre></p>
+                    <p>else  </p>
+                    <p><pre class='prettyprint lang-lua'>self.lubyk = {version = Lubyk.version}</pre></p>
+                    <p>end end</p>
+                    <p>--- Parse processes machine assignments. function private.set:processes(processes) for name, info in pairs(processes or {}) do</p>
+                    <p><pre class='prettyprint lang-lua'>if type(info) == 'table' then
   -- ok
 elseif info == '' then
   -- localhost
@@ -251,10 +232,10 @@ else
   info = {host = info}
 end
 private.process.add(self, name, info, true)</pre></p>
-                      <p>end end</p>
-                      <p>--=============================================== UPDATE</p>
-                      <p>--- Change processes: create, delete or change machine assignment. function private.update:processes(data) for name, def in pairs(data) do</p>
-                      <p><pre class='prettyprint lang-lua'>if def == false then
+                    <p>end end</p>
+                    <p>--=============================================== UPDATE</p>
+                    <p>--- Change processes: create, delete or change machine assignment. function private.update:processes(data) for name, def in pairs(data) do</p>
+                    <p><pre class='prettyprint lang-lua'>if def == false then
   private.removeProcess(self, name)
 elseif not self.processes[name] then
   private.createProcess(self, def)
@@ -265,37 +246,37 @@ else
   -- process.
   -- TODO
 end</pre></p>
-                      <p>end end</p>
-                      <p>function private:createProcess(definition) local processes = self.processes local name = definition.name if name == '_views' then</p>
-                      <p><pre class='prettyprint lang-lua'>-- ERROR, not allowed
+                    <p>end end</p>
+                    <p>function private:createProcess(definition) local processes = self.processes local name = definition.name if name == '_views' then</p>
+                    <p><pre class='prettyprint lang-lua'>-- ERROR, not allowed
 printf("Cannot create a process named '_views' (reserved name).")</pre></p>
-                      <p>elseif processes[name] then</p>
-                      <p><pre class='prettyprint lang-lua'>-- ERROR
+                    <p>elseif processes[name] then</p>
+                    <p><pre class='prettyprint lang-lua'>-- ERROR
 printf("Cannot create existing process '%s'.", definition.name)</pre></p>
-                      <p>else</p>
-                      <p><pre class='prettyprint lang-lua'>private.process.add(self, name, definition)</pre></p>
-                      <p>end end</p>
-                      <p>function private:removeProcess(name) local process = self.processes[name] if process then</p>
-                      <p><pre class='prettyprint lang-lua'>if process.online then
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>private.process.add(self, name, definition)</pre></p>
+                    <p>end end</p>
+                    <p>function private:removeProcess(name) local process = self.processes[name] if process then</p>
+                    <p><pre class='prettyprint lang-lua'>if process.online then
   process.push:send(lubyk.quit_url)
   self.processes[name] = nil
   private.writeFile(self)
   process.dir:delete()
 end</pre></p>
-                      <p>else</p>
-                      <p><pre class='prettyprint lang-lua'>-- ERROR
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>-- ERROR
 printf("Cannot remove unknown process '%s'.", name)</pre></p>
-                      <p>end end</p>
-                      <p>--=============================================== DUMP</p>
-                      <p>--- Dump name -- default: "tmp/bob.lkp" <code> gaspard function private.dump:name() local path = self.root.name .. '/' .. self.lkp_file.name  return string.format('"%s" </code> %s', path, Lubyk.host) end</p>
-                      <p>function private.dump:host() return Lubyk.host end</p>
-                      <p>--- Dump Lubyk version information. function private.dump:lubyk(partial) return self.lubyk end</p>
-                      <p>--- Dump information on processes machine assignments. function private.dump:processes(partial) local to_dump if partial == true then</p>
-                      <p><pre class='prettyprint lang-lua'>to_dump = self.processes</pre></p>
-                      <p>else</p>
-                      <p><pre class='prettyprint lang-lua'>to_dump = partial</pre></p>
-                      <p>end local dump = {} for name, def in pairs(to_dump) do</p>
-                      <p><pre class='prettyprint lang-lua'>if def == false then
+                    <p>end end</p>
+                    <p>--=============================================== DUMP</p>
+                    <p>--- Dump name -- default: "tmp/bob.lkp" <code> gaspard function private.dump:name() local path = self.root.name .. '/' .. self.lkp_file.name  return string.format('"%s" </code> %s', path, Lubyk.host) end</p>
+                    <p>function private.dump:host() return Lubyk.host end</p>
+                    <p>--- Dump Lubyk version information. function private.dump:lubyk(partial) return self.lubyk end</p>
+                    <p>--- Dump information on processes machine assignments. function private.dump:processes(partial) local to_dump if partial == true then</p>
+                    <p><pre class='prettyprint lang-lua'>to_dump = self.processes</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>to_dump = partial</pre></p>
+                    <p>end local dump = {} for name, def in pairs(to_dump) do</p>
+                    <p><pre class='prettyprint lang-lua'>if def == false then
   -- Removal information
   dump[name] = false
 else
@@ -315,13 +296,13 @@ else
     dump[name] = p
   end
 end</pre></p>
-                      <p>end return dump end</p>
-                      <p>--- Dump information on views function private.dump:<em>views(partial) local to</em>dump if partial == true then</p>
-                      <p><pre class='prettyprint lang-lua'>to_dump = self.views</pre></p>
-                      <p>else</p>
-                      <p><pre class='prettyprint lang-lua'>to_dump = partial</pre></p>
-                      <p>end local dump = {} for name, def in pairs(to_dump) do</p>
-                      <p><pre class='prettyprint lang-lua'>if def == false then
+                    <p>end return dump end</p>
+                    <p>--- Dump information on views function private.dump:<em>views(partial) local to</em>dump if partial == true then</p>
+                    <p><pre class='prettyprint lang-lua'>to_dump = self.views</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>to_dump = partial</pre></p>
+                    <p>end local dump = {} for name, def in pairs(to_dump) do</p>
+                    <p><pre class='prettyprint lang-lua'>if def == false then
   -- Removal information
   dump[name] = false
 elseif partial == true then
@@ -331,16 +312,16 @@ else
   -- Partial dump: just echo changes back
   dump[name] = def
 end</pre></p>
-                      <p>end return dump end</p>
-                      <p>--=============================================== PROCESS</p>
-                      <p>--- A process appeared on the network, we connect to this process to receive -- notifications. function private.process:connect(process, remote_process) process.sub = zmq.SimpleSub(function(changes)</p>
-                      <p><pre class='prettyprint lang-lua'>-- we receive notifications, update content
+                    <p>end return dump end</p>
+                    <p>--=============================================== PROCESS</p>
+                    <p>--- A process appeared on the network, we connect to this process to receive -- notifications. function private.process:connect(process, remote_process) process.sub = zmq.SimpleSub(function(changes)</p>
+                    <p><pre class='prettyprint lang-lua'>-- we receive notifications, update content
 -- FIXME: filter control events ?
 private.process.changed(self, process, changes)</pre></p>
-                      <p>end) process.sub:connect(remote<em>process.sub</em>url) end</p>
-                      <p>--- A process died, disconnect. function private.process:disconnect(process) process.sub = nil end</p>
-                      <p>--- We receive notifications from processes. function private.process.changed(self, process, changes) -- write changes to file     local cache = process.cache for base<em>k, base</em>v in pairs(changes) do</p>
-                      <p><pre class='prettyprint lang-lua'>if base_k == 'nodes' then
+                    <p>end) process.sub:connect(remote<em>process.sub</em>url) end</p>
+                    <p>--- A process died, disconnect. function private.process:disconnect(process) process.sub = nil end</p>
+                    <p>--- We receive notifications from processes. function private.process.changed(self, process, changes) -- write changes to file     local cache = process.cache for base<em>k, base</em>v in pairs(changes) do</p>
+                    <p><pre class='prettyprint lang-lua'>if base_k == 'nodes' then
   local nodes = base_v
   local cache_nodes = cache[base_k]
   if not cache_nodes then
@@ -424,62 +405,62 @@ elseif base_k == 'log' then
 else
   patch_changed = lk.deepMerge(cache, base_k, base_v) or patch_changed
 end</pre></p>
-                      <p>end if patch_changed then</p>
-                      <p><pre class='prettyprint lang-lua'>private.process.writeFile(process)</pre></p>
-                      <p>end                                          end</p>
-                      <p>--- Read and parse process patch definition file. function private.process.readFile(self, process) process.cache = yaml.load(process.patch:body(), true) or {} if type(process.cache) ~= 'table' then</p>
-                      <p><pre class='prettyprint lang-lua'>process.cache = {}</pre></p>
-                      <p>end local nodes = process.cache.nodes or {} for name, def in pairs(nodes) do</p>
-                      <p><pre class='prettyprint lang-lua'>local resource = private.findOrMakeResource(self, process.dir.url .. '/' .. name .. '.lua')
+                    <p>end if patch_changed then</p>
+                    <p><pre class='prettyprint lang-lua'>private.process.writeFile(process)</pre></p>
+                    <p>end                                          end</p>
+                    <p>--- Read and parse process patch definition file. function private.process.readFile(self, process) process.cache = yaml.load(process.patch:body(), true) or {} if type(process.cache) ~= 'table' then</p>
+                    <p><pre class='prettyprint lang-lua'>process.cache = {}</pre></p>
+                    <p>end local nodes = process.cache.nodes or {} for name, def in pairs(nodes) do</p>
+                    <p><pre class='prettyprint lang-lua'>local resource = private.findOrMakeResource(self, process.dir.url .. '/' .. name .. '.lua')
 resource:addCallback('update', private.node.updateCallback, process, name)</pre></p>
-                      <p>end end</p>
-                      <p>--- Write patch definition to file. function private.process.writeFile(process) process.patch:update(yaml.dump(process.cache)) end</p>
-                      <p>-- When reading a file 'reading<em>lkp' is set so we know that we must not -- write to lkp file. function private.process.add(self, name, info, reading</em>lkp) -- Find or create process. local process = self.process<em>watch:process(name) self.processes[name] = process process.host = info.host -- set resource process.dir = private.findOrMakeResource(self, '/' .. (info.dir or name), true) process.patch = private.findOrMakeResource(self, process.dir.url .. '/</em>patch.yml')</p>
-                      <p>private.process.readFile(self, process) if not reading_lkp then</p>
-                      <p><pre class='prettyprint lang-lua'>-- This is a new process
+                    <p>end end</p>
+                    <p>--- Write patch definition to file. function private.process.writeFile(process) process.patch:update(yaml.dump(process.cache)) end</p>
+                    <p>-- When reading a file 'reading<em>lkp' is set so we know that we must not -- write to lkp file. function private.process.add(self, name, info, reading</em>lkp) -- Find or create process. local process = self.process<em>watch:process(name) self.processes[name] = process process.host = info.host -- set resource process.dir = private.findOrMakeResource(self, '/' .. (info.dir or name), true) process.patch = private.findOrMakeResource(self, process.dir.url .. '/</em>patch.yml')</p>
+                    <p>private.process.readFile(self, process) if not reading_lkp then</p>
+                    <p><pre class='prettyprint lang-lua'>-- This is a new process
 lk.deepMerge(process, 'cache', info)
 -- Host is not stored inside the patch
 process.cache.host = nil
 private.writeFile(self)
 private.process.writeFile(process)</pre></p>
-                      <p>end private.process.start(self, process) end</p>
-                      <p>--- Try to start a process by calling the corresponding stem cell. function private.process:start(process) local stem = self.stem_cells[process.host] if not stem or not stem.push then</p>
-                      <p><pre class='prettyprint lang-lua'>-- will start as soon as the stem cell appears on the network
+                    <p>end private.process.start(self, process) end</p>
+                    <p>--- Try to start a process by calling the corresponding stem cell. function private.process:start(process) local stem = self.stem_cells[process.host] if not stem or not stem.push then</p>
+                    <p><pre class='prettyprint lang-lua'>-- will start as soon as the stem cell appears on the network
 return</pre></p>
-                      <p>end stem.push:send(lubyk.execute_url, 'spawn', process.name) end</p>
-                      <p>--- Kill and restart process. function private.process:restart(process) if not process.online then</p>
-                      <p><pre class='prettyprint lang-lua'>private.process.start(self, process)</pre></p>
-                      <p>else</p>
-                      <p><pre class='prettyprint lang-lua'>local stem = self.stem_cells[process.host]
+                    <p>end stem.push:send(lubyk.execute_url, 'spawn', process.name) end</p>
+                    <p>--- Kill and restart process. function private.process:restart(process) if not process.online then</p>
+                    <p><pre class='prettyprint lang-lua'>private.process.start(self, process)</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>local stem = self.stem_cells[process.host]
 if not stem then
   -- will restart as soon as the stem cell appears on the network
   process.on_stem = 'restart'
 else
   stem.push:send(lubyk.execute_url, 'kill', process.name)
 end</pre></p>
-                      <p>end end</p>
-                      <p>function private:restartProcess(name) local process = self.processes[name] if process then</p>
-                      <p><pre class='prettyprint lang-lua'>if process.online then
+                    <p>end end</p>
+                    <p>function private:restartProcess(name) local process = self.processes[name] if process then</p>
+                    <p><pre class='prettyprint lang-lua'>if process.online then
   process.push:send(lubyk.quit_url)
   -- The process will restart automatically.
 end</pre></p>
-                      <p>else</p>
-                      <p><pre class='prettyprint lang-lua'>-- ERROR
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>-- ERROR
 printf("Cannot restart unknown process '%s'.", name)</pre></p>
-                      <p>end end</p>
-                      <p>--=============================================== NODE</p>
-                      <p>-- This is called when we do an update on the resource (file save). function private.node.updateCallback(process, node<em>name, resource) -- We launch a new thread to make sure that we do not hang the server -- if this fails. process.update</em>thread = lk.Thread(function()</p>
-                      <p><pre class='prettyprint lang-lua'>if process.online then
+                    <p>end end</p>
+                    <p>--=============================================== NODE</p>
+                    <p>-- This is called when we do an update on the resource (file save). function private.node.updateCallback(process, node<em>name, resource) -- We launch a new thread to make sure that we do not hang the server -- if this fails. process.update</em>thread = lk.Thread(function()</p>
+                    <p><pre class='prettyprint lang-lua'>if process.online then
   process.push:send(lubyk.update_url, {
     nodes = {
       [node_name] = { code = resource:body()}
     }
   })
 end</pre></p>
-                      <p>end) end</p>
-                      <p>--=============================================== VIEW</p>
-                      <p>--- Change views (we do a deep parsing to detect what to create/delete/update). function private.update:_views(data) local views = self.views for name, def in pairs(data) do</p>
-                      <p><pre class='prettyprint lang-lua'>local view = views[name]
+                    <p>end) end</p>
+                    <p>--=============================================== VIEW</p>
+                    <p>--- Change views (we do a deep parsing to detect what to create/delete/update). function private.update:_views(data) local views = self.views for name, def in pairs(data) do</p>
+                    <p><pre class='prettyprint lang-lua'>local view = views[name]
 if def == false then
   if view then
     view.file:delete()
@@ -499,94 +480,97 @@ else
   -- write view to filesystem
   private.view.writeFile(view)
 end</pre></p>
-                      <p>end end</p>
-                      <p>-- When reading a view file 'reading<em>lkv' is set so we know that we must not -- write to lkv file. function private.view.add(self, name, info, reading</em>lkv) local view = {} self.views[name] = view -- set resource view.file = private.findOrMakeResource(self, self.views_dir.url .. '/' .. name .. '.lkv')</p>
-                      <p>private.view.readFile(self, view) if not reading_lkv then</p>
-                      <p><pre class='prettyprint lang-lua'>-- This is a new view
+                    <p>end end</p>
+                    <p>-- When reading a view file 'reading<em>lkv' is set so we know that we must not -- write to lkv file. function private.view.add(self, name, info, reading</em>lkv) local view = {} self.views[name] = view -- set resource view.file = private.findOrMakeResource(self, self.views_dir.url .. '/' .. name .. '.lkv')</p>
+                    <p>private.view.readFile(self, view) if not reading_lkv then</p>
+                    <p><pre class='prettyprint lang-lua'>-- This is a new view
 lk.deepMerge(view, 'cache', info)
 private.view.writeFile(view)</pre></p>
-                      <p>end end</p>
-                      <p>--- Read and parse process view definition file. function private.view.readFile(self, view) view.cache = yaml.load(view.file:body(), true) or {} if type(view.cache) ~= 'table' then</p>
-                      <p><pre class='prettyprint lang-lua'>view.cache = {}</pre></p>
-                      <p>end end</p>
-                      <p>--- Write patch definition to file. function private.view.writeFile(view) view.file:update(yaml.dump(view.cache)) end</p>
-                            </section>
-              </div>
+                    <p>end end</p>
+                    <p>--- Read and parse process view definition file. function private.view.readFile(self, view) view.cache = yaml.load(view.file:body(), true) or {} if type(view.cache) ~= 'table' then</p>
+                    <p><pre class='prettyprint lang-lua'>view.cache = {}</pre></p>
+                    <p>end end</p>
+                    <p>--- Write patch definition to file. function private.view.writeFile(view) view.file:update(yaml.dump(view.cache)) end</p>
+                              </section>
+                  </div>
 
-      <div class="span3 bs-docs-sidebar global-nav">
-        <ul class="nav nav-list bs-docs-sidenav">
-                    <li class='module'><a href='lk.html'>lk</a></li>
-                              <li><a href='lk.Client.html'>lk.Client</a></li>
-                    <li><a href='lk.Command.html'>lk.Command</a></li>
-                    <li><a href='lk.DavMorph.html'>lk.DavMorph</a></li>
-                    <li><a href='lk.DavServer.html'>lk.DavServer</a></li>
-                    <li><a href='lk.Debug.html'>lk.Debug</a></li>
-                    <li><a href='lk.Dir.html'>lk.Dir</a></li>
-                    <li><a href='lk.Doc.html'>lk.Doc</a></li>
-                    <li><a href='lk.Environment.html'>lk.Environment</a></li>
-                    <li><a href='lk.FileResource.html'>lk.FileResource</a></li>
-                    <li><a href='lk.Inlet.html'>lk.Inlet</a></li>
-                    <li><a href='lk.InletMethod.html'>lk.InletMethod</a></li>
-                    <li><a href='lk.Lubyk.html'>lk.Lubyk</a></li>
-                    <li class='active'><a href='lk.Morph.html'>lk.Morph</a></li>
-                    <li><a href='lk.Node.html'>lk.Node</a></li>
-                    <li><a href='lk.Observer.html'>lk.Observer</a></li>
-                    <li><a href='lk.Outlet.html'>lk.Outlet</a></li>
-                    <li><a href='lk.OutletMethod.html'>lk.OutletMethod</a></li>
-                    <li><a href='lk.ParamMethod.html'>lk.ParamMethod</a></li>
-                    <li><a href='lk.Patch.html'>lk.Patch</a></li>
-                    <li><a href='lk.Process.html'>lk.Process</a></li>
-                    <li><a href='lk.ProcessWatch.html'>lk.ProcessWatch</a></li>
-                    <li><a href='lk.Properties.html'>lk.Properties</a></li>
-                    <li><a href='lk.RemoteProcess.html'>lk.RemoteProcess</a></li>
-                    <li><a href='lk.Scheduler.html'>lk.Scheduler</a></li>
-                    <li><a href='lk.SelectCallback.html'>lk.SelectCallback</a></li>
-                    <li><a href='lk.Service.html'>lk.Service</a></li>
-                    <li><a href='lk.ServiceBrowser.html'>lk.ServiceBrowser</a></li>
-                    <li><a href='lk.Settings.html'>lk.Settings</a></li>
-                    <li><a href='lk.Socket.html'>lk.Socket</a></li>
-                    <li><a href='lk.Socket2.html'>lk.Socket2</a></li>
-                    <li><a href='lk.StemCell.html'>lk.StemCell</a></li>
-                    <li><a href='lk.SubClass.html'>lk.SubClass</a></li>
-                    <li><a href='lk.TCPSocket.html'>lk.TCPSocket</a></li>
-                    <li><a href='lk.Thread.html'>lk.Thread</a></li>
-                    <li><a href='lk.Timer.html'>lk.Timer</a></li>
-                    <li><a href='lk.UDPSocket.html'>lk.UDPSocket</a></li>
-                    <li><a href='lk.WebServer.html'>lk.WebServer</a></li>
-                    <li><a href='lk.crypto.html'>lk.crypto</a></li>
-                    <li><a href='lk.more.html'>lk.more</a></li>
-                    <li><a href='lk.util.html'>lk.util</a></li>
-                  </ul>
+        <div class='span2'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='lk.html'>lk</a></li>
+                                    <li><a href='lk.Client.html'>lk.Client</a></li>
+                        <li><a href='lk.Command.html'>lk.Command</a></li>
+                        <li><a href='lk.DavMorph.html'>lk.DavMorph</a></li>
+                        <li><a href='lk.DavServer.html'>lk.DavServer</a></li>
+                        <li><a href='lk.Debug.html'>lk.Debug</a></li>
+                        <li><a href='lk.Dir.html'>lk.Dir</a></li>
+                        <li><a href='lk.Doc.html'>lk.Doc</a></li>
+                        <li><a href='lk.Environment.html'>lk.Environment</a></li>
+                        <li><a href='lk.FileResource.html'>lk.FileResource</a></li>
+                        <li><a href='lk.Finalizer.html'>lk.Finalizer</a></li>
+                        <li><a href='lk.Inlet.html'>lk.Inlet</a></li>
+                        <li><a href='lk.InletMethod.html'>lk.InletMethod</a></li>
+                        <li><a href='lk.Lubyk.html'>lk.Lubyk</a></li>
+                        <li class='active'><a href='lk.Morph.html'>lk.Morph</a></li>
+                        <li><a href='lk.Node.html'>lk.Node</a></li>
+                        <li><a href='lk.Observer.html'>lk.Observer</a></li>
+                        <li><a href='lk.Outlet.html'>lk.Outlet</a></li>
+                        <li><a href='lk.OutletMethod.html'>lk.OutletMethod</a></li>
+                        <li><a href='lk.ParamMethod.html'>lk.ParamMethod</a></li>
+                        <li><a href='lk.Patch.html'>lk.Patch</a></li>
+                        <li><a href='lk.Process.html'>lk.Process</a></li>
+                        <li><a href='lk.ProcessWatch.html'>lk.ProcessWatch</a></li>
+                        <li><a href='lk.Properties.html'>lk.Properties</a></li>
+                        <li><a href='lk.RemoteProcess.html'>lk.RemoteProcess</a></li>
+                        <li><a href='lk.Scheduler.html'>lk.Scheduler</a></li>
+                        <li><a href='lk.SelectCallback.html'>lk.SelectCallback</a></li>
+                        <li><a href='lk.Service.html'>lk.Service</a></li>
+                        <li><a href='lk.ServiceBrowser.html'>lk.ServiceBrowser</a></li>
+                        <li><a href='lk.Settings.html'>lk.Settings</a></li>
+                        <li><a href='lk.Socket.html'>lk.Socket</a></li>
+                        <li><a href='lk.Socket2.html'>lk.Socket2</a></li>
+                        <li><a href='lk.StemCell.html'>lk.StemCell</a></li>
+                        <li><a href='lk.SubClass.html'>lk.SubClass</a></li>
+                        <li><a href='lk.TCPSocket.html'>lk.TCPSocket</a></li>
+                        <li><a href='lk.Thread.html'>lk.Thread</a></li>
+                        <li><a href='lk.TimeRef.html'>lk.TimeRef</a></li>
+                        <li><a href='lk.Timer.html'>lk.Timer</a></li>
+                        <li><a href='lk.UDPSocket.html'>lk.UDPSocket</a></li>
+                        <li><a href='lk.WebServer.html'>lk.WebServer</a></li>
+                        <li><a href='lk.core.html'>lk.core</a></li>
+                        <li><a href='lk.crypto.html'>lk.crypto</a></li>
+                        <li><a href='lk.more.html'>lk.more</a></li>
+                        <li><a href='lk.util.html'>lk.util</a></li>
+                      </ul>
+        </div>
       </div>
     </div>
-  </div>
 
     <footer class="footer">
-      <div class="container">
-         made with <a href='lk.Doc.html'>lk.Doc</a> 
-      </div>
+    <div class="container">
+       made with <a href='http://doc.lubyk.org/lk.Doc.html'>lk.Doc</a> 
+    </div>
     </footer>
 
-    <!-- Placed at the end of the document so the pages load faster -->
-    <!--
-    <script src="assets/js/jquery.js"></script>
-    <script src="assets/js/bootstrap-transition.js"></script>
-    <script src="assets/js/bootstrap-alert.js"></script>
-    <script src="assets/js/bootstrap-modal.js"></script>
-    <script src="assets/js/bootstrap-dropdown.js"></script>
-    <script src="assets/js/bootstrap-scrollspy.js"></script>
-    <script src="assets/js/bootstrap-tab.js"></script>
-    <script src="assets/js/bootstrap-tooltip.js"></script>
-    <script src="assets/js/bootstrap-popover.js"></script>
-    <script src="assets/js/bootstrap-button.js"></script>
-    <script src="assets/js/bootstrap-collapse.js"></script>
-    <script src="assets/js/bootstrap-carousel.js"></script>
-    <script src="assets/js/bootstrap-typeahead.js"></script>
-    <script src="assets/js/bootstrap-affix.js"></script>
-    -->
-
-    
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
     <script src='http://code.jquery.com/jquery.js'></script>
     <script src='js/bootstrap.min.js'></script>
   </body>
 </html>
+

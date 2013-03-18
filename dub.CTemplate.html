@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>dub.CTemplate</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+
+
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/docs.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class='row'>
+          <div class='span12'>
+             <a href='http://lubyk.org'><img alt='lubyk logo' src='img/lubyk.png'/> <h1>Lubyk documentation</h1></a> 
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="row">
+
+        <div class='span3'>
+          <ul class='nav nav-tabs nav-stacked local-nav affix'>
+                        <li><a href='#CTemplate'><i class='icon-chevron-right'></i> dub.CTemplate</a></li>
+                      </ul>
+        </div>
+
+        <div class="span7">
+
+                    <section id='CTemplate'>
+          <h2 class='section'>dub.CTemplate</h2>
+
+                              <a name='resolveTemplateParams'></a>
+          <h4 class='method'><span>:</span>resolveTemplateParams <code>(parent, name, types)</code></h4>
+          
+                    <p class='summary'></p>
+                    <p>local lib     = { type        = 'dub.CTemplate', template    = true, } local private = {} lib.<em></em>index   = lib <a href='dub.CTemplate.html'>dub.CTemplate</a> = lib setmetatable(lib, dub.Class)</p>
+                    <p>--=============================================== Ctor never used -- We transform a <a href='dub.Class.html'>dub.Class</a> while parsing template params.</p>
+                    <p>--=============================================== PUBLIC METHODS</p>
+                    <p>-- Returns a <a href='dub.Class.html'>dub.Class</a> by resolving the given parameters. local name<em>to</em>type = {} name<em>to</em>type[self.name] = name local all<em>resolved = true for i, param in ipairs(self.template</em>params) do</p>
+                    <p><pre class='prettyprint lang-lua'>local typ = types[i]
+if typ then
+  name_to_type[param] = typ
+else
+  all_resolved = false
+end</pre></p>
+                    <p>end if all_resolved then</p>
+                    <p><pre class='prettyprint lang-lua'>-- Make class
+local class = dub.Class {
+  db           = self.db,
+  parent       = parent or self.parent,
+  name         = name,
+}
+-- Rebuild methods
+private.resolveMethods(self, class, name_to_type)
+-- Rebuild attributes
+if self.has_variables then
+  private.resolveAttributes(self, class, name_to_type)
+end
+return class</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>-- Make another template</pre></p>
+                    <p>end end</p>
+                    <p>lib.fullname = <a href='dub.Class.html#fullname'>dub.Class.fullname</a></p>
+                    <p>--=============================================== PRIVATE</p>
+                    <p>function private:resolveMethods(class, name<em>to</em>type) for method in self:methods() do</p>
+                    <p><pre class='prettyprint lang-lua'>local opts = {
+  db            = self.db,
+  parent        = class,
+  name          = method.name,
+  params_list   = private.resolveParams(method, name_to_type),
+  return_value  = private.resolveType(method.return_value, name_to_type),
+  definition    = method.definition,
+  argsstring    = method.argsstring,
+  location      = method.location,
+  desc          = method.desc,
+  static        = method.static,
+  xml           = method.xml,
+  member        = method.member,
+  dtor          = method.dtor,
+  ctor          = method.ctor,
+  dub           = method.dub,
+  is_set_attr   = method.is_set_attr,
+  is_get_attr   = method.is_get_attr,
+  is_cast       = method.is_cast,
+}
+if method.ctor then
+  opts.name = class.name
+  opts.return_value = dub.MemoryStorage.makeType(class.name .. ' *')
+elseif method.dtor then
+  opts.name = '~' .. class.name
+end
+
+local m = dub.Function(opts)
+class.cache[m.name] = m
+table.insert(class.functions_list, m)</pre></p>
+                    <p>end end</p>
+                    <p>function private:resolveAttributes(class, name<em>to</em>type) class.has<em>variables = true local list = class.variables</em>list for attr in self:attributes() do</p>
+                    <p><pre class='prettyprint lang-lua'>table.insert(list, {
+  type   = 'dub.Attribute',
+  parent = class,
+  name   = attr.name,
+  ctype  = private.resolveType(attr.ctype, name_to_type),
+})</pre></p>
+                    <p>end end</p>
+                    <p>function private:resolveParams(name<em>to</em>type) local res = {} for <em>, param in ipairs(self.params</em>list) do</p>
+                    <p><pre class='prettyprint lang-lua'>local p = {
+  type     = 'dub.Param',
+  name     = param.name,
+  position = param.position,
+  ctype    = private.resolveType(param.ctype, name_to_type),
+}
+table.insert(res, p)</pre></p>
+                    <p>end return res end</p>
+                    <p>function private.resolveType(ctype, name<em>to</em>type) if not ctype then</p>
+                    <p><pre class='prettyprint lang-lua'>return</pre></p>
+                    <p>end local resolv = name<em>to</em>type[ctype.name]</p>
+                    <p><pre class='prettyprint lang-lua'>  </pre></p>
+                    <p>if resolv then</p>
+                    <p><pre class='prettyprint lang-lua'>local t = dub.MemoryStorage.makeType(resolv)
+return dub.MemoryStorage.makeType(resolv)</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>return ctype</pre></p>
+                    <p>end end</p>
+                              </section>
+                  </div>
+
+        <div class='span2'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='dub.html'>dub</a></li>
+                                    <li class='active'><a href='dub.CTemplate.html'>dub.CTemplate</a></li>
+                        <li><a href='dub.Class.html'>dub.Class</a></li>
+                        <li><a href='dub.Function.html'>dub.Function</a></li>
+                        <li><a href='dub.Inspector.html'>dub.Inspector</a></li>
+                        <li><a href='dub.LuaBinder.html'>dub.LuaBinder</a></li>
+                        <li><a href='dub.MemoryStorage.html'>dub.MemoryStorage</a></li>
+                        <li><a href='dub.Namespace.html'>dub.Namespace</a></li>
+                        <li><a href='dub.OptParser.html'>dub.OptParser</a></li>
+                        <li><a href='dub.Template.html'>dub.Template</a></li>
+                      </ul>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+    <div class="container">
+       made with <a href='http://doc.lubyk.org/lk.Doc.html'>lk.Doc</a> 
+    </div>
+    </footer>
+
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
+    <script src='http://code.jquery.com/jquery.js'></script>
+    <script src='js/bootstrap.min.js'></script>
+  </body>
+</html>
+

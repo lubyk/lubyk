@@ -8,25 +8,6 @@
     <meta name="author" content="">
 
 
-    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
-
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-        config: ["MMLorHTML.js"],
-        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
-        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
-        TeX: {
-          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
-        },
-        menuSettings: {
-          zoom: "Hover",
-          mpContext: true,
-          mpMouse: true
-        },
-      });
-    </script>
-    <script type="text/javascript"
-  src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
 
     <link href="css/bootstrap.css" rel="stylesheet">
     <link href="css/bootstrap-responsive.css" rel="stylesheet">
@@ -44,51 +25,51 @@
       </div>
     </div>
 
-  <div class="container">
+    <div class="container">
 
-    <div class="row">
+      <div class="row">
 
-      <div class="span2 bs-docs-sidebar local-nav">
-        <ul class="nav nav-list bs-docs-sidenav affix">
-                    <li><a href='#WebServer'><i class='icon-chevron-right'></i> lk.WebServer</a></li>
-                  </ul>
-      </div>
+        <div class='span3'>
+          <ul class='nav nav-tabs nav-stacked local-nav affix'>
+                        <li><a href='#WebServer'><i class='icon-chevron-right'></i> lk.WebServer</a></li>
+                      </ul>
+        </div>
 
-      <div class="span7">
+        <div class="span7">
 
-                <section id='WebServer'>
+                    <section id='WebServer'>
           <h2 class='section'>lk.WebServer</h2>
 
                               <a name='GET'></a>
           <h4 class='method'><span>:</span>GET <code>(request)</code></h4>
           
-                      <p class='summary'></p>
-                      <p>local lib = {type='lk.WebServer'} lib.<em></em>index  = lib <a href='lk.WebServer.html'>lk.WebServer</a> = lib local private = {}</p>
-                      <p>setmetatable(lib, { -- new method <em></em>call = function(lib, port) local self = {</p>
-                      <p><pre class='prettyprint lang-lua'>should_run = true,
+                    <p class='summary'></p>
+                    <p>local lib = {type='lk.WebServer'} lib.<em></em>index  = lib <a href='lk.WebServer.html'>lk.WebServer</a> = lib local private = {}</p>
+                    <p>setmetatable(lib, { -- new method <em></em>call = function(lib, port) local self = {</p>
+                    <p><pre class='prettyprint lang-lua'>should_run = true,
 clients    = {},
 server     = lk.Socket(),</pre></p>
-                      <p>} self.server:bind() self.host, self.port = self.server:localHost(), self.server:localPort() setmetatable(self, lib) self:listen() return self end})</p>
-                      <p>lib.STATUS_CODES = { ["100"]  = "Continue", ["101"]  = "Switching Protocols", ["200"]  = "OK", ["201"]  = "Created", ["202"]  = "Accepted", ["203"]  = "Non-Authoritative Information", ["204"]  = "No Content", ["205"]  = "Reset Content", ["206"]  = "Partial Content", ["300"]  = "Multiple Choices", ["301"]  = "Moved Permanently", ["302"]  = "Found", ["303"]  = "See Other", ["304"]  = "Not Modified", ["305"]  = "Use Proxy", ["307"]  = "Temporary Redirect", ["400"]  = "Bad Request", ["401"]  = "Unauthorized", ["402"]  = "Payment Required", ["403"]  = "Forbidden", ["404"]  = "Not Found", ["405"]  = "Method Not Allowed", ["406"]  = "Not Acceptable", ["407"]  = "Proxy Authentication Required", ["408"]  = "Request Time-out", ["409"]  = "Conflict", ["410"]  = "Gone", ["411"]  = "Length Required", ["412"]  = "Precondition Failed", ["413"]  = "Request Entity Too Large", ["414"]  = "Request-URI Too Large", ["415"]  = "Unsupported Media Type", ["416"]  = "Requested range not satisfiable", ["417"]  = "Expectation Failed", ["500"]  = "Internal Server Error", ["501"]  = "Not Implemented", ["502"]  = "Bad Gateway", ["503"]  = "Service Unavailable", ["504"]  = "Gateway Time-out", ["505"]  = "HTTP Version not supported", }</p>
-                      <p>local function buildReply(body, headers) local status = tostring(headers.status or "200") local status<em>msg = lib.STATUS</em>CODES[status] if not status_msg then</p>
-                      <p><pre class='prettyprint lang-lua'>--print("Bad HTTP status", status)
+                    <p>} self.server:bind() self.host, self.port = self.server:localHost(), self.server:localPort() setmetatable(self, lib) self:listen() return self end})</p>
+                    <p>lib.STATUS_CODES = { ["100"]  = "Continue", ["101"]  = "Switching Protocols", ["200"]  = "OK", ["201"]  = "Created", ["202"]  = "Accepted", ["203"]  = "Non-Authoritative Information", ["204"]  = "No Content", ["205"]  = "Reset Content", ["206"]  = "Partial Content", ["300"]  = "Multiple Choices", ["301"]  = "Moved Permanently", ["302"]  = "Found", ["303"]  = "See Other", ["304"]  = "Not Modified", ["305"]  = "Use Proxy", ["307"]  = "Temporary Redirect", ["400"]  = "Bad Request", ["401"]  = "Unauthorized", ["402"]  = "Payment Required", ["403"]  = "Forbidden", ["404"]  = "Not Found", ["405"]  = "Method Not Allowed", ["406"]  = "Not Acceptable", ["407"]  = "Proxy Authentication Required", ["408"]  = "Request Time-out", ["409"]  = "Conflict", ["410"]  = "Gone", ["411"]  = "Length Required", ["412"]  = "Precondition Failed", ["413"]  = "Request Entity Too Large", ["414"]  = "Request-URI Too Large", ["415"]  = "Unsupported Media Type", ["416"]  = "Requested range not satisfiable", ["417"]  = "Expectation Failed", ["500"]  = "Internal Server Error", ["501"]  = "Not Implemented", ["502"]  = "Bad Gateway", ["503"]  = "Service Unavailable", ["504"]  = "Gateway Time-out", ["505"]  = "HTTP Version not supported", }</p>
+                    <p>local function buildReply(body, headers) local status = tostring(headers.status or "200") local status<em>msg = lib.STATUS</em>CODES[status] if not status_msg then</p>
+                    <p><pre class='prettyprint lang-lua'>--print("Bad HTTP status", status)
 return nil</pre></p>
-                      <p>end local res = string.format("HTTP/1.1 %s %s\r\n", status, status_msg) res = res .. string.format("Server: lubyk 0.1\r\n") res = res .. "Connection: close\r\n"</p>
-                      <p>for k, v in pairs(headers) do</p>
-                      <p><pre class='prettyprint lang-lua'>if k ~= 'status' then
+                    <p>end local res = string.format("HTTP/1.1 %s %s\r\n", status, status_msg) res = res .. string.format("Server: lubyk 0.1\r\n") res = res .. "Connection: close\r\n"</p>
+                    <p>for k, v in pairs(headers) do</p>
+                    <p><pre class='prettyprint lang-lua'>if k ~= 'status' then
   res = res .. string.format("%s: %s\r\n", k, v)
 end</pre></p>
-                      <p>end if body then</p>
-                      <p><pre class='prettyprint lang-lua'>res = res .. string.format("Content-Length: %i\r\n", string.len(body))
+                    <p>end if body then</p>
+                    <p><pre class='prettyprint lang-lua'>res = res .. string.format("Content-Length: %i\r\n", string.len(body))
 res = res .. '\r\n' .. body</pre></p>
-                      <p>else</p>
-                      <p><pre class='prettyprint lang-lua'>res = res .. "Content-Length: 0\r\n"</pre></p>
-                      <p>end --print("--------------------------------------------------") --print(res) return res end</p>
-                      <p>-- TODO: protection against DOS attack ? local function getRequest(client) local request = {} --print("==================================================") local line, err = client:recv() if err then</p>
-                      <p><pre class='prettyprint lang-lua'>return nil, err</pre></p>
-                      <p>end --print('STATUS', line) -- GET /foo/bar.html HTTP/1.1 request.method, request.path, request.http = string.match(line, '(%S+)%s+(%S+)%s+(%S+)') request.path = string.match(request.path, '^(.*)/$') or request.path</p>
-                      <p>local headers = {} request.headers = headers while true do</p>
-                      <p><pre class='prettyprint lang-lua'>local line, err = client:recv()
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>res = res .. "Content-Length: 0\r\n"</pre></p>
+                    <p>end --print("--------------------------------------------------") --print(res) return res end</p>
+                    <p>-- TODO: protection against DOS attack ? local function getRequest(client) local request = {} --print("==================================================") local line, err = client:recv() if err then</p>
+                    <p><pre class='prettyprint lang-lua'>return nil, err</pre></p>
+                    <p>end --print('STATUS', line) -- GET /foo/bar.html HTTP/1.1 request.method, request.path, request.http = string.match(line, '(%S+)%s+(%S+)%s+(%S+)') request.path = string.match(request.path, '^(.*)/$') or request.path</p>
+                    <p>local headers = {} request.headers = headers while true do</p>
+                    <p><pre class='prettyprint lang-lua'>local line, err = client:recv()
 if err then
   return nil, err
 end
@@ -100,16 +81,16 @@ if key then
 else
   break
 end</pre></p>
-                      <p>end</p>
-                      <p>local content<em>length = tonumber(headers['Content-Length']) or 0 if content</em>length > 0 then</p>
-                      <p><pre class='prettyprint lang-lua'>request.body, err = client:recv(content_length)
+                    <p>end</p>
+                    <p>local content<em>length = tonumber(headers['Content-Length']) or 0 if content</em>length > 0 then</p>
+                    <p><pre class='prettyprint lang-lua'>request.body, err = client:recv(content_length)
 if err then
   return nil, err
 end
 --print('BODY', request.body)</pre></p>
-                      <p>end return request end</p>
-                      <p>local server = self.server server:listen() self.thread = lk.Thread(function()</p>
-                      <p><pre class='prettyprint lang-lua'>private.ready(self)
+                    <p>end return request end</p>
+                    <p>local server = self.server server:listen() self.thread = lk.Thread(function()</p>
+                    <p><pre class='prettyprint lang-lua'>private.ready(self)
 while true do
   local client = server:accept()
   self.clients[client.sock_fd] = client
@@ -133,89 +114,92 @@ while true do
     client:close()
   end)
 end</pre></p>
-                      <p>end) end</p>
-                      <p>table.insert(self.on_ready, callback) end</p>
-                      <p>function private:ready() local list = self.on<em>ready self.on</em>ready = {} for _, callback in pairs(list) do</p>
-                      <p><pre class='prettyprint lang-lua'>callback()</pre></p>
-                      <p>end end</p>
-                      <p>return "<html><head><title>YO</title></head><body>Hello World</body>", {status=200, ['Content-type']='text/html'} end</p>
-                            </section>
-              </div>
+                    <p>end) end</p>
+                    <p>table.insert(self.on_ready, callback) end</p>
+                    <p>function private:ready() local list = self.on<em>ready self.on</em>ready = {} for _, callback in pairs(list) do</p>
+                    <p><pre class='prettyprint lang-lua'>callback()</pre></p>
+                    <p>end end</p>
+                    <p>return "<html><head><title>YO</title></head><body>Hello World</body>", {status=200, ['Content-type']='text/html'} end</p>
+                              </section>
+                  </div>
 
-      <div class="span3 bs-docs-sidebar global-nav">
-        <ul class="nav nav-list bs-docs-sidenav">
-                    <li class='module'><a href='lk.html'>lk</a></li>
-                              <li><a href='lk.Client.html'>lk.Client</a></li>
-                    <li><a href='lk.Command.html'>lk.Command</a></li>
-                    <li><a href='lk.DavMorph.html'>lk.DavMorph</a></li>
-                    <li><a href='lk.DavServer.html'>lk.DavServer</a></li>
-                    <li><a href='lk.Debug.html'>lk.Debug</a></li>
-                    <li><a href='lk.Dir.html'>lk.Dir</a></li>
-                    <li><a href='lk.Doc.html'>lk.Doc</a></li>
-                    <li><a href='lk.Environment.html'>lk.Environment</a></li>
-                    <li><a href='lk.FileResource.html'>lk.FileResource</a></li>
-                    <li><a href='lk.Inlet.html'>lk.Inlet</a></li>
-                    <li><a href='lk.InletMethod.html'>lk.InletMethod</a></li>
-                    <li><a href='lk.Lubyk.html'>lk.Lubyk</a></li>
-                    <li><a href='lk.Morph.html'>lk.Morph</a></li>
-                    <li><a href='lk.Node.html'>lk.Node</a></li>
-                    <li><a href='lk.Observer.html'>lk.Observer</a></li>
-                    <li><a href='lk.Outlet.html'>lk.Outlet</a></li>
-                    <li><a href='lk.OutletMethod.html'>lk.OutletMethod</a></li>
-                    <li><a href='lk.ParamMethod.html'>lk.ParamMethod</a></li>
-                    <li><a href='lk.Patch.html'>lk.Patch</a></li>
-                    <li><a href='lk.Process.html'>lk.Process</a></li>
-                    <li><a href='lk.ProcessWatch.html'>lk.ProcessWatch</a></li>
-                    <li><a href='lk.Properties.html'>lk.Properties</a></li>
-                    <li><a href='lk.RemoteProcess.html'>lk.RemoteProcess</a></li>
-                    <li><a href='lk.Scheduler.html'>lk.Scheduler</a></li>
-                    <li><a href='lk.SelectCallback.html'>lk.SelectCallback</a></li>
-                    <li><a href='lk.Service.html'>lk.Service</a></li>
-                    <li><a href='lk.ServiceBrowser.html'>lk.ServiceBrowser</a></li>
-                    <li><a href='lk.Settings.html'>lk.Settings</a></li>
-                    <li><a href='lk.Socket.html'>lk.Socket</a></li>
-                    <li><a href='lk.Socket2.html'>lk.Socket2</a></li>
-                    <li><a href='lk.StemCell.html'>lk.StemCell</a></li>
-                    <li><a href='lk.SubClass.html'>lk.SubClass</a></li>
-                    <li><a href='lk.TCPSocket.html'>lk.TCPSocket</a></li>
-                    <li><a href='lk.Thread.html'>lk.Thread</a></li>
-                    <li><a href='lk.Timer.html'>lk.Timer</a></li>
-                    <li><a href='lk.UDPSocket.html'>lk.UDPSocket</a></li>
-                    <li class='active'><a href='lk.WebServer.html'>lk.WebServer</a></li>
-                    <li><a href='lk.crypto.html'>lk.crypto</a></li>
-                    <li><a href='lk.more.html'>lk.more</a></li>
-                    <li><a href='lk.util.html'>lk.util</a></li>
-                  </ul>
+        <div class='span2'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='lk.html'>lk</a></li>
+                                    <li><a href='lk.Client.html'>lk.Client</a></li>
+                        <li><a href='lk.Command.html'>lk.Command</a></li>
+                        <li><a href='lk.DavMorph.html'>lk.DavMorph</a></li>
+                        <li><a href='lk.DavServer.html'>lk.DavServer</a></li>
+                        <li><a href='lk.Debug.html'>lk.Debug</a></li>
+                        <li><a href='lk.Dir.html'>lk.Dir</a></li>
+                        <li><a href='lk.Doc.html'>lk.Doc</a></li>
+                        <li><a href='lk.Environment.html'>lk.Environment</a></li>
+                        <li><a href='lk.FileResource.html'>lk.FileResource</a></li>
+                        <li><a href='lk.Finalizer.html'>lk.Finalizer</a></li>
+                        <li><a href='lk.Inlet.html'>lk.Inlet</a></li>
+                        <li><a href='lk.InletMethod.html'>lk.InletMethod</a></li>
+                        <li><a href='lk.Lubyk.html'>lk.Lubyk</a></li>
+                        <li><a href='lk.Morph.html'>lk.Morph</a></li>
+                        <li><a href='lk.Node.html'>lk.Node</a></li>
+                        <li><a href='lk.Observer.html'>lk.Observer</a></li>
+                        <li><a href='lk.Outlet.html'>lk.Outlet</a></li>
+                        <li><a href='lk.OutletMethod.html'>lk.OutletMethod</a></li>
+                        <li><a href='lk.ParamMethod.html'>lk.ParamMethod</a></li>
+                        <li><a href='lk.Patch.html'>lk.Patch</a></li>
+                        <li><a href='lk.Process.html'>lk.Process</a></li>
+                        <li><a href='lk.ProcessWatch.html'>lk.ProcessWatch</a></li>
+                        <li><a href='lk.Properties.html'>lk.Properties</a></li>
+                        <li><a href='lk.RemoteProcess.html'>lk.RemoteProcess</a></li>
+                        <li><a href='lk.Scheduler.html'>lk.Scheduler</a></li>
+                        <li><a href='lk.SelectCallback.html'>lk.SelectCallback</a></li>
+                        <li><a href='lk.Service.html'>lk.Service</a></li>
+                        <li><a href='lk.ServiceBrowser.html'>lk.ServiceBrowser</a></li>
+                        <li><a href='lk.Settings.html'>lk.Settings</a></li>
+                        <li><a href='lk.Socket.html'>lk.Socket</a></li>
+                        <li><a href='lk.Socket2.html'>lk.Socket2</a></li>
+                        <li><a href='lk.StemCell.html'>lk.StemCell</a></li>
+                        <li><a href='lk.SubClass.html'>lk.SubClass</a></li>
+                        <li><a href='lk.TCPSocket.html'>lk.TCPSocket</a></li>
+                        <li><a href='lk.Thread.html'>lk.Thread</a></li>
+                        <li><a href='lk.TimeRef.html'>lk.TimeRef</a></li>
+                        <li><a href='lk.Timer.html'>lk.Timer</a></li>
+                        <li><a href='lk.UDPSocket.html'>lk.UDPSocket</a></li>
+                        <li class='active'><a href='lk.WebServer.html'>lk.WebServer</a></li>
+                        <li><a href='lk.core.html'>lk.core</a></li>
+                        <li><a href='lk.crypto.html'>lk.crypto</a></li>
+                        <li><a href='lk.more.html'>lk.more</a></li>
+                        <li><a href='lk.util.html'>lk.util</a></li>
+                      </ul>
+        </div>
       </div>
     </div>
-  </div>
 
     <footer class="footer">
-      <div class="container">
-         made with <a href='lk.Doc.html'>lk.Doc</a> 
-      </div>
+    <div class="container">
+       made with <a href='http://doc.lubyk.org/lk.Doc.html'>lk.Doc</a> 
+    </div>
     </footer>
 
-    <!-- Placed at the end of the document so the pages load faster -->
-    <!--
-    <script src="assets/js/jquery.js"></script>
-    <script src="assets/js/bootstrap-transition.js"></script>
-    <script src="assets/js/bootstrap-alert.js"></script>
-    <script src="assets/js/bootstrap-modal.js"></script>
-    <script src="assets/js/bootstrap-dropdown.js"></script>
-    <script src="assets/js/bootstrap-scrollspy.js"></script>
-    <script src="assets/js/bootstrap-tab.js"></script>
-    <script src="assets/js/bootstrap-tooltip.js"></script>
-    <script src="assets/js/bootstrap-popover.js"></script>
-    <script src="assets/js/bootstrap-button.js"></script>
-    <script src="assets/js/bootstrap-collapse.js"></script>
-    <script src="assets/js/bootstrap-carousel.js"></script>
-    <script src="assets/js/bootstrap-typeahead.js"></script>
-    <script src="assets/js/bootstrap-affix.js"></script>
-    -->
-
-    
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
     <script src='http://code.jquery.com/jquery.js'></script>
     <script src='js/bootstrap.min.js'></script>
   </body>
 </html>
+

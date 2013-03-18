@@ -8,25 +8,6 @@
     <meta name="author" content="">
 
 
-    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
-
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-        config: ["MMLorHTML.js"],
-        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
-        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
-        TeX: {
-          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
-        },
-        menuSettings: {
-          zoom: "Hover",
-          mpContext: true,
-          mpMouse: true
-        },
-      });
-    </script>
-    <script type="text/javascript"
-  src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
 
     <link href="css/bootstrap.css" rel="stylesheet">
     <link href="css/bootstrap-responsive.css" rel="stylesheet">
@@ -44,36 +25,36 @@
       </div>
     </div>
 
-  <div class="container">
+    <div class="container">
 
-    <div class="row">
+      <div class="row">
 
-      <div class="span2 bs-docs-sidebar local-nav">
-        <ul class="nav nav-list bs-docs-sidenav affix">
-                    <li><a href='#Settings'><i class='icon-chevron-right'></i> lk.Settings</a></li>
-                  </ul>
-      </div>
+        <div class='span3'>
+          <ul class='nav nav-tabs nav-stacked local-nav affix'>
+                        <li><a href='#Settings'><i class='icon-chevron-right'></i> lk.Settings</a></li>
+                      </ul>
+        </div>
 
-      <div class="span7">
+        <div class="span7">
 
-                <section id='Settings'>
+                    <section id='Settings'>
           <h2 class='section'>lk.Settings</h2>
 
                               <a name='dump'></a>
           <h4 class='method'><span>:</span>dump <code>()</code></h4>
           
-                      <p class='summary'></p>
-                      <p>local lib     = {} lib.<em></em>index   = lib <a href='lk.Settings.html'>lk.Settings</a>   = lib local private = {}</p>
-                      <p>setmetatable(lib, { <em></em>call = function(lib, mod_name, defaults)</p>
-                      <p><pre class='prettyprint lang-lua'>local self, path = private.loadSettings(mod_name)
+                    <p class='summary'></p>
+                    <p>local lib     = {} lib.<em></em>index   = lib <a href='lk.Settings.html'>lk.Settings</a>   = lib local private = {}</p>
+                    <p>setmetatable(lib, { <em></em>call = function(lib, mod_name, defaults)</p>
+                    <p><pre class='prettyprint lang-lua'>local self, path = private.loadSettings(mod_name)
 defaults.save = lib.save
 defaults._module = {name = mod_name, path = path}
 defaults.__index = defaults
 private.prepareTables(self, defaults)
 return setmetatable(self, defaults)</pre></p>
-                      <p>end })</p>
-                      <p>--- Dump settings as a lua file in the settings path. if later then</p>
-                      <p><pre class='prettyprint lang-lua'>-- save in a few ms (do not repeatedly save during window
+                    <p>end })</p>
+                    <p>--- Dump settings as a lua file in the settings path. if later then</p>
+                    <p><pre class='prettyprint lang-lua'>-- save in a few ms (do not repeatedly save during window
 -- move/resize)
 local thread = self._module.thread
 if thread then
@@ -83,20 +64,20 @@ self._module.thread = lk.Thread(function()
   self._module.thread = nil
   self:save()
 end, elapsed() + 500)</pre></p>
-                      <p>else</p>
-                      <p><pre class='prettyprint lang-lua'>local path = self._module.path
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>local path = self._module.path
 lk.writeall(path, lib.dump(self))</pre></p>
-                      <p>end end</p>
-                      <p>return string.format('return %s\n', private.dump(self, '  ', true)) end</p>
-                      <p>--=============================================== PRIVATE function private.loadSettings(mod_name) local path = string.format('%s/.lubyk/%s.lua',</p>
-                      <p><pre class='prettyprint lang-lua'>             os.getenv('HOME'), mod_name)</pre></p>
-                      <p>local code = loadfile(path) local self if code then</p>
-                      <p><pre class='prettyprint lang-lua'>self = code()</pre></p>
-                      <p>else</p>
-                      <p><pre class='prettyprint lang-lua'>self = {}</pre></p>
-                      <p>end return self, path end</p>
-                      <p>local function dump(o, indent, is_root) if type(o) == 'table' then</p>
-                      <p><pre class='prettyprint lang-lua'>if o._placeholder then
+                    <p>end end</p>
+                    <p>return string.format('return %s\n', private.dump(self, '  ', true)) end</p>
+                    <p>--=============================================== PRIVATE function private.loadSettings(mod_name) local path = string.format('%s/.lubyk/%s.lua',</p>
+                    <p><pre class='prettyprint lang-lua'>             os.getenv('HOME'), mod_name)</pre></p>
+                    <p>local code = loadfile(path) local self if code then</p>
+                    <p><pre class='prettyprint lang-lua'>self = code()</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>self = {}</pre></p>
+                    <p>end return self, path end</p>
+                    <p>local function dump(o, indent, is_root) if type(o) == 'table' then</p>
+                    <p><pre class='prettyprint lang-lua'>if o._placeholder then
   -- ignore
   return nil
 end
@@ -124,110 +105,113 @@ for k,v in pairs(o) do
   end
 end
 return s .. '}'</pre></p>
-                      <p>elseif type(o) == 'number' or</p>
-                      <p><pre class='prettyprint lang-lua'>     type(o) == 'boolean' then
+                    <p>elseif type(o) == 'number' or</p>
+                    <p><pre class='prettyprint lang-lua'>     type(o) == 'boolean' then
 return tostring(o)</pre></p>
-                      <p>elseif type(o) == 'string' then</p>
-                      <p><pre class='prettyprint lang-lua'>return '"' .. o:gsub('"', '\\"') .. '"'</pre></p>
-                      <p>else</p>
-                      <p><pre class='prettyprint lang-lua'>-- IGNORE</pre></p>
-                      <p>end end</p>
-                      <p>private.dump = dump</p>
-                      <p>-- Copy on write local cow = {}</p>
-                      <p>function cow.<em></em>index(tbl, key) return rawget(tbl._placeholder, key) end</p>
-                      <p>function cow.<em></em>newindex(tbl, key, value) -- make a copy of defaults local copy = tbl.<em>self[tbl.</em>key] if copy == tbl then</p>
-                      <p><pre class='prettyprint lang-lua'>copy = {}
+                    <p>elseif type(o) == 'string' then</p>
+                    <p><pre class='prettyprint lang-lua'>return '"' .. o:gsub('"', '\\"') .. '"'</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>-- IGNORE</pre></p>
+                    <p>end end</p>
+                    <p>private.dump = dump</p>
+                    <p>-- Copy on write local cow = {}</p>
+                    <p>function cow.<em></em>index(tbl, key) return rawget(tbl._placeholder, key) end</p>
+                    <p>function cow.<em></em>newindex(tbl, key, value) -- make a copy of defaults local copy = tbl.<em>self[tbl.</em>key] if copy == tbl then</p>
+                    <p><pre class='prettyprint lang-lua'>copy = {}
 for k, v in pairs(tbl._placeholder) do
   copy[k] = v
 end
 copy[key] = value
 -- remove placeholder and work on the copy alone from now
 tbl._self[tbl._key] = copy</pre></p>
-                      <p>else</p>
-                      <p><pre class='prettyprint lang-lua'>copy[key] = value</pre></p>
-                      <p>end end</p>
-                      <p>function private:prepareTables(defaults) -- This is to enable natural value setting for tables -- <a href='editor.Setting.html#foo'>editor.Setting.foo</a>.bar = 'baz' -- <-- this should copy table defaults for k, v in pairs(defaults) do</p>
-                      <p><pre class='prettyprint lang-lua'>if type(v) == 'table' and not rawget(self, k) then
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>copy[key] = value</pre></p>
+                    <p>end end</p>
+                    <p>function private:prepareTables(defaults) -- This is to enable natural value setting for tables -- <a href='editor.Setting.html#foo'>editor.Setting.foo</a>.bar = 'baz' -- <-- this should copy table defaults for k, v in pairs(defaults) do</p>
+                    <p><pre class='prettyprint lang-lua'>if type(v) == 'table' and not rawget(self, k) then
   self[k] = setmetatable({_placeholder = v, _self = self, _key = k}, cow)
 end</pre></p>
-                      <p>end end</p>
-                            </section>
-              </div>
+                    <p>end end</p>
+                              </section>
+                  </div>
 
-      <div class="span3 bs-docs-sidebar global-nav">
-        <ul class="nav nav-list bs-docs-sidenav">
-                    <li class='module'><a href='lk.html'>lk</a></li>
-                              <li><a href='lk.Client.html'>lk.Client</a></li>
-                    <li><a href='lk.Command.html'>lk.Command</a></li>
-                    <li><a href='lk.DavMorph.html'>lk.DavMorph</a></li>
-                    <li><a href='lk.DavServer.html'>lk.DavServer</a></li>
-                    <li><a href='lk.Debug.html'>lk.Debug</a></li>
-                    <li><a href='lk.Dir.html'>lk.Dir</a></li>
-                    <li><a href='lk.Doc.html'>lk.Doc</a></li>
-                    <li><a href='lk.Environment.html'>lk.Environment</a></li>
-                    <li><a href='lk.FileResource.html'>lk.FileResource</a></li>
-                    <li><a href='lk.Inlet.html'>lk.Inlet</a></li>
-                    <li><a href='lk.InletMethod.html'>lk.InletMethod</a></li>
-                    <li><a href='lk.Lubyk.html'>lk.Lubyk</a></li>
-                    <li><a href='lk.Morph.html'>lk.Morph</a></li>
-                    <li><a href='lk.Node.html'>lk.Node</a></li>
-                    <li><a href='lk.Observer.html'>lk.Observer</a></li>
-                    <li><a href='lk.Outlet.html'>lk.Outlet</a></li>
-                    <li><a href='lk.OutletMethod.html'>lk.OutletMethod</a></li>
-                    <li><a href='lk.ParamMethod.html'>lk.ParamMethod</a></li>
-                    <li><a href='lk.Patch.html'>lk.Patch</a></li>
-                    <li><a href='lk.Process.html'>lk.Process</a></li>
-                    <li><a href='lk.ProcessWatch.html'>lk.ProcessWatch</a></li>
-                    <li><a href='lk.Properties.html'>lk.Properties</a></li>
-                    <li><a href='lk.RemoteProcess.html'>lk.RemoteProcess</a></li>
-                    <li><a href='lk.Scheduler.html'>lk.Scheduler</a></li>
-                    <li><a href='lk.SelectCallback.html'>lk.SelectCallback</a></li>
-                    <li><a href='lk.Service.html'>lk.Service</a></li>
-                    <li><a href='lk.ServiceBrowser.html'>lk.ServiceBrowser</a></li>
-                    <li class='active'><a href='lk.Settings.html'>lk.Settings</a></li>
-                    <li><a href='lk.Socket.html'>lk.Socket</a></li>
-                    <li><a href='lk.Socket2.html'>lk.Socket2</a></li>
-                    <li><a href='lk.StemCell.html'>lk.StemCell</a></li>
-                    <li><a href='lk.SubClass.html'>lk.SubClass</a></li>
-                    <li><a href='lk.TCPSocket.html'>lk.TCPSocket</a></li>
-                    <li><a href='lk.Thread.html'>lk.Thread</a></li>
-                    <li><a href='lk.Timer.html'>lk.Timer</a></li>
-                    <li><a href='lk.UDPSocket.html'>lk.UDPSocket</a></li>
-                    <li><a href='lk.WebServer.html'>lk.WebServer</a></li>
-                    <li><a href='lk.crypto.html'>lk.crypto</a></li>
-                    <li><a href='lk.more.html'>lk.more</a></li>
-                    <li><a href='lk.util.html'>lk.util</a></li>
-                  </ul>
+        <div class='span2'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='lk.html'>lk</a></li>
+                                    <li><a href='lk.Client.html'>lk.Client</a></li>
+                        <li><a href='lk.Command.html'>lk.Command</a></li>
+                        <li><a href='lk.DavMorph.html'>lk.DavMorph</a></li>
+                        <li><a href='lk.DavServer.html'>lk.DavServer</a></li>
+                        <li><a href='lk.Debug.html'>lk.Debug</a></li>
+                        <li><a href='lk.Dir.html'>lk.Dir</a></li>
+                        <li><a href='lk.Doc.html'>lk.Doc</a></li>
+                        <li><a href='lk.Environment.html'>lk.Environment</a></li>
+                        <li><a href='lk.FileResource.html'>lk.FileResource</a></li>
+                        <li><a href='lk.Finalizer.html'>lk.Finalizer</a></li>
+                        <li><a href='lk.Inlet.html'>lk.Inlet</a></li>
+                        <li><a href='lk.InletMethod.html'>lk.InletMethod</a></li>
+                        <li><a href='lk.Lubyk.html'>lk.Lubyk</a></li>
+                        <li><a href='lk.Morph.html'>lk.Morph</a></li>
+                        <li><a href='lk.Node.html'>lk.Node</a></li>
+                        <li><a href='lk.Observer.html'>lk.Observer</a></li>
+                        <li><a href='lk.Outlet.html'>lk.Outlet</a></li>
+                        <li><a href='lk.OutletMethod.html'>lk.OutletMethod</a></li>
+                        <li><a href='lk.ParamMethod.html'>lk.ParamMethod</a></li>
+                        <li><a href='lk.Patch.html'>lk.Patch</a></li>
+                        <li><a href='lk.Process.html'>lk.Process</a></li>
+                        <li><a href='lk.ProcessWatch.html'>lk.ProcessWatch</a></li>
+                        <li><a href='lk.Properties.html'>lk.Properties</a></li>
+                        <li><a href='lk.RemoteProcess.html'>lk.RemoteProcess</a></li>
+                        <li><a href='lk.Scheduler.html'>lk.Scheduler</a></li>
+                        <li><a href='lk.SelectCallback.html'>lk.SelectCallback</a></li>
+                        <li><a href='lk.Service.html'>lk.Service</a></li>
+                        <li><a href='lk.ServiceBrowser.html'>lk.ServiceBrowser</a></li>
+                        <li class='active'><a href='lk.Settings.html'>lk.Settings</a></li>
+                        <li><a href='lk.Socket.html'>lk.Socket</a></li>
+                        <li><a href='lk.Socket2.html'>lk.Socket2</a></li>
+                        <li><a href='lk.StemCell.html'>lk.StemCell</a></li>
+                        <li><a href='lk.SubClass.html'>lk.SubClass</a></li>
+                        <li><a href='lk.TCPSocket.html'>lk.TCPSocket</a></li>
+                        <li><a href='lk.Thread.html'>lk.Thread</a></li>
+                        <li><a href='lk.TimeRef.html'>lk.TimeRef</a></li>
+                        <li><a href='lk.Timer.html'>lk.Timer</a></li>
+                        <li><a href='lk.UDPSocket.html'>lk.UDPSocket</a></li>
+                        <li><a href='lk.WebServer.html'>lk.WebServer</a></li>
+                        <li><a href='lk.core.html'>lk.core</a></li>
+                        <li><a href='lk.crypto.html'>lk.crypto</a></li>
+                        <li><a href='lk.more.html'>lk.more</a></li>
+                        <li><a href='lk.util.html'>lk.util</a></li>
+                      </ul>
+        </div>
       </div>
     </div>
-  </div>
 
     <footer class="footer">
-      <div class="container">
-         made with <a href='lk.Doc.html'>lk.Doc</a> 
-      </div>
+    <div class="container">
+       made with <a href='http://doc.lubyk.org/lk.Doc.html'>lk.Doc</a> 
+    </div>
     </footer>
 
-    <!-- Placed at the end of the document so the pages load faster -->
-    <!--
-    <script src="assets/js/jquery.js"></script>
-    <script src="assets/js/bootstrap-transition.js"></script>
-    <script src="assets/js/bootstrap-alert.js"></script>
-    <script src="assets/js/bootstrap-modal.js"></script>
-    <script src="assets/js/bootstrap-dropdown.js"></script>
-    <script src="assets/js/bootstrap-scrollspy.js"></script>
-    <script src="assets/js/bootstrap-tab.js"></script>
-    <script src="assets/js/bootstrap-tooltip.js"></script>
-    <script src="assets/js/bootstrap-popover.js"></script>
-    <script src="assets/js/bootstrap-button.js"></script>
-    <script src="assets/js/bootstrap-collapse.js"></script>
-    <script src="assets/js/bootstrap-carousel.js"></script>
-    <script src="assets/js/bootstrap-typeahead.js"></script>
-    <script src="assets/js/bootstrap-affix.js"></script>
-    -->
-
-    
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
     <script src='http://code.jquery.com/jquery.js'></script>
     <script src='js/bootstrap.min.js'></script>
   </body>
 </html>
+

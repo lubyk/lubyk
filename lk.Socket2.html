@@ -8,25 +8,6 @@
     <meta name="author" content="">
 
 
-    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
-
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-        config: ["MMLorHTML.js"],
-        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
-        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
-        TeX: {
-          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
-        },
-        menuSettings: {
-          zoom: "Hover",
-          mpContext: true,
-          mpMouse: true
-        },
-      });
-    </script>
-    <script type="text/javascript"
-  src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
 
     <link href="css/bootstrap.css" rel="stylesheet">
     <link href="css/bootstrap-responsive.css" rel="stylesheet">
@@ -44,33 +25,33 @@
       </div>
     </div>
 
-  <div class="container">
+    <div class="container">
 
-    <div class="row">
+      <div class="row">
 
-      <div class="span2 bs-docs-sidebar local-nav">
-        <ul class="nav nav-list bs-docs-sidenav affix">
-                    <li><a href='#Socket2'><i class='icon-chevron-right'></i> lk.Socket2</a></li>
-                  </ul>
-      </div>
+        <div class='span3'>
+          <ul class='nav nav-tabs nav-stacked local-nav affix'>
+                        <li><a href='#Socket2'><i class='icon-chevron-right'></i> lk.Socket2</a></li>
+                      </ul>
+        </div>
 
-      <div class="span7">
+        <div class="span7">
 
-                <section id='Socket2'>
+                    <section id='Socket2'>
           <h2 class='section'>lk.Socket2</h2>
 
                               <a name='accept'></a>
           <h4 class='method'><span>:</span>accept <code>(func)</code></h4>
           
-                      <p class='summary'></p>
-                      <p>require 'lk.Socket_core' constr    = <a href='lk.Socket.html'>lk.Socket</a> local lib = lk.SubClass(lk.Socket) <a href='lk.Socket.html'>lk.Socket</a> = lib</p>
-                      <p>lib.type = 'lk.Socket' lib.TCP  = lk.Socket<em>const.TCP lib.UDP  = lk.Socket</em>const.UDP</p>
-                      <p>local self = constr(lib.TCP) assert(func) self.thread = sched:thread(function()</p>
-                      <p><pre class='prettyprint lang-lua'>func(self)</pre></p>
-                      <p>end) return setmetatable(self, lib) end</p>
-                      <p>self.host    = host self.port    = self.super:bind(host, port) self.super:setNonBlocking() sched:addFd(self.thread, self.super:fd()) return self.port end</p>
-                      <p>local buffer = self.buffer while true do</p>
-                      <p><pre class='prettyprint lang-lua'>if buffer then
+                    <p class='summary'></p>
+                    <p>require 'lk.Socket_core' constr    = <a href='lk.Socket.html'>lk.Socket</a> local lib = lk.SubClass(lk.Socket) <a href='lk.Socket.html'>lk.Socket</a> = lib</p>
+                    <p>lib.type = 'lk.Socket' lib.TCP  = lk.Socket<em>const.TCP lib.UDP  = lk.Socket</em>const.UDP</p>
+                    <p>local self = constr(lib.TCP) assert(func) self.thread = sched:thread(function()</p>
+                    <p><pre class='prettyprint lang-lua'>func(self)</pre></p>
+                    <p>end) return setmetatable(self, lib) end</p>
+                    <p>self.host    = host self.port    = self.super:bind(host, port) self.super:setNonBlocking() sched:addFd(self.thread, self.super:fd()) return self.port end</p>
+                    <p>local buffer = self.buffer while true do</p>
+                    <p><pre class='prettyprint lang-lua'>if buffer then
   local line, rest = string.match(buffer, '([^\r\n]*)\r?\n(.*)')
   if line then
     self.buffer = rest
@@ -84,103 +65,106 @@ if buffer then
 else
   buffer = data
 end</pre></p>
-                      <p>end end</p>
-                      <p>local buffer = data while true do</p>
-                      <p><pre class='prettyprint lang-lua'>local sent = self.super:send(data)
+                    <p>end end</p>
+                    <p>local buffer = data while true do</p>
+                    <p><pre class='prettyprint lang-lua'>local sent = self.super:send(data)
 if sent == string.len(data) then
   break
 else
   data = string.sub(data, sent + 1)
 end
 sched:waitWrite(self.sock_fd)</pre></p>
-                      <p>end end</p>
-                      <p>assert(func) sched:waitRead(self.sock<em>fd) local cli = self.super:accept() cli.super:setNonBlocking() cli.sock</em>fd = cli:fd() -- start new thread cli.thread = sched:thread(function()</p>
-                      <p><pre class='prettyprint lang-lua'>func(cli)</pre></p>
-                      <p>end) sched:addFd(cli.thread, cli.super:fd()) return setmetatable(cli, lib) end --[[ --=============================================== ???? old stuff local function checkLoop(self) if not self.loop then</p>
-                      <p><pre class='prettyprint lang-lua'>error("Loop not set")</pre></p>
-                      <p>end end</p>
-                      <p>function mt:shouldRun() checkLoop(self) return self.loop:shouldRun() end</p>
-                      <p>function mt:start() checkLoop(self) self.loop:start() end</p>
-                      <p>function mt:quit() checkLoop(self) self.loop:quit() end</p>
-                      <p>function mt:kill() checkLoop(self) self.loop:kill() end</p>
-                      <p>function mt:join() checkLoop(self) self.loop:join() end</p>
-                            </section>
-              </div>
+                    <p>end end</p>
+                    <p>assert(func) sched:waitRead(self.sock<em>fd) local cli = self.super:accept() cli.super:setNonBlocking() cli.sock</em>fd = cli:fd() -- start new thread cli.thread = sched:thread(function()</p>
+                    <p><pre class='prettyprint lang-lua'>func(cli)</pre></p>
+                    <p>end) sched:addFd(cli.thread, cli.super:fd()) return setmetatable(cli, lib) end --[[ --=============================================== ???? old stuff local function checkLoop(self) if not self.loop then</p>
+                    <p><pre class='prettyprint lang-lua'>error("Loop not set")</pre></p>
+                    <p>end end</p>
+                    <p>function mt:shouldRun() checkLoop(self) return self.loop:shouldRun() end</p>
+                    <p>function mt:start() checkLoop(self) self.loop:start() end</p>
+                    <p>function mt:quit() checkLoop(self) self.loop:quit() end</p>
+                    <p>function mt:kill() checkLoop(self) self.loop:kill() end</p>
+                    <p>function mt:join() checkLoop(self) self.loop:join() end</p>
+                              </section>
+                  </div>
 
-      <div class="span3 bs-docs-sidebar global-nav">
-        <ul class="nav nav-list bs-docs-sidenav">
-                    <li class='module'><a href='lk.html'>lk</a></li>
-                              <li><a href='lk.Client.html'>lk.Client</a></li>
-                    <li><a href='lk.Command.html'>lk.Command</a></li>
-                    <li><a href='lk.DavMorph.html'>lk.DavMorph</a></li>
-                    <li><a href='lk.DavServer.html'>lk.DavServer</a></li>
-                    <li><a href='lk.Debug.html'>lk.Debug</a></li>
-                    <li><a href='lk.Dir.html'>lk.Dir</a></li>
-                    <li><a href='lk.Doc.html'>lk.Doc</a></li>
-                    <li><a href='lk.Environment.html'>lk.Environment</a></li>
-                    <li><a href='lk.FileResource.html'>lk.FileResource</a></li>
-                    <li><a href='lk.Inlet.html'>lk.Inlet</a></li>
-                    <li><a href='lk.InletMethod.html'>lk.InletMethod</a></li>
-                    <li><a href='lk.Lubyk.html'>lk.Lubyk</a></li>
-                    <li><a href='lk.Morph.html'>lk.Morph</a></li>
-                    <li><a href='lk.Node.html'>lk.Node</a></li>
-                    <li><a href='lk.Observer.html'>lk.Observer</a></li>
-                    <li><a href='lk.Outlet.html'>lk.Outlet</a></li>
-                    <li><a href='lk.OutletMethod.html'>lk.OutletMethod</a></li>
-                    <li><a href='lk.ParamMethod.html'>lk.ParamMethod</a></li>
-                    <li><a href='lk.Patch.html'>lk.Patch</a></li>
-                    <li><a href='lk.Process.html'>lk.Process</a></li>
-                    <li><a href='lk.ProcessWatch.html'>lk.ProcessWatch</a></li>
-                    <li><a href='lk.Properties.html'>lk.Properties</a></li>
-                    <li><a href='lk.RemoteProcess.html'>lk.RemoteProcess</a></li>
-                    <li><a href='lk.Scheduler.html'>lk.Scheduler</a></li>
-                    <li><a href='lk.SelectCallback.html'>lk.SelectCallback</a></li>
-                    <li><a href='lk.Service.html'>lk.Service</a></li>
-                    <li><a href='lk.ServiceBrowser.html'>lk.ServiceBrowser</a></li>
-                    <li><a href='lk.Settings.html'>lk.Settings</a></li>
-                    <li><a href='lk.Socket.html'>lk.Socket</a></li>
-                    <li class='active'><a href='lk.Socket2.html'>lk.Socket2</a></li>
-                    <li><a href='lk.StemCell.html'>lk.StemCell</a></li>
-                    <li><a href='lk.SubClass.html'>lk.SubClass</a></li>
-                    <li><a href='lk.TCPSocket.html'>lk.TCPSocket</a></li>
-                    <li><a href='lk.Thread.html'>lk.Thread</a></li>
-                    <li><a href='lk.Timer.html'>lk.Timer</a></li>
-                    <li><a href='lk.UDPSocket.html'>lk.UDPSocket</a></li>
-                    <li><a href='lk.WebServer.html'>lk.WebServer</a></li>
-                    <li><a href='lk.crypto.html'>lk.crypto</a></li>
-                    <li><a href='lk.more.html'>lk.more</a></li>
-                    <li><a href='lk.util.html'>lk.util</a></li>
-                  </ul>
+        <div class='span2'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='lk.html'>lk</a></li>
+                                    <li><a href='lk.Client.html'>lk.Client</a></li>
+                        <li><a href='lk.Command.html'>lk.Command</a></li>
+                        <li><a href='lk.DavMorph.html'>lk.DavMorph</a></li>
+                        <li><a href='lk.DavServer.html'>lk.DavServer</a></li>
+                        <li><a href='lk.Debug.html'>lk.Debug</a></li>
+                        <li><a href='lk.Dir.html'>lk.Dir</a></li>
+                        <li><a href='lk.Doc.html'>lk.Doc</a></li>
+                        <li><a href='lk.Environment.html'>lk.Environment</a></li>
+                        <li><a href='lk.FileResource.html'>lk.FileResource</a></li>
+                        <li><a href='lk.Finalizer.html'>lk.Finalizer</a></li>
+                        <li><a href='lk.Inlet.html'>lk.Inlet</a></li>
+                        <li><a href='lk.InletMethod.html'>lk.InletMethod</a></li>
+                        <li><a href='lk.Lubyk.html'>lk.Lubyk</a></li>
+                        <li><a href='lk.Morph.html'>lk.Morph</a></li>
+                        <li><a href='lk.Node.html'>lk.Node</a></li>
+                        <li><a href='lk.Observer.html'>lk.Observer</a></li>
+                        <li><a href='lk.Outlet.html'>lk.Outlet</a></li>
+                        <li><a href='lk.OutletMethod.html'>lk.OutletMethod</a></li>
+                        <li><a href='lk.ParamMethod.html'>lk.ParamMethod</a></li>
+                        <li><a href='lk.Patch.html'>lk.Patch</a></li>
+                        <li><a href='lk.Process.html'>lk.Process</a></li>
+                        <li><a href='lk.ProcessWatch.html'>lk.ProcessWatch</a></li>
+                        <li><a href='lk.Properties.html'>lk.Properties</a></li>
+                        <li><a href='lk.RemoteProcess.html'>lk.RemoteProcess</a></li>
+                        <li><a href='lk.Scheduler.html'>lk.Scheduler</a></li>
+                        <li><a href='lk.SelectCallback.html'>lk.SelectCallback</a></li>
+                        <li><a href='lk.Service.html'>lk.Service</a></li>
+                        <li><a href='lk.ServiceBrowser.html'>lk.ServiceBrowser</a></li>
+                        <li><a href='lk.Settings.html'>lk.Settings</a></li>
+                        <li><a href='lk.Socket.html'>lk.Socket</a></li>
+                        <li class='active'><a href='lk.Socket2.html'>lk.Socket2</a></li>
+                        <li><a href='lk.StemCell.html'>lk.StemCell</a></li>
+                        <li><a href='lk.SubClass.html'>lk.SubClass</a></li>
+                        <li><a href='lk.TCPSocket.html'>lk.TCPSocket</a></li>
+                        <li><a href='lk.Thread.html'>lk.Thread</a></li>
+                        <li><a href='lk.TimeRef.html'>lk.TimeRef</a></li>
+                        <li><a href='lk.Timer.html'>lk.Timer</a></li>
+                        <li><a href='lk.UDPSocket.html'>lk.UDPSocket</a></li>
+                        <li><a href='lk.WebServer.html'>lk.WebServer</a></li>
+                        <li><a href='lk.core.html'>lk.core</a></li>
+                        <li><a href='lk.crypto.html'>lk.crypto</a></li>
+                        <li><a href='lk.more.html'>lk.more</a></li>
+                        <li><a href='lk.util.html'>lk.util</a></li>
+                      </ul>
+        </div>
       </div>
     </div>
-  </div>
 
     <footer class="footer">
-      <div class="container">
-         made with <a href='lk.Doc.html'>lk.Doc</a> 
-      </div>
+    <div class="container">
+       made with <a href='http://doc.lubyk.org/lk.Doc.html'>lk.Doc</a> 
+    </div>
     </footer>
 
-    <!-- Placed at the end of the document so the pages load faster -->
-    <!--
-    <script src="assets/js/jquery.js"></script>
-    <script src="assets/js/bootstrap-transition.js"></script>
-    <script src="assets/js/bootstrap-alert.js"></script>
-    <script src="assets/js/bootstrap-modal.js"></script>
-    <script src="assets/js/bootstrap-dropdown.js"></script>
-    <script src="assets/js/bootstrap-scrollspy.js"></script>
-    <script src="assets/js/bootstrap-tab.js"></script>
-    <script src="assets/js/bootstrap-tooltip.js"></script>
-    <script src="assets/js/bootstrap-popover.js"></script>
-    <script src="assets/js/bootstrap-button.js"></script>
-    <script src="assets/js/bootstrap-collapse.js"></script>
-    <script src="assets/js/bootstrap-carousel.js"></script>
-    <script src="assets/js/bootstrap-typeahead.js"></script>
-    <script src="assets/js/bootstrap-affix.js"></script>
-    -->
-
-    
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
     <script src='http://code.jquery.com/jquery.js'></script>
     <script src='js/bootstrap.min.js'></script>
   </body>
 </html>
+

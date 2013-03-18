@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>dub.Function</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+
+
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/docs.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class='row'>
+          <div class='span12'>
+             <a href='http://lubyk.org'><img alt='lubyk logo' src='img/lubyk.png'/> <h1>Lubyk documentation</h1></a> 
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="row">
+
+        <div class='span3'>
+          <ul class='nav nav-tabs nav-stacked local-nav affix'>
+                        <li><a href='#Function'><i class='icon-chevron-right'></i> dub.Function</a></li>
+                      </ul>
+        </div>
+
+        <div class="span7">
+
+                    <section id='Function'>
+          <h2 class='section'>dub.Function</h2>
+
+                              <a name='setName'></a>
+          <h4 class='method'><span>:</span>setName <code>(name)</code></h4>
+          
+                    <p class='summary'></p>
+                    <p>local lib     = { type = 'dub.Function', -- C function names to use for the binding function. OP<em>TO</em>NAME = {</p>
+                    <p><pre class='prettyprint lang-lua'>['+']  = 'add',
+['-']  = 'sub',
+['- '] = 'unm',
+['*']  = 'mul',
+['/']  = 'div',
+['=='] = 'eq',
+['&lt;']  = 'lt',
+['&lt;='] = 'le',
+['()'] = 'call',
+['[]'] = 'index',
+-- set with equal
+['=']  = 'sete',
+-- add equal
+['+='] = 'adde',
+-- sub equal
+['-='] = 'sube',
+-- mul equal
+['*='] = 'mule',
+-- div equal
+['/='] = 'dive',</pre></p>
+                    <p>} } local private = {} lib.<em></em>index   = lib <a href='dub.Function.html'>dub.Function</a>  = lib</p>
+                    <p>--=============================================== dub.Function() setmetatable(lib, { <em></em>call = function(lib, self)</p>
+                    <p><pre class='prettyprint lang-lua'>self.dub = self.dub or {}
+self.member = self.parent.is_class and not (self.static or self.ctor)
+self.has_defaults = self.params_list.first_default and true
+self.header = self.header or self.parent.header
+if self.has_defaults then
+  self.first_default = self.params_list.first_default
+  -- minimal number of arguments
+  self.min_arg_size = self.first_default - 1
+else
+  self.min_arg_size = #self.params_list
+end
+setmetatable(self, lib)
+if not self:setName(self.name) then
+  -- invalid name (usually an unknown operator)
+  return nil
+end
+
+if self.db:ignored(self:fullname()) or
+   self.dub.ignore == true or
+   (self.parent.is_class and self.parent:ignoreFunc(self.name)) then
+  return nil
+end
+
+self.sign = private.makeSignature(self)
+return self</pre></p>
+                    <p>end })</p>
+                    <p>--=============================================== PUBLIC METHODS</p>
+                    <p>--- Return an iterator over the params of this function. local co = coroutine.create(private.paramsIterator) return function()</p>
+                    <p><pre class='prettyprint lang-lua'>local ok, value = coroutine.resume(co, self)
+if ok then
+  return value
+end</pre></p>
+                    <p>end end</p>
+                    <p>return self.definition .. self.argsstring end</p>
+                    <p>-- Full name for function. lib.fullname = <a href='dub.Class.html#fullname'>dub.Class.fullname</a></p>
+                    <p>-- Full C name for function. if self.parent and self.parent.name then</p>
+                    <p><pre class='prettyprint lang-lua'>return self.parent:fullname() .. '::' .. self.cname</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>return self.cname</pre></p>
+                    <p>end end</p>
+                    <p>-- TODO: inspect xml return self.is<em>set</em>attr or</p>
+                    <p><pre class='prettyprint lang-lua'>     self.is_get_attr or
+     self.is_cast</pre></p>
+                    <p>end</p>
+                    <p>self.name = name if string.match(self.name, '^~') then</p>
+                    <p><pre class='prettyprint lang-lua'>self.destructor = true
+self.cname = string.gsub(self.name, '~', '_')</pre></p>
+                    <p>elseif string.match(name, '^operator') then</p>
+                    <p><pre class='prettyprint lang-lua'>local n = string.match(name, '^operator(.+)$')
+local op = self.OP_TO_NAME[n]
+if op then
+  self.cname = 'operator_' .. op
+else
+  return false
+end</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>self.cname = self.name</pre></p>
+                    <p>end return true end --=============================================== PRIVATE</p>
+                    <p>function private:paramsIterator() for <em>, param in ipairs(self.params</em>list) do</p>
+                    <p><pre class='prettyprint lang-lua'>coroutine.yield(param)</pre></p>
+                    <p>end end</p>
+                    <p>-- Create a string identifying the met type for overloading. This is just -- a concatenation of param type names. function private.makeSignature(met) local res = '' for param in met:params() do</p>
+                    <p><pre class='prettyprint lang-lua'>if res ~= '' then
+  res = res .. ', '
+end
+res = res .. param.ctype.name</pre></p>
+                              </section>
+                  </div>
+
+        <div class='span2'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='dub.html'>dub</a></li>
+                                    <li><a href='dub.CTemplate.html'>dub.CTemplate</a></li>
+                        <li><a href='dub.Class.html'>dub.Class</a></li>
+                        <li class='active'><a href='dub.Function.html'>dub.Function</a></li>
+                        <li><a href='dub.Inspector.html'>dub.Inspector</a></li>
+                        <li><a href='dub.LuaBinder.html'>dub.LuaBinder</a></li>
+                        <li><a href='dub.MemoryStorage.html'>dub.MemoryStorage</a></li>
+                        <li><a href='dub.Namespace.html'>dub.Namespace</a></li>
+                        <li><a href='dub.OptParser.html'>dub.OptParser</a></li>
+                        <li><a href='dub.Template.html'>dub.Template</a></li>
+                      </ul>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+    <div class="container">
+       made with <a href='http://doc.lubyk.org/lk.Doc.html'>lk.Doc</a> 
+    </div>
+    </footer>
+
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
+    <script src='http://code.jquery.com/jquery.js'></script>
+    <script src='js/bootstrap.min.js'></script>
+  </body>
+</html>
+

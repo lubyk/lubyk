@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>dub.Namespace</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+
+
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/docs.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class='row'>
+          <div class='span12'>
+             <a href='http://lubyk.org'><img alt='lubyk logo' src='img/lubyk.png'/> <h1>Lubyk documentation</h1></a> 
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="row">
+
+        <div class='span3'>
+          <ul class='nav nav-tabs nav-stacked local-nav affix'>
+                        <li><a href='#Namespace'><i class='icon-chevron-right'></i> dub.Namespace</a></li>
+                      </ul>
+        </div>
+
+        <div class="span7">
+
+                    <section id='Namespace'>
+          <h2 class='section'>dub.Namespace</h2>
+
+                              <a name='children'></a>
+          <h4 class='method'><span>:</span>children <code>()</code></h4>
+          
+                    <p class='summary'></p>
+                    <p>local lib     = { type        = 'dub.Namespace', is<em>class    = false, } local private = {} lib.</em>_index   = lib <a href='dub.Namespace.html'>dub.Namespace</a> = lib -- Behaves like a class by default setmetatable(lib, dub.Class)</p>
+                    <p>--=============================================== dub.Namespace()</p>
+                    <p>local name = self.name self.name = nil self.const_headers = {} self = dub.Class(self) setmetatable(self, lib) self:setName(name) return self end</p>
+                    <p>return self.db:namespaces() end</p>
+                    <p>return self.db:functions(self) end</p>
+                    <p>--=============================================== PUBLIC METHODS</p>
+                    <p>self.name = name end</p>
+                    <p>if self.parent and self.parent.type ~= 'dub.MemoryStorage' then</p>
+                    <p><pre class='prettyprint lang-lua'>return self.parent:fullname() .. '::' .. self.name</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>return self.name</pre></p>
+                    <p>end end</p>
+                              </section>
+                  </div>
+
+        <div class='span2'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='dub.html'>dub</a></li>
+                                    <li><a href='dub.CTemplate.html'>dub.CTemplate</a></li>
+                        <li><a href='dub.Class.html'>dub.Class</a></li>
+                        <li><a href='dub.Function.html'>dub.Function</a></li>
+                        <li><a href='dub.Inspector.html'>dub.Inspector</a></li>
+                        <li><a href='dub.LuaBinder.html'>dub.LuaBinder</a></li>
+                        <li><a href='dub.MemoryStorage.html'>dub.MemoryStorage</a></li>
+                        <li class='active'><a href='dub.Namespace.html'>dub.Namespace</a></li>
+                        <li><a href='dub.OptParser.html'>dub.OptParser</a></li>
+                        <li><a href='dub.Template.html'>dub.Template</a></li>
+                      </ul>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+    <div class="container">
+       made with <a href='http://doc.lubyk.org/lk.Doc.html'>lk.Doc</a> 
+    </div>
+    </footer>
+
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
+    <script src='http://code.jquery.com/jquery.js'></script>
+    <script src='js/bootstrap.min.js'></script>
+  </body>
+</html>
+

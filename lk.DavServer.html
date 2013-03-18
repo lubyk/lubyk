@@ -8,25 +8,6 @@
     <meta name="author" content="">
 
 
-    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
-
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-        config: ["MMLorHTML.js"],
-        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
-        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
-        TeX: {
-          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
-        },
-        menuSettings: {
-          zoom: "Hover",
-          mpContext: true,
-          mpMouse: true
-        },
-      });
-    </script>
-    <script type="text/javascript"
-  src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
 
     <link href="css/bootstrap.css" rel="stylesheet">
     <link href="css/bootstrap-responsive.css" rel="stylesheet">
@@ -44,59 +25,59 @@
       </div>
     </div>
 
-  <div class="container">
+    <div class="container">
 
-    <div class="row">
+      <div class="row">
 
-      <div class="span2 bs-docs-sidebar local-nav">
-        <ul class="nav nav-list bs-docs-sidenav affix">
-                    <li><a href='#DavServer'><i class='icon-chevron-right'></i> lk.DavServer</a></li>
-                  </ul>
-      </div>
+        <div class='span3'>
+          <ul class='nav nav-tabs nav-stacked local-nav affix'>
+                        <li><a href='#DavServer'><i class='icon-chevron-right'></i> lk.DavServer</a></li>
+                      </ul>
+        </div>
 
-      <div class="span7">
+        <div class="span7">
 
-                <section id='DavServer'>
+                    <section id='DavServer'>
           <h2 class='section'>lk.DavServer</h2>
 
                               <a name='MKCOL'></a>
           <h4 class='method'><span>:</span>MKCOL <code>(request)</code></h4>
           
-                      <p class='summary'></p>
-                      <p>local lib = {type='lk.DavServer'} lib.<em></em>index  = lib <a href='lk.DavServer.html'>lk.DavServer</a> = lib</p>
-                      <p>-- the DavServer is an extension of the WebServer for k, v in pairs(lk.WebServer) do if k ~= 'type' and k ~= '<em></em>index' then</p>
-                      <p><pre class='prettyprint lang-lua'>lib[k] = v</pre></p>
-                      <p>end end</p>
-                      <p>setmetatable(lib, { -- new method <em></em>call = function(lib, port, root) -- make sure we run with 'C' locale (because of HTTP date parsing) os.setlocale('C') local self = {</p>
-                      <p><pre class='prettyprint lang-lua'>should_run = true,
+                    <p class='summary'></p>
+                    <p>local lib = {type='lk.DavServer'} lib.<em></em>index  = lib <a href='lk.DavServer.html'>lk.DavServer</a> = lib</p>
+                    <p>-- the DavServer is an extension of the WebServer for k, v in pairs(lk.WebServer) do if k ~= 'type' and k ~= '<em></em>index' then</p>
+                    <p><pre class='prettyprint lang-lua'>lib[k] = v</pre></p>
+                    <p>end end</p>
+                    <p>setmetatable(lib, { -- new method <em></em>call = function(lib, port, root) -- make sure we run with 'C' locale (because of HTTP date parsing) os.setlocale('C') local self = {</p>
+                    <p><pre class='prettyprint lang-lua'>should_run = true,
 clients    = {},
 server     = lk.Socket(),
 on_ready   = {},</pre></p>
-                      <p>}</p>
-                      <p>self.server:bind('*', port or 0) self.host, self.port = self.server:localHost(), self.server:localPort() self.href<em>base = 'http://' .. self.host .. ':' .. self.port printf("Started DavServer: %s", self.href</em>base) setmetatable(self, lib) if root then</p>
-                      <p><pre class='prettyprint lang-lua'>self:setRoot(root)</pre></p>
-                      <p>else</p>
-                      <p><pre class='prettyprint lang-lua'>-- if no root path is provided, all the functions (find, findChildren,
+                    <p>}</p>
+                    <p>self.server:bind('*', port or 0) self.host, self.port = self.server:localHost(), self.server:localPort() self.href<em>base = 'http://' .. self.host .. ':' .. self.port printf("Started DavServer: %s", self.href</em>base) setmetatable(self, lib) if root then</p>
+                    <p><pre class='prettyprint lang-lua'>self:setRoot(root)</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>-- if no root path is provided, all the functions (find, findChildren,
 -- update, create, delete and move) should be implemented.</pre></p>
-                      <p>end self:listen() return self end})</p>
-                      <p>if type(root) == 'string' then</p>
-                      <p><pre class='prettyprint lang-lua'>self.root  = lk.FileResource(root)</pre></p>
-                      <p>else</p>
-                      <p><pre class='prettyprint lang-lua'>self.root = root</pre></p>
-                      <p>end -- FIXME: how long do we keep these around ? self.deleted = {} end</p>
-                      <p>--=============================================== Functions to sub-class local rez = self.root.cache[url] if not rez then</p>
-                      <p><pre class='prettyprint lang-lua'>-- this only happens on special files because we list children
+                    <p>end self:listen() return self end})</p>
+                    <p>if type(root) == 'string' then</p>
+                    <p><pre class='prettyprint lang-lua'>self.root  = lk.FileResource(root)</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>self.root = root</pre></p>
+                    <p>end -- FIXME: how long do we keep these around ? self.deleted = {} end</p>
+                    <p>--=============================================== Functions to sub-class local rez = self.root.cache[url] if not rez then</p>
+                    <p><pre class='prettyprint lang-lua'>-- this only happens on special files because we list children
 -- (and cache result) before we are asked for a path.
 rez = lk.FileResource(url, self.root)</pre></p>
-                      <p>end return rez end</p>
-                      <p>return resource:children() end</p>
-                      <p>if resource:update(content) then</p>
-                      <p><pre class='prettyprint lang-lua'>return nil, {status = '200'}</pre></p>
-                      <p>else</p>
-                      <p><pre class='prettyprint lang-lua'>return nil, {status = '400'}</pre></p>
-                      <p>end end</p>
-                      <p>-- create resource local url = parent.url .. '/' .. name local resource = self.deleted[url] if resource then</p>
-                      <p><pre class='prettyprint lang-lua'>if content and not resource.is_dir then
+                    <p>end return rez end</p>
+                    <p>return resource:children() end</p>
+                    <p>if resource:update(content) then</p>
+                    <p><pre class='prettyprint lang-lua'>return nil, {status = '200'}</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>return nil, {status = '400'}</pre></p>
+                    <p>end end</p>
+                    <p>-- create resource local url = parent.url .. '/' .. name local resource = self.deleted[url] if resource then</p>
+                    <p><pre class='prettyprint lang-lua'>if content and not resource.is_dir then
   if resource:update(content) then
     self.root.cache[url] = resource
     self.deleted[url] = nil
@@ -105,41 +86,41 @@ rez = lk.FileResource(url, self.root)</pre></p>
 else
   self.deleted[url] = nil
 end</pre></p>
-                      <p>end if parent:createChild(name, content) then</p>
-                      <p><pre class='prettyprint lang-lua'>return nil, {status = '201'}</pre></p>
-                      <p>end return nil, {status = '400'} end</p>
-                      <p>-- we use this in case the remote uses a delete -- and create to update self.deleted[resource.url] = resource if parent:deleteChild(resource) then</p>
-                      <p><pre class='prettyprint lang-lua'>-- clear cache
+                    <p>end if parent:createChild(name, content) then</p>
+                    <p><pre class='prettyprint lang-lua'>return nil, {status = '201'}</pre></p>
+                    <p>end return nil, {status = '400'} end</p>
+                    <p>-- we use this in case the remote uses a delete -- and create to update self.deleted[resource.url] = resource if parent:deleteChild(resource) then</p>
+                    <p><pre class='prettyprint lang-lua'>-- clear cache
 collectgarbage()
 return nil, {status = '204'}</pre></p>
-                      <p>end return nil, {status = '400'} end</p>
-                      <p>if parent:moveChild(resource, dest<em>parent, dest</em>name) then</p>
-                      <p><pre class='prettyprint lang-lua'>return nil, {status = '201'}</pre></p>
-                      <p>else</p>
-                      <p><pre class='prettyprint lang-lua'>return nil, {status = '400'}</pre></p>
-                      <p>end end</p>
-                      <p>--=============================================== PRIVATE</p>
-                      <p>local DATE<em>FORMAT</em>HTTP<em>DATE = '!%a, %d %b %Y %H:%M:%S GMT' lib.DATE</em>FORMAT<em>HTTP</em>DATE = DATE<em>FORMAT</em>HTTP_DATE</p>
-                      <p>local DATE<em>FORMAT</em>ISO<em>8601 = '!%Y-%m-%dT%H:%M:%SZ' lib.DATE</em>FORMAT<em>ISO</em>8601 = DATE<em>FORMAT</em>ISO_8601</p>
-                      <p>-- More status codes for WebDav lib.STATUS_CODES['207'] = 'Multi-Status'</p>
-                      <p>return nil, {</p>
-                      <p><pre class='prettyprint lang-lua'>DAV = "1, 2"</pre></p>
-                      <p>} end</p>
-                      <p>local function etag(...) -- TODO: sha1 return lk.crypto.sha1(string.format(...)) end</p>
-                      <p>local function getResourceType(is<em>dir) if is</em>dir then</p>
-                      <p><pre class='prettyprint lang-lua'>return {xml = 'collection'}</pre></p>
-                      <p>end end</p>
-                      <p>local function getContentLength(is<em>dir) if is</em>dir then</p>
-                      <p><pre class='prettyprint lang-lua'>return 2</pre></p>
-                      <p>else</p>
-                      <p><pre class='prettyprint lang-lua'>return 0</pre></p>
-                      <p>end end</p>
-                      <p>local function isDirectory(resource) local rtype = resource:davProperty('resourcetype') if rtype then</p>
-                      <p><pre class='prettyprint lang-lua'>return rtype.xml == 'collection'</pre></p>
-                      <p>end end</p>
-                      <p>local function httpDateNoLocale(time) DATE<em>FORMAT</em>HTTP_DATE = '!%a, %d %b %Y %H:%M:%S GMT' end</p>
-                      <p>local function makeResponse(self, resource, prop<em>list) local prop = {xml='prop'} for </em>, k in ipairs(prop_list) do</p>
-                      <p><pre class='prettyprint lang-lua'>k = k.xml
+                    <p>end return nil, {status = '400'} end</p>
+                    <p>if parent:moveChild(resource, dest<em>parent, dest</em>name) then</p>
+                    <p><pre class='prettyprint lang-lua'>return nil, {status = '201'}</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>return nil, {status = '400'}</pre></p>
+                    <p>end end</p>
+                    <p>--=============================================== PRIVATE</p>
+                    <p>local DATE<em>FORMAT</em>HTTP<em>DATE = '!%a, %d %b %Y %H:%M:%S GMT' lib.DATE</em>FORMAT<em>HTTP</em>DATE = DATE<em>FORMAT</em>HTTP_DATE</p>
+                    <p>local DATE<em>FORMAT</em>ISO<em>8601 = '!%Y-%m-%dT%H:%M:%SZ' lib.DATE</em>FORMAT<em>ISO</em>8601 = DATE<em>FORMAT</em>ISO_8601</p>
+                    <p>-- More status codes for WebDav lib.STATUS_CODES['207'] = 'Multi-Status'</p>
+                    <p>return nil, {</p>
+                    <p><pre class='prettyprint lang-lua'>DAV = "1, 2"</pre></p>
+                    <p>} end</p>
+                    <p>local function etag(...) -- TODO: sha1 return lk.crypto.sha1(string.format(...)) end</p>
+                    <p>local function getResourceType(is<em>dir) if is</em>dir then</p>
+                    <p><pre class='prettyprint lang-lua'>return {xml = 'collection'}</pre></p>
+                    <p>end end</p>
+                    <p>local function getContentLength(is<em>dir) if is</em>dir then</p>
+                    <p><pre class='prettyprint lang-lua'>return 2</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>return 0</pre></p>
+                    <p>end end</p>
+                    <p>local function isDirectory(resource) local rtype = resource:davProperty('resourcetype') if rtype then</p>
+                    <p><pre class='prettyprint lang-lua'>return rtype.xml == 'collection'</pre></p>
+                    <p>end end</p>
+                    <p>local function httpDateNoLocale(time) DATE<em>FORMAT</em>HTTP_DATE = '!%a, %d %b %Y %H:%M:%S GMT' end</p>
+                    <p>local function makeResponse(self, resource, prop<em>list) local prop = {xml='prop'} for </em>, k in ipairs(prop_list) do</p>
+                    <p><pre class='prettyprint lang-lua'>k = k.xml
 local v = resource:davProperty(k)
 if v then
   if k == 'creationdate' then
@@ -151,153 +132,156 @@ if v then
   end
 end
 table.insert(prop, {xml = k, v or ''})</pre></p>
-                      <p>end return {</p>
-                      <p><pre class='prettyprint lang-lua'>xml = 'response',
+                    <p>end return {</p>
+                    <p><pre class='prettyprint lang-lua'>xml = 'response',
 {xml = 'href', self.href_base .. resource:davProperty('url')},
 {xml = 'propstat',
   prop,
   {xml = 'status', "HTTP/1.1 200 OK"},
 }</pre></p>
-                      <p>} end</p>
-                      <p>local function getPropList(body) local data = xml.parse(body or '') if not data then</p>
-                      <p><pre class='prettyprint lang-lua'>return</pre></p>
-                      <p>end xml.removeNamespace(data, 'DAV:') return data:find('prop') end</p>
-                      <p>local resource = self:find(request.path) local prop<em>list = getPropList(request.body) if not resource or not prop</em>list then</p>
-                      <p><pre class='prettyprint lang-lua'>return nil, {status = '404'}</pre></p>
-                      <p>end   if params then</p>
-                      <p>end</p>
-                      <p>local headers = request.headers local depth = tonumber(headers['Depth'])</p>
-                      <p>local res = {</p>
-                      <p><pre class='prettyprint lang-lua'>xml = 'multistatus',
+                    <p>} end</p>
+                    <p>local function getPropList(body) local data = xml.parse(body or '') if not data then</p>
+                    <p><pre class='prettyprint lang-lua'>return</pre></p>
+                    <p>end xml.removeNamespace(data, 'DAV:') return data:find('prop') end</p>
+                    <p>local resource = self:find(request.path) local prop<em>list = getPropList(request.body) if not resource or not prop</em>list then</p>
+                    <p><pre class='prettyprint lang-lua'>return nil, {status = '404'}</pre></p>
+                    <p>end   if params then</p>
+                    <p>end</p>
+                    <p>local headers = request.headers local depth = tonumber(headers['Depth'])</p>
+                    <p>local res = {</p>
+                    <p><pre class='prettyprint lang-lua'>xml = 'multistatus',
 xmlns = 'DAV:'</pre></p>
-                      <p>} -- use oldest change to build etag local last_mod = nil</p>
-                      <p>table.insert(res, makeResponse(self, resource, prop_list)) if isDirectory(resource) and depth == 1 then</p>
-                      <p><pre class='prettyprint lang-lua'>local children = self:findChildren(resource)
+                    <p>} -- use oldest change to build etag local last_mod = nil</p>
+                    <p>table.insert(res, makeResponse(self, resource, prop_list)) if isDirectory(resource) and depth == 1 then</p>
+                    <p><pre class='prettyprint lang-lua'>local children = self:findChildren(resource)
 for _, child in ipairs(children) do
   table.insert(res, makeResponse(self, child, prop_list))
 end</pre></p>
-                      <p>end</p>
-                      <p>local body = "<?xml version='1.0' encoding='utf-8'?>\n" .. xml.dump(res)</p>
-                      <p>headers = {</p>
-                      <p><pre class='prettyprint lang-lua'>status = 207,
+                    <p>end</p>
+                    <p>local body = "<?xml version='1.0' encoding='utf-8'?>\n" .. xml.dump(res)</p>
+                    <p>headers = {</p>
+                    <p><pre class='prettyprint lang-lua'>status = 207,
 Etag   = etag('%s', body),
 ['Content-Type']  = 'text/xml; charset="utf-8"',
 --['Last-Modified'] =  os.date(DATE_FORMAT, last_mod)</pre></p>
-                      <p>}</p>
-                      <p>return body, headers end</p>
-                      <p>local resource = self:find(request.path) if not resource then</p>
-                      <p><pre class='prettyprint lang-lua'>return nil, {status = '404'}</pre></p>
-                      <p>end</p>
-                      <p>return resource:body(), {status=200, </p>
-                      <p><pre class='prettyprint lang-lua'>['Content-type']=resource:davProperty('contenttype') or 'text/plain'</pre></p>
-                      <p>} end</p>
-                      <p>local function getParent(self, path) local base, name = lk.pathDir(path) return self:find(base), name end   -- forget about .<em> (resource fork on Mac OS X) if string.match(request.path, '^.</em>') then</p>
-                      <p><pre class='prettyprint lang-lua'>return nil, {status = '400'}</pre></p>
-                      <p>end local resource = self:find(request.path) if resource then</p>
-                      <p><pre class='prettyprint lang-lua'>return self:update(resource, request.body)</pre></p>
-                      <p>else</p>
-                      <p><pre class='prettyprint lang-lua'>local parent, name = getParent(self, request.path)
+                    <p>}</p>
+                    <p>return body, headers end</p>
+                    <p>local resource = self:find(request.path) if not resource then</p>
+                    <p><pre class='prettyprint lang-lua'>return nil, {status = '404'}</pre></p>
+                    <p>end</p>
+                    <p>return resource:body(), {status=200, </p>
+                    <p><pre class='prettyprint lang-lua'>['Content-type']=resource:davProperty('contenttype') or 'text/plain'</pre></p>
+                    <p>} end</p>
+                    <p>local function getParent(self, path) local base, name = lk.pathDir(path) return self:find(base), name end   -- forget about .<em> (resource fork on Mac OS X) if string.match(request.path, '^.</em>') then</p>
+                    <p><pre class='prettyprint lang-lua'>return nil, {status = '400'}</pre></p>
+                    <p>end local resource = self:find(request.path) if resource then</p>
+                    <p><pre class='prettyprint lang-lua'>return self:update(resource, request.body)</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>local parent, name = getParent(self, request.path)
 if parent then
   return self:create(parent, name, request.body or '')
 else
   return nil, {status = '400'}
 end</pre></p>
-                      <p>end end</p>
-                      <p>local resource = self:find(request.path) if not resource then</p>
-                      <p><pre class='prettyprint lang-lua'>return nil, {status = '204'}</pre></p>
-                      <p>end local parent = getParent(self, request.path) if parent then</p>
-                      <p><pre class='prettyprint lang-lua'>return self:delete(parent, resource)</pre></p>
-                      <p>else</p>
-                      <p><pre class='prettyprint lang-lua'>return nil, {status = '400'}</pre></p>
-                      <p>end end</p>
-                      <p>local resource = self:find(request.path) local destination = request.headers['Destination'] or '' destination = string.match(destination, 'http://[^/]+(/.+)$') if destination then</p>
-                      <p><pre class='prettyprint lang-lua'>local parent = getParent(self, request.path)
+                    <p>end end</p>
+                    <p>local resource = self:find(request.path) if not resource then</p>
+                    <p><pre class='prettyprint lang-lua'>return nil, {status = '204'}</pre></p>
+                    <p>end local parent = getParent(self, request.path) if parent then</p>
+                    <p><pre class='prettyprint lang-lua'>return self:delete(parent, resource)</pre></p>
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>return nil, {status = '400'}</pre></p>
+                    <p>end end</p>
+                    <p>local resource = self:find(request.path) local destination = request.headers['Destination'] or '' destination = string.match(destination, 'http://[^/]+(/.+)$') if destination then</p>
+                    <p><pre class='prettyprint lang-lua'>local parent = getParent(self, request.path)
 local dest_parent, dest_name = getParent(self, destination)
 return self:move(parent, resource, dest_parent, dest_name)</pre></p>
-                      <p>end return nil, {status = '400'} end</p>
-                      <p>return nil end</p>
-                      <p>local resource = self:find(request.path) if not resource then</p>
-                      <p><pre class='prettyprint lang-lua'>local parent, name = getParent(self, request.path)
+                    <p>end return nil, {status = '400'} end</p>
+                    <p>return nil end</p>
+                    <p>local resource = self:find(request.path) if not resource then</p>
+                    <p><pre class='prettyprint lang-lua'>local parent, name = getParent(self, request.path)
 return self:create(parent, name)</pre></p>
-                      <p>elseif resource.is_dir then</p>
-                      <p><pre class='prettyprint lang-lua'>return nil, {status = '201'}</pre></p>
-                            </section>
-              </div>
+                    <p>elseif resource.is_dir then</p>
+                    <p><pre class='prettyprint lang-lua'>return nil, {status = '201'}</pre></p>
+                              </section>
+                  </div>
 
-      <div class="span3 bs-docs-sidebar global-nav">
-        <ul class="nav nav-list bs-docs-sidenav">
-                    <li class='module'><a href='lk.html'>lk</a></li>
-                              <li><a href='lk.Client.html'>lk.Client</a></li>
-                    <li><a href='lk.Command.html'>lk.Command</a></li>
-                    <li><a href='lk.DavMorph.html'>lk.DavMorph</a></li>
-                    <li class='active'><a href='lk.DavServer.html'>lk.DavServer</a></li>
-                    <li><a href='lk.Debug.html'>lk.Debug</a></li>
-                    <li><a href='lk.Dir.html'>lk.Dir</a></li>
-                    <li><a href='lk.Doc.html'>lk.Doc</a></li>
-                    <li><a href='lk.Environment.html'>lk.Environment</a></li>
-                    <li><a href='lk.FileResource.html'>lk.FileResource</a></li>
-                    <li><a href='lk.Inlet.html'>lk.Inlet</a></li>
-                    <li><a href='lk.InletMethod.html'>lk.InletMethod</a></li>
-                    <li><a href='lk.Lubyk.html'>lk.Lubyk</a></li>
-                    <li><a href='lk.Morph.html'>lk.Morph</a></li>
-                    <li><a href='lk.Node.html'>lk.Node</a></li>
-                    <li><a href='lk.Observer.html'>lk.Observer</a></li>
-                    <li><a href='lk.Outlet.html'>lk.Outlet</a></li>
-                    <li><a href='lk.OutletMethod.html'>lk.OutletMethod</a></li>
-                    <li><a href='lk.ParamMethod.html'>lk.ParamMethod</a></li>
-                    <li><a href='lk.Patch.html'>lk.Patch</a></li>
-                    <li><a href='lk.Process.html'>lk.Process</a></li>
-                    <li><a href='lk.ProcessWatch.html'>lk.ProcessWatch</a></li>
-                    <li><a href='lk.Properties.html'>lk.Properties</a></li>
-                    <li><a href='lk.RemoteProcess.html'>lk.RemoteProcess</a></li>
-                    <li><a href='lk.Scheduler.html'>lk.Scheduler</a></li>
-                    <li><a href='lk.SelectCallback.html'>lk.SelectCallback</a></li>
-                    <li><a href='lk.Service.html'>lk.Service</a></li>
-                    <li><a href='lk.ServiceBrowser.html'>lk.ServiceBrowser</a></li>
-                    <li><a href='lk.Settings.html'>lk.Settings</a></li>
-                    <li><a href='lk.Socket.html'>lk.Socket</a></li>
-                    <li><a href='lk.Socket2.html'>lk.Socket2</a></li>
-                    <li><a href='lk.StemCell.html'>lk.StemCell</a></li>
-                    <li><a href='lk.SubClass.html'>lk.SubClass</a></li>
-                    <li><a href='lk.TCPSocket.html'>lk.TCPSocket</a></li>
-                    <li><a href='lk.Thread.html'>lk.Thread</a></li>
-                    <li><a href='lk.Timer.html'>lk.Timer</a></li>
-                    <li><a href='lk.UDPSocket.html'>lk.UDPSocket</a></li>
-                    <li><a href='lk.WebServer.html'>lk.WebServer</a></li>
-                    <li><a href='lk.crypto.html'>lk.crypto</a></li>
-                    <li><a href='lk.more.html'>lk.more</a></li>
-                    <li><a href='lk.util.html'>lk.util</a></li>
-                  </ul>
+        <div class='span2'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='lk.html'>lk</a></li>
+                                    <li><a href='lk.Client.html'>lk.Client</a></li>
+                        <li><a href='lk.Command.html'>lk.Command</a></li>
+                        <li><a href='lk.DavMorph.html'>lk.DavMorph</a></li>
+                        <li class='active'><a href='lk.DavServer.html'>lk.DavServer</a></li>
+                        <li><a href='lk.Debug.html'>lk.Debug</a></li>
+                        <li><a href='lk.Dir.html'>lk.Dir</a></li>
+                        <li><a href='lk.Doc.html'>lk.Doc</a></li>
+                        <li><a href='lk.Environment.html'>lk.Environment</a></li>
+                        <li><a href='lk.FileResource.html'>lk.FileResource</a></li>
+                        <li><a href='lk.Finalizer.html'>lk.Finalizer</a></li>
+                        <li><a href='lk.Inlet.html'>lk.Inlet</a></li>
+                        <li><a href='lk.InletMethod.html'>lk.InletMethod</a></li>
+                        <li><a href='lk.Lubyk.html'>lk.Lubyk</a></li>
+                        <li><a href='lk.Morph.html'>lk.Morph</a></li>
+                        <li><a href='lk.Node.html'>lk.Node</a></li>
+                        <li><a href='lk.Observer.html'>lk.Observer</a></li>
+                        <li><a href='lk.Outlet.html'>lk.Outlet</a></li>
+                        <li><a href='lk.OutletMethod.html'>lk.OutletMethod</a></li>
+                        <li><a href='lk.ParamMethod.html'>lk.ParamMethod</a></li>
+                        <li><a href='lk.Patch.html'>lk.Patch</a></li>
+                        <li><a href='lk.Process.html'>lk.Process</a></li>
+                        <li><a href='lk.ProcessWatch.html'>lk.ProcessWatch</a></li>
+                        <li><a href='lk.Properties.html'>lk.Properties</a></li>
+                        <li><a href='lk.RemoteProcess.html'>lk.RemoteProcess</a></li>
+                        <li><a href='lk.Scheduler.html'>lk.Scheduler</a></li>
+                        <li><a href='lk.SelectCallback.html'>lk.SelectCallback</a></li>
+                        <li><a href='lk.Service.html'>lk.Service</a></li>
+                        <li><a href='lk.ServiceBrowser.html'>lk.ServiceBrowser</a></li>
+                        <li><a href='lk.Settings.html'>lk.Settings</a></li>
+                        <li><a href='lk.Socket.html'>lk.Socket</a></li>
+                        <li><a href='lk.Socket2.html'>lk.Socket2</a></li>
+                        <li><a href='lk.StemCell.html'>lk.StemCell</a></li>
+                        <li><a href='lk.SubClass.html'>lk.SubClass</a></li>
+                        <li><a href='lk.TCPSocket.html'>lk.TCPSocket</a></li>
+                        <li><a href='lk.Thread.html'>lk.Thread</a></li>
+                        <li><a href='lk.TimeRef.html'>lk.TimeRef</a></li>
+                        <li><a href='lk.Timer.html'>lk.Timer</a></li>
+                        <li><a href='lk.UDPSocket.html'>lk.UDPSocket</a></li>
+                        <li><a href='lk.WebServer.html'>lk.WebServer</a></li>
+                        <li><a href='lk.core.html'>lk.core</a></li>
+                        <li><a href='lk.crypto.html'>lk.crypto</a></li>
+                        <li><a href='lk.more.html'>lk.more</a></li>
+                        <li><a href='lk.util.html'>lk.util</a></li>
+                      </ul>
+        </div>
       </div>
     </div>
-  </div>
 
     <footer class="footer">
-      <div class="container">
-         made with <a href='lk.Doc.html'>lk.Doc</a> 
-      </div>
+    <div class="container">
+       made with <a href='http://doc.lubyk.org/lk.Doc.html'>lk.Doc</a> 
+    </div>
     </footer>
 
-    <!-- Placed at the end of the document so the pages load faster -->
-    <!--
-    <script src="assets/js/jquery.js"></script>
-    <script src="assets/js/bootstrap-transition.js"></script>
-    <script src="assets/js/bootstrap-alert.js"></script>
-    <script src="assets/js/bootstrap-modal.js"></script>
-    <script src="assets/js/bootstrap-dropdown.js"></script>
-    <script src="assets/js/bootstrap-scrollspy.js"></script>
-    <script src="assets/js/bootstrap-tab.js"></script>
-    <script src="assets/js/bootstrap-tooltip.js"></script>
-    <script src="assets/js/bootstrap-popover.js"></script>
-    <script src="assets/js/bootstrap-button.js"></script>
-    <script src="assets/js/bootstrap-collapse.js"></script>
-    <script src="assets/js/bootstrap-carousel.js"></script>
-    <script src="assets/js/bootstrap-typeahead.js"></script>
-    <script src="assets/js/bootstrap-affix.js"></script>
-    -->
-
-    
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
     <script src='http://code.jquery.com/jquery.js'></script>
     <script src='js/bootstrap.min.js'></script>
   </body>
 </html>
+

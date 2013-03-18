@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Test Suite</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+
+
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/docs.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class='row'>
+          <div class='span12'>
+             <a href='http://lubyk.org'><img alt='lubyk logo' src='img/lubyk.png'/> <h1>Lubyk documentation</h1></a> 
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="row">
+
+        <div class='span3'>
+          <ul class='nav nav-tabs nav-stacked local-nav affix'>
+                        <li><a href='#Suite'><i class='icon-chevron-right'></i> test.Suite</a></li>
+                        <li><a href='#Setup,-teardown'><i class='icon-chevron-right'></i> Setup, teardown</a></li>
+                        <li><a href='#Declare-tests'><i class='icon-chevron-right'></i> Declare tests</a></li>
+                        <li><a href='#Run-tests'><i class='icon-chevron-right'></i> Run tests</a></li>
+                        <li><a href='#Assertions'><i class='icon-chevron-right'></i> Assertions</a></li>
+                      </ul>
+        </div>
+
+        <div class="span7">
+
+                    <section id='Suite'>
+          <h2 class='section'>Test Suite</h2>
+
+                    
+                    <p class='summary'>The test suite is used to declare tests and group them by class or module.</p>
+                                        <a name='new'></a>
+          <h4 class='function'><span>.</span>new <code>(name)</code></h4>
+          
+                    <p>Create a new test suite. It is good practice to use 'should' as local name for this suite since it makes tests more readable. The <code>name</code> should be the exact name of the class or module being tested in case the coverage option is activated in test (it is ON by default).</p>
+                    <p>Usage example:</p>
+                    <p><pre class='prettyprint lang-lua'>local should = test.Suite 'lk.Dir'
+
+function should.listFilesInDirectory()
+  -- ...
+end</pre></p>
+                              </section>
+                    <section id='Setup,-teardown'>
+          <h2 class='section'>Setup, teardown</h2>
+
+                    
+                    <p>If you need to run some code before or after every test, you can define the <code>setup</code> (executed before each test) and/or <code>teardown</code> (executed after each test independantly of success or failure) functions:</p>
+                    <p><pre class='prettyprint lang-lua'>local should = test.Suite 'lk.Dir'
+
+function should.teardown()
+  -- cleanup
+end</pre></p>
+                                        <a name='setup'></a>
+          <h4 class='function'><span>.</span>setup <code>()</code></h4>
+          
+                    <p>Dummy setup function (does nothing).</p>
+                                        <a name='teardown'></a>
+          <h4 class='function'><span>.</span>teardown <code>()</code></h4>
+          
+                    <p>Dummy teardown function (does nothing).</p>
+                              </section>
+                    <section id='Declare-tests'>
+          <h2 class='section'>Declare tests</h2>
+
+                    
+                                        <a name='__newindex'></a>
+          <h4 class='method'><span>:</span>__newindex <code>(key, value)</code></h4>
+          
+                    <p>Tests are declared by adding functions to the test suite. Note that these functions do not have access to 'self'.</p>
+                    <p>Example test declaration:</p>
+                    <p><pre class='prettyprint lang-lua'>functions should.beHappy()
+  assertTrue(true)
+end</pre></p>
+                              </section>
+                    <section id='Run-tests'>
+          <h2 class='section'>Run tests</h2>
+
+                    
+                    <p>Use <code>test.all()</code> to run the tests in all suites at once. You can append this call at the end of the file to run the test when running the file:</p>
+                    <p><pre class='prettyprint lang-lua'>function should.testLast()
+end
+
+-- Run all tests now.
+test.all()</pre></p>
+                              </section>
+                    <section id='Assertions'>
+          <h2 class='section'>Assertions</h2>
+
+                    
+                                        <a name=''></a>
+          <h4 class='function'>fail <code>(msg)</code></h4>
+          
+                    <p>Force a test to fail with a given <code>msg</code>.</p>
+                                        <a name=''></a>
+          <h4 class='function'>assertFalse <code>(ok)</code></h4>
+          
+                    <p>Assert that <code>ok</code> is false.</p>
+                                        <a name=''></a>
+          <h4 class='function'>assertTrue <code>(ok, msg)</code></h4>
+          
+                    <p>Assert that <code>ok</code> is true. If <code>msg</code> exists, it is used in case of failure in place of the default fail message.</p>
+                                        <a name=''></a>
+          <h4 class='function'>assertEqual <code>(expected, value, resolution, up_count)</code></h4>
+          
+                    <p>Assert that <code>value</code> is equal to <code>expected</code>. If <code>expected</code> is a number, the <code>resolution</code> parameter can be used to cope with numerical errors. The actual test for numbers is:</p>
+                    <p><pre class='prettyprint lang-lua'>local ok = (value &gt;= expected - resolution) and (value &lt;= expected + resolution)
+</pre></p>
+                    <p>For other types, this tests raw equality (same object). To compare table contents, use <a href='#assertValueEqual'>assertValueEqual</a>.</p>
+                                        <a name=''></a>
+          <h4 class='function'>assertValueEqual <code>(expected, value, resolution, up_count)</code></h4>
+          
+                    <p>For tables, recursively test that all keys contain the same values.</p>
+                                        <a name=''></a>
+          <h4 class='function'>assertTableEqual <code>(expected, value, resolution, up_count)</code></h4>
+          
+                    <p>This is like <a href='#assertValueEqual'>assertValueEqual</a> but does not check for table type.</p>
+                                        <a name=''></a>
+          <h4 class='function'>assertNotEqual <code>(unexpected, value)</code></h4>
+          
+                    <p>Asserts that <code>value</code> is not equal to <code>unexpected</code>.</p>
+                                        <a name=''></a>
+          <h4 class='function'>assertMatch <code>(pattern, value)</code></h4>
+          
+                    <p>Assert that <code>value</code> matches <code>pattern</code> using <code>string.match</code>.</p>
+                                        <a name=''></a>
+          <h4 class='function'>assertNotMatch <code>(pattern, value, msg)</code></h4>
+          
+                    <p>Assert that <code>value</code> does not match <code>pattern</code>. If <code>msg</code> is provided, use this in case of failure.</p>
+                                        <a name=''></a>
+          <h4 class='function'>assertError <code>(pattern, func)</code></h4>
+          
+                    <p>Assert that calling <code>func</code> generates an error message that matches <code>pattern</code>.</p>
+                                        <a name=''></a>
+          <h4 class='function'>assertPass <code>(func, teardown)</code></h4>
+          
+                    <p>Assert that calling <code>func</code> passes without errors. The optional <code>teardown</code>  function can be used to cleanup after the function call whether it passes or fails.</p>
+                                        <a name=''></a>
+          <h4 class='function'>assertLessThen <code>(expected, value)</code></h4>
+          
+                    <p>Assert that <code>value</code> is less then <code>expected</code>.</p>
+                                        <a name=''></a>
+          <h4 class='function'>assertType <code>(expected, value)</code></h4>
+          
+                    <p>Assert that the Lua type of <code>value</code> is <code>expected</code> ('number', 'table', 'function', etc).</p>
+                                        <a name=''></a>
+          <h4 class='function'>assertNil <code>(value)</code></h4>
+          
+                    <p>Assert that <code>value</code> is nil.</p>
+                                        <a name=''></a>
+          <h4 class='function'>assertInRange <code>(t1, t2, value)</code></h4>
+          
+                    <p>Assert that <code>value</code> is in the range defined by [<code>t1</code>, <code>t2</code>[.</p>
+                              </section>
+                  </div>
+
+        <div class='span2'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='test.html'>test</a></li>
+                                    <li class='active'><a href='test.Suite.html'>test.Suite</a></li>
+                      </ul>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+    <div class="container">
+       made with <a href='http://doc.lubyk.org/lk.Doc.html'>lk.Doc</a> 
+    </div>
+    </footer>
+
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
+    <script src='http://code.jquery.com/jquery.js'></script>
+    <script src='js/bootstrap.min.js'></script>
+  </body>
+</html>
+

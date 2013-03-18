@@ -8,25 +8,6 @@
     <meta name="author" content="">
 
 
-    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
-
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-        config: ["MMLorHTML.js"],
-        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
-        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
-        TeX: {
-          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
-        },
-        menuSettings: {
-          zoom: "Hover",
-          mpContext: true,
-          mpMouse: true
-        },
-      });
-    </script>
-    <script type="text/javascript"
-  src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
 
     <link href="css/bootstrap.css" rel="stylesheet">
     <link href="css/bootstrap-responsive.css" rel="stylesheet">
@@ -44,48 +25,48 @@
       </div>
     </div>
 
-  <div class="container">
+    <div class="container">
 
-    <div class="row">
+      <div class="row">
 
-      <div class="span2 bs-docs-sidebar local-nav">
-        <ul class="nav nav-list bs-docs-sidenav affix">
-                    <li><a href='#Doc'><i class='icon-chevron-right'></i> lk.Doc</a></li>
-                    <li><a href='#Usage'><i class='icon-chevron-right'></i> Usage</a></li>
-                    <li><a href='#Class-functions'><i class='icon-chevron-right'></i> Class functions</a></li>
-                    <li><a href='#Methods'><i class='icon-chevron-right'></i> Methods</a></li>
-                    <li><a href='#TODO'><i class='icon-chevron-right'></i> TODO</a></li>
-                    <li><a href='#FIXME'><i class='icon-chevron-right'></i> FIXME</a></li>
-                  </ul>
-      </div>
+        <div class='span3'>
+          <ul class='nav nav-tabs nav-stacked local-nav affix'>
+                        <li><a href='#Doc'><i class='icon-chevron-right'></i> lk.Doc</a></li>
+                        <li><a href='#Usage'><i class='icon-chevron-right'></i> Usage</a></li>
+                        <li><a href='#Class-functions'><i class='icon-chevron-right'></i> Class functions</a></li>
+                        <li><a href='#Methods'><i class='icon-chevron-right'></i> Methods</a></li>
+                        <li><a href='#TODO'><i class='icon-chevron-right'></i> TODO</a></li>
+                        <li><a href='#FIXME'><i class='icon-chevron-right'></i> FIXME</a></li>
+                      </ul>
+        </div>
 
-      <div class="span7">
+        <div class="span7">
 
-                <section id='Doc'>
+                    <section id='Doc'>
           <h2 class='section'>Documentation extractor</h2>
 
                     
-                      <p class='summary'>lk.Doc parses lua comments and extracts the documentation from these comments.</p>
-                      <p>It parses indifferently multiline comments like this:  </p>
-                      <p><pre class='prettyprint lang-lua'>--[[ 
+                    <p class='summary'>lk.Doc parses lua comments and extracts the documentation from these comments.</p>
+                    <p>It parses indifferently multiline comments like this:  </p>
+                    <p><pre class='prettyprint lang-lua'>--[[ 
 Some text in comments.
 
 Some more text.
 --]]
 </pre></p>
-                      <p>and single line comments like this:  </p>
-                      <p><pre class='prettyprint lang-lua'>-- Some text in comments.
+                    <p>and single line comments like this:  </p>
+                    <p><pre class='prettyprint lang-lua'>-- Some text in comments.
 -- 
 -- Some more text.
 </pre></p>
-                            </section>
-                <section id='Usage'>
+                              </section>
+                    <section id='Usage'>
           <h2 class='section'>Usage</h2>
 
                     
-                      <h3 class='sub-title'>Preamble</h3>
-                      <p>You must start your file with a preample containing a title for the class or module and some description.</p>
-                      <p><pre class='prettyprint lang-lua'>--[[---------------------------------------
+                    <h4 class='sub-title'>Preamble</h4>
+                    <p>You must start your file with a preample containing a title for the class or module and some description.</p>
+                    <p><pre class='prettyprint lang-lua'>--[[---------------------------------------
   
   # Full title for the file/class
 
@@ -95,21 +76,21 @@ Some more text.
 
 --]]---------------------------------------
 </pre></p>
-                      <h3 class='sub-title'>Math</h3>
-                      <p>The "math" tag can be used to generate mathematics from latex code. When outputing <strong>html</strong>, the page uses <a href='http://www.mathjax.org'>MathJax</a> when outputing html. Here is an example of mathematics inline and as standalone paragraph:</p>
-                      <p><pre class='prettyprint lang-lua'>-- Some documentation with inline
+                    <h4 class='sub-title'>Math</h4>
+                    <p>The "math" tag can be used to generate mathematics from latex code. When outputing <strong>html</strong>, the page uses <a href='http://www.mathjax.org'>MathJax</a> when outputing html. Here is an example of mathematics inline and as standalone paragraph:</p>
+                    <p><pre class='prettyprint lang-lua'>-- Some documentation with inline
 -- [math]\gamma[/math] math. And now a
 -- standalone math paragraph:
 --
 -- [math]\frac{\partial}{\partial\theta_j}J(\theta) = \frac{1}{m}\sum_{i=1}^m(\theta^{T}x^{(i)}-y^{(i)})x_j^{(i)}[/math]
 </pre></p>
-                      <p>The result for the code above is:</p>
-                      <p>Some documentation with inline \(\gamma\) math. And now a standalone math paragraph:  </p>
-                      <p>\(\frac{\partial}{\partial\theta_j}J(\theta) = \frac{1}{m}\sum_{i=1}^m(\theta^{T}x^{(i)}-y^{(i)})x_j^{(i)}\)</p>
-                      <p>If you <strong>hover</strong> with the mouse over the formula, it zooms.  </p>
-                      <h3 class='sub-title'>Lua code</h3>
-                      <p>  You can insert code snippets by indenting the code with two spaces. Here is an example of some normal text and some Lua and C++ code.</p>
-                      <p><pre class='prettyprint lang-lua'>--[[
+                    <p>The result for the code above is:</p>
+                    <p>Some documentation with inline \(\gamma\) math. And now a standalone math paragraph:  </p>
+                    <p>\(\frac{\partial}{\partial\theta_j}J(\theta) = \frac{1}{m}\sum_{i=1}^m(\theta^{T}x^{(i)}-y^{(i)})x_j^{(i)}\)</p>
+                    <p>If you <strong>hover</strong> with the mouse over the formula, it zooms.  </p>
+                    <h4 class='sub-title'>Lua code</h4>
+                    <p>  You can insert code snippets by indenting the code with two spaces. Here is an example of some normal text and some Lua and C++ code.</p>
+                    <p><pre class='prettyprint lang-lua'>--[[
 Some Lua code:
 
   local foo = {}
@@ -123,55 +104,55 @@ And a cpp example:
   printf("Result = %.2f\n", x);
 --]]
 </pre></p>
-                      <p>This results in:</p>
-                      <p>Some Lua code:</p>
-                      <p><pre class='prettyprint lang-lua'>local foo = {}
+                    <p>This results in:</p>
+                    <p>Some Lua code:</p>
+                    <p><pre class='prettyprint lang-lua'>local foo = {}
 -- print something
 print 'Hello'
 </pre></p>
-                      <p>And a cpp example:</p>
-                      <p><pre class='prettyprint lang-cpp'>float x = 1.0;
+                    <p>And a cpp example:</p>
+                    <p><pre class='prettyprint lang-cpp'>float x = 1.0;
 printf("Result = %.2f\n", x);
 </pre></p>
-                      <p>As you can see, you have to declare other languages with <code>#name</code> if the code is not Lua.</p>
-                      <h3 class='sub-title'>Styles</h3>
-                      <p>You can enhance your comments with links, bold, italics and images.</p>
-                      <p>Some links are automatically created when the parser sees <code>module.Class</code> like this: <a href='lk.Doc.html'>lk.Doc</a>. A custom link is made with <code>[link title](http://example.com)</code>.</p>
-                      <p>Bold is done by using stars: <code>some text with *bold* emphasis</code>. Italics are inserted with underscores: <code>some text _with italic_ emphasis</code>.</p>
-                      <p>You can add images with <code>![alt text](/path/to/image.jpg)</code>.</p>
-                      <h3 class='sub-title'>TODO and FIXME</h3>
-                      <p>You can create TODO and FIXME marks like this</p>
-                      <p><pre class='prettyprint lang-lua'>TODO This is a todo definition
+                    <p>As you can see, you have to declare other languages with <code>#name</code> if the code is not Lua.</p>
+                    <h4 class='sub-title'>Styles</h4>
+                    <p>You can enhance your comments with links, bold, italics and images.</p>
+                    <p>Some links are automatically created when the parser sees <code>module.Class</code> like this: <a href='lk.Doc.html'>lk.Doc</a>. A custom link is made with <code>[link title](http://example.com)</code>.</p>
+                    <p>Bold is done by using stars: <code>some text with *bold* emphasis</code>. Italics are inserted with underscores: <code>some text _with italic_ emphasis</code>.</p>
+                    <p>You can add images with <code>![alt text](/path/to/image.jpg)</code>.</p>
+                    <h4 class='sub-title'>TODO and FIXME</h4>
+                    <p>You can create TODO and FIXME marks like this</p>
+                    <p><pre class='prettyprint lang-lua'>TODO This is a todo definition
 
 FIXME This is a fixme
 
 </pre></p>
-                      <p>These end up like this (and are repeated at the end of the file).</p>
-                      <p><span class='todo'><span>TODO</span> This is a todo definition</span></p>
-                      <p><span class='fixme'><span>FIXME</span> This is a fixme</span></p>
-                            </section>
-                <section id='Class-functions'>
+                    <p>These end up like this (and are repeated at the end of the file).</p>
+                    <p><span class='todo'><span>TODO</span> This is a todo definition</span></p>
+                    <p><span class='fixme'><span>FIXME</span> This is a fixme</span></p>
+                              </section>
+                    <section id='Class-functions'>
           <h2 class='section'>Class functions</h2>
 
                     
                                         <a name='new'></a>
           <h4 class='function'><span>.</span>new <code>(path, def)</code></h4>
           
-                      <p>Parse the content of a file given by <code>path</code> and return an <a href='lk.Doc.html'>lk.Doc</a> object  containing the documentation of the class.</p>
-                      <p>Usage example:</p>
-                      <p><pre class='prettyprint lang-lua'>require 'lubyk'
+                    <p>Parse the content of a file given by <code>path</code> and return an <a href='lk.Doc.html'>lk.Doc</a> object  containing the documentation of the class.</p>
+                    <p>Usage example:</p>
+                    <p><pre class='prettyprint lang-lua'>require 'lubyk'
 local doc = lk.Doc('path/to/File.lua', {target = 'doc'})
 lk.writeall('doc/File.html', doc:toHtml())
 </pre></p>
-                      <p>When documenting multiple files it is better to use <a href='#make'>make</a>.</p>
+                    <p>When documenting multiple files it is better to use <a href='#make'>make</a>.</p>
                                         <a name='make'></a>
           <h4 class='function'><span>.</span>make <code>(def)</code></h4>
           
-                      <p>Generate the documentation for multiple files.</p>
-                      <p>The <code>sources</code> parameter lists paths to Lua files or directories to parse and document. The <code>target</code> parameter is the path to the directory where all the output files will be written. <code>format</code> is the type of output desired. Only 'html' format is supported for now.</p>
-                      <p>You can also provide some html code for <code>header</code> and <code>footer</code> that will be inserted in every html output page.</p>
-                      <p>Usage:</p>
-                      <p><pre class='prettyprint lang-lua'>require 'lubyk'
+                    <p>Generate the documentation for multiple files.</p>
+                    <p>The <code>sources</code> parameter lists paths to Lua files or directories to parse and document. The <code>target</code> parameter is the path to the directory where all the output files will be written. <code>format</code> is the type of output desired. Only 'html' format is supported for now.</p>
+                    <p>You can also provide some html code for <code>header</code> and <code>footer</code> that will be inserted in every html output page.</p>
+                    <p>Usage:</p>
+                    <p><pre class='prettyprint lang-lua'>require 'lubyk'
 lk.Doc.make {
   sources = {
     'lib/doc/DocTest.lua',
@@ -187,104 +168,111 @@ lk.Doc.make {
   ]],
   footer = [[ made with &lt;a href='lk.Doc.html'&gt;lk.Doc&lt;/a&gt; ]],
 }</pre></p>
-                            </section>
-                <section id='Methods'>
+                              </section>
+                    <section id='Methods'>
           <h2 class='section'>Methods</h2>
 
                     
                                         <a name='toHtml'></a>
           <h4 class='method'><span>:</span>toHtml <code>(template)</code></h4>
           
-                      <p>Render the documentation as html. If a <code>template</code> is provided, it is used instead of the default one. This is mainly used for testing since you usually want to have some navigation menus which are extracted by creating the documentation in batch mode with <a href='#make'>make</a>.</p>
-                            </section>
-                <section id='TODO'>
+                    <p>Render the documentation as html. If a <code>template</code> is provided, it is used instead of the default one. This is mainly used for testing since you usually want to have some navigation menus which are extracted by creating the documentation in batch mode with <a href='#make'>make</a>.</p>
+                                        <a name=''></a>
+          <h4 class='function'>private:addToParaN <code>(i, d)</code></h4>
+          
+                    <p>Add with newline.</p>
+                              </section>
+                    <section id='TODO'>
           <h2 class='section'>TODO</h2>
 
                     
-                      <p><span class='todo'><span>TODO</span> This is a todo definition</span></p>
-                            </section>
-                <section id='FIXME'>
+                    <p><span class='todo'><span>TODO</span> This is a todo definition</span></p>
+                              </section>
+                    <section id='FIXME'>
           <h2 class='section'>FIXME</h2>
 
                     
-                      <p><span class='fixme'><span>FIXME</span> This is a fixme</span></p>
-                            </section>
-              </div>
+                    <p><span class='fixme'><span>FIXME</span> This is a fixme</span></p>
+                              </section>
+                  </div>
 
-      <div class="span3 bs-docs-sidebar global-nav">
-        <ul class="nav nav-list bs-docs-sidenav">
-                    <li class='module'><a href='lk.html'>lk</a></li>
-                              <li><a href='lk.Client.html'>lk.Client</a></li>
-                    <li><a href='lk.Command.html'>lk.Command</a></li>
-                    <li><a href='lk.DavMorph.html'>lk.DavMorph</a></li>
-                    <li><a href='lk.DavServer.html'>lk.DavServer</a></li>
-                    <li><a href='lk.Debug.html'>lk.Debug</a></li>
-                    <li><a href='lk.Dir.html'>lk.Dir</a></li>
-                    <li class='active'><a href='lk.Doc.html'>lk.Doc</a></li>
-                    <li><a href='lk.Environment.html'>lk.Environment</a></li>
-                    <li><a href='lk.FileResource.html'>lk.FileResource</a></li>
-                    <li><a href='lk.Inlet.html'>lk.Inlet</a></li>
-                    <li><a href='lk.InletMethod.html'>lk.InletMethod</a></li>
-                    <li><a href='lk.Lubyk.html'>lk.Lubyk</a></li>
-                    <li><a href='lk.Morph.html'>lk.Morph</a></li>
-                    <li><a href='lk.Node.html'>lk.Node</a></li>
-                    <li><a href='lk.Observer.html'>lk.Observer</a></li>
-                    <li><a href='lk.Outlet.html'>lk.Outlet</a></li>
-                    <li><a href='lk.OutletMethod.html'>lk.OutletMethod</a></li>
-                    <li><a href='lk.ParamMethod.html'>lk.ParamMethod</a></li>
-                    <li><a href='lk.Patch.html'>lk.Patch</a></li>
-                    <li><a href='lk.Process.html'>lk.Process</a></li>
-                    <li><a href='lk.ProcessWatch.html'>lk.ProcessWatch</a></li>
-                    <li><a href='lk.Properties.html'>lk.Properties</a></li>
-                    <li><a href='lk.RemoteProcess.html'>lk.RemoteProcess</a></li>
-                    <li><a href='lk.Scheduler.html'>lk.Scheduler</a></li>
-                    <li><a href='lk.SelectCallback.html'>lk.SelectCallback</a></li>
-                    <li><a href='lk.Service.html'>lk.Service</a></li>
-                    <li><a href='lk.ServiceBrowser.html'>lk.ServiceBrowser</a></li>
-                    <li><a href='lk.Settings.html'>lk.Settings</a></li>
-                    <li><a href='lk.Socket.html'>lk.Socket</a></li>
-                    <li><a href='lk.Socket2.html'>lk.Socket2</a></li>
-                    <li><a href='lk.StemCell.html'>lk.StemCell</a></li>
-                    <li><a href='lk.SubClass.html'>lk.SubClass</a></li>
-                    <li><a href='lk.TCPSocket.html'>lk.TCPSocket</a></li>
-                    <li><a href='lk.Thread.html'>lk.Thread</a></li>
-                    <li><a href='lk.Timer.html'>lk.Timer</a></li>
-                    <li><a href='lk.UDPSocket.html'>lk.UDPSocket</a></li>
-                    <li><a href='lk.WebServer.html'>lk.WebServer</a></li>
-                    <li><a href='lk.crypto.html'>lk.crypto</a></li>
-                    <li><a href='lk.more.html'>lk.more</a></li>
-                    <li><a href='lk.util.html'>lk.util</a></li>
-                  </ul>
+        <div class='span2'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='lk.html'>lk</a></li>
+                                    <li><a href='lk.Client.html'>lk.Client</a></li>
+                        <li><a href='lk.Command.html'>lk.Command</a></li>
+                        <li><a href='lk.DavMorph.html'>lk.DavMorph</a></li>
+                        <li><a href='lk.DavServer.html'>lk.DavServer</a></li>
+                        <li><a href='lk.Debug.html'>lk.Debug</a></li>
+                        <li><a href='lk.Dir.html'>lk.Dir</a></li>
+                        <li class='active'><a href='lk.Doc.html'>lk.Doc</a></li>
+                        <li><a href='lk.Environment.html'>lk.Environment</a></li>
+                        <li><a href='lk.FileResource.html'>lk.FileResource</a></li>
+                        <li><a href='lk.Finalizer.html'>lk.Finalizer</a></li>
+                        <li><a href='lk.Inlet.html'>lk.Inlet</a></li>
+                        <li><a href='lk.InletMethod.html'>lk.InletMethod</a></li>
+                        <li><a href='lk.Lubyk.html'>lk.Lubyk</a></li>
+                        <li><a href='lk.Morph.html'>lk.Morph</a></li>
+                        <li><a href='lk.Node.html'>lk.Node</a></li>
+                        <li><a href='lk.Observer.html'>lk.Observer</a></li>
+                        <li><a href='lk.Outlet.html'>lk.Outlet</a></li>
+                        <li><a href='lk.OutletMethod.html'>lk.OutletMethod</a></li>
+                        <li><a href='lk.ParamMethod.html'>lk.ParamMethod</a></li>
+                        <li><a href='lk.Patch.html'>lk.Patch</a></li>
+                        <li><a href='lk.Process.html'>lk.Process</a></li>
+                        <li><a href='lk.ProcessWatch.html'>lk.ProcessWatch</a></li>
+                        <li><a href='lk.Properties.html'>lk.Properties</a></li>
+                        <li><a href='lk.RemoteProcess.html'>lk.RemoteProcess</a></li>
+                        <li><a href='lk.Scheduler.html'>lk.Scheduler</a></li>
+                        <li><a href='lk.SelectCallback.html'>lk.SelectCallback</a></li>
+                        <li><a href='lk.Service.html'>lk.Service</a></li>
+                        <li><a href='lk.ServiceBrowser.html'>lk.ServiceBrowser</a></li>
+                        <li><a href='lk.Settings.html'>lk.Settings</a></li>
+                        <li><a href='lk.Socket.html'>lk.Socket</a></li>
+                        <li><a href='lk.Socket2.html'>lk.Socket2</a></li>
+                        <li><a href='lk.StemCell.html'>lk.StemCell</a></li>
+                        <li><a href='lk.SubClass.html'>lk.SubClass</a></li>
+                        <li><a href='lk.TCPSocket.html'>lk.TCPSocket</a></li>
+                        <li><a href='lk.Thread.html'>lk.Thread</a></li>
+                        <li><a href='lk.TimeRef.html'>lk.TimeRef</a></li>
+                        <li><a href='lk.Timer.html'>lk.Timer</a></li>
+                        <li><a href='lk.UDPSocket.html'>lk.UDPSocket</a></li>
+                        <li><a href='lk.WebServer.html'>lk.WebServer</a></li>
+                        <li><a href='lk.core.html'>lk.core</a></li>
+                        <li><a href='lk.crypto.html'>lk.crypto</a></li>
+                        <li><a href='lk.more.html'>lk.more</a></li>
+                        <li><a href='lk.util.html'>lk.util</a></li>
+                      </ul>
+        </div>
       </div>
     </div>
-  </div>
 
     <footer class="footer">
-      <div class="container">
-         made with <a href='lk.Doc.html'>lk.Doc</a> 
-      </div>
+    <div class="container">
+       made with <a href='http://doc.lubyk.org/lk.Doc.html'>lk.Doc</a> 
+    </div>
     </footer>
 
-    <!-- Placed at the end of the document so the pages load faster -->
-    <!--
-    <script src="assets/js/jquery.js"></script>
-    <script src="assets/js/bootstrap-transition.js"></script>
-    <script src="assets/js/bootstrap-alert.js"></script>
-    <script src="assets/js/bootstrap-modal.js"></script>
-    <script src="assets/js/bootstrap-dropdown.js"></script>
-    <script src="assets/js/bootstrap-scrollspy.js"></script>
-    <script src="assets/js/bootstrap-tab.js"></script>
-    <script src="assets/js/bootstrap-tooltip.js"></script>
-    <script src="assets/js/bootstrap-popover.js"></script>
-    <script src="assets/js/bootstrap-button.js"></script>
-    <script src="assets/js/bootstrap-collapse.js"></script>
-    <script src="assets/js/bootstrap-carousel.js"></script>
-    <script src="assets/js/bootstrap-typeahead.js"></script>
-    <script src="assets/js/bootstrap-affix.js"></script>
-    -->
-
-    
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
     <script src='http://code.jquery.com/jquery.js'></script>
     <script src='js/bootstrap.min.js'></script>
   </body>
 </html>
+

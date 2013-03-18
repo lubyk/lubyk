@@ -8,25 +8,6 @@
     <meta name="author" content="">
 
 
-    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
-
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-        config: ["MMLorHTML.js"],
-        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
-        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
-        TeX: {
-          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
-        },
-        menuSettings: {
-          zoom: "Hover",
-          mpContext: true,
-          mpMouse: true
-        },
-      });
-    </script>
-    <script type="text/javascript"
-  src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
 
     <link href="css/bootstrap.css" rel="stylesheet">
     <link href="css/bootstrap-responsive.css" rel="stylesheet">
@@ -44,37 +25,37 @@
       </div>
     </div>
 
-  <div class="container">
+    <div class="container">
 
-    <div class="row">
+      <div class="row">
 
-      <div class="span2 bs-docs-sidebar local-nav">
-        <ul class="nav nav-list bs-docs-sidenav affix">
-                    <li><a href='#Properties'><i class='icon-chevron-right'></i> lk.Properties</a></li>
-                  </ul>
-      </div>
+        <div class='span3'>
+          <ul class='nav nav-tabs nav-stacked local-nav affix'>
+                        <li><a href='#Properties'><i class='icon-chevron-right'></i> lk.Properties</a></li>
+                      </ul>
+        </div>
 
-      <div class="span7">
+        <div class="span7">
 
-                <section id='Properties'>
+                    <section id='Properties'>
           <h2 class='section'>lk.Properties</h2>
 
                               <a name='__index'></a>
           <h4 class='method'><span>:</span>__index <code>(idx)</code></h4>
           
-                      <p class='summary'></p>
-                      <p>local lib = {type='lk.Properties'} <a href='lk.Properties.html'>lk.Properties</a> = lib</p>
-                      <p>-- node.property('foo', 'info message') local function node<em>declare</em>property(node, prop<em>name, info) local self = node.prop local prop = self.properties[prop</em>name] if not prop then</p>
-                      <p><pre class='prettyprint lang-lua'>-- declaring a new property (not an update)
+                    <p class='summary'></p>
+                    <p>local lib = {type='lk.Properties'} <a href='lk.Properties.html'>lk.Properties</a> = lib</p>
+                    <p>-- node.property('foo', 'info message') local function node<em>declare</em>property(node, prop<em>name, info) local self = node.prop local prop = self.properties[prop</em>name] if not prop then</p>
+                    <p><pre class='prettyprint lang-lua'>-- declaring a new property (not an update)
 prop = {name = prop_name, observers = {}}
 self.properties[prop_name] = prop</pre></p>
-                      <p>end -- only thing that an be updated prop.info = info end</p>
-                      <p>-- property accessor with callbacks local function set_property(self, idx, value) local prop = self.properties[idx] if not prop then</p>
-                      <p><pre class='prettyprint lang-lua'>error(string.format('Unknown property %s', idx))</pre></p>
-                      <p>end local old_value = self.values[idx] local callback  = self.node[prop.name] if callback then</p>
-                      <p><pre class='prettyprint lang-lua'>value = callback(self.node, value)</pre></p>
-                      <p>end if value ~= old_value then</p>
-                      <p><pre class='prettyprint lang-lua'>-- set new value
+                    <p>end -- only thing that an be updated prop.info = info end</p>
+                    <p>-- property accessor with callbacks local function set_property(self, idx, value) local prop = self.properties[idx] if not prop then</p>
+                    <p><pre class='prettyprint lang-lua'>error(string.format('Unknown property %s', idx))</pre></p>
+                    <p>end local old_value = self.values[idx] local callback  = self.node[prop.name] if callback then</p>
+                    <p><pre class='prettyprint lang-lua'>value = callback(self.node, value)</pre></p>
+                    <p>end if value ~= old_value then</p>
+                    <p><pre class='prettyprint lang-lua'>-- set new value
 self.values[idx] = value
 -- notify value change
 local observers = prop.observers
@@ -86,132 +67,135 @@ for _, list in ipairs(observers) do
   -- target:method(target_idx, value)
   list[1](list[2], list[3], value)
 end</pre></p>
-                      <p>end end lib.<em></em>newindex = set_property</p>
-                      <p>local function add<em>observer(self, prop</em>name, target<em>method, target, target</em>idx) local prop = self.properties[prop_name] if not prop then</p>
-                      <p><pre class='prettyprint lang-lua'>error(string.format("Cannot connect '%s' to '%s' (source property does not exist)", prop_name, target_idx))</pre></p>
-                      <p>end local observers = prop.observers -- make sure we do not connect twice for _, observer in ipairs(observers) do</p>
-                      <p><pre class='prettyprint lang-lua'>if observer[1] == target_method and observer[2] == target and observer[3] == target_idx then
+                    <p>end end lib.<em></em>newindex = set_property</p>
+                    <p>local function add<em>observer(self, prop</em>name, target<em>method, target, target</em>idx) local prop = self.properties[prop_name] if not prop then</p>
+                    <p><pre class='prettyprint lang-lua'>error(string.format("Cannot connect '%s' to '%s' (source property does not exist)", prop_name, target_idx))</pre></p>
+                    <p>end local observers = prop.observers -- make sure we do not connect twice for _, observer in ipairs(observers) do</p>
+                    <p><pre class='prettyprint lang-lua'>if observer[1] == target_method and observer[2] == target and observer[3] == target_idx then
   return
 end</pre></p>
-                      <p>end -- add observer table.insert(observers, {target<em>method, target, target</em>idx}) end lib.add<em>observer = add</em>observer</p>
-                      <p>local function node<em>connect</em>observer(node, prop_name, arg2, arg3, arg4) if not arg4 then</p>
-                      <p><pre class='prettyprint lang-lua'>-- arg2 == node
+                    <p>end -- add observer table.insert(observers, {target<em>method, target, target</em>idx}) end lib.add<em>observer = add</em>observer</p>
+                    <p>local function node<em>connect</em>observer(node, prop_name, arg2, arg3, arg4) if not arg4 then</p>
+                    <p><pre class='prettyprint lang-lua'>-- arg2 == node
 -- arg3 == target_idx
 add_observer(node.prop, prop_name, set_property, arg2.prop, arg3)</pre></p>
-                      <p>else</p>
-                      <p><pre class='prettyprint lang-lua'>-- arg2 == target_method
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>-- arg2 == target_method
 -- arg3 == target
 -- arg4 == target_idx
 add_observer(node.prop, prop_name, arg2, arg3, arg4)</pre></p>
-                      <p>end end</p>
-                      <p>local function remove<em>observer(self, prop</em>name, target<em>method, target, target</em>idx) local prop = self.properties[prop_name] if not prop then</p>
-                      <p><pre class='prettyprint lang-lua'>-- ignore
+                    <p>end end</p>
+                    <p>local function remove<em>observer(self, prop</em>name, target<em>method, target, target</em>idx) local prop = self.properties[prop_name] if not prop then</p>
+                    <p><pre class='prettyprint lang-lua'>-- ignore
 return</pre></p>
-                      <p>end local observers = prop.observers</p>
-                      <p>-- remove connected observer local i = <a href='#observers'>observers</a> while i > 0 do</p>
-                      <p><pre class='prettyprint lang-lua'>local observer = observers[i]
+                    <p>end local observers = prop.observers</p>
+                    <p>-- remove connected observer local i = <a href='#observers'>observers</a> while i > 0 do</p>
+                    <p><pre class='prettyprint lang-lua'>local observer = observers[i]
 if observer[1] == target_method and observer[2] == target and (target_idx == nil or observer[3] == target_idx) then
   -- remove element i from table
   table.remove(observers, i)
 end
 i = i - 1</pre></p>
-                      <p>end end lib.remove<em>observer = remove</em>observer</p>
-                      <p>local function node<em>disconnect</em>observer(node, arg1, arg2, arg3) if arg2 == nil then</p>
-                      <p><pre class='prettyprint lang-lua'>-- arg1 == target
+                    <p>end end lib.remove<em>observer = remove</em>observer</p>
+                    <p>local function node<em>disconnect</em>observer(node, arg1, arg2, arg3) if arg2 == nil then</p>
+                    <p><pre class='prettyprint lang-lua'>-- arg1 == target
 -- disconnect observer from all properties
 for prop_name, _ in pairs(node.prop.properties) do
   remove_observer(node.prop, prop_name, set_property, arg1.prop)
 end</pre></p>
-                      <p>elseif arg3 == nil then</p>
-                      <p><pre class='prettyprint lang-lua'>-- arg1 = prop_name
+                    <p>elseif arg3 == nil then</p>
+                    <p><pre class='prettyprint lang-lua'>-- arg1 = prop_name
 -- arg2 = target node
 -- disconnect observer from property 'prop_name'
 remove_observer(node.prop, arg1, set_property, arg2.prop)</pre></p>
-                      <p>else</p>
-                      <p><pre class='prettyprint lang-lua'>-- arg1 = prop_name
+                    <p>else</p>
+                    <p><pre class='prettyprint lang-lua'>-- arg1 = prop_name
 -- arg2 = target
 -- arg3 = target_idx
 -- disconnect observer hook 'target_idx' from property 'prop_name'
 remove_observer(node.prop, arg1, set_property, arg2.prop, arg3)</pre></p>
-                      <p>end end</p>
-                      <p>setmetatable(lib, { -- new method <em></em>call = function(lib, node) local instance = {properties = {}, node = node, values = {}} -- declare property methods -- FIXME: move these into <a href='lk.Node.html'>lk.Node</a> node.property   = node<em>declare</em>property node.connect    = node<em>connect</em>observer node.disconnect = node<em>disconnect</em>observer node.prop = instance setmetatable(instance, lib) return instance end})</p>
-                            </section>
-              </div>
+                    <p>end end</p>
+                    <p>setmetatable(lib, { -- new method <em></em>call = function(lib, node) local instance = {properties = {}, node = node, values = {}} -- declare property methods -- FIXME: move these into <a href='lk.Node.html'>lk.Node</a> node.property   = node<em>declare</em>property node.connect    = node<em>connect</em>observer node.disconnect = node<em>disconnect</em>observer node.prop = instance setmetatable(instance, lib) return instance end})</p>
+                              </section>
+                  </div>
 
-      <div class="span3 bs-docs-sidebar global-nav">
-        <ul class="nav nav-list bs-docs-sidenav">
-                    <li class='module'><a href='lk.html'>lk</a></li>
-                              <li><a href='lk.Client.html'>lk.Client</a></li>
-                    <li><a href='lk.Command.html'>lk.Command</a></li>
-                    <li><a href='lk.DavMorph.html'>lk.DavMorph</a></li>
-                    <li><a href='lk.DavServer.html'>lk.DavServer</a></li>
-                    <li><a href='lk.Debug.html'>lk.Debug</a></li>
-                    <li><a href='lk.Dir.html'>lk.Dir</a></li>
-                    <li><a href='lk.Doc.html'>lk.Doc</a></li>
-                    <li><a href='lk.Environment.html'>lk.Environment</a></li>
-                    <li><a href='lk.FileResource.html'>lk.FileResource</a></li>
-                    <li><a href='lk.Inlet.html'>lk.Inlet</a></li>
-                    <li><a href='lk.InletMethod.html'>lk.InletMethod</a></li>
-                    <li><a href='lk.Lubyk.html'>lk.Lubyk</a></li>
-                    <li><a href='lk.Morph.html'>lk.Morph</a></li>
-                    <li><a href='lk.Node.html'>lk.Node</a></li>
-                    <li><a href='lk.Observer.html'>lk.Observer</a></li>
-                    <li><a href='lk.Outlet.html'>lk.Outlet</a></li>
-                    <li><a href='lk.OutletMethod.html'>lk.OutletMethod</a></li>
-                    <li><a href='lk.ParamMethod.html'>lk.ParamMethod</a></li>
-                    <li><a href='lk.Patch.html'>lk.Patch</a></li>
-                    <li><a href='lk.Process.html'>lk.Process</a></li>
-                    <li><a href='lk.ProcessWatch.html'>lk.ProcessWatch</a></li>
-                    <li class='active'><a href='lk.Properties.html'>lk.Properties</a></li>
-                    <li><a href='lk.RemoteProcess.html'>lk.RemoteProcess</a></li>
-                    <li><a href='lk.Scheduler.html'>lk.Scheduler</a></li>
-                    <li><a href='lk.SelectCallback.html'>lk.SelectCallback</a></li>
-                    <li><a href='lk.Service.html'>lk.Service</a></li>
-                    <li><a href='lk.ServiceBrowser.html'>lk.ServiceBrowser</a></li>
-                    <li><a href='lk.Settings.html'>lk.Settings</a></li>
-                    <li><a href='lk.Socket.html'>lk.Socket</a></li>
-                    <li><a href='lk.Socket2.html'>lk.Socket2</a></li>
-                    <li><a href='lk.StemCell.html'>lk.StemCell</a></li>
-                    <li><a href='lk.SubClass.html'>lk.SubClass</a></li>
-                    <li><a href='lk.TCPSocket.html'>lk.TCPSocket</a></li>
-                    <li><a href='lk.Thread.html'>lk.Thread</a></li>
-                    <li><a href='lk.Timer.html'>lk.Timer</a></li>
-                    <li><a href='lk.UDPSocket.html'>lk.UDPSocket</a></li>
-                    <li><a href='lk.WebServer.html'>lk.WebServer</a></li>
-                    <li><a href='lk.crypto.html'>lk.crypto</a></li>
-                    <li><a href='lk.more.html'>lk.more</a></li>
-                    <li><a href='lk.util.html'>lk.util</a></li>
-                  </ul>
+        <div class='span2'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='lk.html'>lk</a></li>
+                                    <li><a href='lk.Client.html'>lk.Client</a></li>
+                        <li><a href='lk.Command.html'>lk.Command</a></li>
+                        <li><a href='lk.DavMorph.html'>lk.DavMorph</a></li>
+                        <li><a href='lk.DavServer.html'>lk.DavServer</a></li>
+                        <li><a href='lk.Debug.html'>lk.Debug</a></li>
+                        <li><a href='lk.Dir.html'>lk.Dir</a></li>
+                        <li><a href='lk.Doc.html'>lk.Doc</a></li>
+                        <li><a href='lk.Environment.html'>lk.Environment</a></li>
+                        <li><a href='lk.FileResource.html'>lk.FileResource</a></li>
+                        <li><a href='lk.Finalizer.html'>lk.Finalizer</a></li>
+                        <li><a href='lk.Inlet.html'>lk.Inlet</a></li>
+                        <li><a href='lk.InletMethod.html'>lk.InletMethod</a></li>
+                        <li><a href='lk.Lubyk.html'>lk.Lubyk</a></li>
+                        <li><a href='lk.Morph.html'>lk.Morph</a></li>
+                        <li><a href='lk.Node.html'>lk.Node</a></li>
+                        <li><a href='lk.Observer.html'>lk.Observer</a></li>
+                        <li><a href='lk.Outlet.html'>lk.Outlet</a></li>
+                        <li><a href='lk.OutletMethod.html'>lk.OutletMethod</a></li>
+                        <li><a href='lk.ParamMethod.html'>lk.ParamMethod</a></li>
+                        <li><a href='lk.Patch.html'>lk.Patch</a></li>
+                        <li><a href='lk.Process.html'>lk.Process</a></li>
+                        <li><a href='lk.ProcessWatch.html'>lk.ProcessWatch</a></li>
+                        <li class='active'><a href='lk.Properties.html'>lk.Properties</a></li>
+                        <li><a href='lk.RemoteProcess.html'>lk.RemoteProcess</a></li>
+                        <li><a href='lk.Scheduler.html'>lk.Scheduler</a></li>
+                        <li><a href='lk.SelectCallback.html'>lk.SelectCallback</a></li>
+                        <li><a href='lk.Service.html'>lk.Service</a></li>
+                        <li><a href='lk.ServiceBrowser.html'>lk.ServiceBrowser</a></li>
+                        <li><a href='lk.Settings.html'>lk.Settings</a></li>
+                        <li><a href='lk.Socket.html'>lk.Socket</a></li>
+                        <li><a href='lk.Socket2.html'>lk.Socket2</a></li>
+                        <li><a href='lk.StemCell.html'>lk.StemCell</a></li>
+                        <li><a href='lk.SubClass.html'>lk.SubClass</a></li>
+                        <li><a href='lk.TCPSocket.html'>lk.TCPSocket</a></li>
+                        <li><a href='lk.Thread.html'>lk.Thread</a></li>
+                        <li><a href='lk.TimeRef.html'>lk.TimeRef</a></li>
+                        <li><a href='lk.Timer.html'>lk.Timer</a></li>
+                        <li><a href='lk.UDPSocket.html'>lk.UDPSocket</a></li>
+                        <li><a href='lk.WebServer.html'>lk.WebServer</a></li>
+                        <li><a href='lk.core.html'>lk.core</a></li>
+                        <li><a href='lk.crypto.html'>lk.crypto</a></li>
+                        <li><a href='lk.more.html'>lk.more</a></li>
+                        <li><a href='lk.util.html'>lk.util</a></li>
+                      </ul>
+        </div>
       </div>
     </div>
-  </div>
 
     <footer class="footer">
-      <div class="container">
-         made with <a href='lk.Doc.html'>lk.Doc</a> 
-      </div>
+    <div class="container">
+       made with <a href='http://doc.lubyk.org/lk.Doc.html'>lk.Doc</a> 
+    </div>
     </footer>
 
-    <!-- Placed at the end of the document so the pages load faster -->
-    <!--
-    <script src="assets/js/jquery.js"></script>
-    <script src="assets/js/bootstrap-transition.js"></script>
-    <script src="assets/js/bootstrap-alert.js"></script>
-    <script src="assets/js/bootstrap-modal.js"></script>
-    <script src="assets/js/bootstrap-dropdown.js"></script>
-    <script src="assets/js/bootstrap-scrollspy.js"></script>
-    <script src="assets/js/bootstrap-tab.js"></script>
-    <script src="assets/js/bootstrap-tooltip.js"></script>
-    <script src="assets/js/bootstrap-popover.js"></script>
-    <script src="assets/js/bootstrap-button.js"></script>
-    <script src="assets/js/bootstrap-collapse.js"></script>
-    <script src="assets/js/bootstrap-carousel.js"></script>
-    <script src="assets/js/bootstrap-typeahead.js"></script>
-    <script src="assets/js/bootstrap-affix.js"></script>
-    -->
-
-    
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
     <script src='http://code.jquery.com/jquery.js'></script>
     <script src='js/bootstrap.min.js'></script>
   </body>
 </html>
+

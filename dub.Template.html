@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>dub.Template</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+
+
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/docs.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class='row'>
+          <div class='span12'>
+             <a href='http://lubyk.org'><img alt='lubyk logo' src='img/lubyk.png'/> <h1>Lubyk documentation</h1></a> 
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="row">
+
+        <div class='span3'>
+          <ul class='nav nav-tabs nav-stacked local-nav affix'>
+                        <li><a href='#Template'><i class='icon-chevron-right'></i> dub.Template</a></li>
+                      </ul>
+        </div>
+
+        <div class="span7">
+
+                    <section id='Template'>
+          <h2 class='section'>dub.Template</h2>
+
+                              <a name='run'></a>
+          <h4 class='method'><span>:</span>run <code>(env)</code></h4>
+          
+                    <p class='summary'></p>
+                    <p>local lib     = {} local private = {} lib.<em></em>index   = lib <a href='dub.Template.html'>dub.Template</a>  = lib</p>
+                    <p>--=============================================== dub.Template() setmetatable(lib, { <em></em>call = function(lib, source)</p>
+                    <p><pre class='prettyprint lang-lua'>local self
+if type(source) == 'string' then
+  self = {source = source}
+else
+  self = source
+  -- Grab source from path...
+  local file = io.open(self.path, 'r')
+  self.source = file:read('*a')
+  file:close()
+end
+setmetatable(self, lib)
+self.lua = self:parse(self.source)
+self.func, self.err = loadstring(self.lua)
+if self.err then
+  print(self.err)
+  print(self.lua)
+end
+return self</pre></p>
+                    <p>end })</p>
+                    <p>-- Create Lua code from the template string.  local res = '' local eat<em>next</em>newline --for text, block in string.gmatch(tmpl, "([^{]-)(%b{})") do -- Find balanced { for text, block in string.gmatch(source .. '{{}}', '([^{]-)(%b{})') do</p>
+                    <p><pre class='prettyprint lang-lua'>if text ~= '' then
+  if string.sub(text, 1, 1) == "\n" then
+    if not eat_next_newline then
+      -- Avoid multiline return removal
+      text = "\n" .. text
+    end
+  end
+end
+-- handle block
+eat_next_newline = false
+local block_type = string.sub(block, 1, 2)
+local content = string.sub(block, 3, -3)
+local block_text = ''
+if block_type == '{{' then
+  -- output content
+  if content ~= '' then
+    block_text = string.format("_out_(%s)\n", content)
+  end
+elseif block_type == '{|' then
+  -- output content with indentation
+  if content ~= '' then
+    block_text = string.format("_indout_(%s, [=[%s]=])\n", content, text)
+    text = nil
+  end
+elseif block_type == '{%' then
+  block_text = content .. "\n"
+  eat_next_newline = true
+else
+  text = text .. '{'
+  block_text = self:parse(string.sub(block, 2, -1))
+end
+if text then
+  res = res .. string.format("_out_([=[%s]=])\n", text) .. block_text
+else
+  res = res .. block_text
+end</pre></p>
+                    <p>end return res end</p>
+                    <p>local buffer<em> = '' function env.</em>out_(str)</p>
+                    <p><pre class='prettyprint lang-lua'>buffer_ = buffer_ .. (str or '')</pre></p>
+                    <p>end function env.<em>indout</em>(str, indent)</p>
+                    <p><pre class='prettyprint lang-lua'>buffer_ = buffer_ .. indent .. string.gsub(str, '\n', indent)</pre></p>
+                              </section>
+                  </div>
+
+        <div class='span2'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='dub.html'>dub</a></li>
+                                    <li><a href='dub.CTemplate.html'>dub.CTemplate</a></li>
+                        <li><a href='dub.Class.html'>dub.Class</a></li>
+                        <li><a href='dub.Function.html'>dub.Function</a></li>
+                        <li><a href='dub.Inspector.html'>dub.Inspector</a></li>
+                        <li><a href='dub.LuaBinder.html'>dub.LuaBinder</a></li>
+                        <li><a href='dub.MemoryStorage.html'>dub.MemoryStorage</a></li>
+                        <li><a href='dub.Namespace.html'>dub.Namespace</a></li>
+                        <li><a href='dub.OptParser.html'>dub.OptParser</a></li>
+                        <li class='active'><a href='dub.Template.html'>dub.Template</a></li>
+                      </ul>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+    <div class="container">
+       made with <a href='http://doc.lubyk.org/lk.Doc.html'>lk.Doc</a> 
+    </div>
+    </footer>
+
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
+    <script src='http://code.jquery.com/jquery.js'></script>
+    <script src='js/bootstrap.min.js'></script>
+  </body>
+</html>
+

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Class</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+
+
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/docs.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class='row'>
+          <div class='span12'>
+             <a href='http://lubyk.org'><img alt='lubyk logo' src='img/lubyk.png'/> <h1>Lubyk documentation</h1></a> 
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="row">
+
+        <div class='span3'>
+          <ul class='nav nav-tabs nav-stacked local-nav affix'>
+                        <li><a href='#Class'><i class='icon-chevron-right'></i> dub.Class</a></li>
+                        <li><a href='#TODO'><i class='icon-chevron-right'></i> TODO</a></li>
+                      </ul>
+        </div>
+
+        <div class="span7">
+
+                    <section id='Class'>
+          <h2 class='section'>Class</h2>
+
+                    
+                    <p class='summary'>A class/struct definition.</p>
+                                        <a name='__call'></a>
+          <h4 class='function'><span>.</span>__call <code>(lib, self)</code></h4>
+          
+                    <p>This lets sub-classes of <a href='dub.Class.html'>dub.Class</a> like <a href='dub.Namespace.html'>dub.Namespace</a> or <a href='dub.CTemplate.html'>dub.CTemplate</a> use the same call convention to create new objects.</p>
+                                        <a name='new'></a>
+          <h4 class='function'><span>.</span>new <code>(self)</code></h4>
+          
+                    <p>Create a new class definition. Most of the attributes are passed with <code>self</code>. Usage example:</p>
+                    <p><pre class='prettyprint lang-lua'>local class = dub.Class {
+  -- self can be a class or db (root)
+  db      = self.db or self,
+  parent  = parent,
+  name    = name,
+  xml     = elem,
+  xml_headers  = {
+    {path = header.dir .. lk.Dir.sep .. elem.refid .. '.xml', dir = header.dir}
+  },
+}</pre></p>
+                                        <a name='findChild'></a>
+          <h4 class='method'><span>:</span>findChild <code>(name)</code></h4>
+          
+                    <p>Return a child element from <code>name</code> or nil if nothing is found. Uses the database internally.</p>
+                                        <a name='method'></a>
+          <h4 class='method'><span>:</span>method <code>(name)</code></h4>
+          
+                    <p>Return a method from a given <code>name</code>.</p>
+                                        <a name='methods'></a>
+          <h4 class='method'><span>:</span>methods <code>()</code></h4>
+          
+                    <p>Return an iterator over the methods of this class.</p>
+                                        <a name='attributes'></a>
+          <h4 class='method'><span>:</span>attributes <code>()</code></h4>
+          
+                    <p>Return an iterator over the attributes of this class.</p>
+                                        <a name='superclasses'></a>
+          <h4 class='method'><span>:</span>superclasses <code>()</code></h4>
+          
+                    <p>Return an iterator over the superclasses of this class.</p>
+                                        <a name='hasVariables'></a>
+          <h4 class='method'><span>:</span>hasVariables <code>()</code></h4>
+          
+                    <p>Returns true if the class has variables (public C attributes).</p>
+                                        <a name='constants'></a>
+          <h4 class='method'><span>:</span>constants <code>()</code></h4>
+          
+                    <p>Return an iterator over the constants defined in this class.</p>
+                                        <a name='fullname'></a>
+          <h4 class='method'><span>:</span>fullname <code>()</code></h4>
+          
+                    <p>The fullname of the class in the form of <code>parent::ClassName</code>.</p>
+                                        <a name='needCast'></a>
+          <h4 class='method'><span>:</span>needCast <code>()</code></h4>
+          
+                    <p>Return true if the class needs a cast method (it has known superclasses).</p>
+                                        <a name='setName'></a>
+          <h4 class='method'><span>:</span>setName <code>(name)</code></h4>
+          
+                    <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION</span></p>
+                                        <a name='setOpt'></a>
+          <h4 class='method'><span>:</span>setOpt <code>(opt)</code></h4>
+          
+                    <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION</span></p>
+                                        <a name='namespace'></a>
+          <h4 class='method'><span>:</span>namespace <code>()</code></h4>
+          
+                    <p>Return the enclosing namespace or nil if none found.</p>
+                                        <a name='ignoreFunc'></a>
+          <h4 class='method'><span>:</span>ignoreFunc <code>(name)</code></h4>
+          
+                    <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION</span></p>
+                              </section>
+                    <section id='TODO'>
+          <h2 class='section'>TODO</h2>
+
+                    
+                    <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION FOR <a href='#setName'>setName</a>.</span></p>
+                    <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION FOR <a href='#setOpt'>setOpt</a>.</span></p>
+                    <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION FOR <a href='#ignoreFunc'>ignoreFunc</a>.</span></p>
+                              </section>
+                  </div>
+
+        <div class='span2'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='dub.html'>dub</a></li>
+                                    <li><a href='dub.CTemplate.html'>dub.CTemplate</a></li>
+                        <li class='active'><a href='dub.Class.html'>dub.Class</a></li>
+                        <li><a href='dub.Function.html'>dub.Function</a></li>
+                        <li><a href='dub.Inspector.html'>dub.Inspector</a></li>
+                        <li><a href='dub.LuaBinder.html'>dub.LuaBinder</a></li>
+                        <li><a href='dub.MemoryStorage.html'>dub.MemoryStorage</a></li>
+                        <li><a href='dub.Namespace.html'>dub.Namespace</a></li>
+                        <li><a href='dub.OptParser.html'>dub.OptParser</a></li>
+                        <li><a href='dub.Template.html'>dub.Template</a></li>
+                      </ul>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+    <div class="container">
+       made with <a href='http://doc.lubyk.org/lk.Doc.html'>lk.Doc</a> 
+    </div>
+    </footer>
+
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
+    <script src='http://code.jquery.com/jquery.js'></script>
+    <script src='js/bootstrap.min.js'></script>
+  </body>
+</html>
+
