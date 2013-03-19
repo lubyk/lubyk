@@ -45,29 +45,12 @@
           
                     <p class='summary'></p>
                     <p>local lib = {type='lk.RemoteProcess'} lib.<em></em>index      = lib <a href='lk.RemoteProcess.html'>lk.RemoteProcess</a> = lib</p>
-                    <p>setmetatable(lib, { -- new method <em></em>call = function(lib, name, remote_service) local instance = {</p>
-                    <p><pre class='prettyprint lang-lua'>name = name,
-inlets = {},</pre></p>
-                    <p>} setmetatable(instance, lib)</p>
-                    <p>if remote_service then</p>
-                    <p><pre class='prettyprint lang-lua'>instance:connect(remote_service)</pre></p>
-                    <p>end</p>
+                    <p>setmetatable(lib, { -- new method <em></em>call = function(lib, name, remote_service) local instance = { name = name, inlets = {}, } setmetatable(instance, lib)</p>
+                    <p>if remote<em>service then instance:connect(remote</em>service) end</p>
                     <p>return instance end})</p>
-                    <p>self.name    = remote<em>service.name self.ip      = remote</em>service.ip self.info    = remote<em>service.info self.sub</em>url = remote<em>service.sub</em>url self.push    = remote<em>service.push self.req     = remote</em>service.req -- replace dummy 'send' self.send = function(...)</p>
-                    <p><pre class='prettyprint lang-lua'>remote_service.push:send(...)</pre></p>
-                    <p>end self.online = true end</p>
+                    <p>self.name    = remote<em>service.name self.ip      = remote</em>service.ip self.info    = remote<em>service.info self.sub</em>url = remote<em>service.sub</em>url self.push    = remote<em>service.push self.req     = remote</em>service.req -- replace dummy 'send' self.send = function(...) remote_service.push:send(...) end self.online = true end</p>
                     <p>self.info    = nil self.sub_url = nil self.push    = nil self.req     = nil -- dummy self.send = lib.send self.online = false end</p>
                     <p>--print('Not connected', url) -- not connected -- This method is replaced on connection end</p>
-                    <p>-- Return a dummy inlet local inlet = self.inlets[path] if not inlet then</p>
-                    <p><pre class='prettyprint lang-lua'>inlet = {target_url = '/' .. self.name .. '/' .. path}
--- just to fool lk.Outlet in thinking this is an lk.Inlet
--- FIXME: remove metatable test in Patch:get() ?
--- FIXME: just check for a 'receive' function ?
-setmetatable(inlet, lk.Inlet)
-function inlet.receive(...)
-  self.send(path, ...)
-end
-self.inlets[path] = inlet</pre></p>
                               </section>
                   </div>
 

@@ -45,81 +45,29 @@
           
                     <p class='summary'></p>
                     <p>-- 'inlet' accessor metamethod local lib   = {type = 'lk.Outlet'} lib.<em></em>index = lib <a href='lk.Outlet.html'>lk.Outlet</a>   = lib</p>
-                    <p>local doSend setmetatable(lib, { -- lk.Outlet(node) -- Create a new outlet and insert it into -- node. <em></em>call = function(lib, node, name, opts) local self = {</p>
-                    <p><pre class='prettyprint lang-lua'>name = name,
-node = node,
-opts = opts or {},
--- Connection information
-links = {},
--- Connection inlets
-inlets = {},</pre></p>
-                    <p>}</p>
-                    <p>function self.send(...)</p>
-                    <p><pre class='prettyprint lang-lua'>doSend(self, ...)</pre></p>
-                    <p>end</p>
+                    <p>local doSend setmetatable(lib, { -- lk.Outlet(node) -- Create a new outlet and insert it into -- node. <em></em>call = function(lib, node, name, opts) local self = { name = name, node = node, opts = opts or {}, -- Connection information links = {}, -- Connection inlets inlets = {}, }</p>
+                    <p>function self.send(...) doSend(self, ...) end</p>
                     <p>return setmetatable(self, lib) end})</p>
-                    <p>function doSend(self, ...) for _,inlet in ipairs(self.inlets) do</p>
-                    <p><pre class='prettyprint lang-lua'>inlet.receive(...)</pre></p>
-                    <p>end end</p>
+                    <p>function doSend(self, ...) for _,inlet in ipairs(self.inlets) do inlet.receive(...) end end</p>
                     <p>self.opts = opts end</p>
-                    <p>local default<em>receive = <a href='lk.Inlet.html#receive'>lk.Inlet.receive</a> -- TODO: performance compile new 'instance.send' method by -- generating lua code and evaluating the code with upvalues. for </em>, inl in ipairs(self.inlets) do</p>
-                    <p><pre class='prettyprint lang-lua'>if inl == inlet then
-  return
-end</pre></p>
-                    <p>end local conn = {type = 'Basic'} self.links[inlet:url()] = conn table.insert(self.inlets, inlet)</p>
-                    <p>local msg = self.opts.connect if msg then</p>
-                    <p><pre class='prettyprint lang-lua'>local receive = inlet.receive
-if receive ~= default_receive then
-  if type(msg) == 'function' then
-    msg = msg()
-  end
-  receive(msg, conn)
-end</pre></p>
-                    <p>end end</p>
-                    <p>for i, inlet in ipairs(self.inlets) do</p>
-                    <p><pre class='prettyprint lang-lua'>if inlet:url() == target_url then
-  table.remove(self.inlets, i)
-  local link_def = self.links[target_url]
-  if link_def then
-    local msg = self.opts.disconnect
-    if msg ~= nil then
-      local receive = inlet.receive
-      if receive ~= default_receive then
-        if type(msg) == 'function' then
-          msg = msg()
-        end
-
-        receive(msg)
+                    <p>local default<em>receive = <a href='lk.Inlet.html#receive'>lk.Inlet.receive</a> -- TODO: performance compile new 'instance.send' method by -- generating lua code and evaluating the code with upvalues. for </em>, inl in ipairs(self.inlets) do if inl == inlet then return end end local conn = {type = 'Basic'} self.links[inlet:url()] = conn table.insert(self.inlets, inlet)</p>
+                    <p>local msg = self.opts.connect if msg then local receive = inlet.receive if receive ~= default_receive then if type(msg) == 'function' then msg = msg() end receive(msg, conn) end end end</p>
+                    <p>for i, inlet in ipairs(self.inlets) do if inlet:url() == target<em>url then table.remove(self.inlets, i) local link</em>def = self.links[target<em>url] if link</em>def then local msg = self.opts.disconnect if msg ~= nil then local receive = inlet.receive if receive ~= default_receive then if type(msg) == 'function' then msg = msg() end</p>
+                    <pre class='prettyprint lang-lua'>        receive(msg)
       end
     end
     self.links[target_url] = nil
   end
-end</pre></p>
+end</pre>
                     <p>end end</p>
-                    <p>-- This is called on object removal. for target<em>url, </em> in pairs(self.links) do</p>
-                    <p><pre class='prettyprint lang-lua'>-- It is OK to set self.links[target_url] to nil during this
--- traversal.
-self:disconnect(target_url)</pre></p>
-                    <p>end end</p>
-                    <p>local function dumpLinks(self, changed<em>link) local links if changed</em>link then</p>
-                    <p><pre class='prettyprint lang-lua'>-- return a copy
-links = {}
-for k, v in pairs(self.links) do
-  links[k] = v
-end
-
-for k, v in pairs(changed_link) do
+                    <p>-- This is called on object removal. for target<em>url, </em> in pairs(self.links) do -- It is OK to set self.links[target<em>url] to nil during this -- traversal. self:disconnect(target</em>url) end end</p>
+                    <p>local function dumpLinks(self, changed<em>link) local links if changed</em>link then -- return a copy links = {} for k, v in pairs(self.links) do links[k] = v end</p>
+                    <pre class='prettyprint lang-lua'>for k, v in pairs(changed_link) do
   if v == false then
     links[k] = false
   end
-end</pre></p>
-                    <p>else</p>
-                    <p><pre class='prettyprint lang-lua'>links = self.links</pre></p>
-                    <p>end return links end</p>
-                    <p>local res = {</p>
-                    <p><pre class='prettyprint lang-lua'>name = self.name,
-info = self.info,
-links = dumpLinks(self, links and links[self.name]),</pre></p>
+end</pre>
+                    <p>else links = self.links end return links end</p>
                               </section>
                   </div>
 

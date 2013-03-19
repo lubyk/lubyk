@@ -46,40 +46,11 @@
                     <p class='summary'></p>
                     <p>require 'lk.Socket_core' constr    = <a href='lk.Socket.html'>lk.Socket</a> local lib = lk.SubClass(lk.Socket) <a href='lk.Socket.html'>lk.Socket</a> = lib</p>
                     <p>lib.type = 'lk.Socket' lib.TCP  = lk.Socket<em>const.TCP lib.UDP  = lk.Socket</em>const.UDP</p>
-                    <p>local self = constr(lib.TCP) assert(func) self.thread = sched:thread(function()</p>
-                    <p><pre class='prettyprint lang-lua'>func(self)</pre></p>
-                    <p>end) return setmetatable(self, lib) end</p>
+                    <p>local self = constr(lib.TCP) assert(func) self.thread = sched:thread(function() func(self) end) return setmetatable(self, lib) end</p>
                     <p>self.host    = host self.port    = self.super:bind(host, port) self.super:setNonBlocking() sched:addFd(self.thread, self.super:fd()) return self.port end</p>
-                    <p>local buffer = self.buffer while true do</p>
-                    <p><pre class='prettyprint lang-lua'>if buffer then
-  local line, rest = string.match(buffer, '([^\r\n]*)\r?\n(.*)')
-  if line then
-    self.buffer = rest
-    return line
-  end
-end
-sched:waitRead(self.sock_fd)
-local data = self.super:recv('*a')
-if buffer then
-  buffer = buffer .. data
-else
-  buffer = data
-end</pre></p>
-                    <p>end end</p>
-                    <p>local buffer = data while true do</p>
-                    <p><pre class='prettyprint lang-lua'>local sent = self.super:send(data)
-if sent == string.len(data) then
-  break
-else
-  data = string.sub(data, sent + 1)
-end
-sched:waitWrite(self.sock_fd)</pre></p>
-                    <p>end end</p>
-                    <p>assert(func) sched:waitRead(self.sock<em>fd) local cli = self.super:accept() cli.super:setNonBlocking() cli.sock</em>fd = cli:fd() -- start new thread cli.thread = sched:thread(function()</p>
-                    <p><pre class='prettyprint lang-lua'>func(cli)</pre></p>
-                    <p>end) sched:addFd(cli.thread, cli.super:fd()) return setmetatable(cli, lib) end --[[ --=============================================== ???? old stuff local function checkLoop(self) if not self.loop then</p>
-                    <p><pre class='prettyprint lang-lua'>error("Loop not set")</pre></p>
-                    <p>end end</p>
+                    <p>local buffer = self.buffer while true do if buffer then local line, rest = string.match(buffer, '([^\r\n]<strong>)\r?\n(.</strong>)') if line then self.buffer = rest return line end end sched:waitRead(self.sock_fd) local data = self.super:recv('*a') if buffer then buffer = buffer .. data else buffer = data end end end</p>
+                    <p>local buffer = data while true do local sent = self.super:send(data) if sent == string.len(data) then break else data = string.sub(data, sent + 1) end sched:waitWrite(self.sock_fd) end end</p>
+                    <p>assert(func) sched:waitRead(self.sock<em>fd) local cli = self.super:accept() cli.super:setNonBlocking() cli.sock</em>fd = cli:fd() -- start new thread cli.thread = sched:thread(function() func(cli) end) sched:addFd(cli.thread, cli.super:fd()) return setmetatable(cli, lib) end --[[ --=============================================== ???? old stuff local function checkLoop(self) if not self.loop then error("Loop not set") end end</p>
                     <p>function mt:shouldRun() checkLoop(self) return self.loop:shouldRun() end</p>
                     <p>function mt:start() checkLoop(self) self.loop:start() end</p>
                     <p>function mt:quit() checkLoop(self) self.loop:quit() end</p>

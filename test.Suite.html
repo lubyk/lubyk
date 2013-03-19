@@ -51,22 +51,22 @@
           
                     <p>Create a new test suite. It is good practice to use 'should' as local name for this suite since it makes tests more readable. The <code>name</code> should be the exact name of the class or module being tested in case the coverage option is activated in test (it is ON by default).</p>
                     <p>Usage example:</p>
-                    <p><pre class='prettyprint lang-lua'>local should = test.Suite 'lk.Dir'
+                    <pre class='prettyprint lang-lua'>local should = test.Suite 'lk.Dir'
 
 function should.listFilesInDirectory()
   -- ...
-end</pre></p>
+end</pre>
                               </section>
                     <section id='Setup,-teardown'>
           <h2 class='section'>Setup, teardown</h2>
 
                     
                     <p>If you need to run some code before or after every test, you can define the <code>setup</code> (executed before each test) and/or <code>teardown</code> (executed after each test independantly of success or failure) functions:</p>
-                    <p><pre class='prettyprint lang-lua'>local should = test.Suite 'lk.Dir'
+                    <pre class='prettyprint lang-lua'>local should = test.Suite 'lk.Dir'
 
 function should.teardown()
   -- cleanup
-end</pre></p>
+end</pre>
                                         <a name='setup'></a>
           <h4 class='function'><span>.</span>setup <code>()</code></h4>
           
@@ -85,20 +85,20 @@ end</pre></p>
           
                     <p>Tests are declared by adding functions to the test suite. Note that these functions do not have access to 'self'.</p>
                     <p>Example test declaration:</p>
-                    <p><pre class='prettyprint lang-lua'>functions should.beHappy()
+                    <pre class='prettyprint lang-lua'>functions should.beHappy()
   assertTrue(true)
-end</pre></p>
+end</pre>
                               </section>
                     <section id='Run-tests'>
           <h2 class='section'>Run tests</h2>
 
                     
                     <p>Use <code>test.all()</code> to run the tests in all suites at once. You can append this call at the end of the file to run the test when running the file:</p>
-                    <p><pre class='prettyprint lang-lua'>function should.testLast()
+                    <pre class='prettyprint lang-lua'>function should.testLast()
 end
 
 -- Run all tests now.
-test.all()</pre></p>
+test.all()</pre>
                               </section>
                     <section id='Assertions'>
           <h2 class='section'>Assertions</h2>
@@ -120,8 +120,8 @@ test.all()</pre></p>
           <h4 class='function'>assertEqual <code>(expected, value, resolution, up_count)</code></h4>
           
                     <p>Assert that <code>value</code> is equal to <code>expected</code>. If <code>expected</code> is a number, the <code>resolution</code> parameter can be used to cope with numerical errors. The actual test for numbers is:</p>
-                    <p><pre class='prettyprint lang-lua'>local ok = (value &gt;= expected - resolution) and (value &lt;= expected + resolution)
-</pre></p>
+                    <pre class='prettyprint lang-lua'>local ok = (value &gt;= expected - resolution) and (value &lt;= expected + resolution)
+</pre>
                     <p>For other types, this tests raw equality (same object). To compare table contents, use <a href='#assertValueEqual'>assertValueEqual</a>.</p>
                                         <a name=''></a>
           <h4 class='function'>assertValueEqual <code>(expected, value, resolution, up_count)</code></h4>

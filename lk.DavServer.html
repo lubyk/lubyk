@@ -45,163 +45,44 @@
           
                     <p class='summary'></p>
                     <p>local lib = {type='lk.DavServer'} lib.<em></em>index  = lib <a href='lk.DavServer.html'>lk.DavServer</a> = lib</p>
-                    <p>-- the DavServer is an extension of the WebServer for k, v in pairs(lk.WebServer) do if k ~= 'type' and k ~= '<em></em>index' then</p>
-                    <p><pre class='prettyprint lang-lua'>lib[k] = v</pre></p>
-                    <p>end end</p>
-                    <p>setmetatable(lib, { -- new method <em></em>call = function(lib, port, root) -- make sure we run with 'C' locale (because of HTTP date parsing) os.setlocale('C') local self = {</p>
-                    <p><pre class='prettyprint lang-lua'>should_run = true,
-clients    = {},
-server     = lk.Socket(),
-on_ready   = {},</pre></p>
-                    <p>}</p>
-                    <p>self.server:bind('*', port or 0) self.host, self.port = self.server:localHost(), self.server:localPort() self.href<em>base = 'http://' .. self.host .. ':' .. self.port printf("Started DavServer: %s", self.href</em>base) setmetatable(self, lib) if root then</p>
-                    <p><pre class='prettyprint lang-lua'>self:setRoot(root)</pre></p>
-                    <p>else</p>
-                    <p><pre class='prettyprint lang-lua'>-- if no root path is provided, all the functions (find, findChildren,
--- update, create, delete and move) should be implemented.</pre></p>
-                    <p>end self:listen() return self end})</p>
-                    <p>if type(root) == 'string' then</p>
-                    <p><pre class='prettyprint lang-lua'>self.root  = lk.FileResource(root)</pre></p>
-                    <p>else</p>
-                    <p><pre class='prettyprint lang-lua'>self.root = root</pre></p>
-                    <p>end -- FIXME: how long do we keep these around ? self.deleted = {} end</p>
-                    <p>--=============================================== Functions to sub-class local rez = self.root.cache[url] if not rez then</p>
-                    <p><pre class='prettyprint lang-lua'>-- this only happens on special files because we list children
--- (and cache result) before we are asked for a path.
-rez = lk.FileResource(url, self.root)</pre></p>
-                    <p>end return rez end</p>
+                    <p>-- the DavServer is an extension of the WebServer for k, v in pairs(lk.WebServer) do if k ~= 'type' and k ~= '<em></em>index' then lib[k] = v end end</p>
+                    <p>setmetatable(lib, { -- new method <em></em>call = function(lib, port, root) -- make sure we run with 'C' locale (because of HTTP date parsing) os.setlocale('C') local self = { should<em>run = true, clients    = {}, server     = lk.Socket(), on</em>ready   = {}, }</p>
+                    <p>self.server:bind('*', port or 0) self.host, self.port = self.server:localHost(), self.server:localPort() self.href<em>base = 'http://' .. self.host .. ':' .. self.port printf("Started DavServer: %s", self.href</em>base) setmetatable(self, lib) if root then self:setRoot(root) else -- if no root path is provided, all the functions (find, findChildren, -- update, create, delete and move) should be implemented. end self:listen() return self end})</p>
+                    <p>if type(root) == 'string' then self.root  = lk.FileResource(root) else self.root = root end -- FIXME: how long do we keep these around ? self.deleted = {} end</p>
+                    <p>--=============================================== Functions to sub-class local rez = self.root.cache[url] if not rez then -- this only happens on special files because we list children -- (and cache result) before we are asked for a path. rez = lk.FileResource(url, self.root) end return rez end</p>
                     <p>return resource:children() end</p>
-                    <p>if resource:update(content) then</p>
-                    <p><pre class='prettyprint lang-lua'>return nil, {status = '200'}</pre></p>
-                    <p>else</p>
-                    <p><pre class='prettyprint lang-lua'>return nil, {status = '400'}</pre></p>
-                    <p>end end</p>
-                    <p>-- create resource local url = parent.url .. '/' .. name local resource = self.deleted[url] if resource then</p>
-                    <p><pre class='prettyprint lang-lua'>if content and not resource.is_dir then
-  if resource:update(content) then
-    self.root.cache[url] = resource
-    self.deleted[url] = nil
-    return nil, {status = '201'}
-  end
-else
-  self.deleted[url] = nil
-end</pre></p>
-                    <p>end if parent:createChild(name, content) then</p>
-                    <p><pre class='prettyprint lang-lua'>return nil, {status = '201'}</pre></p>
-                    <p>end return nil, {status = '400'} end</p>
-                    <p>-- we use this in case the remote uses a delete -- and create to update self.deleted[resource.url] = resource if parent:deleteChild(resource) then</p>
-                    <p><pre class='prettyprint lang-lua'>-- clear cache
-collectgarbage()
-return nil, {status = '204'}</pre></p>
-                    <p>end return nil, {status = '400'} end</p>
-                    <p>if parent:moveChild(resource, dest<em>parent, dest</em>name) then</p>
-                    <p><pre class='prettyprint lang-lua'>return nil, {status = '201'}</pre></p>
-                    <p>else</p>
-                    <p><pre class='prettyprint lang-lua'>return nil, {status = '400'}</pre></p>
-                    <p>end end</p>
+                    <p>if resource:update(content) then return nil, {status = '200'} else return nil, {status = '400'} end end</p>
+                    <p>-- create resource local url = parent.url .. '/' .. name local resource = self.deleted[url] if resource then if content and not resource.is_dir then if resource:update(content) then self.root.cache[url] = resource self.deleted[url] = nil return nil, {status = '201'} end else self.deleted[url] = nil end end if parent:createChild(name, content) then return nil, {status = '201'} end return nil, {status = '400'} end</p>
+                    <p>-- we use this in case the remote uses a delete -- and create to update self.deleted[resource.url] = resource if parent:deleteChild(resource) then -- clear cache collectgarbage() return nil, {status = '204'} end return nil, {status = '400'} end</p>
+                    <p>if parent:moveChild(resource, dest<em>parent, dest</em>name) then return nil, {status = '201'} else return nil, {status = '400'} end end</p>
                     <p>--=============================================== PRIVATE</p>
                     <p>local DATE<em>FORMAT</em>HTTP<em>DATE = '!%a, %d %b %Y %H:%M:%S GMT' lib.DATE</em>FORMAT<em>HTTP</em>DATE = DATE<em>FORMAT</em>HTTP_DATE</p>
                     <p>local DATE<em>FORMAT</em>ISO<em>8601 = '!%Y-%m-%dT%H:%M:%SZ' lib.DATE</em>FORMAT<em>ISO</em>8601 = DATE<em>FORMAT</em>ISO_8601</p>
                     <p>-- More status codes for WebDav lib.STATUS_CODES['207'] = 'Multi-Status'</p>
-                    <p>return nil, {</p>
-                    <p><pre class='prettyprint lang-lua'>DAV = "1, 2"</pre></p>
-                    <p>} end</p>
+                    <p>return nil, { DAV = "1, 2" } end</p>
                     <p>local function etag(...) -- TODO: sha1 return lk.crypto.sha1(string.format(...)) end</p>
-                    <p>local function getResourceType(is<em>dir) if is</em>dir then</p>
-                    <p><pre class='prettyprint lang-lua'>return {xml = 'collection'}</pre></p>
-                    <p>end end</p>
-                    <p>local function getContentLength(is<em>dir) if is</em>dir then</p>
-                    <p><pre class='prettyprint lang-lua'>return 2</pre></p>
-                    <p>else</p>
-                    <p><pre class='prettyprint lang-lua'>return 0</pre></p>
-                    <p>end end</p>
-                    <p>local function isDirectory(resource) local rtype = resource:davProperty('resourcetype') if rtype then</p>
-                    <p><pre class='prettyprint lang-lua'>return rtype.xml == 'collection'</pre></p>
-                    <p>end end</p>
+                    <p>local function getResourceType(is<em>dir) if is</em>dir then return {xml = 'collection'} end end</p>
+                    <p>local function getContentLength(is<em>dir) if is</em>dir then return 2 else return 0 end end</p>
+                    <p>local function isDirectory(resource) local rtype = resource:davProperty('resourcetype') if rtype then return rtype.xml == 'collection' end end</p>
                     <p>local function httpDateNoLocale(time) DATE<em>FORMAT</em>HTTP_DATE = '!%a, %d %b %Y %H:%M:%S GMT' end</p>
-                    <p>local function makeResponse(self, resource, prop<em>list) local prop = {xml='prop'} for </em>, k in ipairs(prop_list) do</p>
-                    <p><pre class='prettyprint lang-lua'>k = k.xml
-local v = resource:davProperty(k)
-if v then
-  if k == 'creationdate' then
-    v = os.date(DATE_FORMAT_ISO_8601, v)
-  elseif k == 'getlastmodified' then
-    -- This format is a stupid: it renders differently depending on the
-    -- locale: this is why we need setlocale('C')
-    v = os.date(DATE_FORMAT_HTTP_DATE, v)
-  end
-end
-table.insert(prop, {xml = k, v or ''})</pre></p>
-                    <p>end return {</p>
-                    <p><pre class='prettyprint lang-lua'>xml = 'response',
-{xml = 'href', self.href_base .. resource:davProperty('url')},
-{xml = 'propstat',
-  prop,
-  {xml = 'status', "HTTP/1.1 200 OK"},
-}</pre></p>
-                    <p>} end</p>
-                    <p>local function getPropList(body) local data = xml.parse(body or '') if not data then</p>
-                    <p><pre class='prettyprint lang-lua'>return</pre></p>
-                    <p>end xml.removeNamespace(data, 'DAV:') return data:find('prop') end</p>
-                    <p>local resource = self:find(request.path) local prop<em>list = getPropList(request.body) if not resource or not prop</em>list then</p>
-                    <p><pre class='prettyprint lang-lua'>return nil, {status = '404'}</pre></p>
-                    <p>end   if params then</p>
+                    <p>local function makeResponse(self, resource, prop<em>list) local prop = {xml='prop'} for </em>, k in ipairs(prop<em>list) do k = k.xml local v = resource:davProperty(k) if v then if k == 'creationdate' then v = os.date(DATE</em>FORMAT<em>ISO</em>8601, v) elseif k == 'getlastmodified' then -- This format is a stupid: it renders differently depending on the -- locale: this is why we need setlocale('C') v = os.date(DATE<em>FORMAT</em>HTTP<em>DATE, v) end end table.insert(prop, {xml = k, v or ''}) end return { xml = 'response', {xml = 'href', self.href</em>base .. resource:davProperty('url')}, {xml = 'propstat', prop, {xml = 'status', "HTTP/1.1 200 OK"}, } } end</p>
+                    <p>local function getPropList(body) local data = xml.parse(body or '') if not data then return end xml.removeNamespace(data, 'DAV:') return data:find('prop') end</p>
+                    <p>local resource = self:find(request.path) local prop<em>list = getPropList(request.body) if not resource or not prop</em>list then return nil, {status = '404'} end</p>
+                    <p>if params then</p>
                     <p>end</p>
                     <p>local headers = request.headers local depth = tonumber(headers['Depth'])</p>
-                    <p>local res = {</p>
-                    <p><pre class='prettyprint lang-lua'>xml = 'multistatus',
-xmlns = 'DAV:'</pre></p>
-                    <p>} -- use oldest change to build etag local last_mod = nil</p>
-                    <p>table.insert(res, makeResponse(self, resource, prop_list)) if isDirectory(resource) and depth == 1 then</p>
-                    <p><pre class='prettyprint lang-lua'>local children = self:findChildren(resource)
-for _, child in ipairs(children) do
-  table.insert(res, makeResponse(self, child, prop_list))
-end</pre></p>
-                    <p>end</p>
+                    <p>local res = { xml = 'multistatus', xmlns = 'DAV:' } -- use oldest change to build etag local last_mod = nil</p>
+                    <p>table.insert(res, makeResponse(self, resource, prop<em>list)) if isDirectory(resource) and depth == 1 then local children = self:findChildren(resource) for </em>, child in ipairs(children) do table.insert(res, makeResponse(self, child, prop_list)) end end</p>
                     <p>local body = "<?xml version='1.0' encoding='utf-8'?>\n" .. xml.dump(res)</p>
-                    <p>headers = {</p>
-                    <p><pre class='prettyprint lang-lua'>status = 207,
-Etag   = etag('%s', body),
-['Content-Type']  = 'text/xml; charset="utf-8"',
---['Last-Modified'] =  os.date(DATE_FORMAT, last_mod)</pre></p>
-                    <p>}</p>
+                    <p>headers = { status = 207, Etag   = etag('%s', body), ['Content-Type']  = 'text/xml; charset="utf-8"', --['Last-Modified'] =  os.date(DATE<em>FORMAT, last</em>mod) }</p>
                     <p>return body, headers end</p>
-                    <p>local resource = self:find(request.path) if not resource then</p>
-                    <p><pre class='prettyprint lang-lua'>return nil, {status = '404'}</pre></p>
-                    <p>end</p>
-                    <p>return resource:body(), {status=200, </p>
-                    <p><pre class='prettyprint lang-lua'>['Content-type']=resource:davProperty('contenttype') or 'text/plain'</pre></p>
-                    <p>} end</p>
-                    <p>local function getParent(self, path) local base, name = lk.pathDir(path) return self:find(base), name end   -- forget about .<em> (resource fork on Mac OS X) if string.match(request.path, '^.</em>') then</p>
-                    <p><pre class='prettyprint lang-lua'>return nil, {status = '400'}</pre></p>
-                    <p>end local resource = self:find(request.path) if resource then</p>
-                    <p><pre class='prettyprint lang-lua'>return self:update(resource, request.body)</pre></p>
-                    <p>else</p>
-                    <p><pre class='prettyprint lang-lua'>local parent, name = getParent(self, request.path)
-if parent then
-  return self:create(parent, name, request.body or '')
-else
-  return nil, {status = '400'}
-end</pre></p>
-                    <p>end end</p>
-                    <p>local resource = self:find(request.path) if not resource then</p>
-                    <p><pre class='prettyprint lang-lua'>return nil, {status = '204'}</pre></p>
-                    <p>end local parent = getParent(self, request.path) if parent then</p>
-                    <p><pre class='prettyprint lang-lua'>return self:delete(parent, resource)</pre></p>
-                    <p>else</p>
-                    <p><pre class='prettyprint lang-lua'>return nil, {status = '400'}</pre></p>
-                    <p>end end</p>
-                    <p>local resource = self:find(request.path) local destination = request.headers['Destination'] or '' destination = string.match(destination, 'http://[^/]+(/.+)$') if destination then</p>
-                    <p><pre class='prettyprint lang-lua'>local parent = getParent(self, request.path)
-local dest_parent, dest_name = getParent(self, destination)
-return self:move(parent, resource, dest_parent, dest_name)</pre></p>
-                    <p>end return nil, {status = '400'} end</p>
+                    <p>local resource = self:find(request.path) if not resource then return nil, {status = '404'} end</p>
+                    <p>return resource:body(), {status=200,  ['Content-type']=resource:davProperty('contenttype') or 'text/plain' } end</p>
+                    <p>local function getParent(self, path) local base, name = lk.pathDir(path) return self:find(base), name end</p>
+                    <p>-- forget about .<em> (resource fork on Mac OS X) if string.match(request.path, '^.</em>') then return nil, {status = '400'} end local resource = self:find(request.path) if resource then return self:update(resource, request.body) else local parent, name = getParent(self, request.path) if parent then return self:create(parent, name, request.body or '') else return nil, {status = '400'} end end end</p>
+                    <p>local resource = self:find(request.path) if not resource then return nil, {status = '204'} end local parent = getParent(self, request.path) if parent then return self:delete(parent, resource) else return nil, {status = '400'} end end</p>
+                    <p>local resource = self:find(request.path) local destination = request.headers['Destination'] or '' destination = string.match(destination, 'http://[^/]+(/.+)$') if destination then local parent = getParent(self, request.path) local dest<em>parent, dest</em>name = getParent(self, destination) return self:move(parent, resource, dest<em>parent, dest</em>name) end return nil, {status = '400'} end</p>
                     <p>return nil end</p>
-                    <p>local resource = self:find(request.path) if not resource then</p>
-                    <p><pre class='prettyprint lang-lua'>local parent, name = getParent(self, request.path)
-return self:create(parent, name)</pre></p>
-                    <p>elseif resource.is_dir then</p>
-                    <p><pre class='prettyprint lang-lua'>return nil, {status = '201'}</pre></p>
                               </section>
                   </div>
 

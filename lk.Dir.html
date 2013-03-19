@@ -62,22 +62,22 @@
           <h4 class='method'><span>:</span>glob <code>(pattern)</code></h4>
           
                     <p>Return an iterator to recursively find files matching <code>pattern</code> in the directory. The pattern syntax is the same as string.match.</p>
-                    <p><pre class='prettyprint lang-lua'>-- Find files ending in ".lua".
+                    <pre class='prettyprint lang-lua'>-- Find files ending in ".lua".
 for file in lk.Dir('lib'):glob '%.lua$' do
   print(file)
 end
 --&gt; lib/lk/Dir.lua
 --&gt; lib/lk/Doc.lua
---&gt; ...</pre></p>
+--&gt; ...</pre>
                                         <a name='list'></a>
           <h4 class='method'><span>:</span>list <code>()</code></h4>
           
                     <p>Return an iterator over the paths in the directory. The returned values are paths, not just filenames.</p>
-                    <p><pre class='prettyprint lang-lua'>for file in lk.Dir('lib'):list() do
+                    <pre class='prettyprint lang-lua'>for file in lk.Dir('lib'):list() do
   print(file)
 end
 --&gt; lib/lk
---&gt; lib/lk.lua</pre></p>
+--&gt; lib/lk.lua</pre>
                                         <a name='contains'></a>
           <h4 class='method'><span>:</span>contains <code>(pattern)</code></h4>
           

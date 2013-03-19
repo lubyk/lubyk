@@ -60,10 +60,10 @@
           <h4 class='function'><span>.</span>scriptPath <code>(level)</code></h4>
           
                     <p>Find the path of the current script or the script up x levels in the call chain (-1 = up one level). The path is relative to the current directory.</p>
-                    <p><pre class='prettyprint lang-lua'>-- get path of running script
+                    <pre class='prettyprint lang-lua'>-- get path of running script
 local my_path = lk.scriptPath()
 --&gt; 'test/lk_test.lua'
-</pre></p>
+</pre>
                     <p>If you need an absolute path, use <a href='#absolutizePath'>absolutizePath</a>.</p>
                                         <a name='scriptDir'></a>
           <h4 class='function'><span>.</span>scriptDir <code>(level)</code></h4>
@@ -73,13 +73,13 @@ local my_path = lk.scriptPath()
           <h4 class='function'><span>.</span>deprecation <code>(lib_name, old, new, ...)</code></h4>
           
                     <p>Declare a method as being deprecated. This should be used when method names are changed to avoid breaking code without warnings. The syntax is:</p>
-                    <p><pre class='prettyprint lang-lua'>function lib.badName(...)
+                    <pre class='prettyprint lang-lua'>function lib.badName(...)
   return lib.deprecation('lk', 'badName', 'betterName', ...)
 end
-</pre></p>
+</pre>
                     <p>When someone uses the "badName" method, a deprecation warning is printed:</p>
-                    <p><pre class='prettyprint lang-lua'>[DEPRECATION] {traceback}
-    'lk.badName' is deprecated. Please use 'lk.betterName' instead.</pre></p>
+                    <pre class='prettyprint lang-lua'>[DEPRECATION] {traceback}
+    'lk.badName' is deprecated. Please use 'lk.betterName' instead.</pre>
                               </section>
                     <section id='Filesystem'>
           <h2 class='section'>Filesystem</h2>
@@ -121,24 +121,24 @@ end
           <h4 class='function'><span>.</span>pathDir <code>(filepath)</code></h4>
           
                     <p>Return the parent folder and filename from a <code>filepath</code>. Usage:</p>
-                    <p><pre class='prettyprint lang-lua'>local base, file = lk.pathDir(filepath)
-</pre></p>
+                    <pre class='prettyprint lang-lua'>local base, file = lk.pathDir(filepath)
+</pre>
                     <p>This can also be used on urls.</p>
                                         <a name='absolutizePath'></a>
           <h4 class='function'><span>.</span>absolutizePath <code>(path, basepath)</code></h4>
           
                     <p>Return an absolute path from a <code>path</code> and optional <code>basepath</code>. If basepath is not provided, the method uses the current directory. This method resolves <code>/../</code> and <code>/./</code> in paths and returns a clean path. Can also be used with urls.</p>
                     <p>For example:</p>
-                    <p><pre class='prettyprint lang-lua'>local abs_path = lk.absolutizePath('foo/bar/../baz', '/home')
---&gt; '/home/foo/baz'</pre></p>
+                    <pre class='prettyprint lang-lua'>local abs_path = lk.absolutizePath('foo/bar/../baz', '/home')
+--&gt; '/home/foo/baz'</pre>
                                         <a name='absToRel'></a>
           <h4 class='function'><span>.</span>absToRel <code>(abs_string, base)</code></h4>
           
                     <p>Transform an absolute path or url to a relative path with given base. For  example:</p>
-                    <p><pre class='prettyprint lang-lua'>local rel = lk.absToRel('/home/foo/bar', '/home/foo/baz')
+                    <pre class='prettyprint lang-lua'>local rel = lk.absToRel('/home/foo/bar', '/home/foo/baz')
 --&gt; '/home/foo/bar'
 local rel = lk.absToRel('/home/foo/bar', '/home/foo')
---&gt; 'bar'</pre></p>
+--&gt; 'bar'</pre>
                               </section>
                     <section id='Strings,-Arrays'>
           <h2 class='section'>Strings, Arrays</h2>
@@ -152,14 +152,14 @@ local rel = lk.absToRel('/home/foo/bar', '/home/foo')
           <h4 class='function'><span>.</span>split <code>(str, pat)</code></h4>
           
                     <p>Split a string <code>str</code> into elements separated by the pattern <code>pat</code>. The function returns a table.</p>
-                    <p><pre class='prettyprint lang-lua'>local t = lk.split('foo/bar/baz', '/')
---&gt; {'foo', 'bar', 'baz'}</pre></p>
+                    <pre class='prettyprint lang-lua'>local t = lk.split('foo/bar/baz', '/')
+--&gt; {'foo', 'bar', 'baz'}</pre>
                                         <a name='join'></a>
           <h4 class='function'><span>.</span>join <code>(list, sep)</code></h4>
           
                     <p>Join elements of a table <code>list</code> with separator <code>sep</code>. Returns a string.</p>
-                    <p><pre class='prettyprint lang-lua'>local x = lk.join({'foo', 'bar', 'baz'}, '.')
---&gt; 'foo.bar.baz'</pre></p>
+                    <pre class='prettyprint lang-lua'>local x = lk.join({'foo', 'bar', 'baz'}, '.')
+--&gt; 'foo.bar.baz'</pre>
                                         <a name='insertSorted'></a>
           <h4 class='function'><span>.</span>insertSorted <code>(list, elem, key)</code></h4>
           
@@ -168,12 +168,12 @@ local rel = lk.absToRel('/home/foo/bar', '/home/foo')
           <h4 class='function'><span>.</span>deepMerge <code>(base, key, value)</code></h4>
           
                     <p>Deep merge <code>value</code> into <code>base</code> at <code>key</code>. Returns true if <strong>base</strong> has been changed. For example:</p>
-                    <p><pre class='prettyprint lang-lua'>local base = {a = { b = 4, c = 5 }}
+                    <pre class='prettyprint lang-lua'>local base = {a = { b = 4, c = 5 }}
 lk.deepMerge(base, 'a', { c = 5 })
 --&gt; false (nothing changed)
 
 lk.deepMerge(base, 'a', { c = 6 })
---&gt; true, base = {a = { b = 4, c = 6 }}</pre></p>
+--&gt; true, base = {a = { b = 4, c = 6 }}</pre>
                               </section>
                     <section id='Debugging'>
           <h2 class='section'>Debugging</h2>
@@ -183,16 +183,16 @@ lk.deepMerge(base, 'a', { c = 6 })
           <h4 class='function'><span>.</span>traceRequire <code>()</code></h4>
           
                     <p>Print calls to <code>require</code>. This can be used to list all code dependencies. Usage:</p>
-                    <p><pre class='prettyprint lang-lua'>lk.traceRequire()
+                    <pre class='prettyprint lang-lua'>lk.traceRequire()
 -- From now on, all require statements are printed.
-</pre></p>
+</pre>
                     <p>If you simply want to make sure no require is not called to autoload code after some point, you should use <a href='Autoload.html#strict'>Autoload.strict</a>.</p>
                                         <a name='log'></a>
           <h4 class='function'><span>.</span>log <code>(...)</code></h4>
           
                     <p>Print a log message with the current file name and line. This is better then using "print" because it gives us some information on the context of the  print statement.</p>
-                    <p><pre class='prettyprint lang-lua'>lk.log('foo')
---&gt; lk/util.lua:426:  foo</pre></p>
+                    <pre class='prettyprint lang-lua'>lk.log('foo')
+--&gt; lk/util.lua:426:  foo</pre>
                               </section>
                     <section id='Miscellanous'>
           <h2 class='section'>Miscellanous</h2>
@@ -203,16 +203,15 @@ lk.deepMerge(base, 'a', { c = 6 })
           
                     <p>Start a new process with <code>code</code>, encoding arguments with yaml.</p>
                     <p>Here is an example that passes a table of arguments.</p>
-                    <p><pre class='prettyprint lang-lua'>
-local pid = lk.spawn([[
+                    <pre class='prettyprint lang-lua'>local pid = lk.spawn([[
   require 'lubyk'
   lk.Doc.make(%s)
-]], {target = 'doc', sources = 'lib', format = 'html'})</pre></p>
+]], {target = 'doc', sources = 'lib', format = 'html'})</pre>
                                         <a name='shellQuote'></a>
           <h4 class='function'><span>.</span>shellQuote <code>(str)</code></h4>
           
                     <p>Quote string <code>str</code> so that it can be inserted in a shell command. Example:</p>
-                    <p><pre class='prettyprint lang-lua'>os.execute(string.format('latex %s', lk.shellQuote(filepath)))</pre></p>
+                    <pre class='prettyprint lang-lua'>os.execute(string.format('latex %s', lk.shellQuote(filepath)))</pre>
                               </section>
                   </div>
 

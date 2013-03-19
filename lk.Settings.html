@@ -45,93 +45,16 @@
           
                     <p class='summary'></p>
                     <p>local lib     = {} lib.<em></em>index   = lib <a href='lk.Settings.html'>lk.Settings</a>   = lib local private = {}</p>
-                    <p>setmetatable(lib, { <em></em>call = function(lib, mod_name, defaults)</p>
-                    <p><pre class='prettyprint lang-lua'>local self, path = private.loadSettings(mod_name)
-defaults.save = lib.save
-defaults._module = {name = mod_name, path = path}
-defaults.__index = defaults
-private.prepareTables(self, defaults)
-return setmetatable(self, defaults)</pre></p>
-                    <p>end })</p>
-                    <p>--- Dump settings as a lua file in the settings path. if later then</p>
-                    <p><pre class='prettyprint lang-lua'>-- save in a few ms (do not repeatedly save during window
--- move/resize)
-local thread = self._module.thread
-if thread then
-  thread:kill()
-end
-self._module.thread = lk.Thread(function()
-  self._module.thread = nil
-  self:save()
-end, elapsed() + 500)</pre></p>
-                    <p>else</p>
-                    <p><pre class='prettyprint lang-lua'>local path = self._module.path
-lk.writeall(path, lib.dump(self))</pre></p>
-                    <p>end end</p>
+                    <p>setmetatable(lib, { <em></em>call = function(lib, mod<em>name, defaults) local self, path = private.loadSettings(mod</em>name) defaults.save = lib.save defaults.<em>module = {name = mod</em>name, path = path} defaults.<em></em>index = defaults private.prepareTables(self, defaults) return setmetatable(self, defaults) end })</p>
+                    <p>--- Dump settings as a lua file in the settings path. if later then -- save in a few ms (do not repeatedly save during window -- move/resize) local thread = self.<em>module.thread if thread then thread:kill() end self.</em>module.thread = lk.Thread(function() self.<em>module.thread = nil self:save() end, elapsed() + 500) else local path = self.</em>module.path lk.writeall(path, lib.dump(self)) end end</p>
                     <p>return string.format('return %s\n', private.dump(self, '  ', true)) end</p>
-                    <p>--=============================================== PRIVATE function private.loadSettings(mod_name) local path = string.format('%s/.lubyk/%s.lua',</p>
-                    <p><pre class='prettyprint lang-lua'>             os.getenv('HOME'), mod_name)</pre></p>
-                    <p>local code = loadfile(path) local self if code then</p>
-                    <p><pre class='prettyprint lang-lua'>self = code()</pre></p>
-                    <p>else</p>
-                    <p><pre class='prettyprint lang-lua'>self = {}</pre></p>
-                    <p>end return self, path end</p>
-                    <p>local function dump(o, indent, is_root) if type(o) == 'table' then</p>
-                    <p><pre class='prettyprint lang-lua'>if o._placeholder then
-  -- ignore
-  return nil
-end
-local first = true
-local s = '{'
-for k,v in pairs(o) do
-  if is_root and k == '_module' then
-    -- ignore
-  else
-    local v = dump(v, indent .. '  ')
-    if v then
-      if first then
-        s = s .. '\n'
-        first = false
-      end
-      if type(k) == 'number' then
-        s = s .. indent .. '[' .. k .. ']'
-      elseif k:match('^[a-zA-Z_]+$') then
-        s = s .. indent .. k
-      else
-        s = s .. indent .. '["'.. k .. '"]'
-      end
-      s = s .. ' = ' .. v .. ',\n'
-    end
-  end
-end
-return s .. '}'</pre></p>
-                    <p>elseif type(o) == 'number' or</p>
-                    <p><pre class='prettyprint lang-lua'>     type(o) == 'boolean' then
-return tostring(o)</pre></p>
-                    <p>elseif type(o) == 'string' then</p>
-                    <p><pre class='prettyprint lang-lua'>return '"' .. o:gsub('"', '\\"') .. '"'</pre></p>
-                    <p>else</p>
-                    <p><pre class='prettyprint lang-lua'>-- IGNORE</pre></p>
-                    <p>end end</p>
+                    <p>--=============================================== PRIVATE function private.loadSettings(mod<em>name) local path = string.format('%s/.lubyk/%s.lua', os.getenv('HOME'), mod</em>name) local code = loadfile(path) local self if code then self = code() else self = {} end return self, path end</p>
+                    <p>local function dump(o, indent, is<em>root) if type(o) == 'table' then if o.</em>placeholder then -- ignore return nil end local first = true local s = '{' for k,v in pairs(o) do if is<em>root and k == '</em>module' then -- ignore else local v = dump(v, indent .. '  ') if v then if first then s = s .. '\n' first = false end if type(k) == 'number' then s = s .. indent .. '[' .. k .. ']' elseif k:match('^[a-zA-Z_]+$') then s = s .. indent .. k else s = s .. indent .. '["'.. k .. '"]' end s = s .. ' = ' .. v .. ',\n' end end end return s .. '}' elseif type(o) == 'number' or type(o) == 'boolean' then return tostring(o) elseif type(o) == 'string' then return '"' .. o:gsub('"', '\\"') .. '"' else -- IGNORE end end</p>
                     <p>private.dump = dump</p>
                     <p>-- Copy on write local cow = {}</p>
                     <p>function cow.<em></em>index(tbl, key) return rawget(tbl._placeholder, key) end</p>
-                    <p>function cow.<em></em>newindex(tbl, key, value) -- make a copy of defaults local copy = tbl.<em>self[tbl.</em>key] if copy == tbl then</p>
-                    <p><pre class='prettyprint lang-lua'>copy = {}
-for k, v in pairs(tbl._placeholder) do
-  copy[k] = v
-end
-copy[key] = value
--- remove placeholder and work on the copy alone from now
-tbl._self[tbl._key] = copy</pre></p>
-                    <p>else</p>
-                    <p><pre class='prettyprint lang-lua'>copy[key] = value</pre></p>
-                    <p>end end</p>
-                    <p>function private:prepareTables(defaults) -- This is to enable natural value setting for tables -- <a href='editor.Setting.html#foo'>editor.Setting.foo</a>.bar = 'baz' -- <-- this should copy table defaults for k, v in pairs(defaults) do</p>
-                    <p><pre class='prettyprint lang-lua'>if type(v) == 'table' and not rawget(self, k) then
-  self[k] = setmetatable({_placeholder = v, _self = self, _key = k}, cow)
-end</pre></p>
-                    <p>end end</p>
+                    <p>function cow.<em></em>newindex(tbl, key, value) -- make a copy of defaults local copy = tbl.<em>self[tbl.</em>key] if copy == tbl then copy = {} for k, v in pairs(tbl.<em>placeholder) do copy[k] = v end copy[key] = value -- remove placeholder and work on the copy alone from now tbl.</em>self[tbl._key] = copy else copy[key] = value end end</p>
+                    <p>function private:prepareTables(defaults) -- This is to enable natural value setting for tables -- <a href='editor.Setting.html#foo'>editor.Setting.foo</a>.bar = 'baz' -- <-- this should copy table defaults for k, v in pairs(defaults) do if type(v) == 'table' and not rawget(self, k) then self[k] = setmetatable({<em>placeholder = v, </em>self = self, _key = k}, cow) end end end</p>
                               </section>
                   </div>
 

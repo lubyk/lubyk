@@ -45,885 +45,99 @@
           
                     <p class='summary'></p>
                     <p>local lib = { type = 'dub.MemoryStorage',  } -- Pattern to check for Doxygen version local DOXYGEN<em>VERSIONS = {"1%.7%.", "1%.8%."} local private = {} local parse   = {} lib.</em>_index   = lib <a href='dub.MemoryStorage.html'>dub.MemoryStorage</a> = lib</p>
-                    <p>--=============================================== dub.Inspector() setmetatable(lib, { <em></em>call = function(lib)</p>
-                    <p><pre class='prettyprint lang-lua'>local self = {
-  -- xml definitions list
-  xml_headers     = {},
-  -- .h header files
-  headers_list    = {},
-  cache           = {},
-  sorted_cache    = {},
-  functions_list  = {},
-  constants_list  = {},
-  const_headers   = {},
-  resolved_cache  = {},
-  namespaces_list = {},
-}
--- Just so that we can pass the db as any scope.
-self.db = self
-return setmetatable(self, lib)</pre></p>
-                    <p>end })</p>
+                    <p>--=============================================== dub.Inspector() setmetatable(lib, { <em></em>call = function(lib) local self = { -- xml definitions list xml<em>headers     = {}, -- .h header files headers</em>list    = {}, cache           = {}, sorted<em>cache    = {}, functions</em>list  = {}, constants<em>list  = {}, const</em>headers   = {}, resolved<em>cache  = {}, namespaces</em>list = {}, } -- Just so that we can pass the db as any scope. self.db = self return setmetatable(self, lib) end })</p>
                     <p>--=============================================== PUBLIC METHODS -- Prepare database</p>
-                    <p>-- Parse xml directory and find header files. This will allow -- us to find definitions as needed. self.ignore = {} private.parseIgnoreList(self, nil, ignore<em>list) local xml</em>headers = self.xml<em>headers local dir = lk.Dir(xml</em>dir) -- Parse header (.h) content first for file in dir:glob('_8h.xml') do</p>
-                    <p><pre class='prettyprint lang-lua'>table.insert(xml_headers, {path = file, dir = xml_dir})</pre></p>
-                    <p>end -- Parse namespace content for file in dir:glob('namespace.*.xml') do</p>
-                    <p><pre class='prettyprint lang-lua'>table.insert(xml_headers, {path = file, dir = xml_dir})</pre></p>
-                    <p>end if not_lazy then</p>
-                    <p><pre class='prettyprint lang-lua'>private.parseAll(self)</pre></p>
-                    <p>end end</p>
-                    <p>-- split name components local parts = lk.split(name, '::') local current = self if self.name == parts[1] then</p>
-                    <p><pre class='prettyprint lang-lua'>-- remove pseudo-scope
-table.remove(parts, 1)</pre></p>
-                    <p>end for i, part in ipairs(parts) do</p>
-                    <p><pre class='prettyprint lang-lua'>local child = self:findChildFor(current, part)
-if not child then
-  return nil
-else
-  current = private.resolveTypedef(self, child)
-end</pre></p>
-                    <p>end return current end</p>
+                    <p>-- Parse xml directory and find header files. This will allow -- us to find definitions as needed. self.ignore = {} private.parseIgnoreList(self, nil, ignore<em>list) local xml</em>headers = self.xml<em>headers local dir = lk.Dir(xml</em>dir) -- Parse header (.h) content first for file in dir:glob('<em>8h.xml') do table.insert(xml</em>headers, {path = file, dir = xml<em>dir}) end -- Parse namespace content for file in dir:glob('namespace.*.xml') do table.insert(xml</em>headers, {path = file, dir = xml<em>dir}) end if not</em>lazy then private.parseAll(self) end end</p>
+                    <p>-- split name components local parts = lk.split(name, '::') local current = self if self.name == parts[1] then -- remove pseudo-scope table.remove(parts, 1) end for i, part in ipairs(parts) do local child = self:findChildFor(current, part) if not child then return nil else current = private.resolveTypedef(self, child) end end return current end</p>
                     <p>-- Any element at the root of the name space return self:findChildFor(self, name) end</p>
-                    <p>-- Any element at the root of the name space if parent.is_scope or parent == self then</p>
-                    <p><pre class='prettyprint lang-lua'>return parent.cache[name] or private.parseHeaders(parent, name)</pre></p>
-                    <p>end end</p>
-                    <p>--- Return an iterator over the functions of this class/namespace. if not parent then</p>
-                    <p><pre class='prettyprint lang-lua'>return private.allGlobalFunctions(self)</pre></p>
-                    <p>end -- make sure we have parsed the headers private.parseHeaders(parent) local co = coroutine.create(private.iteratorWithSuper) local seen = {} return function()</p>
-                    <p><pre class='prettyprint lang-lua'>local ok, elem
--- For this first version, just ignore super methods with same name:
--- no handling of overloaded functions through inheritance chain.
-while true do
-  local ok, elem = coroutine.resume(co, parent, 'functions_list')
-  if ok and elem then
-    if parent.dub.destroy=="free" and elem.dtor then
-      -- do nothing: no destructor should be generated in this case
-    elseif not seen[elem.name] then
-      seen[elem.name] = true
-      if parent.ignore[elem.name] then
-        -- ignore
-      else
-        return elem
-      end
-    end
-  elseif not ok then
-    print(elem, debug.traceback(co))
-  else
-    return nil
-  end
-end</pre></p>
-                    <p>end end</p>
-                    <p>--- Return an iterator over the variables of this class/namespace. -- make sure we have parsed the headers private.parseHeaders(parent) local co = coroutine.create(private.iteratorWithSuper) return function()</p>
-                    <p><pre class='prettyprint lang-lua'>local ok, elem = coroutine.resume(co, parent, 'variables_list')
-if ok then
-  return elem
-else
-  print(elem, debug.traceback(co))
-end</pre></p>
-                    <p>end end</p>
-                    <p>--- Return an iterator over all the headers of this library. -- make sure we have parsed the headers private.parseHeaders(self) local co = coroutine.create(function()</p>
-                    <p><pre class='prettyprint lang-lua'>local seen = {}
--- For each bound class
-for _, class in ipairs(classes) do
-  local h = class.header
-  if not seen[h] then
-    coroutine.yield(h)
-    seen[h] = true
-  end
-end
--- For every global function
-for func in self:functions() do
-  local h = func.header
-  if not seen[h] then
-    coroutine.yield(h)
-    seen[h] = true
-  end
-end
--- For every constant
-for i, h in ipairs(self.const_headers) do
-  if not seen[h] then
-    coroutine.yield(h)
-    seen[h] = true
-  end
-end
--- For every namespace
-for _, n in ipairs(self.namespaces_list) do
-  for i, h in ipairs(n.const_headers) do
-    if not seen[h] then
-      coroutine.yield(h)
-      seen[h] = true
-    end
-  end
-end</pre></p>
-                    <p>end) return function()</p>
-                    <p><pre class='prettyprint lang-lua'>local ok, elem = coroutine.resume(co)
-if ok then
-  return elem
-else
-  print(elem, debug.traceback(co))
-end</pre></p>
-                    <p>end end</p>
-                    <p>--- Return an iterator over the variables of this class/namespace. parent = parent or self -- make sure we have parsed the headers private.parseHeaders(parent) local co = coroutine.create(private.iterator) return function()</p>
-                    <p><pre class='prettyprint lang-lua'>local ok, elem = coroutine.resume(co, parent.sorted_cache)
-if ok then
-  return elem
-else
-  print(elem, debug.traceback(co))
-end</pre></p>
-                    <p>end end</p>
-                    <p>--- Return an iterator over the superclasses of this class. -- make sure we have parsed the headers private.parseHeaders(self) private.parseHeaders(parent) local co = coroutine.create(private.superIterator) return function()</p>
-                    <p><pre class='prettyprint lang-lua'>local ok, elem = coroutine.resume(co, self, parent)
-if ok then
-  return elem
-else
-  print(elem, debug.traceback(co))
-end</pre></p>
-                    <p>end end</p>
-                    <p>--- Return an iterator over the constants defined in this parent. -- make sure we have parsed the headers private.parseHeaders(self) if parent then</p>
-                    <p><pre class='prettyprint lang-lua'>private.parseHeaders(parent)</pre></p>
-                    <p>else</p>
-                    <p><pre class='prettyprint lang-lua'>parent = self</pre></p>
-                    <p>end local co = coroutine.create(private.iterator) return function()</p>
-                    <p><pre class='prettyprint lang-lua'>local ok, elem = coroutine.resume(co, parent.constants_list)
-if ok then
-  return elem
-else
-  print(elem, debug.traceback(co))
-end</pre></p>
-                    <p>end end</p>
-                    <p>--- Return an iterator over the namespaces in root. -- make sure we have parsed the headers private.parseHeaders(self) local co = coroutine.create(private.iterator) return function()</p>
-                    <p><pre class='prettyprint lang-lua'>local ok, elem = coroutine.resume(co, self.namespaces_list)
-if ok then
-  return elem
-else
-  print(elem, debug.traceback(co))
-end</pre></p>
-                    <p>end end</p>
-                    <p>local function resolveOne(self, scope, name) local base = scope:fullname() if base then</p>
-                    <p><pre class='prettyprint lang-lua'>base = base .. '::'</pre></p>
-                    <p>else</p>
-                    <p><pre class='prettyprint lang-lua'>base = ''</pre></p>
-                    <p>end local fullname = base .. name local t = self:findByFullname(fullname) if t then</p>
-                    <p><pre class='prettyprint lang-lua'>if t.type == 'dub.Class' or t.type == 'dub.CTemplate' then
-  -- real type
-  return t
-elseif t.type == 'dub.Typedef' then
-  -- alias type
-  return resolveOne(self, scope, t.ctype.name) or t.ctype
-elseif t.type == 'dub.Enum' then
-  return t.ctype
-end</pre></p>
-                    <p>end end</p>
-                    <p>name = name:gsub('%.', '::') local fullname = scope:fullname() if fullname then</p>
-                    <p><pre class='prettyprint lang-lua'>fullname = fullname .. '::' .. name</pre></p>
-                    <p>else</p>
-                    <p><pre class='prettyprint lang-lua'>fullname = name</pre></p>
-                    <p>end local t = self.resolved_cache[fullname] if t ~= nil then</p>
-                    <p><pre class='prettyprint lang-lua'>return t</pre></p>
-                    <p>end -- Do we have a typedef or enum ? -- Look in nested scopes while scope do</p>
-                    <p><pre class='prettyprint lang-lua'>t = resolveOne(self, scope, name)
-if t then
-  self.resolved_cache[fullname] = t
-  return t
-end
-if scope.type == 'dub.Class' then
-  -- Look in superclasses
-  for super in scope:superclasses() do
-    t = resolveOne(self, super, name)
-    if t then
-      self.resolved_cache[fullname] = t
-      return t
-    end
-  end
-end
-scope = scope.parent</pre></p>
-                    <p>end -- not found (could be a native type) self.resolved_cache[fullname] = false return false end</p>
+                    <p>-- Any element at the root of the name space if parent.is_scope or parent == self then return parent.cache[name] or private.parseHeaders(parent, name) end end</p>
+                    <p>--- Return an iterator over the functions of this class/namespace. if not parent then return private.allGlobalFunctions(self) end -- make sure we have parsed the headers private.parseHeaders(parent) local co = coroutine.create(private.iteratorWithSuper) local seen = {} return function() local ok, elem -- For this first version, just ignore super methods with same name: -- no handling of overloaded functions through inheritance chain. while true do local ok, elem = coroutine.resume(co, parent, 'functions_list') if ok and elem then if parent.dub.destroy=="free" and elem.dtor then -- do nothing: no destructor should be generated in this case elseif not seen[elem.name] then seen[elem.name] = true if parent.ignore[elem.name] then -- ignore else return elem end end elseif not ok then print(elem, debug.traceback(co)) else return nil end end end end</p>
+                    <p>--- Return an iterator over the variables of this class/namespace. -- make sure we have parsed the headers private.parseHeaders(parent) local co = coroutine.create(private.iteratorWithSuper) return function() local ok, elem = coroutine.resume(co, parent, 'variables_list') if ok then return elem else print(elem, debug.traceback(co)) end end end</p>
+                    <p>--- Return an iterator over all the headers of this library. -- make sure we have parsed the headers private.parseHeaders(self) local co = coroutine.create(function() local seen = {} -- For each bound class for <em>, class in ipairs(classes) do local h = class.header if not seen[h] then coroutine.yield(h) seen[h] = true end end -- For every global function for func in self:functions() do local h = func.header if not seen[h] then coroutine.yield(h) seen[h] = true end end -- For every constant for i, h in ipairs(self.const</em>headers) do if not seen[h] then coroutine.yield(h) seen[h] = true end end -- For every namespace for <em>, n in ipairs(self.namespaces</em>list) do for i, h in ipairs(n.const_headers) do if not seen[h] then coroutine.yield(h) seen[h] = true end end end end) return function() local ok, elem = coroutine.resume(co) if ok then return elem else print(elem, debug.traceback(co)) end end end</p>
+                    <p>--- Return an iterator over the variables of this class/namespace. parent = parent or self -- make sure we have parsed the headers private.parseHeaders(parent) local co = coroutine.create(private.iterator) return function() local ok, elem = coroutine.resume(co, parent.sorted_cache) if ok then return elem else print(elem, debug.traceback(co)) end end end</p>
+                    <p>--- Return an iterator over the superclasses of this class. -- make sure we have parsed the headers private.parseHeaders(self) private.parseHeaders(parent) local co = coroutine.create(private.superIterator) return function() local ok, elem = coroutine.resume(co, self, parent) if ok then return elem else print(elem, debug.traceback(co)) end end end</p>
+                    <p>--- Return an iterator over the constants defined in this parent. -- make sure we have parsed the headers private.parseHeaders(self) if parent then private.parseHeaders(parent) else parent = self end local co = coroutine.create(private.iterator) return function() local ok, elem = coroutine.resume(co, parent.constants_list) if ok then return elem else print(elem, debug.traceback(co)) end end end</p>
+                    <p>--- Return an iterator over the namespaces in root. -- make sure we have parsed the headers private.parseHeaders(self) local co = coroutine.create(private.iterator) return function() local ok, elem = coroutine.resume(co, self.namespaces_list) if ok then return elem else print(elem, debug.traceback(co)) end end end</p>
+                    <p>local function resolveOne(self, scope, name) local base = scope:fullname() if base then base = base .. '::' else base = '' end local fullname = base .. name local t = self:findByFullname(fullname) if t then if t.type == 'dub.Class' or t.type == 'dub.CTemplate' then -- real type return t elseif t.type == 'dub.Typedef' then -- alias type return resolveOne(self, scope, t.ctype.name) or t.ctype elseif t.type == 'dub.Enum' then return t.ctype end end end</p>
+                    <p>name = name:gsub('%.', '::') local fullname = scope:fullname() if fullname then fullname = fullname .. '::' .. name else fullname = name end local t = self.resolved<em>cache[fullname] if t ~= nil then return t end -- Do we have a typedef or enum ? -- Look in nested scopes while scope do t = resolveOne(self, scope, name) if t then self.resolved</em>cache[fullname] = t return t end if scope.type == 'dub.Class' then -- Look in superclasses for super in scope:superclasses() do t = resolveOne(self, super, name) if t then self.resolved<em>cache[fullname] = t return t end end end scope = scope.parent end -- not found (could be a native type) self.resolved</em>cache[fullname] = false return false end</p>
                     <p>return self.name end</p>
                     <p>return self.ignore[fullname] end --=============================================== PRIVATE</p>
-                    <p>function private.iterator(list) for _, child in ipairs(list) do</p>
-                    <p><pre class='prettyprint lang-lua'>coroutine.yield(child)</pre></p>
-                    <p>end end</p>
-                    <p>function private.iteratorWithSuper(elem, key) private.iterator(elem[key]) if elem.type == 'dub.Class' then</p>
-                    <p><pre class='prettyprint lang-lua'>for super in elem:superclasses() do
-  for _, child in ipairs(super[key]) do
-    if not child.no_inherit and
-       not child.dtor and
-       not child.static then
-       coroutine.yield(child)
-     end
-  end
-end</pre></p>
-                    <p>end end</p>
-                    <p>-- Iterate superclass hierarchy. function private:superIterator(base, seen, allow<em>cast</em>class) -- Only iterate over a parent once local seen = seen or {} for <em>, name in ipairs(base.super</em>list) do</p>
-                    <p><pre class='prettyprint lang-lua'>local class
-local super = self:resolveType(base.parent or self, name)
-if not super and not allow_cast_class then
-  -- Ignore empty class if not explicitely declared in
-  -- @dub super statement.
-else
-  if not super then
-    -- Yield an empty class that can be used for casting
-    dub.warn(5, "Class definition not found for '%s' (using empty class).", name)
-    class = dub.Class {
-      name = name,
-      parent = base.parent,
-      create_name = name .. ' *',
-      db = self,
-      should_cast = true,
-    }
-  else
-    class = super
-  end
-  local fullname = class:fullname()
-  if not seen[fullname] then
-    coroutine.yield(class)
-    seen[fullname] = true
-    private.superIterator(self, class, seen)
-  end
-end</pre></p>
-                    <p>end</p>
-                    <p>-- Find pseudo parents if base.dub.super then</p>
-                    <p><pre class='prettyprint lang-lua'>private.superIterator(self, {super_list = base.dub.super, dub = {}}, seen, true)</pre></p>
-                    <p>end end</p>
-                    <p>function private:parseAll() if self.parsed_headers then</p>
-                    <p><pre class='prettyprint lang-lua'>return</pre></p>
-                    <p>end for i, header in ipairs(self.xml_headers) do</p>
-                    <p><pre class='prettyprint lang-lua'>if not header.parsed then
-  parse.header(self, header, true)
-end</pre></p>
-                    <p>end self.parsed_headers = true end</p>
-                    <p>-- Here 'self' can be the db (root) or a class. function private:parseHeaders(name) local cache = self.cache if self.parsed_headers then</p>
-                    <p><pre class='prettyprint lang-lua'>return cache[name] </pre></p>
-                    <p>end local elem -- Look in all unparsed headers for i, header in ipairs(self.xml_headers) do</p>
-                    <p><pre class='prettyprint lang-lua'>if not header.parsed then
-  parse.header(self, header)
-  if name and cache[name] then
-    return cache[name]
-  end
-end</pre></p>
-                    <p>end self.parsed_headers = true end</p>
+                    <p>function private.iterator(list) for _, child in ipairs(list) do coroutine.yield(child) end end</p>
+                    <p>function private.iteratorWithSuper(elem, key) private.iterator(elem[key]) if elem.type == 'dub.Class' then for super in elem:superclasses() do for <em>, child in ipairs(super[key]) do if not child.no</em>inherit and not child.dtor and not child.static then coroutine.yield(child) end end end end end</p>
+                    <p>-- Iterate superclass hierarchy. function private:superIterator(base, seen, allow<em>cast</em>class) -- Only iterate over a parent once local seen = seen or {} for <em>, name in ipairs(base.super</em>list) do local class local super = self:resolveType(base.parent or self, name) if not super and not allow<em>cast</em>class then -- Ignore empty class if not explicitely declared in -- @dub super statement. else if not super then -- Yield an empty class that can be used for casting dub.warn(5, "Class definition not found for '%s' (using empty class).", name) class = <a href='dub.Class.html'>dub.Class</a> { name = name, parent = base.parent, create<em>name = name .. ' *', db = self, should</em>cast = true, } else class = super end local fullname = class:fullname() if not seen[fullname] then coroutine.yield(class) seen[fullname] = true private.superIterator(self, class, seen) end end end</p>
+                    <p>-- Find pseudo parents if base.dub.super then private.superIterator(self, {super_list = base.dub.super, dub = {}}, seen, true) end end</p>
+                    <p>function private:parseAll() if self.parsed<em>headers then return end for i, header in ipairs(self.xml</em>headers) do if not header.parsed then parse.header(self, header, true) end end self.parsed_headers = true end</p>
+                    <p>-- Here 'self' can be the db (root) or a class. function private:parseHeaders(name) local cache = self.cache if self.parsed<em>headers then return cache[name]  end local elem -- Look in all unparsed headers for i, header in ipairs(self.xml</em>headers) do if not header.parsed then parse.header(self, header) if name and cache[name] then return cache[name] end end end self.parsed_headers = true end</p>
                     <p>require 'lubyk'</p>
                     <p>--- Parse a header definition and return element  -- identified by 'name' if found. function parse:header(header, not<em>lazy) header.parsed = true local data = xml.load(header.path) private.checkDoxygenVersion(data) data = data:find('compounddef') local h</em>path = data:find('location').file local base, h<em>file = lk.pathDir(h</em>path) header.file = h_path</p>
-                    <p>if data.kind == 'namespace' then</p>
-                    <p><pre class='prettyprint lang-lua'>local namespace = dub.Namespace {
-  name   = data:find('compoundname')[1],
-  parent = self,
-  db     = self.db or self,
-}
-if string.match(namespace.name, '::') then
-  -- Ignore: nested namespaces not supported now.
-  dub.warn(5, "Ignoring nested namespace '%s'.", namespace.name)
-  return
-end
-if self.cache[namespace.name] then
-  -- do not add again
-  self = self.cache[namespace.name]
-else
-  self.cache[namespace.name] = namespace
-  table.insert(self.namespaces_list, namespace)
-  self = namespace
-end</pre></p>
-                    <p>end self.header = h_path</p>
-                    <p>local opt = parse.opt(data) if opt then</p>
-                    <p><pre class='prettyprint lang-lua'>self:setOpt(opt)</pre></p>
-                    <p>end parse.children(self, data, header, not_lazy) end</p>
-                    <p>function parse:children(elem<em>list, header, not</em>lazy) local cache = self.cache local sorted<em>cache = self.sorted</em>cache -- First parse namespaces local collect = {} for <em>, elem in ipairs(elem</em>list) do</p>
-                    <p><pre class='prettyprint lang-lua'>if elem.xml == 'innernamespace' then
-  table.insert(collect, 1, elem)
-else
-  table.insert(collect, elem)
-end</pre></p>
-                    <p>end -- Then parse the other elements. for _, elem in ipairs(collect) do</p>
-                    <p><pre class='prettyprint lang-lua'>local func = parse[elem.xml]
-if func then
-  local child = func(self, elem, header, not_lazy)
-  if child then
-    cache[child.name] = child
-    table.insert(sorted_cache, child)
-  end
-else
-  --print('skipping', elem.xml)
-end</pre></p>
-                    <p>end end</p>
-                    <p>-- This is parsed before inheritancegraph. function parse:basecompoundref(elem, header) if elem.prot == 'public' then</p>
-                    <p><pre class='prettyprint lang-lua'>table.insert(self.super_list, elem[1])</pre></p>
-                    <p>end end</p>
-                    <p>function parse:innernamespace(elem, header) local name = elem[1] if self.cache[name] then</p>
-                    <p><pre class='prettyprint lang-lua'>return nil</pre></p>
-                    <p>end</p>
-                    <p>if self.type ~= 'dub.MemoryStorage' or</p>
-                    <p><pre class='prettyprint lang-lua'>-- Ignore nested namespaces for now.
-dub.warn(5, "Ignoring nested namespace '%s'.", name)
-return</pre></p>
-                    <p>end local namespace = <a href='dub.Namespace.html'>dub.Namespace</a> {</p>
-                    <p><pre class='prettyprint lang-lua'>name   = name,
-parent = self,
-db     = self.db or self,</pre></p>
-                    <p>} table.insert(self.namespaces_list, namespace) return namespace end</p>
-                    <p>function parse:innerclass(elem, header, not_lazy) local fullname = elem[1] local name = fullname local parent = self if string.match(fullname, '::') then</p>
-                    <p><pre class='prettyprint lang-lua'>-- inside a namespace or class
-parent = self.db or self
-local parts = lk.split(fullname, '::')
-local i = #parts
-name = parts[i]
-parts[i] = nil
-for i, part in ipairs(parts) do
-  local child = parent.cache[part]
-  if not child then
-    dub.warn(4, "Ignoring class '%s'.", fullname)
-    -- Ignore: this can be due to nested namespaces.
-    return nil
-    --assert(false, "Could not find parent '"..part.."' in '"..parent:fullname().."'.")
-  end
-  parent = child
-end</pre></p>
-                    <p>end</p>
-                    <p>local class = <a href='dub.Class.html'>dub.Class</a> {</p>
-                    <p><pre class='prettyprint lang-lua'>-- self can be a class or db (root)
-db      = self.db or self,
-parent  = parent,
-name    = name,
-xml     = elem,
-xml_headers  = {
-  {path = header.dir .. lk.Dir.sep .. elem.refid .. '.xml', dir = header.dir}
-},</pre></p>
-                    <p>} if not parent.cache[class.name] then</p>
-                    <p><pre class='prettyprint lang-lua'>parent.cache[class.name] = class
-table.insert(parent.sorted_cache, class)</pre></p>
-                    <p>end</p>
-                    <p>if not_lazy then</p>
-                    <p><pre class='prettyprint lang-lua'>private.parseAll(class)</pre></p>
-                    <p>end end</p>
-                    <p>function parse:templateparamlist(elem, header) -- change self from <a href='dub.Class.html'>dub.Class</a> to <a href='dub.CTemplate.html'>dub.CTemplate</a> if self.type == 'dub.Class' then</p>
-                    <p><pre class='prettyprint lang-lua'>setmetatable(self, dub.CTemplate)</pre></p>
-                    <p>end self.template<em>params = {} for </em>, param in ipairs(elem) do</p>
-                    <p><pre class='prettyprint lang-lua'>local name = private.flatten(param:find('type')[1])
-name = string.gsub(name, 'class ', '')
-name = string.gsub(name, 'typename ', '')
-table.insert(self.template_params, name)</pre></p>
-                    <p>end end</p>
-                    <p>function parse:sectiondef(elem, header) local kind = elem.kind if kind == 'public-func' or </p>
-                    <p><pre class='prettyprint lang-lua'> -- methods
- kind == 'enum' or
- -- global enum
- kind == 'func' or
- -- global func
- kind == 'typedef' or
- -- typedef
- kind == 'public-attrib' or
- -- attributes
- kind == 'public-static-attrib' or
- -- static attributes
- kind == 'public-static-func' or
- -- static methods
- kind == 'public-type'
- -- enum, sub-types
- then
-parse.children(self, elem, header)
-if kind == 'enum' then
-  -- global or namespace enum
-  table.insert(self.const_headers, header.file)
-end</pre></p>
-                    <p>elseif kind == 'private-func' or kind == 'protected-func' then</p>
-                    <p><pre class='prettyprint lang-lua'>-- private methods (to detect private ctor/dtor)
-for _, elem in ipairs(elem) do
-  if elem.xml == 'memberdef' and
-     elem.kind == 'function' then
-
-    local name = elem:find('name')[1]
+                    <p>if data.kind == 'namespace' then local namespace = <a href='dub.Namespace.html'>dub.Namespace</a> { name   = data:find('compoundname')[1], parent = self, db     = self.db or self, } if string.match(namespace.name, '::') then -- Ignore: nested namespaces not supported now. dub.warn(5, "Ignoring nested namespace '%s'.", namespace.name) return end if self.cache[namespace.name] then -- do not add again self = self.cache[namespace.name] else self.cache[namespace.name] = namespace table.insert(self.namespaces<em>list, namespace) self = namespace end end self.header = h</em>path</p>
+                    <p>local opt = parse.opt(data) if opt then self:setOpt(opt) end parse.children(self, data, header, not_lazy) end</p>
+                    <p>function parse:children(elem<em>list, header, not</em>lazy) local cache = self.cache local sorted<em>cache = self.sorted</em>cache -- First parse namespaces local collect = {} for <em>, elem in ipairs(elem</em>list) do if elem.xml == 'innernamespace' then table.insert(collect, 1, elem) else table.insert(collect, elem) end end -- Then parse the other elements. for <em>, elem in ipairs(collect) do local func = parse[elem.xml] if func then local child = func(self, elem, header, not</em>lazy) if child then cache[child.name] = child table.insert(sorted_cache, child) end else --print('skipping', elem.xml) end end end</p>
+                    <p>-- This is parsed before inheritancegraph. function parse:basecompoundref(elem, header) if elem.prot == 'public' then table.insert(self.super_list, elem[1]) end end</p>
+                    <p>function parse:innernamespace(elem, header) local name = elem[1] if self.cache[name] then return nil end</p>
+                    <p>if self.type ~= 'dub.MemoryStorage' or string.match(name, '::') then -- Ignore nested namespaces for now. dub.warn(5, "Ignoring nested namespace '%s'.", name) return end local namespace = <a href='dub.Namespace.html'>dub.Namespace</a> { name   = name, parent = self, db     = self.db or self, } table.insert(self.namespaces_list, namespace) return namespace end</p>
+                    <p>function parse:innerclass(elem, header, not_lazy) local fullname = elem[1] local name = fullname local parent = self if string.match(fullname, '::') then -- inside a namespace or class parent = self.db or self local parts = lk.split(fullname, '::') local i = <a href='#parts'>parts</a> name = parts[i] parts[i] = nil for i, part in ipairs(parts) do local child = parent.cache[part] if not child then dub.warn(4, "Ignoring class '%s'.", fullname) -- Ignore: this can be due to nested namespaces. return nil --assert(false, "Could not find parent '"..part.."' in '"..parent:fullname().."'.") end parent = child end end</p>
+                    <p>local class = <a href='dub.Class.html'>dub.Class</a> { -- self can be a class or db (root) db      = self.db or self, parent  = parent, name    = name, xml     = elem, xml<em>headers  = { {path = header.dir .. <a href='lk.Dir.html#sep'>lk.Dir.sep</a> .. elem.refid .. '.xml', dir = header.dir} }, } if not parent.cache[class.name] then parent.cache[class.name] = class table.insert(parent.sorted</em>cache, class) end</p>
+                    <p>if not_lazy then private.parseAll(class) end end</p>
+                    <p>function parse:templateparamlist(elem, header) -- change self from <a href='dub.Class.html'>dub.Class</a> to <a href='dub.CTemplate.html'>dub.CTemplate</a> if self.type == 'dub.Class' then setmetatable(self, dub.CTemplate) end self.template<em>params = {} for </em>, param in ipairs(elem) do local name = private.flatten(param:find('type')[1]) name = string.gsub(name, 'class ', '') name = string.gsub(name, 'typename ', '') table.insert(self.template_params, name) end end</p>
+                    <p>function parse:sectiondef(elem, header) local kind = elem.kind if kind == 'public-func' or  -- methods kind == 'enum' or -- global enum kind == 'func' or -- global func kind == 'typedef' or -- typedef kind == 'public-attrib' or -- attributes kind == 'public-static-attrib' or -- static attributes kind == 'public-static-func' or -- static methods kind == 'public-type' -- enum, sub-types then parse.children(self, elem, header) if kind == 'enum' then -- global or namespace enum table.insert(self.const<em>headers, header.file) end elseif kind == 'private-func' or kind == 'protected-func' then -- private methods (to detect private ctor/dtor) for </em>, elem in ipairs(elem) do if elem.xml == 'memberdef' and elem.kind == 'function' then</p>
+                    <pre class='prettyprint lang-lua'>    local name = elem:find('name')[1]
     if name == '~' .. self.name or
        name ==        self.name then
       -- Private dtor or ctor
       self.cache[name] = 'private'
     end
   end
-end</pre></p>
+end</pre>
                     <p>end end</p>
-                    <p>function parse:memberdef(elem, header) local cache = self.cache local sorted<em>cache = self.sorted</em>cache local kind = elem.kind local func = parse[kind] if func then</p>
-                    <p><pre class='prettyprint lang-lua'>local child = func(self, elem, header)
-if child then
-  cache[child.name] = child
-  table.insert(sorted_cache, child)
-end</pre></p>
-                    <p>else</p>
-                    <p><pre class='prettyprint lang-lua'>--print('skipping memberdef ', kind)</pre></p>
-                    <p>end end</p>
-                    <p>function parse:variable(elem, header) local name = elem:find('name')[1] local definition = elem:find('definition')[1] if string.match(definition, '@') or</p>
-                    <p><pre class='prettyprint lang-lua'> -- ignore defined in class
- self.ignore[name] or
- -- ignore defined in inspector
- self.db.ignore[self.name .. '::' .. name] then
--- ignore
-return nil</pre></p>
-                    <p>end</p>
-                    <p>local child  = {</p>
-                    <p><pre class='prettyprint lang-lua'>name       = name,
-parent     = self,
-type       = 'dub.Attribute',
-ctype      = parse.type(elem),
-static     = elem.static == 'yes',
-argsstring = elem:find('argsstring')[1],
-definition = definition,</pre></p>
-                    <p>} local dim = child.argsstring and string.match(child.argsstring, '^%[(.*)%]$') if dim then</p>
-                    <p><pre class='prettyprint lang-lua'>child.array_dim = dim
--- Transform into two dub.Function name(int) and set_name(int)
-private.makeAttrArrayMethods(self, child)</pre></p>
-                    <p>else</p>
-                    <p><pre class='prettyprint lang-lua'>self.has_variables = true
-table.insert(self.variables_list, child)</pre></p>
-                    <p>end return child end</p>
-                    <p>function parse:enum(elem, header) local constants = self.constants<em>list local list = {} for </em>, v in ipairs(elem) do</p>
-                    <p><pre class='prettyprint lang-lua'>if v.xml == 'enumvalue' then
-  local const = v:find('name')[1]
-  table.insert(list, const)
-  table.insert(constants, const)
-end</pre></p>
-                    <p>end local name = elem:find('name')[1] local enum = {</p>
-                    <p><pre class='prettyprint lang-lua'>type     = 'dub.Enum',
-name     = name,
-location = private.makeLocation(elem, header),
-list     = list,
-ctype    = lib.makeType('int'),</pre></p>
-                    <p>} if self.name then</p>
-                    <p><pre class='prettyprint lang-lua'>enum.ctype.cast = self:fullname() .. '::' .. name
-enum.ctype.create_name = self:fullname() .. '::' .. name .. ' '
-enum.ctype.scope = self:fullname()</pre></p>
-                    <p>else</p>
-                    <p><pre class='prettyprint lang-lua'>enum.ctype.cast = name
-enum.ctype.create_name = name .. ' '</pre></p>
-                    <p>end</p>
+                    <p>function parse:memberdef(elem, header) local cache = self.cache local sorted<em>cache = self.sorted</em>cache local kind = elem.kind local func = parse[kind] if func then local child = func(self, elem, header) if child then cache[child.name] = child table.insert(sorted_cache, child) end else --print('skipping memberdef ', kind) end end</p>
+                    <p>function parse:variable(elem, header) local name = elem:find('name')[1] local definition = elem:find('definition')[1] if string.match(definition, '@') or -- ignore defined in class self.ignore[name] or -- ignore defined in inspector self.db.ignore[self.name .. '::' .. name] then -- ignore return nil end</p>
+                    <p>local child  = { name       = name, parent     = self, type       = 'dub.Attribute', ctype      = parse.type(elem), static     = elem.static == 'yes', argsstring = elem:find('argsstring')[1], definition = definition, } local dim = child.argsstring and string.match(child.argsstring, '^%[(.*)%]$') if dim then child.array<em>dim = dim -- Transform into two <a href='dub.Function.html'>dub.Function</a> name(int) and set</em>name(int) private.makeAttrArrayMethods(self, child) else self.has<em>variables = true table.insert(self.variables</em>list, child) end return child end</p>
+                    <p>function parse:enum(elem, header) local constants = self.constants<em>list local list = {} for </em>, v in ipairs(elem) do if v.xml == 'enumvalue' then local const = v:find('name')[1] table.insert(list, const) table.insert(constants, const) end end local name = elem:find('name')[1] local enum = { type     = 'dub.Enum', name     = name, location = private.makeLocation(elem, header), list     = list, ctype    = lib.makeType('int'), } if self.name then enum.ctype.cast = self:fullname() .. '::' .. name enum.ctype.create<em>name = self:fullname() .. '::' .. name .. ' ' enum.ctype.scope = self:fullname() else enum.ctype.cast = name enum.ctype.create</em>name = name .. ' ' end</p>
                     <p>self.has_constants = true return enum end</p>
-                    <p>function parse:typedef(elem, header) local typ = {</p>
-                    <p><pre class='prettyprint lang-lua'>type        = 'dub.Typedef',
-parent      = self, 
-db          = self.db or self,
-name        = elem:find('name')[1],
-ctype       = parse.type(elem),
-desc        = (elem:find('detaileddescription') or {})[1],
-xml         = elem,
-definition  = elem:find('definition')[1],
-location    = private.makeLocation(elem, header),
-header_path = elem:find('location').file,</pre></p>
-                    <p>} typ.ctype.create_name = typ.name .. ' ' return typ end</p>
-                    <p><pre class='prettyprint lang-lua'></pre></p>
-                    <p>parse['function'] = function(self, elem, header) local name = elem:find('name')[1] if self.is_class then</p>
-                    <p><pre class='prettyprint lang-lua'>if name == '~' .. self.name and self.dub.destroy == 'free' then
-  return nil
-end</pre></p>
-                    <p>end</p>
-                    <p>local argsstring = elem:find('argsstring')[1] if string.match(argsstring, '%.%.%.') or string.match(argsstring, '%[') then</p>
-                    <p><pre class='prettyprint lang-lua'>-- cannot deal with vararg or array types
-return nil</pre></p>
-                    <p>end</p>
-                    <p>local child = <a href='dub.Function.html'>dub.Function</a> {</p>
-                    <p><pre class='prettyprint lang-lua'>-- self can be a class or db (root)
-db            = self.db or self,
-parent        = self,
-header        = header.file,
-name          = name,
-params_list   = parse.params(elem, header),
-return_value  = parse.retval(elem),
-definition    = elem:find('definition')[1],
-argsstring    = argsstring,
-location      = private.makeLocation(elem, header),
-desc          = (elem:find('detaileddescription') or {})[1],
-static        = elem.static == 'yes' or (self.name == name),
-xml           = elem,
-member        = self.is_class,
-dtor          = self.is_class and name == '~' .. self.name,
-ctor          = self.is_class and name == self.name,
-dub           = parse.opt(elem) or {},
-pure_virtual  = elem.virt == 'pure-virtual',</pre></p>
-                    <p>}</p>
+                    <p>function parse:typedef(elem, header) local typ = { type        = 'dub.Typedef', parent      = self,  db          = self.db or self, name        = elem:find('name')[1], ctype       = parse.type(elem), desc        = (elem:find('detaileddescription') or {})[1], xml         = elem, definition  = elem:find('definition')[1], location    = private.makeLocation(elem, header), header<em>path = elem:find('location').file, } typ.ctype.create</em>name = typ.name .. ' ' return typ end</p>
+                    <p>parse['function'] = function(self, elem, header) local name = elem:find('name')[1] if self.is_class then if name == '~' .. self.name and self.dub.destroy == 'free' then return nil end end</p>
+                    <p>local argsstring = elem:find('argsstring')[1] if string.match(argsstring, '%.%.%.') or string.match(argsstring, '%[') then -- cannot deal with vararg or array types return nil end</p>
+                    <p>local child = <a href='dub.Function.html'>dub.Function</a> { -- self can be a class or db (root) db            = self.db or self, parent        = self, header        = header.file, name          = name, params<em>list   = parse.params(elem, header), return</em>value  = parse.retval(elem), definition    = elem:find('definition')[1], argsstring    = argsstring, location      = private.makeLocation(elem, header), desc          = (elem:find('detaileddescription') or {})[1], static        = elem.static == 'yes' or (self.name == name), xml           = elem, member        = self.is<em>class, dtor          = self.is</em>class and name == '~' .. self.name, ctor          = self.is<em>class and name == self.name, dub           = parse.opt(elem) or {}, pure</em>virtual  = elem.virt == 'pure-virtual', }</p>
                     <p>local pure_virtual = elem.virt == 'pure-virtual'</p>
-                    <p>if pure_virtual then</p>
-                    <p><pre class='prettyprint lang-lua'>self.abstract = true
--- remove ctor
-for i, met in ipairs(self.functions_list) do
-  if met.name == self.name then
-    table.remove(self.functions_list, i)
-    break
-  end
-end
-self.cache[self.name] = nil</pre></p>
-                    <p>elseif child and child.ctor and self.abstract then</p>
-                    <p><pre class='prettyprint lang-lua'>return nil</pre></p>
-                    <p>end</p>
-                    <p>if not child then</p>
-                    <p><pre class='prettyprint lang-lua'>-- invalid or ignored child
-return nil</pre></p>
-                    <p>end</p>
-                    <p>local template<em>params = elem:find('templateparamlist') if template</em>params then</p>
-                    <p><pre class='prettyprint lang-lua'>parse.templateparamlist(child, template_params, header)</pre></p>
-                    <p>end</p>
-                    <p>if child.template_params then</p>
-                    <p><pre class='prettyprint lang-lua'>-- we ignore templated functions for now
-return nil</pre></p>
-                    <p>end</p>
-                    <p>if self.is_class and self.name == name then</p>
-                    <p><pre class='prettyprint lang-lua'>-- Constructor
-child.return_value = lib.makeType(self.create_name)</pre></p>
-                    <p>elseif name == 'operator[]' then</p>
-                    <p><pre class='prettyprint lang-lua'>-- Special case for index method
-child.is_get_attr  = true
-child.index_op     = child
-child.name         = self.GET_ATTR_NAME
-child.cname        = self.GET_ATTR_NAME
-local exist = self.cache[self.GET_ATTR_NAME]
-if exist then
-  exist.index_op = child
-  return nil
-else
-  child.index_op = child
-end</pre></p>
-                    <p>end</p>
-                    <p>if name == 'operator-' and <a href='#child'>child</a>.params_list == 0 then</p>
-                    <p><pre class='prettyprint lang-lua'>-- unary minus trick
-name = 'operator- '
-child:setName(name)</pre></p>
-                    <p>end</p>
-                    <p>local exist = self.cache[name] if exist and exist ~= 'private' then</p>
-                    <p><pre class='prettyprint lang-lua'>local list = exist.overloaded
-if not list then
-  list = {exist}
-end
-for _,met in ipairs(list) do
-  if met.sign == child.sign then
-    -- do not add this new version
-    return nil
-  end
-end
-table.insert(list, child)
-exist.overloaded = list
--- not not add it again in cache
-return nil</pre></p>
-                    <p>else</p>
-                    <p><pre class='prettyprint lang-lua'>-- We do not have a previous function or we had a private ctor/dtor.
-local list = self.functions_list
-if list then
-  table.insert(list, child)
-end
-return child</pre></p>
-                    <p>end end</p>
-                    <p>function parse.params(elem, header) local res = {str = elem:find('argsstring')[1]} local i = 0 local first<em>default for </em>, p in ipairs(elem) do</p>
-                    <p><pre class='prettyprint lang-lua'>if p.xml == 'param' then
-  local param = parse.param(p, i+1)
-  if param then
-    i = i + 1
-    table.insert(res, param)
-    if param.default and not first_default then
-      first_default = param.position
-    end
-  end
-end</pre></p>
-                    <p>end res.first<em>default = first</em>default return res end</p>
+                    <p>if pure<em>virtual then self.abstract = true -- remove ctor for i, met in ipairs(self.functions</em>list) do if met.name == self.name then table.remove(self.functions_list, i) break end end self.cache[self.name] = nil elseif child and child.ctor and self.abstract then return nil end</p>
+                    <p>if not child then -- invalid or ignored child return nil end</p>
+                    <p>local template<em>params = elem:find('templateparamlist') if template</em>params then parse.templateparamlist(child, template_params, header) end</p>
+                    <p>if child.template_params then -- we ignore templated functions for now return nil end</p>
+                    <p>if self.is<em>class and self.name == name then -- Constructor child.return</em>value = lib.makeType(self.create<em>name) elseif name == 'operator[]' then -- Special case for index method child.is</em>get<em>attr  = true child.index</em>op     = child child.name         = self.GET<em>ATTR</em>NAME child.cname        = self.GET<em>ATTR</em>NAME local exist = self.cache[self.GET<em>ATTR</em>NAME] if exist then exist.index<em>op = child return nil else child.index</em>op = child end end</p>
+                    <p>if name == 'operator-' and <a href='#child'>child</a>.params_list == 0 then -- unary minus trick name = 'operator- ' child:setName(name) end</p>
+                    <p>local exist = self.cache[name] if exist and exist ~= 'private' then local list = exist.overloaded if not list then list = {exist} end for <em>,met in ipairs(list) do if met.sign == child.sign then -- do not add this new version return nil end end table.insert(list, child) exist.overloaded = list -- not not add it again in cache return nil else -- We do not have a previous function or we had a private ctor/dtor. local list = self.functions</em>list if list then table.insert(list, child) end return child end end</p>
+                    <p>function parse.params(elem, header) local res = {str = elem:find('argsstring')[1]} local i = 0 local first<em>default for </em>, p in ipairs(elem) do if p.xml == 'param' then local param = parse.param(p, i+1) if param then i = i + 1 table.insert(res, param) if param.default and not first<em>default then first</em>default = param.position end end end end res.first<em>default = first</em>default return res end</p>
                     <p>function parse.param(elem, position) local declname = elem:find('declname')</p>
-                    <p>if not declname then</p>
-                    <p><pre class='prettyprint lang-lua'>-- unnamed parameter
-declname = string.format("p%d",position);</pre></p>
-                    <p>else</p>
-                    <p><pre class='prettyprint lang-lua'>declname = declname[1]</pre></p>
-                    <p>end</p>
-                    <p>local default = elem:find('defval') if default then</p>
-                    <p><pre class='prettyprint lang-lua'>default = private.flatten(default)</pre></p>
-                    <p>end</p>
-                    <p>local ctype = parse.type(elem) if not ctype then</p>
-                    <p><pre class='prettyprint lang-lua'>-- type was 'void'
-return nil</pre></p>
-                    <p>end</p>
-                    <p>return {</p>
-                    <p><pre class='prettyprint lang-lua'>type     = 'dub.Param',
-name     = declname,
-position = position,
-ctype    = ctype,
-default  = default,</pre></p>
-                    <p>} end</p>
-                    <p>function parse.retval(elem) local ctype = parse.type(elem) if ctype and ctype.name ~= 'void' then</p>
-                    <p><pre class='prettyprint lang-lua'>return ctype</pre></p>
-                    <p>end end</p>
-                    <p>-- Return a string like 'float' or 'MyFloat'. function parse.type(elem) local ctype = elem:find('type') if type(ctype) == 'table' then</p>
-                    <p><pre class='prettyprint lang-lua'>ctype = private.flatten(ctype)</pre></p>
-                    <p>end if ctype and ctype ~= 'void' then</p>
-                    <p><pre class='prettyprint lang-lua'>return lib.makeType(ctype)</pre></p>
-                    <p>end end</p>
-                    <p>-- This can be used by binders to create types on the fly. local typename = str typename = string.gsub(typename, ' &', '') local create<em>name = typename typename = string.gsub(typename, ' %*', '') if typename == create</em>name then</p>
-                    <p><pre class='prettyprint lang-lua'>create_name = create_name .. ' '</pre></p>
-                    <p>end typename = string.gsub(typename, 'const ', '') typename = string.gsub(typename, 'struct ', '') return {</p>
-                    <p><pre class='prettyprint lang-lua'>def   = str,
-name  = typename,
-create_name = create_name,
-ptr   = string.match(str, '%*'),
-const = string.match(str, 'const'),
-ref   = string.match(str, '&'),</pre></p>
-                    <p>} end</p>
+                    <p>if not declname then -- unnamed parameter declname = string.format("p%d",position); else declname = declname[1] end</p>
+                    <p>local default = elem:find('defval') if default then default = private.flatten(default) end</p>
+                    <p>local ctype = parse.type(elem) if not ctype then -- type was 'void' return nil end</p>
+                    <p>return { type     = 'dub.Param', name     = declname, position = position, ctype    = ctype, default  = default, } end</p>
+                    <p>function parse.retval(elem) local ctype = parse.type(elem) if ctype and ctype.name ~= 'void' then return ctype end end</p>
+                    <p>-- Return a string like 'float' or 'MyFloat'. function parse.type(elem) local ctype = elem:find('type') if type(ctype) == 'table' then ctype = private.flatten(ctype) end if ctype and ctype ~= 'void' then return lib.makeType(ctype) end end</p>
+                    <p>-- This can be used by binders to create types on the fly. local typename = str typename = string.gsub(typename, ' &', '') local create<em>name = typename typename = string.gsub(typename, ' %<strong>', '') if typename == create</em>name then create<em>name = create</em>name .. ' ' end typename = string.gsub(typename, 'const ', '') typename = string.gsub(typename, 'struct ', '') return { def   = str, name  = typename, create<em>name = create</em>name, ptr   = string.match(str, '%</strong>'), const = string.match(str, 'const'), ref   = string.match(str, '&'), } end</p>
                     <p>function private.makeLocation(elem, header) local loc  = elem:find('location') local file = lk.absToRel(loc.file, lfs.currentdir()) return file .. ':' .. loc.line end</p>
-                    <p>-- self == class function private:makeConstructor() if self.cache[self.name] or self.abstract then</p>
-                    <p><pre class='prettyprint lang-lua'>-- Constructor not needed.
-return</pre></p>
-                    <p>end local name = self.name local child = <a href='dub.Function.html'>dub.Function</a> {</p>
-                    <p><pre class='prettyprint lang-lua'>db            = self.db,
-parent        = self,
-name          = name,
-params_list   = {},
-return_value  = lib.makeType(self.create_name),
-definition    = name,
-argsstring    = '()',
-location      = '',
-desc          = name .. ' default constructor.',
-static        = true,
-xml           = nil,
-ctor          = true,
-member        = true,</pre></p>
-                    <p>} -- constructor goes on top table.insert(self.functions<em>list, 1, child) table.insert(self.sorted</em>cache, 1, child) self.cache['~' .. name] = child end</p>
-                    <p>-- self == class function private:makeDestructor() if self.cache['~' .. self.name]  or</p>
-                    <p><pre class='prettyprint lang-lua'> self.ignore['~' .. self.name] or
- self.dub.destroy == 'free' then
--- Destructor not needed.
-return</pre></p>
-                    <p>end local name = self.name local child = <a href='dub.Function.html'>dub.Function</a> {</p>
-                    <p><pre class='prettyprint lang-lua'>db            = self.db,
-parent        = self,
-name          = '~' .. name,
-params_list   = {},
-return_value  = nil,
-definition    = '~' .. name,
-argsstring    = '()',
-location      = '',
-desc          = name .. ' destructor.',
-static        = false,
-xml           = nil,
-dtor          = true,
-member        = true,</pre></p>
-                    <p>} -- destructor goes on top list table.insert(self.functions<em>list, 1, child) table.insert(self.sorted</em>cache, 1, child) self.cache['~' .. name] = child end</p>
-                    <p>-- We pass custom<em>bindings so that we create get/set methods -- even if we do not have public attributes but we have custom -- code for these methods. This should be called just before -- binding (once everything is parsed). if custom</em>bindings then</p>
-                    <p><pre class='prettyprint lang-lua'>-- Only run this when called from the bindings generator (once
--- everything is parsed).
-private.makeConstructor(class)</pre></p>
-                    <p>else</p>
-                    <p><pre class='prettyprint lang-lua'>custom_bindings = {}</pre></p>
-                    <p>end</p>
-                    <p><pre class='prettyprint lang-lua'></pre></p>
-                    <p>if private.needsCast(class.db, class) then</p>
-                    <p><pre class='prettyprint lang-lua'>private.makeCast(class)</pre></p>
-                    <p>end</p>
+                    <p>-- self == class function private:makeConstructor() if self.cache[self.name] or self.abstract then -- Constructor not needed. return end local name = self.name local child = <a href='dub.Function.html'>dub.Function</a> { db            = self.db, parent        = self, name          = name, params<em>list   = {}, return</em>value  = lib.makeType(self.create<em>name), definition    = name, argsstring    = '()', location      = '', desc          = name .. ' default constructor.', static        = true, xml           = nil, ctor          = true, member        = true, } -- constructor goes on top table.insert(self.functions</em>list, 1, child) table.insert(self.sorted_cache, 1, child) self.cache['~' .. name] = child end</p>
+                    <p>-- self == class function private:makeDestructor() if self.cache['~' .. self.name]  or self.ignore['~' .. self.name] or self.dub.destroy == 'free' then -- Destructor not needed. return end local name = self.name local child = <a href='dub.Function.html'>dub.Function</a> { db            = self.db, parent        = self, name          = '~' .. name, params<em>list   = {}, return</em>value  = nil, definition    = '~' .. name, argsstring    = '()', location      = '', desc          = name .. ' destructor.', static        = false, xml           = nil, dtor          = true, member        = true, } -- destructor goes on top list table.insert(self.functions<em>list, 1, child) table.insert(self.sorted</em>cache, 1, child) self.cache['~' .. name] = child end</p>
+                    <p>-- We pass custom<em>bindings so that we create get/set methods -- even if we do not have public attributes but we have custom -- code for these methods. This should be called just before -- binding (once everything is parsed). if custom</em>bindings then -- Only run this when called from the bindings generator (once -- everything is parsed). private.makeConstructor(class) else custom_bindings = {} end</p>
+                    <p>if private.needsCast(class.db, class) then private.makeCast(class) end</p>
                     <p>private.makeGetAttribute(class, custom<em>bindings[class.name] or {}) private.makeSetAttribute(class, custom</em>bindings[class.name] or {}) private.makeDestructor(class) end</p>
-                    <p>function private:needsCast(class) for <em>, name in ipairs(class.super</em>list) do</p>
-                    <p><pre class='prettyprint lang-lua'>local super = self:resolveType(class.parent or self, name)
-if super and super.should_cast then
-  return true
-end</pre></p>
-                    <p>end for _, name in ipairs(class.dub.super or {}) do</p>
-                    <p><pre class='prettyprint lang-lua'>local super = self:resolveType(class.parent or self, name)
-if super and super.should_cast then
-  return true
-end</pre></p>
-                    <p>end return false end</p>
-                    <p>-- self == class function private:makeAttrArrayMethods(attr) local name = attr.name local child = <a href='dub.Function.html'>dub.Function</a> {</p>
-                    <p><pre class='prettyprint lang-lua'>db            = self.db,
-parent        = self,
-name          = attr.name,
-params_list   = {{
-  type     = 'dub.Param',
-  name     = 'i',
-  position = 1,
-  ctype    = lib.makeType('size_t'),
-}},
-return_value  = attr.ctype,
-definition    = 'Read ' .. name,
-argsstring    = '(size_t i)',
-location      = '',
-desc          = 'Read attribute '..name..' for ' .. self.name .. '.',
-static        = false,
-xml           = nil,
--- Should not be inherited by sub-classes
-no_inherit    = true,
-member        = true,
-array_get     = true,
-array_dim     = attr.array_dim,</pre></p>
-                    <p>} table.insert(self.functions<em>list, child) table.insert(self.sorted</em>cache, child) self.cache[child.name] = child</p>
-                    <p>child.overloaded = {child} local overloaded = child.overloaded child = <a href='dub.Function.html'>dub.Function</a> {</p>
-                    <p><pre class='prettyprint lang-lua'>db            = self.db,
-parent        = self,
-name          = attr.name,
-params_list   = {
-  {
-    type     = 'dub.Param',
-    name     = 'i',
-    position = 1,
-    ctype    = lib.makeType('size_t'),
-  }, 
-  {
-    type     = 'dub.Param',
-    name     = 'v',
-    position = 2,
-    ctype    = attr.ctype,
-  }, 
-},
-return_value  = nil,
-definition    = 'Write ' .. name,
-argsstring    = string.format('(size_t i, %s %s)', attr.ctype.name, name),
-location      = '',
-desc          = 'Write attribute '..name..' for ' .. self.name .. '.',
-static        = false,
-xml           = nil,
--- Should not be inherited by sub-classes
-no_inherit    = true,
-member        = true,
-array_set     = true,
-array_dim     = attr.array_dim,</pre></p>
-                    <p>}</p>
+                    <p>function private:needsCast(class) for <em>, name in ipairs(class.super</em>list) do local super = self:resolveType(class.parent or self, name) if super and super.should<em>cast then return true end end for </em>, name in ipairs(class.dub.super or {}) do local super = self:resolveType(class.parent or self, name) if super and super.should_cast then return true end end return false end</p>
+                    <p>-- self == class function private:makeAttrArrayMethods(attr) local name = attr.name local child = <a href='dub.Function.html'>dub.Function</a> { db            = self.db, parent        = self, name          = attr.name, params<em>list   = {{ type     = 'dub.Param', name     = 'i', position = 1, ctype    = lib.makeType('size</em>t'), }}, return<em>value  = attr.ctype, definition    = 'Read ' .. name, argsstring    = '(size</em>t i)', location      = '', desc          = 'Read attribute '..name..' for ' .. self.name .. '.', static        = false, xml           = nil, -- Should not be inherited by sub-classes no<em>inherit    = true, member        = true, array</em>get     = true, array<em>dim     = attr.array</em>dim, } table.insert(self.functions<em>list, child) table.insert(self.sorted</em>cache, child) self.cache[child.name] = child</p>
+                    <p>child.overloaded = {child} local overloaded = child.overloaded child = <a href='dub.Function.html'>dub.Function</a> { db            = self.db, parent        = self, name          = attr.name, params<em>list   = { { type     = 'dub.Param', name     = 'i', position = 1, ctype    = lib.makeType('size</em>t'), },  { type     = 'dub.Param', name     = 'v', position = 2, ctype    = attr.ctype, },  }, return<em>value  = nil, definition    = 'Write ' .. name, argsstring    = string.format('(size</em>t i, %s %s)', attr.ctype.name, name), location      = '', desc          = 'Write attribute '..name..' for ' .. self.name .. '.', static        = false, xml           = nil, -- Should not be inherited by sub-classes no<em>inherit    = true, member        = true, array</em>set     = true, array<em>dim     = attr.array</em>dim, }</p>
                     <p>table.insert(overloaded, child) end</p>
-                    <p>-- self == class function private:makeGetAttribute(custom<em>bindings) if self.cache[self.GET</em>ATTR_NAME] or</p>
-                    <p><pre class='prettyprint lang-lua'> (not self:hasVariables() and
-  not custom_bindings.get_suffix
- ) then
-return</pre></p>
-                    <p>end local name = self.GET<em>ATTR</em>NAME local child = <a href='dub.Function.html'>dub.Function</a> {</p>
-                    <p><pre class='prettyprint lang-lua'>db            = self.db,
-parent        = self,
-name          = name,
-params_list   = {},
-return_value  = nil,
-definition    = 'Get attributes ',
-argsstring    = '(key)',
-location      = '',
-desc          = 'Read attributes values for ' .. self.name .. '.',
-static        = false,
-xml           = nil,
--- Should not be inherited by sub-classes
-no_inherit    = true,
-is_get_attr   = true,
-member        = true,</pre></p>
-                    <p>} table.insert(self.functions<em>list, 1, child) table.insert(self.sorted</em>cache, 1, child) self.cache[child.name] = child end</p>
-                    <p>function private:makeSetAttribute(custom<em>bindings) if self.cache[self.SET</em>ATTR_NAME] or</p>
-                    <p><pre class='prettyprint lang-lua'> (not self:hasVariables() and
-  not custom_bindings.set_suffix
- ) then
-return</pre></p>
-                    <p>end local name = self.SET<em>ATTR</em>NAME local child = <a href='dub.Function.html'>dub.Function</a> {</p>
-                    <p><pre class='prettyprint lang-lua'>db            = self.db,
-parent        = self,
-name          = name,
-params_list   = {},
-return_value  = nil,
-definition    = 'Set attributes ',
-argsstring    = '(key, value)',
-location      = '',
-desc          = 'Set attributes values for ' .. self.name .. '.',
-static        = false,
-xml           = nil,
--- Should not be inherited by sub-classes
-no_inherit    = true,
-is_set_attr   = true,
-member        = true,</pre></p>
-                    <p>} table.insert(self.functions<em>list, 1, child) table.insert(self.sorted</em>cache, 1, child) self.cache[child.name] = child end</p>
-                    <p>function private:makeCast() if self.cache[self.CAST_NAME] then</p>
-                    <p><pre class='prettyprint lang-lua'>return</pre></p>
-                    <p>end local name = self.CAST_NAME local child = <a href='dub.Function.html'>dub.Function</a> {</p>
-                    <p><pre class='prettyprint lang-lua'>db            = self.db,
-parent        = self,
-name          = name,
-params_list   = {},
-return_value  = nil,
-definition    = 'Cast ',
-argsstring    = '(class_name)',
-location      = '',
-desc          = 'Cast to superclass for ' .. self.name .. '.',
-static        = false,
-xml           = nil,
--- Should not be inherited by sub-classes
-no_inherit    = true,
-is_cast       = true,
-member        = true,</pre></p>
-                    <p>} table.insert(self.functions<em>list, 1, child) table.insert(self.sorted</em>cache, 1, child) self.cache[child.name] = child end</p>
-                    <p>function private.flatten(xml) if type(xml) == 'string' then</p>
-                    <p><pre class='prettyprint lang-lua'>return xml</pre></p>
-                    <p>else</p>
-                    <p><pre class='prettyprint lang-lua'>local res = ''
-for i, e in ipairs(xml) do
-  local f = private.flatten(e)
-  if i &gt; 1 and string.sub(f, 1, 1) ~= '(' then
-    res = res .. ' ' .. f
-  else
-    res = res .. f
-  end
-end
-return res</pre></p>
-                    <p>end end</p>
-                    <p>function parse.detaileddescription(self, elem, header) local opt= parse.opt(elem) if opt then</p>
-                    <p><pre class='prettyprint lang-lua'>self:setOpt(opt)</pre></p>
-                    <p>elseif opt == nil then</p>
-                    <p><pre class='prettyprint lang-lua'>print(string.format("Could not parse @dub settings: %s", xml.dump(elem)))</pre></p>
-                    <p>end end</p>
+                    <p>-- self == class function private:makeGetAttribute(custom<em>bindings) if self.cache[self.GET</em>ATTR<em>NAME] or (not self:hasVariables() and not custom</em>bindings.get<em>suffix ) then return end local name = self.GET</em>ATTR<em>NAME local child = <a href='dub.Function.html'>dub.Function</a> { db            = self.db, parent        = self, name          = name, params</em>list   = {}, return<em>value  = nil, definition    = 'Get attributes ', argsstring    = '(key)', location      = '', desc          = 'Read attributes values for ' .. self.name .. '.', static        = false, xml           = nil, -- Should not be inherited by sub-classes no</em>inherit    = true, is<em>get</em>attr   = true, member        = true, } table.insert(self.functions<em>list, 1, child) table.insert(self.sorted</em>cache, 1, child) self.cache[child.name] = child end</p>
+                    <p>function private:makeSetAttribute(custom<em>bindings) if self.cache[self.SET</em>ATTR<em>NAME] or (not self:hasVariables() and not custom</em>bindings.set<em>suffix ) then return end local name = self.SET</em>ATTR<em>NAME local child = <a href='dub.Function.html'>dub.Function</a> { db            = self.db, parent        = self, name          = name, params</em>list   = {}, return<em>value  = nil, definition    = 'Set attributes ', argsstring    = '(key, value)', location      = '', desc          = 'Set attributes values for ' .. self.name .. '.', static        = false, xml           = nil, -- Should not be inherited by sub-classes no</em>inherit    = true, is<em>set</em>attr   = true, member        = true, } table.insert(self.functions<em>list, 1, child) table.insert(self.sorted</em>cache, 1, child) self.cache[child.name] = child end</p>
+                    <p>function private:makeCast() if self.cache[self.CAST<em>NAME] then return end local name = self.CAST</em>NAME local child = <a href='dub.Function.html'>dub.Function</a> { db            = self.db, parent        = self, name          = name, params<em>list   = {}, return</em>value  = nil, definition    = 'Cast ', argsstring    = '(class<em>name)', location      = '', desc          = 'Cast to superclass for ' .. self.name .. '.', static        = false, xml           = nil, -- Should not be inherited by sub-classes no</em>inherit    = true, is<em>cast       = true, member        = true, } table.insert(self.functions</em>list, 1, child) table.insert(self.sorted_cache, 1, child) self.cache[child.name] = child end</p>
+                    <p>function private.flatten(xml) if type(xml) == 'string' then return xml else local res = '' for i, e in ipairs(xml) do local f = private.flatten(e) if i > 1 and string.sub(f, 1, 1) ~= '(' then res = res .. ' ' .. f else res = res .. f end end return res end end</p>
+                    <p>function parse.detaileddescription(self, elem, header) local opt= parse.opt(elem) if opt then self:setOpt(opt) elseif opt == nil then print(string.format("Could not parse @dub settings: %s", xml.dump(elem))) end end</p>
                     <p>local parseOpt = <a href='dub.OptParser.html#parse'>dub.OptParser.parse</a></p>
-                    <p>function parse.opt(elem) -- This would not work if simplesect is not the first one local sect = elem:find('simplesect', 'kind', 'par') if sect then</p>
-                    <p><pre class='prettyprint lang-lua'>if (sect:find('title') or {})[1] == 'Bindings info:' then
-  local txt = private.flatten(sect:find('para'))
-  -- HACK TO RECREATE NEWLINES...
-  txt = string.gsub(txt, ' ([A-Z_a-z]+):', '\n%1:')
-  return parseOpt(txt)
-end</pre></p>
-                    <p>end return false end</p>
+                    <p>function parse.opt(elem) -- This would not work if simplesect is not the first one local sect = elem:find('simplesect', 'kind', 'par') if sect then if (sect:find('title') or {})[1] == 'Bindings info:' then local txt = private.flatten(sect:find('para')) -- HACK TO RECREATE NEWLINES... txt = string.gsub(txt, ' ([A-Z_a-z]+):', '\n%1:') return parseOpt(txt) end end return false end</p>
                     <p>-- function lib:find(scope, name) --   return self:findByFullname(name) or  --   self:findByFullname(elem.parent:fullname() .. '::' .. name) -- end</p>
-                    <p>function private:resolveTypedef(elem) if elem.type == 'dub.Typedef' then</p>
-                    <p><pre class='prettyprint lang-lua'>-- try to resolve and make a full class
-local name, types = string.match(elem.ctype.name, '^(.*) &lt; (.+) &gt;$')
-if name then
-  types = lk.split(types, ', ')
-  -- Try to find the template.
-  local template = self:resolveType(elem.parent, name)
-  if template and template.type == 'dub.CTemplate' then
-    local class = template:resolveTemplateParams(elem.parent, elem.name, types)
-    self.cache[class.name] = class
-    table.insert(self.sorted_cache, class)
-    class.typedef = elem.definition .. ';'
-    class.header  = elem.header_path
-    return class
-  end
-end</pre></p>
-                    <p>end return elem end</p>
-                    <p>local checked<em>versions = {} function private.checkDoxygenVersion(data) local str = (data:find('doxygen') or {version='???'}).version if not checked</em>versions[str] then</p>
-                    <p><pre class='prettyprint lang-lua'>checked_versions[str] = true
-local ok = false
-local versions = {}
-for pat in ipairs(DOXYGEN_VERSIONS) do
-  table.insert(versions, string.gsub(pat,'','')..'x')
-  if string.match(str, '^'..pat) then
-    ok = true
-    break
-  end
-end
-if not ok then
-  dub.warn(4, "WARNING: XML generated by Doxygen '%s'. This version of Dub was tested with versions %s.", str, lk.join(versions, ', '))
-end</pre></p>
-                    <p>end end</p>
-                    <p>function private.iteratorWithScopes(scopes, key) for _, scope in ipairs(scopes) do</p>
-                    <p><pre class='prettyprint lang-lua'>local list = scope[key]
-for _, elem in ipairs(list) do
-  coroutine.yield(elem)
-end</pre></p>
-                    <p>end end</p>
-                    <p>function private:allGlobalFunctions() -- make sure we have parsed the headers private.parseHeaders(self) local co = coroutine.create(private.iteratorWithScopes) local scopes = {self} for <em>, namespace in ipairs(self.namespaces</em>list) do</p>
-                    <p><pre class='prettyprint lang-lua'>table.insert(scopes, namespace)</pre></p>
-                    <p>end return function()</p>
-                    <p><pre class='prettyprint lang-lua'>local ok, elem = coroutine.resume(co, scopes, 'functions_list')
-if ok then
-  return elem
-else
-  print(elem, debug.traceback(co))
-end</pre></p>
-                    <p>end end</p>
-                    <p>function private:parseIgnoreList(base, list) if not list then</p>
-                    <p><pre class='prettyprint lang-lua'>return</pre></p>
-                    <p>end if base then</p>
-                    <p><pre class='prettyprint lang-lua'>base = base .. '::'</pre></p>
-                    <p>else</p>
-                    <p><pre class='prettyprint lang-lua'>base = ''</pre></p>
-                    <p>end for k, name in pairs(list) do</p>
-                    <p><pre class='prettyprint lang-lua'>if type(name) == 'string' then
-  self.ignore[base .. name] = true
-else
-  private.parseIgnoreList(self, base .. k, name)
-end</pre></p>
+                    <p>function private:resolveTypedef(elem) if elem.type == 'dub.Typedef' then -- try to resolve and make a full class local name, types = string.match(elem.ctype.name, '^(.*) < (.+) >$') if name then types = lk.split(types, ', ') -- Try to find the template. local template = self:resolveType(elem.parent, name) if template and template.type == 'dub.CTemplate' then local class = template:resolveTemplateParams(elem.parent, elem.name, types) self.cache[class.name] = class table.insert(self.sorted<em>cache, class) class.typedef = elem.definition .. ';' class.header  = elem.header</em>path return class end end end return elem end</p>
+                    <p>local checked<em>versions = {} function private.checkDoxygenVersion(data) local str = (data:find('doxygen') or {version='???'}).version if not checked</em>versions[str] then checked<em>versions[str] = true local ok = false local versions = {} for pat in ipairs(DOXYGEN</em>VERSIONS) do table.insert(versions, string.gsub(pat,'%%','')..'x') if string.match(str, '^'..pat) then ok = true break end end if not ok then dub.warn(4, "WARNING: XML generated by Doxygen '%s'. This version of Dub was tested with versions %s.", str, lk.join(versions, ', ')) end end end</p>
+                    <p>function private.iteratorWithScopes(scopes, key) for <em>, scope in ipairs(scopes) do local list = scope[key] for </em>, elem in ipairs(list) do coroutine.yield(elem) end end end</p>
+                    <p>function private:allGlobalFunctions() -- make sure we have parsed the headers private.parseHeaders(self) local co = coroutine.create(private.iteratorWithScopes) local scopes = {self} for <em>, namespace in ipairs(self.namespaces</em>list) do table.insert(scopes, namespace) end return function() local ok, elem = coroutine.resume(co, scopes, 'functions_list') if ok then return elem else print(elem, debug.traceback(co)) end end end</p>
                               </section>
                   </div>
 

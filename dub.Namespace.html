@@ -51,11 +51,7 @@
                     <p>return self.db:functions(self) end</p>
                     <p>--=============================================== PUBLIC METHODS</p>
                     <p>self.name = name end</p>
-                    <p>if self.parent and self.parent.type ~= 'dub.MemoryStorage' then</p>
-                    <p><pre class='prettyprint lang-lua'>return self.parent:fullname() .. '::' .. self.name</pre></p>
-                    <p>else</p>
-                    <p><pre class='prettyprint lang-lua'>return self.name</pre></p>
-                    <p>end end</p>
+                    <p>if self.parent and self.parent.type ~= 'dub.MemoryStorage' then return self.parent:fullname() .. '::' .. self.name else return self.name end end</p>
                               </section>
                   </div>
 

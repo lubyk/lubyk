@@ -51,7 +51,7 @@
           <h4 class='function'><span>.</span>new <code>(self)</code></h4>
           
                     <p>Create a new class definition. Most of the attributes are passed with <code>self</code>. Usage example:</p>
-                    <p><pre class='prettyprint lang-lua'>local class = dub.Class {
+                    <pre class='prettyprint lang-lua'>local class = dub.Class {
   -- self can be a class or db (root)
   db      = self.db or self,
   parent  = parent,
@@ -60,7 +60,7 @@
   xml_headers  = {
     {path = header.dir .. lk.Dir.sep .. elem.refid .. '.xml', dir = header.dir}
   },
-}</pre></p>
+}</pre>
                                         <a name='findChild'></a>
           <h4 class='method'><span>:</span>findChild <code>(name)</code></h4>
           

@@ -45,46 +45,17 @@
           
                     <p class='summary'></p>
                     <p>local lib = {type='lk.Client'} lib.<em></em>index = lib <a href='lk.Client.html'>lk.Client</a>   = lib</p>
-                    <p>setmetatable(lib, { -- new method <em></em>call = function(lib, service_type, callback) if not callback then</p>
-                    <p><pre class='prettyprint lang-lua'>callback     = service_type
-service_type = lubyk.service_type</pre></p>
-                    <p>end if not callback then</p>
-                    <p><pre class='prettyprint lang-lua'>-- dummy
-callback = function() end</pre></p>
-                    <p>end</p>
+                    <p>setmetatable(lib, { -- new method <em></em>call = function(lib, service<em>type, callback) if not callback then callback     = service</em>type service<em>type = lubyk.service</em>type end if not callback then -- dummy callback = function() end end</p>
                     <p>local self = {callback = callback, subscriptions = {}} self.browser = lk.ServiceBrowser(service_type):addDelegate(self) </p>
                     <p>--======================================= SUB client</p>
                     <p>self.sub = zmq.SimpleSub(self.callback)</p>
                     <p>setmetatable(self, lib) return self end})</p>
-                    <p>-- resolve pending local subscription = self.subscriptions[service.name] if subscription and not subscription.connected then</p>
-                    <p><pre class='prettyprint lang-lua'>subscription.subscriber:connect(service.sub_url)
-subscription.connected = true</pre></p>
-                    <p>end end</p>
-                    <p>-- remove connection local subscription = self.subscriptions[service.name] if subscription then</p>
-                    <p><pre class='prettyprint lang-lua'>-- TODO: do we need to disconnect ?
-subscription.connected = false</pre></p>
-                    <p>end end</p>
-                    <p>if self.subscriptions[remote_name] then</p>
-                    <p><pre class='prettyprint lang-lua'>-- allready subscribed, abort
-return</pre></p>
-                    <p>end local subscription = {subscriber = self.sub} self.subscriptions[remote<em>name] = subscription local service = self.browser.services[remote</em>name] if service then</p>
-                    <p><pre class='prettyprint lang-lua'>self.sub:connect(service.sub_url)
-subscription.connected = true</pre></p>
-                    <p>end end</p>
-                    <p>local service = self.browser.services[service_name] if not service then</p>
-                    <p><pre class='prettyprint lang-lua'>return false, string.format('Cannot request to %s (service not found)', service_name)</pre></p>
-                    <p>end return service.req:request(...) end</p>
-                    <p>local service = self.browser.services[service_name] if not service then</p>
-                    <p><pre class='prettyprint lang-lua'>return false, string.format('Cannot send to %s (service not found)', service_name)</pre></p>
-                    <p>else</p>
-                    <p><pre class='prettyprint lang-lua'>service.push:send(...)
-return true</pre></p>
-                    <p>end end</p>
-                    <p>for _, connection in pairs(self.subscriptions) do</p>
-                    <p><pre class='prettyprint lang-lua'>if not connection.connected then
-  return false
-end</pre></p>
-                    <p>end return true end</p>
+                    <p>-- resolve pending local subscription = self.subscriptions[service.name] if subscription and not subscription.connected then subscription.subscriber:connect(service.sub_url) subscription.connected = true end end</p>
+                    <p>-- remove connection local subscription = self.subscriptions[service.name] if subscription then -- TODO: do we need to disconnect ? subscription.connected = false end end</p>
+                    <p>if self.subscriptions[remote<em>name] then -- allready subscribed, abort return end local subscription = {subscriber = self.sub} self.subscriptions[remote</em>name] = subscription local service = self.browser.services[remote<em>name] if service then self.sub:connect(service.sub</em>url) subscription.connected = true end end</p>
+                    <p>local service = self.browser.services[service<em>name] if not service then return false, string.format('Cannot request to %s (service not found)', service</em>name) end return service.req:request(...) end</p>
+                    <p>local service = self.browser.services[service<em>name] if not service then return false, string.format('Cannot send to %s (service not found)', service</em>name) else service.push:send(...) return true end end</p>
+                    <p>for _, connection in pairs(self.subscriptions) do if not connection.connected then return false end end return true end</p>
                               </section>
                   </div>
 

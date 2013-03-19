@@ -45,77 +45,12 @@
           
                     <p class='summary'></p>
                     <p>local lib   = {} lib.<em></em>index = lib <a href='lk.Timer.html'>lk.Timer</a>    = lib</p>
-                    <p>setmetatable(lib, { <em></em>call = function(lib, interval, func)</p>
-                    <p><pre class='prettyprint lang-lua'>-- FIXME: remove warning
-if interval &gt; 10 then
-  -- We changed interval from milliseconds to seconds.
-  printf("Using interval of %f seconds.\n%s\n", interval, debug.traceback())
-end
-local self = {
-  interval = interval,
-}
-self.cb = function() self:run() end
-if func then
-  self.tick = func
-end
-return setmetatable(self, lib)</pre></p>
-                    <p>end })</p>
-                    <p>if trigger == false then</p>
-                    <p><pre class='prettyprint lang-lua'>-- do not trigger on start
-self.thread = lk.Thread(function()
-  sched:wait(self.interval)
-  self:run()
-end)</pre></p>
-                    <p>else</p>
-                    <p><pre class='prettyprint lang-lua'>-- trigger on start (default)
-self.thread = lk.Thread(self.cb)</pre></p>
-                    <p>end end</p>
-                    <p>if self.interval > 0 then</p>
-                    <p><pre class='prettyprint lang-lua'>while self.thread do
-  local interval = self:tick()
-  if interval then
-    self:setInterval(interval)
-    break
-  else
-    sched:wait(self.interval)
-  end
-end</pre></p>
-                    <p>end end  </p>
-                    <p>-- FIXME: remove warning if interval > 10 then</p>
-                    <p><pre class='prettyprint lang-lua'>-- We changed interval from milliseconds to seconds.
-printf("Using interval of %f seconds.\n%s\n", interval, debug.traceback())</pre></p>
-                    <p>end if self.thread then</p>
-                    <p><pre class='prettyprint lang-lua'>-- Running timer: remove from scheduler.
-self:stop()
-if interval == 0 then
-  -- Stop.
-  self.interval = interval
-  return
-end</pre></p>
-                    <p>else</p>
-                    <p><pre class='prettyprint lang-lua'>-- Not running.
-self.interval = interval
-if start_if_stopped then
-  self:start()
-end
-return</pre></p>
-                    <p>end -- new trigger is -- LAST + k * interval (until > now) local n = 0 if self.thread then</p>
-                    <p><pre class='prettyprint lang-lua'>n = self.thread.wrap.at or 0</pre></p>
-                    <p>end if self.interval > 0 then</p>
-                    <p><pre class='prettyprint lang-lua'>-- Was running, move back to reschedule.
-while n &gt; sched.now do
-  n = n - self.interval
-end</pre></p>
-                    <p>else</p>
-                    <p><pre class='prettyprint lang-lua'>n = sched.now</pre></p>
-                    <p>end self.interval = interval</p>
+                    <p>setmetatable(lib, { <em></em>call = function(lib, interval, func) -- FIXME: remove warning if interval > 10 then -- We changed interval from milliseconds to seconds. printf("Using interval of %f seconds.\n%s\n", interval, debug.traceback()) end local self = { interval = interval, } self.cb = function() self:run() end if func then self.tick = func end return setmetatable(self, lib) end })</p>
+                    <p>if trigger == false then -- do not trigger on start self.thread = lk.Thread(function() sched:wait(self.interval) self:run() end) else -- trigger on start (default) self.thread = lk.Thread(self.cb) end end</p>
+                    <p>if self.interval > 0 then while self.thread do local interval = self:tick() if interval then self:setInterval(interval) break else sched:wait(self.interval) end end end end  </p>
+                    <p>-- FIXME: remove warning if interval > 10 then -- We changed interval from milliseconds to seconds. printf("Using interval of %f seconds.\n%s\n", interval, debug.traceback()) end if self.thread then -- Running timer: remove from scheduler. self:stop() if interval == 0 then -- Stop. self.interval = interval return end else -- Not running. self.interval = interval if start<em>if</em>stopped then self:start() end return end -- new trigger is -- LAST + k * interval (until > now) local n = 0 if self.thread then n = self.thread.wrap.at or 0 end if self.interval > 0 then -- Was running, move back to reschedule. while n > sched.now do n = n - self.interval end else n = sched.now end self.interval = interval</p>
                     <p>-- n = last trigger time -- |.....|.....|..||...| -- n              now  dt local dt = interval - ((sched.now - n) % interval) self.thread = lk.Thread(self.cb, sched.now + dt) end</p>
-                    <p>if self.thread then</p>
-                    <p><pre class='prettyprint lang-lua'>self.thread:join()</pre></p>
-                    <p>end end</p>
-                    <p>if self.thread then</p>
-                    <p><pre class='prettyprint lang-lua'>self.thread:kill()
-self.thread = nil</pre></p>
+                    <p>if self.thread then self.thread:join() end end</p>
                               </section>
                   </div>
 

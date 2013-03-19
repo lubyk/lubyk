@@ -45,80 +45,23 @@
           
                     <p class='summary'></p>
                     <p>local lib = {type='lk.WebServer'} lib.<em></em>index  = lib <a href='lk.WebServer.html'>lk.WebServer</a> = lib local private = {}</p>
-                    <p>setmetatable(lib, { -- new method <em></em>call = function(lib, port) local self = {</p>
-                    <p><pre class='prettyprint lang-lua'>should_run = true,
-clients    = {},
-server     = lk.Socket(),</pre></p>
-                    <p>} self.server:bind() self.host, self.port = self.server:localHost(), self.server:localPort() setmetatable(self, lib) self:listen() return self end})</p>
+                    <p>setmetatable(lib, { -- new method <em></em>call = function(lib, port) local self = { should_run = true, clients    = {}, server     = lk.Socket(), } self.server:bind() self.host, self.port = self.server:localHost(), self.server:localPort() setmetatable(self, lib) self:listen() return self end})</p>
                     <p>lib.STATUS_CODES = { ["100"]  = "Continue", ["101"]  = "Switching Protocols", ["200"]  = "OK", ["201"]  = "Created", ["202"]  = "Accepted", ["203"]  = "Non-Authoritative Information", ["204"]  = "No Content", ["205"]  = "Reset Content", ["206"]  = "Partial Content", ["300"]  = "Multiple Choices", ["301"]  = "Moved Permanently", ["302"]  = "Found", ["303"]  = "See Other", ["304"]  = "Not Modified", ["305"]  = "Use Proxy", ["307"]  = "Temporary Redirect", ["400"]  = "Bad Request", ["401"]  = "Unauthorized", ["402"]  = "Payment Required", ["403"]  = "Forbidden", ["404"]  = "Not Found", ["405"]  = "Method Not Allowed", ["406"]  = "Not Acceptable", ["407"]  = "Proxy Authentication Required", ["408"]  = "Request Time-out", ["409"]  = "Conflict", ["410"]  = "Gone", ["411"]  = "Length Required", ["412"]  = "Precondition Failed", ["413"]  = "Request Entity Too Large", ["414"]  = "Request-URI Too Large", ["415"]  = "Unsupported Media Type", ["416"]  = "Requested range not satisfiable", ["417"]  = "Expectation Failed", ["500"]  = "Internal Server Error", ["501"]  = "Not Implemented", ["502"]  = "Bad Gateway", ["503"]  = "Service Unavailable", ["504"]  = "Gateway Time-out", ["505"]  = "HTTP Version not supported", }</p>
-                    <p>local function buildReply(body, headers) local status = tostring(headers.status or "200") local status<em>msg = lib.STATUS</em>CODES[status] if not status_msg then</p>
-                    <p><pre class='prettyprint lang-lua'>--print("Bad HTTP status", status)
-return nil</pre></p>
-                    <p>end local res = string.format("HTTP/1.1 %s %s\r\n", status, status_msg) res = res .. string.format("Server: lubyk 0.1\r\n") res = res .. "Connection: close\r\n"</p>
-                    <p>for k, v in pairs(headers) do</p>
-                    <p><pre class='prettyprint lang-lua'>if k ~= 'status' then
-  res = res .. string.format("%s: %s\r\n", k, v)
-end</pre></p>
-                    <p>end if body then</p>
-                    <p><pre class='prettyprint lang-lua'>res = res .. string.format("Content-Length: %i\r\n", string.len(body))
-res = res .. '\r\n' .. body</pre></p>
-                    <p>else</p>
-                    <p><pre class='prettyprint lang-lua'>res = res .. "Content-Length: 0\r\n"</pre></p>
-                    <p>end --print("--------------------------------------------------") --print(res) return res end</p>
-                    <p>-- TODO: protection against DOS attack ? local function getRequest(client) local request = {} --print("==================================================") local line, err = client:recv() if err then</p>
-                    <p><pre class='prettyprint lang-lua'>return nil, err</pre></p>
-                    <p>end --print('STATUS', line) -- GET /foo/bar.html HTTP/1.1 request.method, request.path, request.http = string.match(line, '(%S+)%s+(%S+)%s+(%S+)') request.path = string.match(request.path, '^(.*)/$') or request.path</p>
-                    <p>local headers = {} request.headers = headers while true do</p>
-                    <p><pre class='prettyprint lang-lua'>local line, err = client:recv()
-if err then
-  return nil, err
-end
---print('HEADER', line)
-
-local key, value = string.match(line, '([^:]+): (.*)')
+                    <p>local function buildReply(body, headers) local status = tostring(headers.status or "200") local status<em>msg = lib.STATUS</em>CODES[status] if not status<em>msg then --print("Bad HTTP status", status) return nil end local res = string.format("HTTP/1.1 %s %s\r\n", status, status</em>msg) res = res .. string.format("Server: lubyk 0.1\r\n") res = res .. "Connection: close\r\n"</p>
+                    <p>for k, v in pairs(headers) do if k ~= 'status' then res = res .. string.format("%s: %s\r\n", k, v) end end if body then res = res .. string.format("Content-Length: %i\r\n", string.len(body)) res = res .. '\r\n' .. body else res = res .. "Content-Length: 0\r\n" end --print("--------------------------------------------------") --print(res) return res end</p>
+                    <p>-- TODO: protection against DOS attack ? local function getRequest(client) local request = {} --print("==================================================") local line, err = client:recv() if err then return nil, err end --print('STATUS', line) -- GET /foo/bar.html HTTP/1.1 request.method, request.path, request.http = string.match(line, '(%S+)%s+(%S+)%s+(%S+)') request.path = string.match(request.path, '^(.*)/$') or request.path</p>
+                    <p>local headers = {} request.headers = headers while true do local line, err = client:recv() if err then return nil, err end --print('HEADER', line)</p>
+                    <pre class='prettyprint lang-lua'>local key, value = string.match(line, '([^:]+): (.*)')
 if key then
   headers[key] = value
 else
   break
-end</pre></p>
+end</pre>
                     <p>end</p>
-                    <p>local content<em>length = tonumber(headers['Content-Length']) or 0 if content</em>length > 0 then</p>
-                    <p><pre class='prettyprint lang-lua'>request.body, err = client:recv(content_length)
-if err then
-  return nil, err
-end
---print('BODY', request.body)</pre></p>
-                    <p>end return request end</p>
-                    <p>local server = self.server server:listen() self.thread = lk.Thread(function()</p>
-                    <p><pre class='prettyprint lang-lua'>private.ready(self)
-while true do
-  local client = server:accept()
-  self.clients[client.sock_fd] = client
-  client.thread = lk.Thread(function()
-    -- receive request
-    local request, err = getRequest(client)
-    if err then
-      print("error: " .. tostring(err))
-    else
-      local fun = self[request.method]
-      if fun then
-        local body, headers = fun(self, request)
-        if body or headers then
-          client:send(buildReply(body, headers))
-        end
-      else
-        print(string.format("Could not handle '%s' method with url '%s'.", request.method, request.path))
-      end
-    end
-    self.clients[client.sock_fd] = nil
-    client:close()
-  end)
-end</pre></p>
-                    <p>end) end</p>
+                    <p>local content<em>length = tonumber(headers['Content-Length']) or 0 if content</em>length > 0 then request.body, err = client:recv(content_length) if err then return nil, err end --print('BODY', request.body) end return request end</p>
+                    <p>local server = self.server server:listen() self.thread = lk.Thread(function() private.ready(self) while true do local client = server:accept() self.clients[client.sock<em>fd] = client client.thread = lk.Thread(function() -- receive request local request, err = getRequest(client) if err then print("error: " .. tostring(err)) else local fun = self[request.method] if fun then local body, headers = fun(self, request) if body or headers then client:send(buildReply(body, headers)) end else print(string.format("Could not handle '%s' method with url '%s'.", request.method, request.path)) end end self.clients[client.sock</em>fd] = nil client:close() end) end end) end</p>
                     <p>table.insert(self.on_ready, callback) end</p>
-                    <p>function private:ready() local list = self.on<em>ready self.on</em>ready = {} for _, callback in pairs(list) do</p>
-                    <p><pre class='prettyprint lang-lua'>callback()</pre></p>
-                    <p>end end</p>
+                    <p>function private:ready() local list = self.on<em>ready self.on</em>ready = {} for _, callback in pairs(list) do callback() end end</p>
                     <p>return "<html><head><title>YO</title></head><body>Hello World</body>", {status=200, ['Content-type']='text/html'} end</p>
                               </section>
                   </div>

@@ -45,52 +45,18 @@
           
                     <p class='summary'></p>
                     <p>local lib = {} lib.<em></em>index     = lib <a href='lk.ProcessWatch.html'>lk.ProcessWatch</a> = lib</p>
-                    <p>setmetatable(lib, { -- new method <em></em>call = function(lib, mock<em>browser) local service</em>type = Lubyk.service_type local self = {</p>
-                    <p><pre class='prettyprint lang-lua'>processes = {},
--- weak table
-delegates = setmetatable({}, {__mode = 'v'}),</pre></p>
-                    <p>} setmetatable(self, lib)</p>
+                    <p>setmetatable(lib, { -- new method <em></em>call = function(lib, mock<em>browser) local service</em>type = Lubyk.service<em>type local self = { processes = {}, -- weak table delegates = setmetatable({}, {</em>_mode = 'v'}), } setmetatable(self, lib)</p>
                     <p>self.browser = lk.ServiceBrowser(service_type):addDelegate(self) return self end})</p>
-                    <p>table.insert(self.delegates, delegate) for _, process in pairs(self.processes) do</p>
-                    <p><pre class='prettyprint lang-lua'>if process.online then
-  delegate:processConnected(process)
-end</pre></p>
-                    <p>end return self end</p>
-                    <p>--- Return the remote process or create a disconnected process. local process = self.processes[name] if not process then</p>
-                    <p><pre class='prettyprint lang-lua'>process = lk.RemoteProcess(name)
-self.processes[name] = process</pre></p>
-                    <p>end return process end</p>
-                    <p>local zone, name = string.match(service.fullname, '^([^:]+):(.*)$') if not zone then</p>
-                    <p><pre class='prettyprint lang-lua'>print('Error in ProcessWatch: found service without zone', service.fullname)
-return</pre></p>
-                    <p>elseif zone ~= Lubyk.zone then</p>
-                    <p><pre class='prettyprint lang-lua'>-- ignore
-return</pre></p>
-                    <p>end</p>
-                    <p>if service.op == 'add' then</p>
-                    <p><pre class='prettyprint lang-lua'>local process = self:process(name)
-if process.online then
-  -- allready found
-  return
-else
-  service.zone = zone
-  service.name = name
-
-  process:connect(service)
+                    <p>table.insert(self.delegates, delegate) for _, process in pairs(self.processes) do if process.online then delegate:processConnected(process) end end return self end</p>
+                    <p>--- Return the remote process or create a disconnected process. local process = self.processes[name] if not process then process = lk.RemoteProcess(name) self.processes[name] = process end return process end</p>
+                    <p>local zone, name = string.match(service.fullname, '^([^:]+):(.*)$') if not zone then print('Error in ProcessWatch: found service without zone', service.fullname) return elseif zone ~= Lubyk.zone then -- ignore return end</p>
+                    <p>if service.op == 'add' then local process = self:process(name) if process.online then -- allready found return else service.zone = zone service.name = name</p>
+                    <pre class='prettyprint lang-lua'>  process:connect(service)
   for _, delegate in ipairs(self.delegates) do
     delegate:processConnected(process)
   end
-end</pre></p>
-                    <p>else</p>
-                    <p><pre class='prettyprint lang-lua'>local process = self.processes[name]
-if process then
-  -- disconnect
-  process:disconnect()
-  for _, delegate in ipairs(self.delegates) do
-    delegate:processDisconnected(process)
-  end
-end</pre></p>
-                    <p>end end</p>
+end</pre>
+                    <p>else local process = self.processes[name] if process then -- disconnect process:disconnect() for _, delegate in ipairs(self.delegates) do delegate:processDisconnected(process) end end end end</p>
                               </section>
                   </div>
 

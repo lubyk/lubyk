@@ -45,19 +45,8 @@
           
                     <p class='summary'></p>
                     <p>local lib = {type='lk.Service'} lib.<em></em>index = lib <a href='lk.Service.html'>lk.Service</a>  = lib</p>
-                    <p>setmetatable(lib, { <em></em>call = function(lib, ...)</p>
-                    <p><pre class='prettyprint lang-lua'>return lib.new(...)</pre></p>
-                    <p>end })</p>
-                    <p>if type(opts) == 'function' then</p>
-                    <p><pre class='prettyprint lang-lua'>opts = {callback = opts}</pre></p>
-                    <p>elseif not opts then</p>
-                    <p><pre class='prettyprint lang-lua'>opts = {}</pre></p>
-                    <p>end local service<em>type, callback, type</em>name = opts.service<em>type, opts.callback, opts.type type</em>name = type<em>name or lib.type service</em>type = service<em>type or lubyk.service</em>type if not callback then</p>
-                    <p><pre class='prettyprint lang-lua'>-- dummy
-callback = function()
-  return nil
-end</pre></p>
-                    <p>end local info = opts.info or {} info.type = type_name local self = {name = name, callback = callback, info = (opts.info or {})}</p>
+                    <p>setmetatable(lib, { <em></em>call = function(lib, ...) return lib.new(...) end })</p>
+                    <p>if type(opts) == 'function' then opts = {callback = opts} elseif not opts then opts = {} end local service<em>type, callback, type</em>name = opts.service<em>type, opts.callback, opts.type type</em>name = type<em>name or lib.type service</em>type = service<em>type or lubyk.service</em>type if not callback then -- dummy callback = function() return nil end end local info = opts.info or {} info.type = type_name local self = {name = name, callback = callback, info = (opts.info or {})}</p>
                     <p>--======================================= PUB server self.pub = zmq.Pub() self.info.pub = self.pub:port()</p>
                     <p>--======================================= REP server (sync) -- FIXME: REMOVE (risk of hanging) self.rep = zmq.SimpleRep(callback)</p>
                     <p>--======================================= PULL server (async) self.pull = zmq.SimplePull(callback)</p>

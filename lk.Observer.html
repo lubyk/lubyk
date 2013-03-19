@@ -46,16 +46,9 @@
                     <p class='summary'></p>
                     <p>local lib     = {type='lk.Observer'} lib.<em></em>index   = lib <a href='lk.Observer.html'>lk.Observer</a>   = lib local private = {}</p>
                     <p>assert(class.observed, 'The observed class should implement "observed(self, instance, event)"') assert(not class.notify, 'Existing "notify" method ("notify" is used by lk.Observer).') class.notify  = private.notify class.observe = private.observe end</p>
-                    <p>--- Start observing another class. Whenever the class notifies -- our ' function private:observe(instance) local observers = instance.observers if not observers then</p>
-                    <p><pre class='prettyprint lang-lua'>instance.observers = setmetatable({}, {__mode = 'k'})
-observers = instance.observers</pre></p>
-                    <p>end</p>
+                    <p>--- Start observing another class. Whenever the class notifies -- our ' function private:observe(instance) local observers = instance.observers if not observers then instance.observers = setmetatable({}, {<em></em>mode = 'k'}) observers = instance.observers end</p>
                     <p>-- We store observers in keys so that we are sure to only register -- each observer only once. observers[self] = true end</p>
-                    <p>--- Whenever an event happens that should be notified to observers, this -- method should be called. function private:notify(action) local observers = self.observers if observers then</p>
-                    <p><pre class='prettyprint lang-lua'>for observer, _ in pairs(observers) do
-  observer:observed(self, action)
-end</pre></p>
-                    <p>end end</p>
+                    <p>--- Whenever an event happens that should be notified to observers, this -- method should be called. function private:notify(action) local observers = self.observers if observers then for observer, _ in pairs(observers) do observer:observed(self, action) end end end</p>
                               </section>
                   </div>
 

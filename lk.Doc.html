@@ -47,18 +47,18 @@
 
                     
                     <p class='summary'>lk.Doc parses lua comments and extracts the documentation from these comments.</p>
-                    <p>It parses indifferently multiline comments like this:  </p>
-                    <p><pre class='prettyprint lang-lua'>--[[ 
+                    <p>It parses indifferently multiline comments like this:</p>
+                    <pre class='prettyprint lang-lua'>--[[ 
 Some text in comments.
 
 Some more text.
 --]]
-</pre></p>
-                    <p>and single line comments like this:  </p>
-                    <p><pre class='prettyprint lang-lua'>-- Some text in comments.
+</pre>
+                    <p>and single line comments like this:</p>
+                    <pre class='prettyprint lang-lua'>-- Some text in comments.
 -- 
 -- Some more text.
-</pre></p>
+</pre>
                               </section>
                     <section id='Usage'>
           <h2 class='section'>Usage</h2>
@@ -66,7 +66,7 @@ Some more text.
                     
                     <h4 class='sub-title'>Preamble</h4>
                     <p>You must start your file with a preample containing a title for the class or module and some description.</p>
-                    <p><pre class='prettyprint lang-lua'>--[[---------------------------------------
+                    <pre class='prettyprint lang-lua'>--[[---------------------------------------
   
   # Full title for the file/class
 
@@ -75,22 +75,22 @@ Some more text.
   Some more description.
 
 --]]---------------------------------------
-</pre></p>
+</pre>
                     <h4 class='sub-title'>Math</h4>
-                    <p>The "math" tag can be used to generate mathematics from latex code. When outputing <strong>html</strong>, the page uses <a href='http://www.mathjax.org'>MathJax</a> when outputing html. Here is an example of mathematics inline and as standalone paragraph:</p>
-                    <p><pre class='prettyprint lang-lua'>-- Some documentation with inline
+                    <p>The <code>[math]</code> tag can be used to generate mathematics from latex code. When outputing <strong>html</strong>, the page uses <a href='http://www.mathjax.org'>MathJax</a> when outputing html. Here is an example of mathematics inline and as standalone paragraph:</p>
+                    <pre class='prettyprint lang-lua'>-- Some documentation with inline
 -- [math]\gamma[/math] math. And now a
 -- standalone math paragraph:
 --
 -- [math]\frac{\partial}{\partial\theta_j}J(\theta) = \frac{1}{m}\sum_{i=1}^m(\theta^{T}x^{(i)}-y^{(i)})x_j^{(i)}[/math]
-</pre></p>
+</pre>
                     <p>The result for the code above is:</p>
-                    <p>Some documentation with inline \(\gamma\) math. And now a standalone math paragraph:  </p>
+                    <p>Some documentation with inline \(\gamma\) math. And now a standalone math paragraph:</p>
                     <p>\(\frac{\partial}{\partial\theta_j}J(\theta) = \frac{1}{m}\sum_{i=1}^m(\theta^{T}x^{(i)}-y^{(i)})x_j^{(i)}\)</p>
-                    <p>If you <strong>hover</strong> with the mouse over the formula, it zooms.  </p>
+                    <p>If you <strong>hover</strong> with the mouse over the formula, it zooms.</p>
                     <h4 class='sub-title'>Lua code</h4>
-                    <p>  You can insert code snippets by indenting the code with two spaces. Here is an example of some normal text and some Lua and C++ code.</p>
-                    <p><pre class='prettyprint lang-lua'>--[[
+                    <p>You can insert code snippets by indenting the code with two spaces. Here is an example of some normal text and some Lua and C++ code.</p>
+                    <pre class='prettyprint lang-lua'>--[[
 Some Lua code:
 
   local foo = {}
@@ -103,30 +103,57 @@ And a cpp example:
   float x = 1.0;
   printf("Result = %.2f\n", x);
 --]]
-</pre></p>
+</pre>
                     <p>This results in:</p>
                     <p>Some Lua code:</p>
-                    <p><pre class='prettyprint lang-lua'>local foo = {}
+                    <pre class='prettyprint lang-lua'>local foo = {}
 -- print something
 print 'Hello'
-</pre></p>
+</pre>
                     <p>And a cpp example:</p>
-                    <p><pre class='prettyprint lang-cpp'>float x = 1.0;
+                    <pre class='prettyprint lang-cpp'>float x = 1.0;
 printf("Result = %.2f\n", x);
-</pre></p>
+</pre>
                     <p>As you can see, you have to declare other languages with <code>#name</code> if the code is not Lua.</p>
                     <h4 class='sub-title'>Styles</h4>
                     <p>You can enhance your comments with links, bold, italics and images.</p>
                     <p>Some links are automatically created when the parser sees <code>module.Class</code> like this: <a href='lk.Doc.html'>lk.Doc</a>. A custom link is made with <code>[link title](http://example.com)</code>.</p>
                     <p>Bold is done by using stars: <code>some text with *bold* emphasis</code>. Italics are inserted with underscores: <code>some text _with italic_ emphasis</code>.</p>
                     <p>You can add images with <code>![alt text](/path/to/image.jpg)</code>.</p>
+                    <h4 class='sub-title'>Lists</h4>
+                    <p>There are two kinds of lists available. The first one is simply a bullet list:</p>
+                    <pre>* First element
+* Second element with more text
+  that wraps around
+* Third
+</pre>
+                    <p>Which renders as:</p>
+                    <ul>
+<li>First element</li>
+<li>Second element with more text that wraps around</li>
+<li>Third</li>
+</ul>
+                    <p>The second style is for definitions:</p>
+                    <pre>+ some key:       is used to do something.
++ other long key: is used with a very long definition that
+                  wraps around and even more text that goes
+                  beyond.
++ @last key@:     is a code key.
+</pre>
+                    <p>Renders as:</p>
+                    <table class='definition'>
+  <tr><td class='key'>some key</td><td>is used to do something.</td></tr>
+  <tr><td class='key'>other long key</td><td>is used with a very long definition that wraps around and even more text that goes beyond.</td></tr>
+  <tr><td class='key'><code>last key</code></td><td>is a code key.</td></tr>
+
+</table>
                     <h4 class='sub-title'>TODO and FIXME</h4>
                     <p>You can create TODO and FIXME marks like this</p>
-                    <p><pre class='prettyprint lang-lua'>TODO This is a todo definition
+                    <pre class='prettyprint lang-lua'>TODO This is a todo definition
 
 FIXME This is a fixme
 
-</pre></p>
+</pre>
                     <p>These end up like this (and are repeated at the end of the file).</p>
                     <p><span class='todo'><span>TODO</span> This is a todo definition</span></p>
                     <p><span class='fixme'><span>FIXME</span> This is a fixme</span></p>
@@ -140,10 +167,10 @@ FIXME This is a fixme
           
                     <p>Parse the content of a file given by <code>path</code> and return an <a href='lk.Doc.html'>lk.Doc</a> object  containing the documentation of the class.</p>
                     <p>Usage example:</p>
-                    <p><pre class='prettyprint lang-lua'>require 'lubyk'
+                    <pre class='prettyprint lang-lua'>require 'lubyk'
 local doc = lk.Doc('path/to/File.lua', {target = 'doc'})
 lk.writeall('doc/File.html', doc:toHtml())
-</pre></p>
+</pre>
                     <p>When documenting multiple files it is better to use <a href='#make'>make</a>.</p>
                                         <a name='make'></a>
           <h4 class='function'><span>.</span>make <code>(def)</code></h4>
@@ -152,7 +179,7 @@ lk.writeall('doc/File.html', doc:toHtml())
                     <p>The <code>sources</code> parameter lists paths to Lua files or directories to parse and document. The <code>target</code> parameter is the path to the directory where all the output files will be written. <code>format</code> is the type of output desired. Only 'html' format is supported for now.</p>
                     <p>You can also provide some html code for <code>header</code> and <code>footer</code> that will be inserted in every html output page.</p>
                     <p>Usage:</p>
-                    <p><pre class='prettyprint lang-lua'>require 'lubyk'
+                    <pre class='prettyprint lang-lua'>require 'lubyk'
 lk.Doc.make {
   sources = {
     'lib/doc/DocTest.lua',
@@ -167,7 +194,7 @@ lk.Doc.make {
     &lt;/a&gt;
   ]],
   footer = [[ made with &lt;a href='lk.Doc.html'&gt;lk.Doc&lt;/a&gt; ]],
-}</pre></p>
+}</pre>
                               </section>
                     <section id='Methods'>
           <h2 class='section'>Methods</h2>

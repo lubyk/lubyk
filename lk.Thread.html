@@ -46,42 +46,13 @@
                     <p class='summary'></p>
                     <p>local lib   = {type = 'lk.Thread'} local sched = sched lib.<em></em>index = lib <a href='lk.Thread.html'>lk.Thread</a>   = lib</p>
                     <p>local WeakValue = {<em></em>mode = 'v'}</p>
-                    <p>setmetatable(lib, { <em></em>call = function(lib, func, at)</p>
-                    <p><pre class='prettyprint lang-lua'>local self = {
-  co = coroutine.create(func),
-  func = func,
-  should_run = true,
-}
-setmetatable(self, lib)
-local wrap = {
-  -- weak link to thread
-  t  = setmetatable({t = self}, WeakValue),
-}
-self.wrap = wrap
-self.finalizer = lk.Finalizer(function()
-  sched:remove(wrap)
-end)
-sched:scheduleAt(at or 0, self.wrap)
-return self</pre></p>
-                    <p>end })</p>
-                    <p>-- The calling threads joins with this thread. if self.co then</p>
-                    <p><pre class='prettyprint lang-lua'>coroutine.yield('join', self)</pre></p>
-                    <p>else</p>
-                    <p><pre class='prettyprint lang-lua'>-- ignore: dead thread</pre></p>
-                    <p>end end</p>
+                    <p>setmetatable(lib, { <em></em>call = function(lib, func, at) local self = { co = coroutine.create(func), func = func, should_run = true, } setmetatable(self, lib) local wrap = { -- weak link to thread t  = setmetatable({t = self}, WeakValue), } self.wrap = wrap self.finalizer = lk.Finalizer(function() sched:remove(wrap) end) sched:scheduleAt(at or 0, self.wrap) return self end })</p>
+                    <p>-- The calling threads joins with this thread. if self.co then coroutine.yield('join', self) else -- ignore: dead thread end end</p>
                     <p>return self.should_run end</p>
-                    <p>self.should_run = false if self.wrap.fd then</p>
-                    <p><pre class='prettyprint lang-lua'>sched:removeFd(self.wrap)</pre></p>
-                    <p>end self.wrap.at = 0 self.co = nil end</p>
+                    <p>self.should_run = false if self.wrap.fd then sched:removeFd(self.wrap) end self.wrap.at = 0 self.co = nil end</p>
                     <p>self.should_run = false end</p>
-                    <p>--- @internal. The scheduler asks this thread to resume other threads -- on finalization. if not self.joins then</p>
-                    <p><pre class='prettyprint lang-lua'>self.joins = setmetatable({}, WeakValue)</pre></p>
-                    <p>end table.insert(self.joins, thread_wrap) end   if self.joins then</p>
-                    <p><pre class='prettyprint lang-lua'>for _, thread_wrap in ipairs(self.joins) do
-  -- joined
-  scheduler:scheduleAt(0, thread_wrap)
-end</pre></p>
-                    <p>end end</p>
+                    <p>--- @internal. The scheduler asks this thread to resume other threads -- on finalization. if not self.joins then self.joins = setmetatable({}, WeakValue) end table.insert(self.joins, thread_wrap) end</p>
+                    <p>if self.joins then for <em>, thread</em>wrap in ipairs(self.joins) do -- joined scheduler:scheduleAt(0, thread_wrap) end end end</p>
                               </section>
                   </div>
 

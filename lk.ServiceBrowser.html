@@ -46,62 +46,10 @@
                     <p class='summary'></p>
                     <p>local lib = {type='lk.ServiceBrowser'} lib.<em></em>index = lib <a href='lk.ServiceBrowser.html'>lk.ServiceBrowser</a>  = lib</p>
                     <p>local browsers = setmetatable({}, {<em></em>mode='v'})</p>
-                    <p>--- Creates an instance of the ServiceBrowser -- Keep a hash of created browser by service<em>type -- Always return the same browser for the given service</em>type -- setmetatable(lib, { -- new method <em></em>call = function(lib, service<em>type) local self = browsers[service</em>type] if self then</p>
-                    <p><pre class='prettyprint lang-lua'>return self</pre></p>
-                    <p>end self = {</p>
-                    <p><pre class='prettyprint lang-lua'>service_type = service_type,
-pending  = {},
-services = {},</pre></p>
-                    <p>}</p>
-                    <p>self.finalizer = lk.Finalizer(function()</p>
-                    <p><pre class='prettyprint lang-lua'>browsers[service_type] = nil</pre></p>
-                    <p>end)</p>
-                    <p>self.browser = mdns.Browser(service<em>type) self.browser.delegates = setmetatable({}, {</em><em>mode='v'}) function self.browser.addDevice(browser, remote</em>service)</p>
-                    <p><pre class='prettyprint lang-lua'>remote_service.fullname = remote_service.name
-local found_service = self.services[remote_service.fullname]
-if not found_service then
-  self.services[remote_service.fullname] = remote_service
-  -- start a new thread to announce object (so we do not risk crashing the
-  -- listening thread)
-  remote_service.announce_thread = lk.Thread(function()
-    remote_service.req = zmq.Req()
-    -- new device
-    remote_service.url = string.format('tcp://%s:%i', remote_service.ip, remote_service.port)
-    remote_service.req:connect(remote_service.url)
-    remote_service.info = remote_service.txt
-    if not remote_service.info then
-      -- Missing TXT record ?
-      -- remote_service.info = remote_service.req:request(lubyk.info_url)
-      -- error ?
-      return
-    end
-    remote_service.sub_url  = string.format('tcp://%s:%i', remote_service.ip, remote_service.info.pub)
-    remote_service.push_url = string.format('tcp://%s:%i', remote_service.ip, remote_service.info.pull)
-    remote_service.push = zmq.Push()
-    -- do not keep unsent messages on quit
-    remote_service.push:setsockopt(zmq.LINGER, 0)
-    remote_service.push:connect(remote_service.push_url)
-    for _, delegate in ipairs(browser.delegates) do
-      delegate:addDevice(remote_service)
-    end
-    remote_service.announce_thread = nil
-  end)
-end</pre></p>
-                    <p>end</p>
-                    <p>function self.browser.removeDevice(browser, remote_service)</p>
-                    <p><pre class='prettyprint lang-lua'>remote_service.fullname = remote_service.name
-local found_service = self.services[remote_service.fullname]
-if found_service then
-  -- removed device. Start a new thread in case an error occurs to avoid 
-  -- crashing the listening thread.
-  found_service.announce_thread = lk.Thread(function()
-    for k, delegate in ipairs(browser.delegates) do
-      delegate:removeDevice(remote_service)
-    end
-    self.services[remote_service.fullname] = nil
-  end)
-end</pre></p>
-                    <p>end browsers[service_type] = self setmetatable(self, lib) return self end})</p>
+                    <p>--- Creates an instance of the ServiceBrowser -- Keep a hash of created browser by service<em>type -- Always return the same browser for the given service</em>type -- setmetatable(lib, { -- new method <em></em>call = function(lib, service<em>type) local self = browsers[service</em>type] if self then return self end self = { service<em>type = service</em>type, pending  = {}, services = {}, }</p>
+                    <p>self.finalizer = lk.Finalizer(function() browsers[service_type] = nil end)</p>
+                    <p>self.browser = mdns.Browser(service<em>type) self.browser.delegates = setmetatable({}, {</em><em>mode='v'}) function self.browser.addDevice(browser, remote</em>service) remote<em>service.fullname = remote</em>service.name local found<em>service = self.services[remote</em>service.fullname] if not found<em>service then self.services[remote</em>service.fullname] = remote<em>service -- start a new thread to announce object (so we do not risk crashing the -- listening thread) remote</em>service.announce<em>thread = lk.Thread(function() remote</em>service.req = zmq.Req() -- new device remote<em>service.url = string.format('tcp://%s:%i', remote</em>service.ip, remote<em>service.port) remote</em>service.req:connect(remote<em>service.url) remote</em>service.info = remote<em>service.txt if not remote</em>service.info then -- Missing TXT record ? -- remote<em>service.info = remote</em>service.req:request(lubyk.info<em>url) -- error ? return end remote</em>service.sub<em>url  = string.format('tcp://%s:%i', remote</em>service.ip, remote<em>service.info.pub) remote</em>service.push<em>url = string.format('tcp://%s:%i', remote</em>service.ip, remote<em>service.info.pull) remote</em>service.push = zmq.Push() -- do not keep unsent messages on quit remote<em>service.push:setsockopt(zmq.LINGER, 0) remote</em>service.push:connect(remote<em>service.push</em>url) for <em>, delegate in ipairs(browser.delegates) do delegate:addDevice(remote</em>service) end remote<em>service.announce</em>thread = nil end) end end</p>
+                    <p>function self.browser.removeDevice(browser, remote<em>service) remote</em>service.fullname = remote<em>service.name local found</em>service = self.services[remote<em>service.fullname] if found</em>service then -- removed device. Start a new thread in case an error occurs to avoid  -- crashing the listening thread. found<em>service.announce</em>thread = lk.Thread(function() for k, delegate in ipairs(browser.delegates) do delegate:removeDevice(remote<em>service) end self.services[remote</em>service.fullname] = nil end) end end browsers[service_type] = self setmetatable(self, lib) return self end})</p>
                               </section>
                   </div>
 

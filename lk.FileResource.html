@@ -45,139 +45,22 @@
           
                     <p class='summary'></p>
                     <p>local lib = {type='lk.FileResource', IGNORE = '^%.'} lib.<em></em>index = lib <a href='lk.FileResource.html'>lk.FileResource</a> = lib -- Only store in cache if the body is less then this local CACHE<em>MAX</em>SIZE = 30000 local private = {}</p>
-                    <p>setmetatable(lib, { -- new method -- Create a FileResource. The path <strong>MUST</strong> be relative to root -- if root is provided and must start with a '/'. <em></em>call = function(lib, url, root) local self if root then</p>
-                    <p><pre class='prettyprint lang-lua'>self = root.cache[url]
-if self then
-  return self
-end
-self = {
-  root = root,
-  path = root.path .. url,
-  url = url,</pre></p>
-                    <p><pre class='prettyprint lang-lua'>self = {
-  path = url,
-  url = '',
-}
-self.root = self
--- keep all resources cached
-self.cache = {}</pre></p>
-                    <p>end if not lk.exist(self.path) then</p>
-                    <p><pre class='prettyprint lang-lua'>return nil</pre></p>
-                    <p>else</p>
-                    <p><pre class='prettyprint lang-lua'>self.root.cache[self.url] = self</pre></p>
-                    <p>end self.callbacks = {} setmetatable(self, lib) return self:sync() end})</p>
+                    <p>setmetatable(lib, { -- new method -- Create a FileResource. The path <strong>MUST</strong> be relative to root -- if root is provided and must start with a '/'. <em></em>call = function(lib, url, root) local self if root then self = root.cache[url] if self then return self end self = { root = root, path = root.path .. url, url = url, } else self = { path = url, url = '', } self.root = self -- keep all resources cached self.cache = {} end if not lk.exist(self.path) then return nil else self.root.cache[self.url] = self end self.callbacks = {} setmetatable(self, lib) return self:sync() end})</p>
                     <p>-- accessor for WebDAV properties lib.davProperty = rawget</p>
-                    <p>local stat, err = lfs.attributes(self.path) if not stat then</p>
-                    <p><pre class='prettyprint lang-lua'>-- does not exist (removed)
-return nil</pre></p>
-                    <p>end self.name = string.match(self.path, '/([^/]+)$') self.children<em>list = nil self.body</em>cache    = nil local url = self.url if self.root == self then</p>
-                    <p><pre class='prettyprint lang-lua'>self.url = ''
-self.cache[self.url] = self</pre></p>
-                    <p>else</p>
-                    <p><pre class='prettyprint lang-lua'>self.url = string.sub(self.path, string.len(self.root.path) + 1)
-if url ~= self.url then
-  if self.root.cache[url] == self then
-    self.root.cache[url] = nil
-  end
-  self.root.cache[self.url] = self
-end</pre></p>
-                    <p>end if stat.mode == 'directory' then</p>
-                    <p><pre class='prettyprint lang-lua'>self.is_dir = true
-self.resourcetype = {xml = 'collection'}
--- TODO: we could keep the getlastmodified in sync (must change
--- on add/removal of children and/or subchildren)
-self.getlastmodified  = stat.modification
--- FIXME: find creation date through lfs ?
-self.creationdate     = self.getlastmodified</pre></p>
-                    <p>else</p>
-                    <p><pre class='prettyprint lang-lua'>self.is_dir = false
-self.resourcetype     = nil
-self.contenttype      = private.contentType(self)
-self.getcontentlength = stat.size
-self.getlastmodified  = stat.modification
--- FIXME: find creation date through lfs ?
-self.creationdate     = self.getlastmodified</pre></p>
-                    <p>end return self end</p>
-                    <p>if self.body_cache then</p>
-                    <p><pre class='prettyprint lang-lua'>return self.body_cache</pre></p>
-                    <p>elseif self.getcontentlength < CACHE<em>MAX</em>SIZE then</p>
-                    <p><pre class='prettyprint lang-lua'>self.body_cache = lk.content(self.path)
-return self.body_cache</pre></p>
-                    <p>else</p>
-                    <p><pre class='prettyprint lang-lua'>-- TODO: something that reads by chunks... (io.read func wrapper?)
-return lk.content(self.path)</pre></p>
-                    <p>end end</p>
-                    <p>if self.is_dir then</p>
-                    <p><pre class='prettyprint lang-lua'>return false</pre></p>
-                    <p>else</p>
-                    <p><pre class='prettyprint lang-lua'>lk.writeall(self.path, content or '')
-self:sync()
-self:triggerCallbacks('update')
-return true</pre></p>
-                    <p>end end</p>
-                    <p>if self.is_dir then</p>
-                    <p><pre class='prettyprint lang-lua'>lk.rmTree(self.path, true)
-local url = self.url
-local len = string.len(url)
-for surl, _ in pairs(self.root.cache) do
-  if string.sub(surl, 1, len) == url then
-    self.root.cache[surl] = nil
-  end
-end</pre></p>
-                    <p>else</p>
-                    <p><pre class='prettyprint lang-lua'>lk.rmFile(self.path)
-self.root.cache[self.url] = nil</pre></p>
-                    <p>end return true end</p>
-                    <p>if lk.move(self.path, new_path) then</p>
-                    <p><pre class='prettyprint lang-lua'>self.path = new_path
-self:sync()
-return true</pre></p>
-                    <p>end return false end</p>
+                    <p>local stat, err = lfs.attributes(self.path) if not stat then -- does not exist (removed) return nil end self.name = string.match(self.path, '/([^/]+)$') self.children<em>list = nil self.body</em>cache    = nil local url = self.url if self.root == self then self.url = '' self.cache[self.url] = self else self.url = string.sub(self.path, string.len(self.root.path) + 1) if url ~= self.url then if self.root.cache[url] == self then self.root.cache[url] = nil end self.root.cache[self.url] = self end end if stat.mode == 'directory' then self.is<em>dir = true self.resourcetype = {xml = 'collection'} -- TODO: we could keep the getlastmodified in sync (must change -- on add/removal of children and/or subchildren) self.getlastmodified  = stat.modification -- FIXME: find creation date through lfs ? self.creationdate     = self.getlastmodified else self.is</em>dir = false self.resourcetype     = nil self.contenttype      = private.contentType(self) self.getcontentlength = stat.size self.getlastmodified  = stat.modification -- FIXME: find creation date through lfs ? self.creationdate     = self.getlastmodified end return self end</p>
+                    <p>if self.body<em>cache then return self.body</em>cache elseif self.getcontentlength < CACHE<em>MAX</em>SIZE then self.body<em>cache = lk.content(self.path) return self.body</em>cache else -- TODO: something that reads by chunks... (io.read func wrapper?) return lk.content(self.path) end end</p>
+                    <p>if self.is_dir then return false else lk.writeall(self.path, content or '') self:sync() self:triggerCallbacks('update') return true end end</p>
+                    <p>if self.is<em>dir then lk.rmTree(self.path, true) local url = self.url local len = string.len(url) for surl, </em> in pairs(self.root.cache) do if string.sub(surl, 1, len) == url then self.root.cache[surl] = nil end end else lk.rmFile(self.path) self.root.cache[self.url] = nil end return true end</p>
+                    <p>if lk.move(self.path, new<em>path) then self.path = new</em>path self:sync() return true end return false end</p>
                     <p>--- LOCK the resource. The lock has a default timeout of -- FileResource.LOCK_TIMEOUT in ms and is linked to a user.  -- -- @return 'nil' if the lock cannot be granted (already locked, parent lock) --          a new lock token on succes end</p>
                     <p>end</p>
                     <p>--=============================================== Callbacks -- These are manually triggered by the controllers (typically -- the WebDAV controller when it updates files.</p>
-                    <p>local clb = {...} table.insert(clb, self) local callbacks = self.callbacks[op] if not callbacks then</p>
-                    <p><pre class='prettyprint lang-lua'>callbacks = {}
-self.callbacks[op] = callbacks</pre></p>
-                    <p>end table.insert(callbacks, {func, clb}) end</p>
-                    <p>local callbacks = self.callbacks[op] if callbacks then</p>
-                    <p><pre class='prettyprint lang-lua'>for _, clbk in ipairs(callbacks) do
-  clbk[1](unpack(clbk[2]))
-end</pre></p>
-                    <p>end end</p>
-                    <p>--=============================================== Children if not self.is_dir or not lk.exist(self.path) then</p>
-                    <p><pre class='prettyprint lang-lua'>return {}</pre></p>
-                    <p>end local list = self.children_list if not list then</p>
-                    <p><pre class='prettyprint lang-lua'>-- build and store in cache
-list = {}
-self.children_list = list
-for file in lfs.dir(self.path) do
-  -- IGNORE
-  if not string.match(file, self.IGNORE) then
-    local f = self.url..'/'..file
-    table.insert(list, lib(f, self.root))
-  end
-end</pre></p>
-                    <p>end return list end</p>
-                    <p>local fullpath = self.path .. '/' .. name if body then</p>
-                    <p><pre class='prettyprint lang-lua'>lk.writeall(fullpath, body)</pre></p>
-                    <p>else</p>
-                    <p><pre class='prettyprint lang-lua'>lk.makePath(fullpath)</pre></p>
-                    <p>end self:sync() return lk.FileResource(self.url .. '/' .. name, self.root) end</p>
-                    <p>local rez  if type(res<em>or</em>name) == 'string' then</p>
-                    <p><pre class='prettyprint lang-lua'>local url = self.url.. '/' .. res_or_name
-rez = lib(url, self.root)</pre></p>
-                    <p>else</p>
-                    <p><pre class='prettyprint lang-lua'>rez = res_or_name</pre></p>
-                    <p>end if not rez or rez:delete() then</p>
-                    <p><pre class='prettyprint lang-lua'>self:sync()
-return true</pre></p>
-                    <p>end return false end</p>
-                    <p>local new<em>path = dest</em>parent.path .. '/' .. dest<em>name if child:move(new</em>path) then</p>
-                    <p><pre class='prettyprint lang-lua'>self:sync()
-dest_parent:sync()
-return true</pre></p>
-                    <p>end return false end</p>
+                    <p>local clb = {...} table.insert(clb, self) local callbacks = self.callbacks[op] if not callbacks then callbacks = {} self.callbacks[op] = callbacks end table.insert(callbacks, {func, clb}) end</p>
+                    <p>local callbacks = self.callbacks[op] if callbacks then for _, clbk in ipairs(callbacks) do clbk<a href='unpack(clbk[2]'>1</a>) end end end</p>
+                    <p>--=============================================== Children if not self.is<em>dir or not lk.exist(self.path) then return {} end local list = self.children</em>list if not list then -- build and store in cache list = {} self.children_list = list for file in lfs.dir(self.path) do -- IGNORE if not string.match(file, self.IGNORE) then local f = self.url..'/'..file table.insert(list, lib(f, self.root)) end end end return list end</p>
+                    <p>local fullpath = self.path .. '/' .. name if body then lk.writeall(fullpath, body) else lk.makePath(fullpath) end self:sync() return lk.FileResource(self.url .. '/' .. name, self.root) end</p>
+                    <p>local rez  if type(res<em>or</em>name) == 'string' then local url = self.url.. '/' .. res<em>or</em>name rez = lib(url, self.root) else rez = res<em>or</em>name end if not rez or rez:delete() then self:sync() return true end return false end</p>
+                    <p>local new<em>path = dest</em>parent.path .. '/' .. dest<em>name if child:move(new</em>path) then self:sync() dest_parent:sync() return true end return false end</p>
                     <p>--=============================================== PRIVATE</p>
                     <p>local EXT<em>TO</em>CONTENT_TYPE = { lkp = 'text/yaml', yml = 'text/yaml', lua = 'text/plain', }</p>
                               </section>

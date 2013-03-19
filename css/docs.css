@@ -2,12 +2,18 @@
 .header img {float:left; margin-right:30px; margin-bottom:10px}
 
 h2.section {color:#777; border-top:1px solid #ddd; font-size:26px; margin:1em 0; padding-top:10px;}
-h4.sub-title, p, ul, .container pre.prettyprint { margin-left:40px}
-.main ul li { margin-left:30px;}
+h4.sub-title, p, ul, .container pre.prettyprint, .container pre, table.definition { margin-left:40px; margin-bottom:10px;}
+.main ul li { margin-left:40px;}
 h4.sub-title {margin-top:30px}
+table.definition .key {min-width:100px; font-weight:bold; padding-right:12px}
+table.definition .key code {font-weight:normal}
+table.definition {margin-left:60px;}
+table.definition td {vertical-align:top; padding-top:10px}
+table.definition tr:first-child td {padding-top:0}
 
 p.summary { font-style:italic; margin-bottom:2em;}
-.container pre.prettyprint {border-color:#999; padding:5px; border-radius:2px; }
+.container .main pre.prettyprint,
+.container .main pre {border:1px solid #bbb; padding:5px; border-radius:1px; }
 p code { color:#111; background:#e0e0e0; padding:2px; border:none; font-size:100%;}
 p code { color:#900; background:none; padding:0; border-radius:0;}
 .nav .active > a, .nav .active:hover > a { background:#ddd; color:black; }
