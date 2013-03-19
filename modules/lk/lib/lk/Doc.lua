@@ -37,7 +37,7 @@
 
   ## Math
 
-  The "math" tag can be used to generate mathematics from latex code. When
+  The @[math]@ tag can be used to generate mathematics from latex code. When
   outputing *html*, the page uses [MathJax](http://www.mathjax.org) when outputing html.
   Here is an example of mathematics inline and as standalone paragraph:
 
@@ -103,6 +103,40 @@
   inserted with underscores: @some text _with italic_ emphasis@.
 
   You can add images with @![alt text](/path/to/image.jpg)@.
+
+  ## Lists
+
+  There are two kinds of lists available. The first one is simply a bullet list:
+
+    #txt
+    * First element
+    * Second element with more text
+      that wraps around
+    * Third
+
+  Which renders as:
+
+  * First element
+  * Second element with more text
+    that wraps around
+  * Third
+
+  The second style is for definitions:
+
+    #txt
+    + some key:       is used to do something.
+    + other long key: is used with a very long definition that
+                      wraps around and even more text that goes
+                      beyond.
+    + @last key@:     is a code key.
+
+  Renders as:
+
+  + some key:       is used to do something.
+  + other long key: is used with a very long definition that
+                    wraps around and even more text that goes
+                    beyond.
+  + @last key@:     is a code key.
 
   ## TODO and FIXME
 
@@ -248,7 +282,6 @@ function lib.make(def)
       private.insertInTree(tree, mpath, lk.pathDir(mpath))
     end
   end
-  print(yaml.dump(tree))
 
   private.makeDoc(tree, def)
 end
@@ -272,7 +305,6 @@ function private.insertInTree(tree, fullpath, base)
   for i, part in ipairs(list) do
     if i == last then
       -- Remove extension
-      print(part)
       part = string.match(part, '(.*)%.lua$')
     end
 
@@ -343,7 +375,9 @@ function private:parseFile(path)
     local replay = true
     line_i = line_i + 1
     while replay do
-      --print(string.format("%3i %-14s %s", line_i, state.name or 'SUB', line))
+      if self.name == 'Doc' then
+        print(string.format("%3i %-14s %s", line_i, state.name or 'SUB', line))
+      end
       replay = false
       for i=1,#state do
         local matcher = state[i]
@@ -468,15 +502,27 @@ function private:addToParaN(i, d)
   end
 end
 
-function private:addToList(i, depth, text)
-  if not self.para then
-    self.para = {list = {}}
-  elseif not self.para.list then
-    private.flushPara(self)
-    self.para = {list = {}}
+function private:addToList(i, tag, text, definition)
+  local key
+  if definition then
+    key  = text
+    text = definition
   end
   local para = self.para
-  table.insert(para.list, text)
+  if not para then
+    self.para = {list = {}, text = text, key = key}
+  elseif not para.list then
+    -- Save previous paragraph.
+    private.flushPara(self)
+    -- Start new list
+    self.para = {list = {}, text = text, key = key}
+  else
+    -- Move previous element in list
+    table.insert(para.list, {text = para.text, key = para.key})
+    -- Prepare next.
+    para.text = text
+    para.key  = key
+  end
 end
 
 function private:newSection(i, title)
@@ -558,11 +604,6 @@ parser.mgroup = {
   { match = '^ *## (.+)$',
     output = private.newTitle,
   },
-  -- code
-  { match = '^   ',
-    output = private.flushPara,
-    move  = function() return parser.mcode, true end,
-  },
   -- out of file function
   { match  = '^ *function lib([:%.])([^%(]+)(.*)$',
     output = private.newFunction,
@@ -579,17 +620,31 @@ parser.mgroup = {
   { match = '^ *%[math%]',
     move  = function() return parser.mmath, true end,
   },
-  -- List
+  -- list
   { match = '^ *(%*+) +(.+)$',
     output = private.addToList,
   },
-  -- Normal paragraph
-  { match = '^ *(.+)$',
-    output = private.addToPara,
+  -- definition list
+  { match = '^ *(%+) +(.-): *(.+)$',
+    output = private.addToList,
   },
-  -- End of paragraph
+  -- end of paragraph
   { match = '^ *$', 
     output = private.flushPara,
+    move = {
+      -- code
+      { match = '^   ',
+        output = private.flushPara,
+        move  = function() return parser.mcode, true end,
+      },
+      { match = '',
+        move  = function() return parser.mgroup, true end,
+      },
+    },
+  },
+  -- normal paragraph
+  { match = '^ *(.+)$',
+    output = private.addToPara,
   },
 }
 
@@ -739,11 +794,6 @@ parser.group = {
   { match = '^%-%- *## (.+)$',
     output = private.newTitle,
   },
-  -- code
-  { match = '^%-%-   ',
-    output = private.flushPara,
-    move  = function() return parser.code, true end,
-  },
   -- out of file function definition
   { match  = '^%-%- *function lib([:%.])([^%(]+)(.*)$',
     output = private.newFunction,
@@ -760,17 +810,31 @@ parser.group = {
   { match = '^%-%- *(FIXME):? (.*)$',
     output = private.todoFixme,
   },
-  -- List
+  -- list
   { match = '^%-%- *(%*+) +(.+)$',
     output = private.addToList,
   },
-  -- Normal paragraph
-  { match = '^%-%- *(.+)$',
-    output = private.addToPara,
+  -- definition list
+  { match = '^%-%- *(%+) +(.-): *(.+)$',
+    output = private.addToList,
   },
-  -- End of paragraph
+  -- end of paragraph
   { match = '^%-%- *$', 
     output = private.flushPara,
+    move = {
+      -- code
+      { match = '^%-%-   ',
+        output = private.flushPara,
+        move  = function() return parser.code, true end,
+      },
+      { match = '',
+        move  = function() return parser.group, true end,
+      },
+    },
+  },
+  -- normal paragraph
+  { match = '^%-%- *(.+)$',
+    output = private.addToPara,
   },
 }
 
@@ -890,7 +954,13 @@ function private:paraToHtml(para)
   elseif para.math then
     return "<p>"..private.mathjaxTag(self, para).."</p>"
   elseif para.code then
-    return "<p><pre class='prettyprint lang-"..para.code.."'>"..
+    local tag
+    if para.code == 'txt' then
+      tag = "<pre>"
+    else
+      tag = "<pre class='prettyprint lang-"..para.code.."'>"
+    end
+    return tag .. 
       string.gsub(
       string.gsub(
       string.gsub(text,
@@ -900,7 +970,7 @@ function private:paraToHtml(para)
       ),
         '%%%%', ''
       )..
-      "</pre></p>"
+      "</pre>"
   elseif para.span then
     return "<p><span class='"..para.span.."'><span>"..string.upper(para.span).."</span> "..private.textToHtml(self, text).."</span></p>"
   elseif para.list then
@@ -950,11 +1020,30 @@ function private:textToHtml(text)
 end
 
 function private:listToHtml(para)
-  local out = '<ul>\n'
-  for _, line in ipairs(para.list) do
-    out = out .. '<li>' .. private.textToHtml(self, line) .. '</li>\n'
+  if para.text then
+    -- Flush last list element.
+    table.insert(para.list, {text = para.text, key = para.key})
+    para.text = nil
+    para.key  = nil
   end
-  return out .. '</ul>'
+
+  if para.list[1].key then
+    -- definition list
+    local out = "<table class='definition'>\n"
+    for _, line in ipairs(para.list) do
+      out = out .. "  <tr><td class='key'>"..
+            private.textToHtml(self, line.key) .."</td><td>" ..
+            private.textToHtml(self, line.text).."</td></tr>\n"
+    end
+    return out .. '\n</table>'
+  else
+    -- bullet list
+    local out = '<ul>\n'
+    for _, line in ipairs(para.list) do
+      out = out .. '<li>' .. private.textToHtml(self, line.text) .. '</li>\n'
+    end
+    return out .. '</ul>'
+  end
 end
 
 local function osTry(cmd)
