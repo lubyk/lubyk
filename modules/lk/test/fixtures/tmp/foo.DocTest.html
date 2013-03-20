@@ -97,6 +97,26 @@ lk.Doc.make {
 
                     
                     <p>This is to test parsing table attributes.</p>
+                                        <a name='cost1'></a>
+          <h4 class='param'><span>.</span>cost1 <code>= {default = 0.5, min = 0, max = 1, unit = 'CHF'}</code></h4>
+          
+                    <p>This is a first attribute that is used for this or that.</p>
+                    <p>$$\infty$$</p>
+                                        <a name='cost2'></a>
+          <h4 class='param'><span>.</span>cost2 <code>= {default = 5,   min = 0, max = 10, unit = '$'}</code></h4>
+          
+                    <p>A second attribute.</p>
+                              
+                    <h4 class='sub-title'>Foobar</h4>
+                    <p>With some text about the Foobar group of parameters.</p>
+                                        <a name='foo'></a>
+          <h4 class='param'><span>.</span>foo <code>= 4</code></h4>
+          
+                    <p>An attribute in the foobar group.</p>
+                                        <a name='bar'></a>
+          <h4 class='param'><span>.</span>bar <code>= 'some text here'</code></h4>
+          
+                    <p>Another attribute in the foobar group.</p>
                               </section>
                     <section id='Validation'>
           <h2 class='section'>Validation</h2>
@@ -111,6 +131,9 @@ lk.Doc.make {
           
                     <p>Return true if all the documentation went fine. Possible causes of failure are: bad file format, missing assets.</p>
                     <p class='todo'><span>TODO</span> An orphan todo inside a function that should end in the function def.</p>
+                              
+                    <h4 class='sub-title'>String management</h4>
+                    <p>This group of functions blah, blah.</p>
                                         <a name='append'></a>
           <h4 class='method'><span>:</span>append <code>(str)</code></h4>
           
@@ -138,6 +161,7 @@ lk.Doc.make {
 
                     
                     <p class='todo'><span class='ref'><a href='#Create'>Create</a></span><span>TODO</span> an example of a todo inside the comments.</p>
+                    <p class='todo'><span class='ref'><a href='#Parameters'>Parameters</a></span><span>TODO</span> An orphan todo that should end in the TODO list.</p>
                     <p class='todo'><span class='ref'><a href='#isOK'>#isOK</a></span><span>TODO</span> An orphan todo inside a function that should end in the function def.</p>
                               </section>
                     <section id='FIXME'>

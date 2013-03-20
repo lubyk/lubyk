@@ -18,6 +18,84 @@
     -- 
     -- Some more text.
 
+  ## Function extraction
+
+  All functions and methods defined against @lib@ are extracted even if they
+  are not yet documented. Example:
+
+    function lib:foo(a, b)
+      -- Will generate a TODO with "MISSING DOCUMENTATION"
+    end
+
+    -- Documented function.
+    function lib:bar()
+    end
+
+    -- Documented class function.
+    function lib.boom()
+    end
+  
+  If a function definition does not follow this convention, it can be
+  documented with a commented version of the function definition:
+
+    -- Special function declaration.
+    -- function lib:bing(a, b, c)
+    lib.bing = lk.Doc.bang
+
+    -- Out of file function definition (in C++ for example).
+    -- function lib:connect(server)
+
+  To ignore functions, use @-- nodoc@ as documentation:
+
+    -- nodoc
+    function lib:badOldLegacyFunction(x, y)
+    end
+
+  ## Table parameters
+
+  Since Lua is also used as a description language, it is often useful to
+  document table keys. This is done by using @-- doc@. It is a good idea to
+  create a new for each table in order to document the table itself.
+
+    -- # Attributes (example)
+    -- This is an example of attributes documentation.
+    
+    local ATTRIBS = { -- doc
+      -- Documentation on first key.
+      first_name = '',
+
+      -- Documentation on second key.
+      last_name = '',
+
+      -- ## Sub-title
+      -- Some text for this group of attributes.
+
+      phone = {default = '', format = '000 000 00 00'},
+    }
+
+  Such a list will create the following documentation:
+
+--]]
+
+-- # Attributes (example)
+-- This is an example of attributes documentation.
+
+local ATTRIBS = { -- doc
+  -- Documentation on first key.
+  first_name = '',
+
+  -- Documentation on second key.
+  last_name = '',
+
+  -- ## Sub-title
+  -- Some text for this group of attributes.
+
+  phone = {default = '', format = '000 000 00 00'},
+}
+
+
+--[[
+
   # Usage
 
   ## Preamble
@@ -395,9 +473,9 @@ function private:parseFile(path)
     local replay = true
     line_i = line_i + 1
     while replay do
-      if self.name == 'Doc' then
-        print(string.format("%3i %-14s %s", line_i, state.name or 'SUB', line))
-      end
+      -- if self.name == 'Doc' then
+      --   print(string.format("%3i %-14s %s", line_i, state.name or 'SUB', line))
+      -- end
       replay = false
       for i=1,#state do
         local matcher = state[i]
@@ -445,7 +523,7 @@ function private:todoFixme(i, typ, text)
   table.insert(group, para)
   local list = self[typ]
   if not list then
-    -- Section for TODO or FIXME
+    -- Section for todo or fixme
     list = {
       name  = string.upper(typ),
       title = string.upper(typ),
@@ -484,11 +562,26 @@ function private:newFunction(i, typ, fun, params)
     self.group.global_fun = fun
   end
   self.group.params = params
-  if self.section[#self.section] ~= self.group then
-    -- This can happen if we are using a temporary group.
-    table.insert(self.section, self.group)
-  end
+  private.useGroup(self)
   self.in_func = self.group
+end
+
+function private:newParam(i, key, params)
+  local i = #self.group
+  if self.group[i] and self.group[i].text == 'nodoc' then
+    -- ignore last para
+    table.remove(self.group)
+    self.para = nil
+    return
+  end
+
+  -- The current section becomes the params section.
+  self.params = self.section
+
+  -- Store last group as param definition
+  self.group.param  = key
+  self.group.params = params
+  private.useGroup(self)
 end
 
 function private:newTitle(i, title)
@@ -496,6 +589,14 @@ function private:newTitle(i, title)
   table.insert(self.group, {
     heading = true, text = title
   })
+  private.useGroup(self)
+end
+
+function private:useGroup()
+  local s = self.section
+  if s[#s] ~= self.group then
+    table.insert(s, self.group)
+  end
 end
 
 function private:addToPara(i, d)
@@ -618,7 +719,7 @@ parser.mgroup = {
   -- End of multi-line comment
   { match  = '^%-%-%]',
     output = private.flushPara,
-    move   = function() return parser.end_comment end,
+    move   = function(self) return self.back or parser.end_comment end,
   },
   -- h2: new section
   { match = '^ *# (.+)$',
@@ -632,12 +733,12 @@ parser.mgroup = {
   { match  = '^ *function lib([:%.])([^%(]+)(.*)$',
     output = private.newFunction,
   },
-  -- TODO
-  { match = '^ *(TODO):? (.*)$',
+  -- todo
+  { match = '^ *(TODO):? ?(.*)$',
     output = private.todoFixme,
   },
-  -- FIXME
-  { match = '^ *(FIXME):? (.*)$',
+  -- fixme
+  { match = '^ *(FIXME):? ?(.*)$',
     output = private.todoFixme,
   },
   -- [math] section
@@ -773,7 +874,7 @@ parser.mmath = {
 
 parser.math = {
   -- One liner
-  { match  = '^%-%- *%[math%](.*)%[/math%]', 
+  { match  = '^ *%-%- *%[math%](.*)%[/math%]', 
     output = function(self, i, d)
       private.flushPara(self)
       self.para = {math = true, text = d}
@@ -781,73 +882,79 @@ parser.math = {
     end,
     move = function() return parser.group end,
   },
-  { match  = '^%-%- *%[math%](.*)',
+  { match  = '^ *%-%- *%[math%](.*)',
     output = function(self, i, d)
       private.flushPara(self)
       self.para = {math = true, text = d}
     end,
   },
   -- End of math
-  { match  = '^%-%- (.*)%[/math%]', 
+  { match  = '^ *%-%- (.*)%[/math%]', 
     output = function(self, i, d)
       private.addToPara(self, i, d)
       private.flushPara(self)
     end,
     move = function() return parser.group end,
   },
-  { match  = '^%-%- (.*)$',
+  { match  = '^ *%-%- (.*)$',
     output = private.addToPara,
   },
 }
 
 parser.group = {
-  -- End of comment
-  { match    = '^[^%-]',
+  -- end of comment
+  { match  = '^ *[^%- ]',
     output = private.flushPara,
-    move = function() return parser.end_comment, true end
+    move   = function(self) return self.back or parser.end_comment, true end
   },
-  { match    = '^$',
+  { match  = '^ *$',
     output = private.flushPara,
-    move = function() return parser.lua end
+    move   = function(self)
+      if self.back then
+        return self.back, true
+      else
+        return parser.lua
+      end
+    end,
   },
   -- h2: new section
-  { match = '^%-%- *# (.+)$',
+  { match  = '^ *%-%- *# (.+)$',
     output = private.newSection,
   },
   -- h3: new title
-  { match = '^%-%- *## (.+)$',
+  { match  = '^ *%-%- *## (.+)$',
     output = private.newTitle,
   },
   -- out of file function definition
-  { match  = '^%-%- *function lib([:%.])([^%(]+)(.*)$',
+  { match  = '^ *%-%- *function lib([:%.])([^%(]+)(.*)$',
     output = private.newFunction,
   },
   -- [math] section
-  { match = '^%-%- *%[math%]',
+  { match = '^ *%-%- *%[math%]',
     move  = function() return parser.math, true end,
   },
-  -- TODO
-  { match = '^%-%- *(TODO):? (.*)$',
+  -- todo
+  { match = '^ *%-%- *(TODO):? ?(.*)$',
     output = private.todoFixme,
   },
-  -- FIXME
-  { match = '^%-%- *(FIXME):? (.*)$',
+  -- fixme
+  { match = '^ *%-%- *(FIXME):? ?(.*)$',
     output = private.todoFixme,
   },
   -- list
-  { match = '^%-%- *(%*+) +(.+)$',
+  { match = '^ *%-%- *(%*+) +(.+)$',
     output = private.addToList,
   },
   -- definition list
-  { match = '^%-%- *(%+) +(.-): *(.+)$',
+  { match = '^ *%-%- *(%+) +(.-): *(.+)$',
     output = private.addToList,
   },
   -- end of paragraph
-  { match = '^%-%- *$', 
+  { match = '^ *%-%- *$', 
     output = private.flushPara,
     move = {
       -- code
-      { match = '^%-%-   ',
+      { match = '^ *%-%-   ',
         output = private.flushPara,
         move  = function() return parser.code, true end,
       },
@@ -857,7 +964,7 @@ parser.group = {
     },
   },
   -- normal paragraph
-  { match = '^%-%- *(.+)$',
+  { match = '^ *%-%- *(.+)$',
     output = private.addToPara,
   },
 }
@@ -877,7 +984,7 @@ parser.end_comment = {
   },
   -- Match anything moves to raw code
   { match = '',
-    move = function() return parser.lua end,
+    move = function() return parser.lua, true end,
   }
 }
 
@@ -895,20 +1002,20 @@ parser.lua = {
       self.in_func = nil
     end,
   },
-  -- TODO
-  { match = '^ *%-%- *(TODO):? (.*)$',
+  -- params
+  { match  = '= *{ %-%- *doc *$',
+    move   = function() return parser.params end,
+  },
+  -- todo
+  { match = '^ *%-%- *(TODO):? ?(.*)$',
     output = function(self, ...)
-      if self.in_func then
-        private.todoFixme(self, ...)
-      end
+      private.todoFixme(self, ...)
     end,
   },
-  -- FIXME
-  { match = '^ *%-%- *(FIXME):? (.*)$',
+  -- fixme
+  { match = '^ *%-%- *(FIXME):? ?(.*)$',
     output = function(self, ...)
-      if self.in_func then
-        private.todoFixme(self, ...)
-      end
+      private.todoFixme(self, ...)
     end,
   },
   { match  = '^%-%- +(.+)$',
@@ -925,6 +1032,48 @@ parser.lua = {
       self.group = {}
     end,
     move = function() return parser.mgroup end,
+  },
+}
+
+parser.params = {
+  { match  = '^ *%-%- +(.+)$',
+    output = function(self, i, d)
+      -- Temporary group (not inserted in section).
+      self.group = {}
+    end,
+    move = function(self)
+      self.back = parser.params
+      -- replay last line
+      return parser.group, true
+    end,
+  },
+  { match  = '^%-%-%[%[ *(.*)$',
+    output = function(self, i, d)
+      private.addToPara(self, i, d)
+      -- Temporary group (not inserted in section).
+      self.group = {}
+    end,
+    move = function(self)
+      self.back = parser.params
+      return parser.mgroup
+    end,
+  },
+  -- param definition
+  { match  = '^ *([a-zA-Z0-9_]+) *= *(.*), *$',
+    output = private.newParam,
+  },
+  -- end of params definition
+  { match = '^}',
+    move = function(self)
+      self.back = nil
+      return parser.lua
+    end
+  },
+  { match = '',
+    output = function(self)
+      private.flushPara(self)
+      self.group = {}
+    end,
   },
 }
 
@@ -1061,7 +1210,7 @@ end
 function private:textToHtml(text)
   -- filter content
   local p = text or ''
-  -- FIXME: replace with walking parser to avoid double parsing.
+  -- TODO: Replace textToHtml with a walking parser to avoid double parsing.
   -- code
   local codes = {}
   p = string.gsub(p, '@(.-)@', function(code)

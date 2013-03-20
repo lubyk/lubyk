@@ -56,6 +56,9 @@
           {% elseif group.global_fun then %}
           <a name='{{group.class_fun}}'></a>
           <h4 class='function'>{{group.global_fun}} <code>{{group.params}}</code></h4>
+          {% elseif group.param then %}
+          <a name='{{group.param}}'></a>
+          <h4 class='param'><span>.</span>{{group.param}} <code>= {{group.params}}</code></h4>
           {% end %}
 
           {% for _, para in ipairs(group) do %}

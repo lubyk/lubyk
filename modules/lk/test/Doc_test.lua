@@ -68,6 +68,43 @@ function should.convertToHtml()
   assertMatch('<title>Documentation Tester</title>', doc:toHtml())
 end
 
+function should.extractParams()
+  local doc = lk.Doc(fixture.path('doc/foo/DocTest.lua'))
+  assertValueEqual({
+    name  = 'Parameters',
+    title = 'Parameters',
+    -- First group = section doc.
+    {
+      {text = 'This is to test parsing table attributes.'},
+    },
+    {
+      param  = 'cost1',
+      params = "{default = 0.5, min = 0, max = 1, unit = 'CHF'}",
+      {text = 'This is a first attribute that is used for this or that.'},
+      {text = '\\infty', math = true},
+    },
+    {
+      param  = 'cost2',
+      params = "{default = 5,   min = 0, max = 10, unit = '$'}",
+      {text = 'A second attribute.'},
+    },
+    {
+      {heading = true, text = 'Foobar'},
+      {text = 'With some text about the Foobar group of parameters.'},
+    },
+    {
+      param  = 'foo',
+      params = '4',
+      {text = 'An attribute in the foobar group.'},
+    },
+    {
+      param  = 'bar',
+      params = "'some text here'",
+      {text = 'Another attribute in the foobar group.'},
+    },
+  }, doc.params)
+end
+
 function should.makeDoc()
   lk.Doc.make {
     sources = {

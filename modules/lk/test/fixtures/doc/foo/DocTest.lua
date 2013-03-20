@@ -74,7 +74,7 @@ local xyz
 
 -- # Parameters
 -- This is to test parsing table attributes.
-lib.params = {
+lib.params = { -- doc
   -- This is a first attribute that is used for this or that.
   -- [math]\infty[/math]
   cost1 = {default = 0.5, min = 0, max = 1, unit = 'CHF'},
@@ -83,7 +83,10 @@ lib.params = {
   cost2 = {default = 5,   min = 0, max = 10, unit = '$'},
 
   -- ## Foobar
-  
+  -- 
+  -- With some text about the Foobar group
+  -- of parameters.
+
   -- An attribute in the foobar group.
   foo = 4,
 
@@ -117,6 +120,9 @@ function lib:isOK()
 end
 
 -- This comment will be ignored.
+
+-- ## String management
+-- This group of functions blah, blah.
 
 -- Append the @str@ string to the description.
 function lib:append(str)
