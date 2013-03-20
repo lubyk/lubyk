@@ -74,26 +74,30 @@
 .../B/foo.lua or
 ...[node:url()].lua &lt;== Code for node 'foo' in process 'B'
 .../lib             &lt;== searched for required code</pre>
+                    <p class='todo'><span>TODO</span> make async</p>
                                         <a name='findClass'></a>
           <h4 class='method'><span>:</span>findClass <code>(class_name)</code></h4>
           
-                    <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION</span></p>
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span>TODO</span> make async ?</p>
                                         <a name='callback'></a>
           <h4 class='method'><span>:</span>callback <code>(url, ...)</code></h4>
           
-                    <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION</span></p>
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='fixme'><span>FIXME</span> This is an ugly hack related to post-linking. We notify only</p>
                                         <a name='error'></a>
           <h4 class='method'><span>:</span>error <code>(...)</code></h4>
           
-                    <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION</span></p>
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span>TODO</span> notify error</p>
                                         <a name='notify'></a>
           <h4 class='method'><span>:</span>notify <code>(...)</code></h4>
           
-                    <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION</span></p>
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
                                         <a name='onNotify'></a>
           <h4 class='method'><span>:</span>onNotify <code>(key, callback)</code></h4>
           
-                    <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION</span></p>
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
                                         <a name='setParam'></a>
           <h4 class='method'><span>:</span>setParam <code>(lubyk, p, param_name, value)</code></h4>
           
@@ -102,11 +106,12 @@
           <h4 class='method'><span>:</span>control <code>(url, value)</code></h4>
           
                     <p>Set a parameter from a relative url like "metro/@tempo".</p>
-                    <p><span class='fixme'><span>FIXME</span> Is this used ?</span></p>
+                    <p class='fixme'><span>FIXME</span> Is this used ?</p>
                                         <a name='findProcess'></a>
           <h4 class='method'><span>:</span>findProcess <code>(name)</code></h4>
           
-                    <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION</span></p>
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span>TODO</span> better error handling</p>
                                         <a name='url'></a>
           <h4 class='method'><span>:</span>url <code>()</code></h4>
           
@@ -114,11 +119,11 @@
                                         <a name='setMorph'></a>
           <h4 class='method'><span>:</span>setMorph <code>(process)</code></h4>
           
-                    <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION</span></p>
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
                                         <a name='sync'></a>
           <h4 class='method'><span>:</span>sync <code>()</code></h4>
           
-                    <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION</span></p>
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
                                         <a name='processConnected'></a>
           <h4 class='method'><span>:</span>processConnected <code>(remote_process)</code></h4>
           
@@ -132,20 +137,25 @@
           <h2 class='section'>TODO</h2>
 
                     
-                    <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION FOR <a href='#findClass'>findClass</a>.</span></p>
-                    <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION FOR <a href='#callback'>callback</a>.</span></p>
-                    <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION FOR <a href='#error'>error</a>.</span></p>
-                    <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION FOR <a href='#notify'>notify</a>.</span></p>
-                    <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION FOR <a href='#onNotify'>onNotify</a>.</span></p>
-                    <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION FOR <a href='#findProcess'>findProcess</a>.</span></p>
-                    <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION FOR <a href='#setMorph'>setMorph</a>.</span></p>
-                    <p><span class='todo'><span>TODO</span> MISSING DOCUMENTATION FOR <a href='#sync'>sync</a>.</span></p>
+                    <p class='todo'><span class='ref'><a href='#findCode'>#findCode</a></span><span>TODO</span> make async</p>
+                    <p class='todo'><span class='ref'><a href='#findClass'>#findClass</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#findClass'>#findClass</a></span><span>TODO</span> make async ?</p>
+                    <p class='todo'><span class='ref'><a href='#callback'>#callback</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#error'>#error</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#error'>#error</a></span><span>TODO</span> notify error</p>
+                    <p class='todo'><span class='ref'><a href='#notify'>#notify</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#onNotify'>#onNotify</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#findProcess'>#findProcess</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#findProcess'>#findProcess</a></span><span>TODO</span> better error handling</p>
+                    <p class='todo'><span class='ref'><a href='#setMorph'>#setMorph</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#sync'>#sync</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
                               </section>
                     <section id='FIXME'>
           <h2 class='section'>FIXME</h2>
 
                     
-                    <p><span class='fixme'><span>FIXME</span> Is this used ?</span></p>
+                    <p class='fixme'><span class='ref'><a href='#callback'>#callback</a></span><span>FIXME</span> This is an ugly hack related to post-linking. We notify only</p>
+                    <p class='fixme'><span class='ref'><a href='#control'>#control</a></span><span>FIXME</span> Is this used ?</p>
                               </section>
                   </div>
 

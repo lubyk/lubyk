@@ -32,6 +32,7 @@
         <div class='span3'>
           <ul class='nav nav-tabs nav-stacked local-nav affix'>
                         <li><a href='#Doc'><i class='icon-chevron-right'></i> lk.Doc</a></li>
+                        <li><a href='#Attributes-(example)'><i class='icon-chevron-right'></i> Attributes (example)</a></li>
                         <li><a href='#Usage'><i class='icon-chevron-right'></i> Usage</a></li>
                         <li><a href='#Class-functions'><i class='icon-chevron-right'></i> Class functions</a></li>
                         <li><a href='#Methods'><i class='icon-chevron-right'></i> Methods</a></li>
@@ -59,6 +60,72 @@ Some more text.
 -- 
 -- Some more text.
 </pre>
+                    <h4 class='sub-title'>Function extraction</h4>
+                    <p>All functions and methods defined against <code>lib</code> are extracted even if they are not yet documented. Example:</p>
+                    <pre class='prettyprint lang-lua'>function lib:foo(a, b)
+  -- Will generate a TODO with "MISSING DOCUMENTATION"
+end
+
+-- Documented function.
+function lib:bar()
+end
+
+-- Documented class function.
+function lib.boom()
+end
+</pre>
+                    <p>If a function definition does not follow this convention, it can be documented with a commented version of the function definition:</p>
+                    <pre class='prettyprint lang-lua'>-- Special function declaration.
+-- function lib:bing(a, b, c)
+lib.bing = lk.Doc.bang
+
+-- Out of file function definition (in C++ for example).
+-- function lib:connect(server)
+</pre>
+                    <p>To ignore functions, use <code>-- nodoc</code> as documentation:</p>
+                    <pre class='prettyprint lang-lua'>-- nodoc
+function lib:badOldLegacyFunction(x, y)
+end
+</pre>
+                    <h4 class='sub-title'>Table parameters</h4>
+                    <p>Since Lua is also used as a description language, it is often useful to document table keys. This is done by using <code>-- doc</code>. It is a good idea to create a new for each table in order to document the table itself.</p>
+                    <pre class='prettyprint lang-lua'>-- # Attributes (example)
+-- This is an example of attributes documentation.
+
+local ATTRIBS = { -- doc
+  -- Documentation on first key.
+  first_name = '',
+
+  -- Documentation on second key.
+  last_name = '',
+
+  -- ## Sub-title
+  -- Some text for this group of attributes.
+
+  phone = {default = '', format = '000 000 00 00'},
+}
+</pre>
+                    <p>Such a list will create the following documentation:</p>
+                              </section>
+                    <section id='Attributes-(example)'>
+          <h2 class='section'>Attributes (example)</h2>
+
+                    
+                    <p>This is an example of attributes documentation.</p>
+                                        <a name='first_name'></a>
+          <h4 class='param'><span>.</span>first_name <code>= ''</code></h4>
+          
+                    <p>Documentation on first key.</p>
+                                        <a name='last_name'></a>
+          <h4 class='param'><span>.</span>last_name <code>= ''</code></h4>
+          
+                    <p>Documentation on second key.</p>
+                              
+                    <h4 class='sub-title'>Sub-title</h4>
+                    <p>Some text for this group of attributes.</p>
+                                        <a name='phone'></a>
+          <h4 class='param'><span>.</span>phone <code>= {default = '', format = '000 000 00 00'}</code></h4>
+          
                               </section>
                     <section id='Usage'>
           <h2 class='section'>Usage</h2>
@@ -155,8 +222,8 @@ FIXME This is a fixme
 
 </pre>
                     <p>These end up like this (and are repeated at the end of the file).</p>
-                    <p><span class='todo'><span>TODO</span> This is a todo definition</span></p>
-                    <p><span class='fixme'><span>FIXME</span> This is a fixme</span></p>
+                    <p class='todo'><span>TODO</span> This is a todo definition</p>
+                    <p class='fixme'><span>FIXME</span> This is a fixme</p>
                               </section>
                     <section id='Class-functions'>
           <h2 class='section'>Class functions</h2>
@@ -172,6 +239,7 @@ local doc = lk.Doc('path/to/File.lua', {target = 'doc'})
 lk.writeall('doc/File.html', doc:toHtml())
 </pre>
                     <p>When documenting multiple files it is better to use <a href='#make'>make</a>.</p>
+                    <p>The <code>navigation</code> and <code>children</code> tables are used to display the  navigation menu on the right and class list in the document body.</p>
                                         <a name='make'></a>
           <h4 class='function'><span>.</span>make <code>(def)</code></h4>
           
@@ -209,13 +277,14 @@ lk.Doc.make {
           <h2 class='section'>TODO</h2>
 
                     
-                    <p><span class='todo'><span>TODO</span> This is a todo definition</span></p>
+                    <p class='todo'><span class='ref'><a href='#Usage'>Usage</a></span><span>TODO</span> This is a todo definition</p>
+                    <p class='todo'><span class='ref'><a href='#Methods'>Methods</a></span><span>TODO</span> Replace textToHtml with a walking parser to avoid double parsing.</p>
                               </section>
                     <section id='FIXME'>
           <h2 class='section'>FIXME</h2>
 
                     
-                    <p><span class='fixme'><span>FIXME</span> This is a fixme</span></p>
+                    <p class='fixme'><span class='ref'><a href='#Usage'>Usage</a></span><span>FIXME</span> This is a fixme</p>
                               </section>
                   </div>
 
