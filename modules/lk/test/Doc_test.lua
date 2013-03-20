@@ -10,6 +10,7 @@ require 'lubyk'
 local should = test.Suite('lk.Doc')
 
 local tmp = fixture.path('tmp')
+
 function should.teardown()
 --  lk.rmTree(tmp)
 end
@@ -47,9 +48,11 @@ function should.extractDescription()
     { text = 'A second paragraph in the "description" with an auto link: doc.DocTest. And here is a custom link "lubyk":http://lubyk.org. And some formatting: *strong* _emphasis_.'},
 
     { text = 'Some lists:'},
-    { text = [[* foo
-** bar
-* baz]]},
+    { text = 'baz', list = {
+        { text = 'foo' },
+        { text = 'bar' },
+      },
+    },
     { text = 'Finally, some inline math [math]\\infty[/math] with more text. And now some more math in its own paragraph:'},
     {
       math = 'inline',

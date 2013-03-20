@@ -172,6 +172,9 @@ local DEFAULT_FOOTER = [[ made with <a href='http://doc.lubyk.org/lk.Doc.html'>l
 --   lk.writeall('doc/File.html', doc:toHtml())
 --
 -- When documenting multiple files it is better to use #make.
+--
+-- The @navigation@ and @children@ tables are used to display the 
+-- navigation menu on the right and class list in the document body.
 function lib.new(path, def)
   def = def or {}
   local self = {
@@ -179,12 +182,12 @@ function lib.new(path, def)
     target = def.target,
     header = def.header,
     footer = def.footer or DEFAULT_FOOTER,
-    navigation = def.navigation,
-    children   = def.children,
+    navigation = def.navigation or {},
+    children   = def.children or {},
     sections = {},
   }
   
-  if self.navigation then
+  if def.navigation then
     self.module   = self.navigation.__fullname
     self.name     = self.children.__name
     if self.navigation.__fullname then
@@ -205,17 +208,32 @@ function lib.new(path, def)
     table.insert(self.group, {text = '', class = 'summary'})
   end
 
-  if #self.children > 0 then
+  if self.children and #self.children > 0 then
     local children = self.children
     local section = self.section
     for _, name in ipairs(children) do
       local child = children[name]
-      -- Insert a new group. Using 'class' key for sub-elements.
-      table.insert(section, {
+
+      local group = {
+        -- Use 'class' key for children elements.
         class = child.__fullname,
         name  = child.__name,
         { text = child.__summary },
-      })
+      }
+
+      if child.__fixme then
+        for _, p in ipairs(child.__fixme[1]) do
+          table.insert(group, p)
+        end
+      end
+
+      if child.__todo then
+        for _, p in ipairs(child.__todo[1]) do
+          table.insert(group, p)
+        end
+      end
+
+      table.insert(section, group)
     end
   end
 
@@ -343,6 +361,8 @@ function private.makeDoc(tree, def)
     })
     elem.__title   = doc.sections[1].title
     elem.__summary = doc.sections[1][1][1].text
+    elem.__todo    = doc.todo
+    elem.__fixme   = doc.fixme
     local trg = def.target .. '/' .. doc.fullname .. '.' .. def.format
     lk.writeall(trg, private.output[def.format](doc, def.template))
   end
@@ -413,14 +433,16 @@ end
 
 --=============================================== Helpers
 
-function private:todoFixme(i, typ, text, text2)
+function private:todoFixme(i, typ, text)
+  local group = self.in_func or self.group
+
   typ = string.lower(typ)
-  table.insert(self.group, self.para)
+  table.insert(group, self.para)
   local para = {
     span = typ,
     text = text,
   }
-  table.insert(self.group, para)
+  table.insert(group, para)
   local list = self[typ]
   if not list then
     -- Section for TODO or FIXME
@@ -432,14 +454,15 @@ function private:todoFixme(i, typ, text, text2)
     }
     self[typ] = list
   end
-  if text2 then
-    table.insert(list[1], {
-      span = typ,
-      text = text2,
-    })
-  else
-    table.insert(list[1], para)
-  end
+  table.insert(list[1], {
+    span  = typ,
+    text  = text,
+    -- This is to find function reference when the todo is shown
+    -- outside the function documentation.
+    group = group,
+    file  = self.fullname,
+    section_name = self.section.name,
+  })
   self.para = nil
 end
 
@@ -465,6 +488,7 @@ function private:newFunction(i, typ, fun, params)
     -- This can happen if we are using a temporary group.
     table.insert(self.section, self.group)
   end
+  self.in_func = self.group
 end
 
 function private:newTitle(i, title)
@@ -843,6 +867,7 @@ parser.end_comment = {
   -- lib function
   { match  = '^function lib([:%.])([^%(]+) *(%(.-%))',
     output = private.newFunction,
+    move   = function() return parser.lua end,
   },
   -- global function
   { match  = '^function ([^:%.%(]+) *(%(.-%))',
@@ -860,9 +885,30 @@ parser.lua = {
   { match  = '^function lib([:%.])([^%(]+) *(%(.-%))',
     output = function(self, i, typ, fun, params)
       self.group = {}
-      local text = string.format("MISSING DOCUMENTATION FOR #%s.", fun)
-      private.todoFixme(self, i, 'TODO', 'MISSING DOCUMENTATION', text)
+      private.todoFixme(self, i, 'TODO', 'MISSING DOCUMENTATION')
       private.newFunction(self, i, typ, fun, params)
+    end,
+  },
+  -- end of function
+  { match  = '^end',
+    output = function(self, i, d)
+      self.in_func = nil
+    end,
+  },
+  -- TODO
+  { match = '^ *%-%- *(TODO):? (.*)$',
+    output = function(self, ...)
+      if self.in_func then
+        private.todoFixme(self, ...)
+      end
+    end,
+  },
+  -- FIXME
+  { match = '^ *%-%- *(FIXME):? (.*)$',
+    output = function(self, ...)
+      if self.in_func then
+        private.todoFixme(self, ...)
+      end
     end,
   },
   { match  = '^%-%- +(.+)$',
@@ -972,13 +1018,44 @@ function private:paraToHtml(para)
       )..
       "</pre>"
   elseif para.span then
-    return "<p><span class='"..para.span.."'><span>"..string.upper(para.span).."</span> "..private.textToHtml(self, text).."</span></p>"
+    return private.spanToHtml(self, para)
   elseif para.list then
     -- render list
     return private.listToHtml(self, para)
   else
     return "<p>"..private.textToHtml(self, text).."</p>"
   end
+end
+
+function private:spanToHtml(para)
+  local ref = ''
+  local ref_name
+  if para.group then
+    if self.fullname ~= para.file then
+      ref = para.file .. '.html'
+    end
+    if para.group.fun then
+      if ref then
+        ref = ref .. '#' .. para.group.fun
+      else
+        ref = '#' .. para.group.fun
+      end
+      ref_name = '#' .. para.group.fun
+    elseif para.section_name then
+      if ref then
+        ref = ref .. '#' .. para.section_name
+      else
+        ref = '#' .. para.section_name
+      end
+      ref_name = para.section_name
+    end
+    ref = "<span class='ref'><a href='"..ref.."'>"..ref_name.."</a></span>"
+  end
+  return "<p class='"..para.span.."'>" ..
+         ref ..
+         "<span>"..string.upper(para.span).."</span> "..
+         private.textToHtml(self, para.text)..
+         "</p>"
 end
 
 function private:textToHtml(text)

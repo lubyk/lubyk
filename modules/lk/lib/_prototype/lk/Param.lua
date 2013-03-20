@@ -7,7 +7,7 @@
 
   ## Inlets
 
-  * @input@ receives the value to store as parameter and notify.
+  + input: receives the value to store as parameter and notify.
 
 --]]------------------------------------------------------
 local i, o, p, print = lubyk()

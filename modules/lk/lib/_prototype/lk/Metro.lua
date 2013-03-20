@@ -6,12 +6,12 @@
 
   ## Inlets
 
-  * @tempo@ sets the tempo in beats per minute.
-  * @freq@ sets the frequency in Hz.
+  + tempo: sets the tempo in beats per minute.
+  + freq: sets the frequency in Hz.
 
   ## Outlets
   
-  * @bang@ sends the step value at regular intervals.
+  + bang: sends the step value at regular intervals.
 
 --]]
 local i, o, p, print = lubyk()

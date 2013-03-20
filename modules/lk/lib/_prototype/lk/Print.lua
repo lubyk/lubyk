@@ -6,7 +6,7 @@
 
   ## Inlets
 
-  * @print@ receives values to print.
+  + print: receives values to print.
 
 --]]------------------------------------------------------
 local i, o, p, print = lubyk()

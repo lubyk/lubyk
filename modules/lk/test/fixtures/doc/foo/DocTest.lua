@@ -70,7 +70,32 @@ end
 function lib.make(def)
 end
 
--- TODO: An orphan todo.
+local xyz
+
+-- # Parameters
+-- This is to test parsing table attributes.
+lib.params = {
+  -- This is a first attribute that is used for this or that.
+  -- [math]\infty[/math]
+  cost1 = {default = 0.5, min = 0, max = 1, unit = 'CHF'},
+
+  -- A second attribute.
+  cost2 = {default = 5,   min = 0, max = 10, unit = '$'},
+
+  -- ## Foobar
+  
+  -- An attribute in the foobar group.
+  foo = 4,
+
+  -- Another attribute in the foobar group.
+  bar = 'some text here',
+}
+-- comment should be ignored
+-- Should not consider 'xyz' as a parameter.
+xyz = 4
+
+
+-- TODO: An orphan todo that should end in the TODO list.
 
 -- # Validation
 -- 
@@ -87,6 +112,8 @@ end
 -- Return true if all the documentation went fine. Possible causes of failure
 -- are: bad file format, missing assets.
 function lib:isOK()
+
+  -- TODO: An orphan todo inside a function that should end in the function def.
 end
 
 -- This comment will be ignored.

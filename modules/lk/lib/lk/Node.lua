@@ -545,12 +545,12 @@ lib.DEFAULT_CODE = [=[
 
   ## Inlets
 
-  * @foo@ does this.
-  * @bar@ does that.
+  + foo: does this.
+  + bar: does that.
 
   ## Outlets
   
-  * @bang@ does blah.
+  + bang: does blah.
 
 --]]------------------------------------------------------
 local i, o, p, print = lubyk()
