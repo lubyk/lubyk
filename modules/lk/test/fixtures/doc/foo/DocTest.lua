@@ -49,9 +49,9 @@ end
 
 -- Generate the documentation for multiple files.
 --
--- The @sources@ parameter lists file paths to Lua files parse and document. The
--- @target@ parameter is the path to the directory where all the output files
--- will be written. @format@ is the type of output desired. Possible values are
+-- The `sources` parameter lists file paths to Lua files parse and document. The
+-- `target` parameter is the path to the directory where all the output files
+-- will be written. `format` is the type of output desired. Possible values are
 -- "html" or "latex".
 --
 -- TODO: an example of a todo inside the comments.
@@ -124,13 +124,13 @@ end
 -- ## String management
 -- This group of functions blah, blah.
 
--- Append the @str@ string to the description.
+-- Append the `str` string to the description.
 function lib:append(str)
 end
 
 
 -- This definition documents an out of file function. This function takes
--- a @one@ and @two@ and makes something interesting with these two parameters.
+-- a `one` and `two` and makes something interesting with these two parameters.
 --
 -- With a second paragraph to describe the out of file function.
 -- function lib:outOfFile(one, two)
@@ -143,6 +143,10 @@ end
   paragraphs.
 
   Like this a second piece of text with *bold*.
+
+    And 80 columns of source code example
+    123456789 123456789 123456789 123456789 123456789 123456789 123456789 1234567890
+    123456789 123456789 123456789 123456789 123456789 123456789 123456789 1234567890
 --]]
 
 

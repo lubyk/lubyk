@@ -557,25 +557,32 @@ function private:parseFile(path)
         if not matcher.on_enter or entering then
           local m = {string.match(line, matcher.match)}
           if m[1] then
+            local move = matcher.move
             if matcher.output then
               matcher.output(self, line_i, unpack(m))
+              if self.force_move then
+                -- We need this to avoid calling move and (enter/exit) just to
+                -- test if we need to move.
+                move = self.force_move
+                self.force_move = nil
+              end
             end
             local state_exit = state.exit
-            if type(matcher.move) == 'function' then
+            if type(move) == 'function' then
               if state_exit  then state_exit(self) end
-              state, replay = matcher.move(self)
+              state, replay = move(self)
               if not state then
-                local def = debug.getinfo(matcher.move)
+                local def = debug.getinfo(move)
                 error("Error in state definition ".. string.match(def.source, '^@(.+)$') .. ':' .. def.linedefined)
               end
               entering = true
               if state.enter then state.enter(self) end
-            elseif not matcher.move then
+            elseif not move then
               -- do not change state
               entering = false
             else
               if state_exit  then state_exit(self) end
-              state = matcher.move
+              state = move
               entering = true
               if state.enter then state.enter(self) end
             end
@@ -1075,15 +1082,22 @@ parser.end_comment = {
   -- lib param
   { match  = 'lib%.([a-zA-Z_0-9]+) *= *(.+)$',
     output = function(self, i, key, def)
-      if self.group[1] and self.group[1].heading then
-        -- Group is not for us
-        self.group = {}
-        if not self.loose then
-          private.todoFixme(self, i, 'TODO', 'MISSING DOCUMENTATION')
-        end
-        private.newParam(self, i, key, def)
+      local def2 = string.match(def, '^(.-) *%-%- *doc *$')
+      if def2 then
+        -- Special case where a lib attribute itself is documented
+        private.newTitle(self, i, key .. ' = ')
+        self.force_move = parser.params
       else
-        private.newParam(self, i, key, def)
+        if self.group[1] and self.group[1].heading then
+          -- Group is not for us
+          self.group = {}
+          if not self.loose then
+            private.todoFixme(self, i, 'TODO', 'MISSING DOCUMENTATION')
+          end
+          private.newParam(self, i, key, def)
+        else
+          private.newParam(self, i, key, def)
+        end
       end
     end
   },

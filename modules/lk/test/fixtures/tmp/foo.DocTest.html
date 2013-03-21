@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Documentation Tester</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+
+
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/docs.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class='row'>
+          <div class='span12'>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="row">
+
+        <div class='span3 local-nav'>
+          <ul class='nav nav-tabs nav-stacked affix'>
+                        <li><a href='#DocTest'><i class='icon-chevron-right'></i> foo.DocTest</a></li>
+                        <li><a href='#Create'><i class='icon-chevron-right'></i> Create</a></li>
+                        <li><a href='#Parameters'><i class='icon-chevron-right'></i> Parameters</a></li>
+                        <li><a href='#Validation'><i class='icon-chevron-right'></i> Validation</a></li>
+                        <li><a href='#Multi-line-comment'><i class='icon-chevron-right'></i> Multi line comment</a></li>
+                        <li><a href='#TODO'><i class='icon-chevron-right'></i> TODO</a></li>
+                        <li><a href='#FIXME'><i class='icon-chevron-right'></i> FIXME</a></li>
+                      </ul>
+        </div>
+
+        <div class='main span7'>
+
+                    <section id='DocTest'>
+          <h2 class='section'>Documentation Tester</h2>
+
+                    
+                    <p class='summary'>This file is a simple test to describe the different documenting options available with <a href='lk.Doc.html'>lk.Doc</a>. This first paragraph is output as "summary".</p>
+                    <p>The following paragraphs up to the end of the preamble comment block define the "description".</p>
+                    <p>A second paragraph in the "description" with an auto link: <a href='doc.DocTest.html'>doc.DocTest</a>. And here is a custom link "lubyk":http://lubyk.org. And some formatting: <strong>strong</strong> _emphasis_.</p>
+                    <p>Some lists:</p>
+                    <ul>
+<li>foo</li>
+<li>bar</li>
+<li>baz</li>
+</ul>
+                    <p>Finally, some inline math \(\infty\) with more text. And now some more math in its own paragraph:</p>
+                    <p>\(\frac{\partial}{\partial\theta_j}J(\theta) = \frac{1}{m}\sum_{i=1}^m(\theta^{T}x^{(i)}-y^{(i)})x_j^{(i)}\)</p>
+                    <p>And some more text after math. With an image (the path is relative to the output directory).</p>
+                    <p><img alt='Dummy example image' src='img/box.jpg'/></p>
+                              </section>
+                    <section id='Create'>
+          <h2 class='section'>Create</h2>
+
+                    
+                                        <h4 id='new' class='entry function'><span>.</span>new <code>(params)</code></h4>
+          
+                    <p>Creating an <a href='lk.DocTest.html'>lk.DocTest</a> is done by providing a table of parameters. </p>
+                    <p>Usage example:</p>
+                    <pre class='prettyprint lang-lua'>require 'lubyk'
+local doc = lk.Doc('path/to/File.lua', {target = 'doc'})
+lk.writeall('doc/File.html', doc:toHtml())
+</pre>
+                    <p>When documenting multiple files it is better to use <a href='#make'>make</a>.</p>
+                                        <h4 id='make' class='entry function'><span>.</span>make <code>(def)</code></h4>
+          
+                    <p>Generate the documentation for multiple files.</p>
+                    <p>The <code>sources</code> parameter lists file paths to Lua files parse and document. The <code>target</code> parameter is the path to the directory where all the output files will be written. <code>format</code> is the type of output desired. Possible values are "html" or "latex".</p>
+                    <p class='todo'><span>TODO</span> an example of a todo inside the comments.</p>
+                    <p>Usage:</p>
+                    <pre class='prettyprint lang-lua'>require 'lubyk'
+lk.Doc.make {
+  sources = {
+    'lib/doc/DocTest.lua',
+    'lib/doc/Other.lua',
+  },
+  target = 'doc',
+  format = 'html',
+}</pre>
+                              </section>
+                    <section id='Parameters'>
+          <h2 class='section'>Parameters</h2>
+
+                    
+                    <p>This is to test parsing table attributes.</p>
+                    <h4 class='sub-title'>params = </h4>
+                                        <h4 id='cost1' class='entry param'><span>.</span>cost1 <code>= {default = 0.5, min = 0, max = 1, unit = 'CHF'}</code></h4>
+          
+                    <p>This is a first attribute that is used for this or that.</p>
+                    <p>$$\infty$$</p>
+                                        <h4 id='cost2' class='entry param'><span>.</span>cost2 <code>= {default = 5,   min = 0, max = 10, unit = '$'}</code></h4>
+          
+                    <p>A second attribute.</p>
+                              
+                    <h4 class='sub-title'>Foobar</h4>
+                    <p>With some text about the Foobar group of parameters.</p>
+                                        <h4 id='foo' class='entry param'><span>.</span>foo <code>= 4</code></h4>
+          
+                    <p>An attribute in the foobar group.</p>
+                                        <h4 id='bar' class='entry param'><span>.</span>bar <code>= 'some text here'</code></h4>
+          
+                    <p>Another attribute in the foobar group.</p>
+                              </section>
+                    <section id='Validation'>
+          <h2 class='section'>Validation</h2>
+
+                    
+                    <p>This is a long description of the new validation section. We can write tons of text here as long as we do not get out of the Lua comments.</p>
+                    <h4 class='sub-title'>Sub-title</h4>
+                    <p>A second paragraph describing the section.</p>
+                    <p class='fixme'><span>FIXME</span> Something to do for validations.</p>
+                                        <h4 id='isOK' class='entry method'><span>:</span>isOK <code>()</code></h4>
+          
+                    <p>Return true if all the documentation went fine. Possible causes of failure are: bad file format, missing assets.</p>
+                    <p class='todo'><span>TODO</span> An orphan todo inside a function that should end in the function def.</p>
+                              
+                    <h4 class='sub-title'>String management</h4>
+                    <p>This group of functions blah, blah.</p>
+                                        <h4 id='append' class='entry method'><span>:</span>append <code>(str)</code></h4>
+          
+                    <p>Append the <code>str</code> string to the description.</p>
+                                        <h4 id='outOfFile' class='entry method'><span>:</span>outOfFile <code>(one, two)</code></h4>
+          
+                    <p>This definition documents an out of file function. This function takes a <code>one</code> and <code>two</code> and makes something interesting with these two parameters.</p>
+                    <p>With a second paragraph to describe the out of file function.</p>
+                              </section>
+                    <section id='Multi-line-comment'>
+          <h2 class='section'>Multi line comment</h2>
+
+                    
+                    <p>We can also use a multi-line comment block to define a section with many paragraphs.</p>
+                    <p>Like this a second piece of text with <strong>bold</strong>.</p>
+                    <pre class='prettyprint lang-lua'>And 80 columns of source code example
+123456789 123456789 123456789 123456789 123456789 123456789 123456789 1234567890
+123456789 123456789 123456789 123456789 123456789 123456789 123456789 1234567890</pre>
+                                        <h4 id='complicated' class='entry method'><span>:</span>complicated <code>(alpha, beta, gamma)</code></h4>
+          
+                    <p>order to help people understand all the details for something very complex.</p>
+                    <p>Second paragraph before the function.</p>
+                              </section>
+                    <section id='TODO'>
+          <h2 class='section'>TODO</h2>
+
+                    
+                    <p class='todo'><span class='ref'><a href='#Create'>Create</a></span><span>TODO</span> an example of a todo inside the comments.</p>
+                    <p class='todo'><span class='ref'><a href='#Parameters'>Parameters</a></span><span>TODO</span> An orphan todo that should end in the TODO list.</p>
+                    <p class='todo'><span class='ref'><a href='#isOK'>#isOK</a></span><span>TODO</span> An orphan todo inside a function that should end in the function def.</p>
+                              </section>
+                    <section id='FIXME'>
+          <h2 class='section'>FIXME</h2>
+
+                    
+                    <p class='fixme'><span class='ref'><a href='#Validation'>Validation</a></span><span>FIXME</span> Something to do for validations.</p>
+                              </section>
+                  </div>
+
+        <div class='span2 global-nav'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='foo.html'>foo</a></li>
+                                    <li class='active'><a href='foo.DocTest.html'>DocTest</a></li>
+                        <li><a href='foo.Other.html'>Other</a></li>
+                      </ul>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+    <div class="container">
+       made with <a href='http://doc.lubyk.org/lk.Doc.html'>lk.Doc</a> 
+    </div>
+    </footer>
+
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
+    <script src='http://code.jquery.com/jquery.js'></script>
+    <script src='js/bootstrap.min.js'></script>
+  </body>
+</html>
+
