@@ -160,7 +160,7 @@ effect.fragment = four.Effect.Shader [[
 -- contains enough information to be rendered.
 --
 -- The @saturation@ parameter is a uniform declaration. The value of this
--- variable will be accessible in the shader (see #Effect below).
+-- variable will be accessible in the shader (see #Effect above).
 -- 
 -- We set the geometry to the fullscreen square by calling our function and
 -- assign our simple effect.
@@ -199,7 +199,7 @@ function win:initializeGL()
   renderer:logInfo()
 end  
 
--- The window's paint function calls four.Renderer#render with our camera
+-- The window's paint function calls four.Renderer.render with our camera
 -- and object.
 function win:paintGL()
   renderer:render(camera, {obj})
