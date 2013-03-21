@@ -41,8 +41,7 @@
                     <section id='Renderer'>
           <h2 class='section'>four.Renderer</h2>
 
-                              <a name='new'></a>
-          <h4 class='function'><span>.</span>new <code>(def)</code></h4>
+                              <h4 id='new' class='entry function'><span>.</span>new <code>(def)</code></h4>
           
                     <p class='summary'></p>
                     <p>-- Module definition</p>
@@ -57,81 +56,62 @@
 <li>@size@, a @V2@ defining the viewport size (defaults to V2(480,270).</li>
 <li>@error_line_pattern@, a string used to parse GPU compiler logs. Must split a line in three part, before the GLSL file number, the file number, after the file number.</li>
 </ul>
-                                        <a name='set'></a>
-          <h4 class='method'><span>:</span>set <code>(def)</code></h4>
+                                        <h4 id='set' class='entry method'><span>:</span>set <code>(def)</code></h4>
           
                     <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
-                                        <a name='_setBackend'></a>
-          <h4 class='method'><span>:</span>_setBackend <code>()</code></h4>
+                                        <h4 id='_setBackend' class='entry method'><span>:</span>_setBackend <code>()</code></h4>
           
                     <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
-                                        <a name='_init'></a>
-          <h4 class='method'><span>:</span>_init <code>()</code></h4>
+                                        <h4 id='_init' class='entry method'><span>:</span>_init <code>()</code></h4>
           
                     <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
-                                        <a name='info'></a>
-          <h4 class='method'><span>:</span>info <code>()</code></h4>
+                                        <h4 id='info' class='entry method'><span>:</span>info <code>()</code></h4>
           
                     <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
                     <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
-                                        <a name='caps'></a>
-          <h4 class='method'><span>:</span>caps <code>()</code></h4>
+                                        <h4 id='caps' class='entry method'><span>:</span>caps <code>()</code></h4>
           
                     <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
-                                        <a name='limits'></a>
-          <h4 class='method'><span>:</span>limits <code>()</code></h4>
+                                        <h4 id='limits' class='entry method'><span>:</span>limits <code>()</code></h4>
           
                     <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
-                                        <a name='stats'></a>
-          <h4 class='method'><span>:</span>stats <code>()</code></h4>
+                                        <h4 id='stats' class='entry method'><span>:</span>stats <code>()</code></h4>
           
                     <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
-                                        <a name='statsTable '></a>
-          <h4 class='function'><span>.</span>statsTable  <code>()</code></h4>
+                                        <h4 id='statsTable ' class='entry function'><span>.</span>statsTable  <code>()</code></h4>
           
-                                        <a name='resetStats'></a>
-          <h4 class='method'><span>:</span>resetStats <code>()</code></h4>
+                                        <h4 id='resetStats' class='entry method'><span>:</span>resetStats <code>()</code></h4>
           
                     <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
                     <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
-                                        <a name='beginStats'></a>
-          <h4 class='method'><span>:</span>beginStats <code>(now)</code></h4>
+                                        <h4 id='beginStats' class='entry method'><span>:</span>beginStats <code>(now)</code></h4>
           
-                                        <a name='endStats'></a>
-          <h4 class='method'><span>:</span>endStats <code>()</code></h4>
+                                        <h4 id='endStats' class='entry method'><span>:</span>endStats <code>()</code></h4>
           
                     <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
-                                        <a name='addGeometryStats'></a>
-          <h4 class='method'><span>:</span>addGeometryStats <code>(g)</code></h4>
+                                        <h4 id='addGeometryStats' class='entry method'><span>:</span>addGeometryStats <code>(g)</code></h4>
           
                     <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
                     <p class='todo'><span>TODO</span> this doesn't work once data was uploaded on the GPU.</p>
-                                        <a name='log'></a>
-          <h4 class='method'><span>:</span>log <code>(msg)</code></h4>
+                                        <h4 id='log' class='entry method'><span>:</span>log <code>(msg)</code></h4>
           
                     <p>@self:log(msg)@ is called by the backend renderer to log message  @msg@. Clients can override the function to redirect the renderer  log (the default implementation @print@s the message).</p>
                     <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
-                                        <a name='logInfo'></a>
-          <h4 class='method'><span>:</span>logInfo <code>(verbose)</code></h4>
+                                        <h4 id='logInfo' class='entry method'><span>:</span>logInfo <code>(verbose)</code></h4>
           
-                                        <a name='logStats'></a>
-          <h4 class='method'><span>:</span>logStats <code>()</code></h4>
+                                        <h4 id='logStats' class='entry method'><span>:</span>logStats <code>()</code></h4>
           
                     <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
-                                        <a name='normalizeScreenPos'></a>
-          <h4 class='method'><span>:</span>normalizeScreenPos <code>(pos, noflip)</code></h4>
+                                        <h4 id='normalizeScreenPos' class='entry method'><span>:</span>normalizeScreenPos <code>(pos, noflip)</code></h4>
           
                     <p>@r:normalizeScreenPos(pos [,noflip])@ is the normalized position of  @pos@ expressed relative to the top left (bottom left if @noflip@ is true) corner of the rendering surface.</p>
-                                        <a name='isRenderable'></a>
-          <h4 class='method'><span>:</span>isRenderable <code>(cam, o)</code></h4>
+                                        <h4 id='isRenderable' class='entry method'><span>:</span>isRenderable <code>(cam, o)</code></h4>
           
                     <p>@renderable(cam, o)@ is @true@ if @o@ can be rendered with @cam@.</p>
-                                        <a name='addRenderable'></a>
-          <h4 class='method'><span>:</span>addRenderable <code>(cam, o)</code></h4>
+                                        <h4 id='addRenderable' class='entry method'><span>:</span>addRenderable <code>(cam, o)</code></h4>
           
                     <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
-                                        <a name='render'></a>
-          <h4 class='method'><span>:</span>render <code>(cam, objs)</code></h4>
+                                        <h4 id='render' class='entry method'><span>:</span>render <code>(cam, objs)</code></h4>
           
                     <p>@render(cam, objs)@ renders the renderables in @objs@ with @cam@.</p>
                               </section>

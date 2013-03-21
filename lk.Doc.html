@@ -147,19 +147,16 @@ local ATTRIBS = { -- doc
 
                     
                     <p>This is an example of attributes documentation.</p>
-                                        <a name='first_name'></a>
-          <h4 class='param'><span>.</span>first_name <code>= ''</code></h4>
+                                        <h4 id='first_name' class='entry param'><span>.</span>first_name <code>= ''</code></h4>
           
                     <p>Documentation on first key.</p>
-                                        <a name='last_name'></a>
-          <h4 class='param'><span>.</span>last_name <code>= ''</code></h4>
+                                        <h4 id='last_name' class='entry param'><span>.</span>last_name <code>= ''</code></h4>
           
                     <p>Documentation on second key.</p>
                               
                     <h4 class='sub-title'>Sub-title</h4>
                     <p>Some text for this group of attributes.</p>
-                                        <a name='phone'></a>
-          <h4 class='param'><span>.</span>phone <code>= {default = '', format = '000 000 00 00'}</code></h4>
+                                        <h4 id='phone' class='entry param'><span>.</span>phone <code>= {default = '', format = '000 000 00 00'}</code></h4>
           
                               </section>
                     <section id='Usage'>
@@ -267,8 +264,7 @@ FIXME This is a fixme
           <h2 class='section'>Class functions</h2>
 
                     
-                                        <a name='new'></a>
-          <h4 class='function'><span>.</span>new <code>(path, def)</code></h4>
+                                        <h4 id='new' class='entry function'><span>.</span>new <code>(path, def)</code></h4>
           
                     <p>Parse the content of a file given by <code>path</code> and return an <a href='lk.Doc.html'>lk.Doc</a> object  containing the documentation of the class.</p>
                     <p>Usage example:</p>
@@ -278,8 +274,7 @@ lk.writeall('doc/File.html', doc:toHtml())
 </pre>
                     <p>When documenting multiple files it is better to use <a href='#make'>make</a>.</p>
                     <p>The <code>navigation</code> and <code>children</code> tables are used to display the  navigation menu on the right and class list in the document body.</p>
-                                        <a name='make'></a>
-          <h4 class='function'><span>.</span>make <code>(def)</code></h4>
+                                        <h4 id='make' class='entry function'><span>.</span>make <code>(def)</code></h4>
           
                     <p>Generate the documentation for multiple files.</p>
                     <p>The <code>sources</code> parameter lists paths to Lua files or directories to parse and document.</p>
@@ -315,8 +310,7 @@ lk.Doc.make {
           <h2 class='section'>Methods</h2>
 
                     
-                                        <a name='toHtml'></a>
-          <h4 class='method'><span>:</span>toHtml <code>(template)</code></h4>
+                                        <h4 id='toHtml' class='entry method'><span>:</span>toHtml <code>(template)</code></h4>
           
                     <p>Render the documentation as html. If a <code>template</code> is provided, it is used instead of the default one. This is mainly used for testing since you usually want to have some navigation menus which are extracted by creating the documentation in batch mode with <a href='#make'>make</a>.</p>
                               </section>

@@ -41,8 +41,7 @@
                     <section id='Quat'>
           <h2 class='section'>four.Quat</h2>
 
-                              <a name='Quat'></a>
-          <h4 class='function'><span>.</span>Quat <code>(x, y, z, w)</code></h4>
+                              <h4 id='Quat' class='entry function'><span>.</span>Quat <code>(x, y, z, w)</code></h4>
           
                     <p class='summary'></p>
                     <p>local lib = { type = 'four.Quat' } lib.__index = lib <a href='four.Quat.html'>four.Quat</a> = lib setmetatable(lib, { __call = function(lib, ...) return lib.Quat(...) end })</p>
@@ -50,158 +49,120 @@
                     <p>-- h2. Constructor and accessors</p>
                     <p>--[[-- @Quat(x, y, z, w)@ is a quaternion with the corresponding components.</p>
                     <p>@Quat(o)@ is a quaternion converted from the object @o@. Supported types for @o@: @bt.Quaternion@.</p>
-                                        <a name='x'></a>
-          <h4 class='function'><span>.</span>x <code>(q)</code></h4>
+                                        <h4 id='x' class='entry function'><span>.</span>x <code>(q)</code></h4>
           
                     <p>@x(v)@ is the @x@ component of @v@.</p>
-                                        <a name='y'></a>
-          <h4 class='function'><span>.</span>y <code>(q)</code></h4>
+                                        <h4 id='y' class='entry function'><span>.</span>y <code>(q)</code></h4>
           
                     <p>@y(v)@ is the @y@ component of @v@.</p>
-                                        <a name='z'></a>
-          <h4 class='function'><span>.</span>z <code>(q)</code></h4>
+                                        <h4 id='z' class='entry function'><span>.</span>z <code>(q)</code></h4>
           
                     <p>@z(v)@ is the @z@ component of @v@.</p>
-                                        <a name='z'></a>
-          <h4 class='function'><span>.</span>z <code>(q)</code></h4>
+                                        <h4 id='z' class='entry function'><span>.</span>z <code>(q)</code></h4>
           
                     <p>@w(v)@ is the @w@ component of @v@.</p>
-                                        <a name='comp'></a>
-          <h4 class='function'><span>.</span>comp <code>(i, q)</code></h4>
+                                        <h4 id='comp' class='entry function'><span>.</span>comp <code>(i, q)</code></h4>
           
                     <p>@comp(i, q)@ is the @i@th component of @v@.</p>
-                                        <a name='ofV4'></a>
-          <h4 class='function'><span>.</span>ofV4 <code>(v)</code></h4>
+                                        <h4 id='ofV4' class='entry function'><span>.</span>ofV4 <code>(v)</code></h4>
           
                     <p>@ofV4(v)@ is a quaternion with @v@'s components. </p>
-                                        <a name='toV4'></a>
-          <h4 class='function'><span>.</span>toV4 <code>(q)</code></h4>
+                                        <h4 id='toV4' class='entry function'><span>.</span>toV4 <code>(q)</code></h4>
           
                     <p>@toV4(v)@ is a vector with @q@'s components.</p>
-                                        <a name='tuple'></a>
-          <h4 class='function'><span>.</span>tuple <code>(q)</code></h4>
+                                        <h4 id='tuple' class='entry function'><span>.</span>tuple <code>(q)</code></h4>
           
                     <p>@tuple(q)@ is @x, y, z, w@, the components of @q@.</p>
-                                        <a name='tostring'></a>
-          <h4 class='function'><span>.</span>tostring <code>(q)</code></h4>
+                                        <h4 id='tostring' class='entry function'><span>.</span>tostring <code>(q)</code></h4>
           
                     <p>@tostring(q)@ is a textual representation of @q@.</p>
-                                        <a name='ofM4'></a>
-          <h4 class='function'><span>.</span>ofM4 <code>(m)</code></h4>
+                                        <h4 id='ofM4' class='entry function'><span>.</span>ofM4 <code>(m)</code></h4>
           
                     <p>@ofM4(m)@ is the unit quaternion for the rotation in the 3x3 top left matrix  of @m@.</p>
-                                        <a name='toM4'></a>
-          <h4 class='function'><span>.</span>toM4 <code>(q)</code></h4>
+                                        <h4 id='toM4' class='entry function'><span>.</span>toM4 <code>(q)</code></h4>
           
                     <p>@toM4(q)@ is the matrix corresponding to the rotation of the <strong>unit</strong>  quaternion @q@.</p>
-                                        <a name='quat_eps'></a>
-          <h4 class='param'><span>.</span>quat_eps <code>= 1e-9</code></h4>
+                                        <h4 id='quat_eps' class='entry param'><span>.</span>quat_eps <code>= 1e-9</code></h4>
           
                     <p>h2. Constants </p>
                     <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
-                                        <a name='zero'></a>
-          <h4 class='function'><span>.</span>zero <code>()</code></h4>
+                                        <h4 id='zero' class='entry function'><span>.</span>zero <code>()</code></h4>
           
                     <p>@zero()@ is the zero quaternion.</p>
-                                        <a name='id'></a>
-          <h4 class='function'><span>.</span>id <code>()</code></h4>
+                                        <h4 id='id' class='entry function'><span>.</span>id <code>()</code></h4>
           
                     <p>@id()@ is the identity quaternion.</p>
-                                        <a name='neg'></a>
-          <h4 class='function'><span>.</span>neg <code>(q)</code></h4>
+                                        <h4 id='neg' class='entry function'><span>.</span>neg <code>(q)</code></h4>
           
                     <p>@neg(q)@ is the quaternion @-q@.</p>
-                                        <a name='add'></a>
-          <h4 class='function'><span>.</span>add <code>(q, r)</code></h4>
+                                        <h4 id='add' class='entry function'><span>.</span>add <code>(q, r)</code></h4>
           
                     <p>@add(q, r)@ is the quaternion addition @q + r@.</p>
-                                        <a name='sub'></a>
-          <h4 class='function'><span>.</span>sub <code>(q, r)</code></h4>
+                                        <h4 id='sub' class='entry function'><span>.</span>sub <code>(q, r)</code></h4>
           
                     <p>@sub(q, r)@ is the quaternion subtraction @u - v@.</p>
-                                        <a name='mul'></a>
-          <h4 class='function'><span>.</span>mul <code>(q, r)</code></h4>
+                                        <h4 id='mul' class='entry function'><span>.</span>mul <code>(q, r)</code></h4>
           
                     <p>@mul(q, r)@ is the quaternion multiplication @q * r@</p>
-                                        <a name='smul'></a>
-          <h4 class='function'><span>.</span>smul <code>(s, q)</code></h4>
+                                        <h4 id='smul' class='entry function'><span>.</span>smul <code>(s, q)</code></h4>
           
                     <p>@smul(s, q)@ is the scalar mutiplication @sq@.</p>
-                                        <a name='conj'></a>
-          <h4 class='function'><span>.</span>conj <code>(q)</code></h4>
+                                        <h4 id='conj' class='entry function'><span>.</span>conj <code>(q)</code></h4>
           
                     <p>@conj(q)@ is the quaternion conjugate @q*@.</p>
-                                        <a name='norm'></a>
-          <h4 class='function'><span>.</span>norm <code>(q)</code></h4>
+                                        <h4 id='norm' class='entry function'><span>.</span>norm <code>(q)</code></h4>
           
                     <p>@norm(q)@ is the norm @|q|@.</p>
-                                        <a name='norm2'></a>
-          <h4 class='function'><span>.</span>norm2 <code>(q)</code></h4>
+                                        <h4 id='norm2' class='entry function'><span>.</span>norm2 <code>(q)</code></h4>
           
                     <p>@norm2(q)@ is the squared norm @|q|^2@.</p>
-                                        <a name='unit'></a>
-          <h4 class='function'><span>.</span>unit <code>(q)</code></h4>
+                                        <h4 id='unit' class='entry function'><span>.</span>unit <code>(q)</code></h4>
           
                     <p>@unit(q)@ is the @unit@ quaternion @q/|q|@.</p>
-                                        <a name='inv'></a>
-          <h4 class='function'><span>.</span>inv <code>(q)</code></h4>
+                                        <h4 id='inv' class='entry function'><span>.</span>inv <code>(q)</code></h4>
           
                     <p>@inv(q)@ is the quaternion inverse @q^-1@</p>
-                                        <a name='slerp'></a>
-          <h4 class='function'><span>.</span>slerp <code>(q, r, t)</code></h4>
+                                        <h4 id='slerp' class='entry function'><span>.</span>slerp <code>(q, r, t)</code></h4>
           
                     <p>@slerp(q, r, t)@ is the spherical spherical linear interpolation between  @q@ and @r@ at @t@. Non commutative, torque minimal and constant velocity.</p>
-                                        <a name='squad'></a>
-          <h4 class='function'><span>.</span>squad <code>(c, cq, cr, r, t)</code></h4>
+                                        <h4 id='squad' class='entry function'><span>.</span>squad <code>(c, cq, cr, r, t)</code></h4>
           
                     <p>@squad(c, cq, cr, r, t)@ is the spherical cubic interpolation between @q@  and @r@ at @t@. @cq@ and @cr@ respectively indicate the tangent  orientations at @q@ and @r@.</p>
-                                        <a name='nlerp'></a>
-          <h4 class='function'><span>.</span>nlerp <code>(q, r, t)</code></h4>
+                                        <h4 id='nlerp' class='entry function'><span>.</span>nlerp <code>(q, r, t)</code></h4>
           
                     <p>@nlerp(q, r, t)@ is the normalized linear interpolation between @q@ and @r@  at @t@. Commutative torque minimal and inconstant velocity.</p>
-                                        <a name='rotMap'></a>
-          <h4 class='function'><span>.</span>rotMap <code>(u, v)</code></h4>
+                                        <h4 id='rotMap' class='entry function'><span>.</span>rotMap <code>(u, v)</code></h4>
           
                     <p>@rotMap(u, v)@ is the unit quaternion for the rotation that maps the <strong>unit</strong> vector @u@ on the <strong>unit</strong> vector @v@. </p>
-                                        <a name='rotAxis'></a>
-          <h4 class='function'><span>.</span>rotAxis <code>(u, theta)</code></h4>
+                                        <h4 id='rotAxis' class='entry function'><span>.</span>rotAxis <code>(u, theta)</code></h4>
           
                     <p>@rotAxis(u, theta)@ is the unit quaternion for the rotation that rotates 3D space by @theta@ around the <strong>unit</strong> vector @u@.</p>
-                                        <a name='toZYX'></a>
-          <h4 class='function'><span>.</span>toZYX <code>(q)</code></h4>
+                                        <h4 id='toZYX' class='entry function'><span>.</span>toZYX <code>(q)</code></h4>
           
                     <p>@toZYX(q)@ is a vector with the @x@, @y@ and @z@ axis angles of the <strong>unit</strong>  quaternion @q@.</p>
-                                        <a name='toAxis'></a>
-          <h4 class='function'><span>.</span>toAxis <code>(q)</code></h4>
+                                        <h4 id='toAxis' class='entry function'><span>.</span>toAxis <code>(q)</code></h4>
           
                     <p>@toAxis(q)@ is @axis, angle@ the rotation axis and angle of the  <strong>unit</strong> quaternion @q@. </p>
-                                        <a name='apply3D'></a>
-          <h4 class='function'><span>.</span>apply3D <code>(q, v)</code></h4>
+                                        <h4 id='apply3D' class='entry function'><span>.</span>apply3D <code>(q, v)</code></h4>
           
                     <p>@apply3D(q, v)@ applies the rotation of the <strong>unit</strong> quaternion @q@ to the vector @v@.</p>
-                                        <a name='apply4D'></a>
-          <h4 class='function'><span>.</span>apply4D <code>(q, v)</code></h4>
+                                        <h4 id='apply4D' class='entry function'><span>.</span>apply4D <code>(q, v)</code></h4>
           
                     <p>@apply4D(q, v)@ applies the rotation of the <strong>unit</strong> quaternion @q@  to the vector @v@, the fourth component is left unchanged.</p>
-                                        <a name='__unm'></a>
-          <h4 class='param'><span>.</span>__unm <code>= lib.neg</code></h4>
+                                        <h4 id='__unm' class='entry param'><span>.</span>__unm <code>= lib.neg</code></h4>
           
                     <p>h2. Operators</p>
                     <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
-                                        <a name='__add'></a>
-          <h4 class='param'><span>.</span>__add <code>= lib.add</code></h4>
+                                        <h4 id='__add' class='entry param'><span>.</span>__add <code>= lib.add</code></h4>
           
                     <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
-                                        <a name='__sub'></a>
-          <h4 class='param'><span>.</span>__sub <code>= lib.sub</code></h4>
+                                        <h4 id='__sub' class='entry param'><span>.</span>__sub <code>= lib.sub</code></h4>
           
                     <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
-                                        <a name='__mul'></a>
-          <h4 class='param'><span>.</span>__mul <code>= lib.mul</code></h4>
+                                        <h4 id='__mul' class='entry param'><span>.</span>__mul <code>= lib.mul</code></h4>
           
                     <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
-                                        <a name='__tostring'></a>
-          <h4 class='param'><span>.</span>__tostring <code>= lib.tostring</code></h4>
+                                        <h4 id='__tostring' class='entry param'><span>.</span>__tostring <code>= lib.tostring</code></h4>
           
                     <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
                               </section>

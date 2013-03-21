@@ -49,8 +49,7 @@
           <h2 class='section'>Class functions</h2>
 
                     
-                                        <a name='new'></a>
-          <h4 class='function'><span>.</span>new <code>(name, ...)</code></h4>
+                                        <h4 id='new' class='entry function'><span>.</span>new <code>(name, ...)</code></h4>
           
                     <p>Create a new debug object with a name and some more arguments to be printed.</p>
                     <pre class='prettyprint lang-lua'>obj.debug = lk.Debug("an obj", obj.id, obj.type)
@@ -58,16 +57,13 @@
 function obj.debug:callback()
   -- do something here
 end</pre>
-                                        <a name='inspect'></a>
-          <h4 class='function'><span>.</span>inspect <code>(elem)</code></h4>
+                                        <h4 id='inspect' class='entry function'><span>.</span>inspect <code>(elem)</code></h4>
           
                     <p>Printout inspect information on a table or userdata.</p>
-                                        <a name='userdata'></a>
-          <h4 class='function'><span>.</span>userdata <code>(udata)</code></h4>
+                                        <h4 id='userdata' class='entry function'><span>.</span>userdata <code>(udata)</code></h4>
           
                     <p>Return userdata type and pointer value.</p>
-                                        <a name='logExecution'></a>
-          <h4 class='function'><span>.</span>logExecution <code>(prefix, hook_type)</code></h4>
+                                        <h4 id='logExecution' class='entry function'><span>.</span>logExecution <code>(prefix, hook_type)</code></h4>
           
                     <p>Start logging program execution. The @hook_type@ can be 'l' (log every line), 'r' (log return from function) or 'c' (log function calls = default).</p>
                     <p>Usage:</p>

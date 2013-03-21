@@ -64,8 +64,7 @@ local function square()
   vb:push3D(-1.0,  1.0, 0.0)
   vb:push3D( 1.0,  1.0, 0.0)
 
-  -- Colors for the positions above. The colors are not used in the
-  -- final effect.
+  -- Colors for the positions above.
   cb:pushV4(four.Color.red())
   cb:pushV4(four.Color.green())
   cb:pushV4(four.Color.blue())
@@ -122,15 +121,14 @@ effect.vertex = four.Effect.Shader [[
   in vec4 vertex;
   in vec4 color;
   out vec4 v_vertex;
-  // ignore color
-  // out vec4 v_color;
+  out vec4 v_color;
   void main()
   {
     v_vertex = vertex;
-    // v_color  = color;
+    v_color  = color;
     gl_Position = vertex;
   }
-]],
+]]
   
 -- Define the fragment shader. This shader simply creates periodic colors
 -- based on pixel position and time.
@@ -148,10 +146,11 @@ effect.fragment = four.Effect.Shader [[
   void main() {
 
     vec4 v = 20 * (v_vertex + vec4(sin(t/10), sin(t/20), sin(t/30), 0.0));
-    float r = saturation + 0.25 * (sin(v.x) + sin(v.y));
-    float g = saturation + 0.25 * (sin(2*v.x) + sin(v.y));
-    float b = saturation + 0.25 * (sin(3*v.x) + sin(v.y));
-    color = vec4(b, r, g, 1);
+    float r = saturation + 0.25 * (sin(3*v.x) + sin(v.y));
+    float g = saturation + 0.25 * (sin(v.x) + sin(v.y));
+    float b = saturation + 0.25 * (sin(2*v.x) + sin(v.y));
+    // blend effect with interpolated color
+    color = vec4(v_color.r + r, v_color.g + g, v_color.b + b, 1);
   }
 ]]
 
@@ -229,5 +228,3 @@ timer:start()
 --
 -- And finally, run the scheduler (enter main loop).
 run()
-
-

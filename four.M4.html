@@ -41,8 +41,7 @@
                     <section id='M4'>
           <h2 class='section'>four.M4</h2>
 
-                              <a name='ortho'></a>
-          <h4 class='function'><span>.</span>ortho <code>(l, r, b, t, n, f)</code></h4>
+                              <h4 id='ortho' class='entry function'><span>.</span>ortho <code>(l, r, b, t, n, f)</code></h4>
           
                     <p class='summary'></p>
                     <p>local lib = { type = 'four.M4' } lib.__index = lib four.M4 = lib setmetatable(lib, { __call = function(lib, ...) return lib.M4(...) end })</p>
@@ -83,82 +82,63 @@
                     <p>-- @rigidqScale(d, q, s)@ is like @rigid(d, axis, theta)@ but  -- it starts by scaling according to @scale@. local r = lib.rigidq(d, q)  r[1] = r[1] <strong> s[1] -- scale col 1 r[2] = r[2] </strong> s[1]   r[3] = r[3] <strong> s[1]   r[5] = r[5] </strong> s[2] -- scale col 2 r[6] = r[6] <strong> s[2] r[7] = r[7] </strong> s[2] r[9] = r[9] <strong> s[3] -- scale col 3 r[10] = r[10] </strong> s[3] r[11] = r[11] * s[3] return r end</p>
                     <p>-- h2. Projection</p>
                     <p>--[[-- @ortho(l, r, b, t, n, f)@ maps the axis aligned box with corners @(l, b, -n)@ and @(r, t, -f)@ to the axis aligned cube with corners  (-1, -1, -1) and @(1, 1, 1)@.</p>
-                                        <a name='persp'></a>
-          <h4 class='function'><span>.</span>persp <code>(l, r, b, t, n, f)</code></h4>
+                                        <h4 id='persp' class='entry function'><span>.</span>persp <code>(l, r, b, t, n, f)</code></h4>
           
                     <p>@persp(l, r, b, t, n, f)@ maps the frustum with top of  the underlying pyramid at the origin, near plane rectangle corners @(l, b, -n)@, @(r, t, -n)@ and far plane at @-far@ to  the axis aligned cube with corners @(-1, -1, -1)@ and @(1, 1, 1)@.</p>
-                                        <a name='scale4D'></a>
-          <h4 class='function'><span>.</span>scale4D <code>(s)</code></h4>
+                                        <h4 id='scale4D' class='entry function'><span>.</span>scale4D <code>(s)</code></h4>
           
                     <p>scales 4D space in the x, y, z and w dimensions according to @s@</p>
-                                        <a name='map'></a>
-          <h4 class='function'><span>.</span>map <code>(f, m)</code></h4>
+                                        <h4 id='map' class='entry function'><span>.</span>map <code>(f, m)</code></h4>
           
                     <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
-                                        <a name='mapi'></a>
-          <h4 class='function'><span>.</span>mapi <code>(f, m)</code></h4>
+                                        <h4 id='mapi' class='entry function'><span>.</span>mapi <code>(f, m)</code></h4>
           
                     <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
-                                        <a name='fold'></a>
-          <h4 class='function'><span>.</span>fold <code>(f, acc, m)</code></h4>
+                                        <h4 id='fold' class='entry function'><span>.</span>fold <code>(f, acc, m)</code></h4>
           
                     <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
-                                        <a name='foldi'></a>
-          <h4 class='function'><span>.</span>foldi <code>(f, acc, m)</code></h4>
+                                        <h4 id='foldi' class='entry function'><span>.</span>foldi <code>(f, acc, m)</code></h4>
           
                     <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
-                                        <a name='iter'></a>
-          <h4 class='function'><span>.</span>iter <code>(f, m)</code></h4>
+                                        <h4 id='iter' class='entry function'><span>.</span>iter <code>(f, m)</code></h4>
           
                     <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
-                                        <a name='iter'></a>
-          <h4 class='function'><span>.</span>iter <code>(f, m)</code></h4>
+                                        <h4 id='iter' class='entry function'><span>.</span>iter <code>(f, m)</code></h4>
           
                     <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
-                                        <a name='forAll'></a>
-          <h4 class='function'><span>.</span>forAll <code>(p, m)</code></h4>
+                                        <h4 id='forAll' class='entry function'><span>.</span>forAll <code>(p, m)</code></h4>
           
                     <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
-                                        <a name='exists'></a>
-          <h4 class='function'><span>.</span>exists <code>(p, v)</code></h4>
+                                        <h4 id='exists' class='entry function'><span>.</span>exists <code>(p, v)</code></h4>
           
                     <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
-                                        <a name='equal'></a>
-          <h4 class='function'><span>.</span>equal <code>(a, b)</code></h4>
+                                        <h4 id='equal' class='entry function'><span>.</span>equal <code>(a, b)</code></h4>
           
                     <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
-                                        <a name='equalF'></a>
-          <h4 class='function'><span>.</span>equalF <code>(f, u, v)</code></h4>
+                                        <h4 id='equalF' class='entry function'><span>.</span>equalF <code>(f, u, v)</code></h4>
           
                     <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
-                                        <a name='compare'></a>
-          <h4 class='function'><span>.</span>compare <code>(u, v)</code></h4>
+                                        <h4 id='compare' class='entry function'><span>.</span>compare <code>(u, v)</code></h4>
           
                     <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
                     <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
-                                        <a name='compareF'></a>
-          <h4 class='function'><span>.</span>compareF <code>(f, u, v)</code></h4>
+                                        <h4 id='compareF' class='entry function'><span>.</span>compareF <code>(f, u, v)</code></h4>
           
                     <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
                     <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
                     <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
                     <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
                     <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
-                                        <a name='__unm'></a>
-          <h4 class='param'><span>.</span>__unm <code>= lib.neg</code></h4>
+                                        <h4 id='__unm' class='entry param'><span>.</span>__unm <code>= lib.neg</code></h4>
           
                     <p>h2. Operators</p>
-                                        <a name='__add'></a>
-          <h4 class='param'><span>.</span>__add <code>= lib.add</code></h4>
+                                        <h4 id='__add' class='entry param'><span>.</span>__add <code>= lib.add</code></h4>
           
-                                        <a name='__sub'></a>
-          <h4 class='param'><span>.</span>__sub <code>= lib.sub</code></h4>
+                                        <h4 id='__sub' class='entry param'><span>.</span>__sub <code>= lib.sub</code></h4>
           
-                                        <a name='__mul'></a>
-          <h4 class='param'><span>.</span>__mul <code>= lib.mul</code></h4>
+                                        <h4 id='__mul' class='entry param'><span>.</span>__mul <code>= lib.mul</code></h4>
           
-                                        <a name='__tostring'></a>
-          <h4 class='param'><span>.</span>__tostring <code>= lib.tostring</code></h4>
+                                        <h4 id='__tostring' class='entry param'><span>.</span>__tostring <code>= lib.tostring</code></h4>
           
                               </section>
                     <section id='TODO'>

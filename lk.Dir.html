@@ -49,8 +49,7 @@
           <h2 class='section'>Class functions</h2>
 
                     
-                                        <a name='new'></a>
-          <h4 class='function'><span>.</span>new <code>(path)</code></h4>
+                                        <h4 id='new' class='entry function'><span>.</span>new <code>(path)</code></h4>
           
                     <p>Create a new directory helper pointing at @path.</p>
                               </section>
@@ -58,8 +57,7 @@
           <h2 class='section'>Methods</h2>
 
                     
-                                        <a name='glob'></a>
-          <h4 class='method'><span>:</span>glob <code>(pattern)</code></h4>
+                                        <h4 id='glob' class='entry method'><span>:</span>glob <code>(pattern)</code></h4>
           
                     <p>Return an iterator to recursively find files matching @pattern@ in the directory. The pattern syntax is the same as string.match.</p>
                     <pre class='prettyprint lang-lua'>-- Find files ending in ".lua".
@@ -69,8 +67,7 @@ end
 --&gt; lib/lk/Dir.lua
 --&gt; lib/lk/Doc.lua
 --&gt; ...</pre>
-                                        <a name='list'></a>
-          <h4 class='method'><span>:</span>list <code>()</code></h4>
+                                        <h4 id='list' class='entry method'><span>:</span>list <code>()</code></h4>
           
                     <p>Return an iterator over the paths in the directory. The returned values are paths, not just filenames.</p>
                     <pre class='prettyprint lang-lua'>for file in lk.Dir('lib'):list() do
@@ -78,8 +75,7 @@ end
 end
 --&gt; lib/lk
 --&gt; lib/lk.lua</pre>
-                                        <a name='contains'></a>
-          <h4 class='method'><span>:</span>contains <code>(pattern)</code></h4>
+                                        <h4 id='contains' class='entry method'><span>:</span>contains <code>(pattern)</code></h4>
           
                     <p>Return true if there is at least one child in the directory that matches @pattern@.</p>
                               </section>

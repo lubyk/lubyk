@@ -60,43 +60,33 @@
                     
                     <h4 class='sub-title'>Buffer element type </h4>
                     <p>Defines how the data will be stored on the GPU and how the shader will  view the data.</p>
-                                        <a name='FLOAT'></a>
-          <h4 class='param'><span>.</span>FLOAT <code>= 1</code></h4>
+                                        <h4 id='FLOAT' class='entry param'><span>.</span>FLOAT <code>= 1</code></h4>
           
-                                        <a name='DOUBLE'></a>
-          <h4 class='param'><span>.</span>DOUBLE <code>= 2</code></h4>
+                                        <h4 id='DOUBLE' class='entry param'><span>.</span>DOUBLE <code>= 2</code></h4>
           
-                                        <a name='INT'></a>
-          <h4 class='param'><span>.</span>INT <code>= 3</code></h4>
+                                        <h4 id='INT' class='entry param'><span>.</span>INT <code>= 3</code></h4>
           
-                                        <a name='UNSIGNED_INT'></a>
-          <h4 class='param'><span>.</span>UNSIGNED_INT <code>= 4</code></h4>
+                                        <h4 id='UNSIGNED_INT' class='entry param'><span>.</span>UNSIGNED_INT <code>= 4</code></h4>
           
-                                        <a name='BYTE'></a>
-          <h4 class='param'><span>.</span>BYTE <code>= 5</code></h4>
+                                        <h4 id='BYTE' class='entry param'><span>.</span>BYTE <code>= 5</code></h4>
           
-                                        <a name='UNSIGNED_BYTE'></a>
-          <h4 class='param'><span>.</span>UNSIGNED_BYTE <code>= 6</code></h4>
+                                        <h4 id='UNSIGNED_BYTE' class='entry param'><span>.</span>UNSIGNED_BYTE <code>= 6</code></h4>
           
                               
                     <h4 class='sub-title'>Buffer usage hints</h4>
                     <p>Defines how the data will be updated (hint for renderer).</p>
-                                        <a name='UPDATE_NEVER'></a>
-          <h4 class='param'><span>.</span>UPDATE_NEVER <code>= 1</code></h4>
+                                        <h4 id='UPDATE_NEVER' class='entry param'><span>.</span>UPDATE_NEVER <code>= 1</code></h4>
           
-                                        <a name='UPDATE_SOMETIMES'></a>
-          <h4 class='param'><span>.</span>UPDATE_SOMETIMES <code>= 2</code></h4>
+                                        <h4 id='UPDATE_SOMETIMES' class='entry param'><span>.</span>UPDATE_SOMETIMES <code>= 2</code></h4>
           
-                                        <a name='UPDATE_OFTEN'></a>
-          <h4 class='param'><span>.</span>UPDATE_OFTEN <code>= 3</code></h4>
+                                        <h4 id='UPDATE_OFTEN' class='entry param'><span>.</span>UPDATE_OFTEN <code>= 3</code></h4>
           
                               </section>
                     <section id='Constructor'>
           <h2 class='section'>Constructor</h2>
 
                     
-                                        <a name='new'></a>
-          <h4 class='function'><span>.</span>new <code>(def)</code></h4>
+                                        <h4 id='new' class='entry function'><span>.</span>new <code>(def)</code></h4>
           
                     <p>Create a <a href='four.Buffer.html'>four.Buffer</a> with parameters defined in <code>def</code>. Possible keys are:</p>
                     <table class='definition'>
@@ -121,75 +111,55 @@
                     <p>Index buffer (how values are used is defined in <a href='four.Geometry.html#primitive'>four.Geometry#primitive</a>).</p>
                     <pre class='prettyprint lang-lua'>local ib = four.Buffer { dim = 1,
            scalar_type = four.Buffer.UNSIGNED_INT }</pre>
-                                        <a name='set'></a>
-          <h4 class='method'><span>:</span>set <code>(def)</code></h4>
+                                        <h4 id='set' class='entry method'><span>:</span>set <code>(def)</code></h4>
           
-                                        <a name='length'></a>
-          <h4 class='method'><span>:</span>length <code>()</code></h4>
+                                        <h4 id='length' class='entry method'><span>:</span>length <code>()</code></h4>
           
-                                        <a name='scalarLength'></a>
-          <h4 class='method'><span>:</span>scalarLength <code>()</code></h4>
+                                        <h4 id='scalarLength' class='entry method'><span>:</span>scalarLength <code>()</code></h4>
           
-                                        <a name='disposeBuffer'></a>
-          <h4 class='method'><span>:</span>disposeBuffer <code>()</code></h4>
+                                        <h4 id='disposeBuffer' class='entry method'><span>:</span>disposeBuffer <code>()</code></h4>
           
                               </section>
                     <section id='Getters-'>
           <h2 class='section'>Getters </h2>
 
                     
-                                        <a name='getScalar'></a>
-          <h4 class='method'><span>:</span>getScalar <code>(i)</code></h4>
+                                        <h4 id='getScalar' class='entry method'><span>:</span>getScalar <code>(i)</code></h4>
           
-                                        <a name='get1D'></a>
-          <h4 class='method'><span>:</span>get1D <code>(i)</code></h4>
+                                        <h4 id='get1D' class='entry method'><span>:</span>get1D <code>(i)</code></h4>
           
-                                        <a name='get2D'></a>
-          <h4 class='method'><span>:</span>get2D <code>(i)</code></h4>
+                                        <h4 id='get2D' class='entry method'><span>:</span>get2D <code>(i)</code></h4>
           
-                                        <a name='get3D'></a>
-          <h4 class='method'><span>:</span>get3D <code>(i)</code></h4>
+                                        <h4 id='get3D' class='entry method'><span>:</span>get3D <code>(i)</code></h4>
           
-                                        <a name='get4D'></a>
-          <h4 class='method'><span>:</span>get4D <code>(i)</code></h4>
+                                        <h4 id='get4D' class='entry method'><span>:</span>get4D <code>(i)</code></h4>
           
-                                        <a name='getV2'></a>
-          <h4 class='method'><span>:</span>getV2 <code>(i)</code></h4>
+                                        <h4 id='getV2' class='entry method'><span>:</span>getV2 <code>(i)</code></h4>
           
-                                        <a name='getV3'></a>
-          <h4 class='method'><span>:</span>getV3 <code>(i)</code></h4>
+                                        <h4 id='getV3' class='entry method'><span>:</span>getV3 <code>(i)</code></h4>
           
-                                        <a name='getV4'></a>
-          <h4 class='method'><span>:</span>getV4 <code>(i)</code></h4>
+                                        <h4 id='getV4' class='entry method'><span>:</span>getV4 <code>(i)</code></h4>
           
                               </section>
                     <section id='Setters'>
           <h2 class='section'>Setters</h2>
 
                     
-                                        <a name='setScalar'></a>
-          <h4 class='method'><span>:</span>setScalar <code>(i, x)</code></h4>
+                                        <h4 id='setScalar' class='entry method'><span>:</span>setScalar <code>(i, x)</code></h4>
           
-                                        <a name='set1D'></a>
-          <h4 class='method'><span>:</span>set1D <code>(i, x)</code></h4>
+                                        <h4 id='set1D' class='entry method'><span>:</span>set1D <code>(i, x)</code></h4>
           
-                                        <a name='set2D'></a>
-          <h4 class='method'><span>:</span>set2D <code>(i, x, y)</code></h4>
+                                        <h4 id='set2D' class='entry method'><span>:</span>set2D <code>(i, x, y)</code></h4>
           
-                                        <a name='set3D'></a>
-          <h4 class='method'><span>:</span>set3D <code>(i, x, y, z)</code></h4>
+                                        <h4 id='set3D' class='entry method'><span>:</span>set3D <code>(i, x, y, z)</code></h4>
           
-                                        <a name='set4D'></a>
-          <h4 class='method'><span>:</span>set4D <code>(i, x, y, z, w)</code></h4>
+                                        <h4 id='set4D' class='entry method'><span>:</span>set4D <code>(i, x, y, z, w)</code></h4>
           
-                                        <a name='setV2'></a>
-          <h4 class='method'><span>:</span>setV2 <code>(i, v)</code></h4>
+                                        <h4 id='setV2' class='entry method'><span>:</span>setV2 <code>(i, v)</code></h4>
           
-                                        <a name='setV3'></a>
-          <h4 class='method'><span>:</span>setV3 <code>(i, v)</code></h4>
+                                        <h4 id='setV3' class='entry method'><span>:</span>setV3 <code>(i, v)</code></h4>
           
-                                        <a name='setV4'></a>
-          <h4 class='method'><span>:</span>setV4 <code>(i, v)</code></h4>
+                                        <h4 id='setV4' class='entry method'><span>:</span>setV4 <code>(i, v)</code></h4>
           
                               </section>
                     <section id='Append-'>
@@ -197,41 +167,31 @@
 
                     
                     <p><strong>Note</strong>: appending just adds elements at the end of the data, it  does not care about buffer dimension.</p>
-                                        <a name='push'></a>
-          <h4 class='method'><span>:</span>push <code>(...)</code></h4>
+                                        <h4 id='push' class='entry method'><span>:</span>push <code>(...)</code></h4>
           
-                                        <a name='push1D'></a>
-          <h4 class='method'><span>:</span>push1D <code>(x)</code></h4>
+                                        <h4 id='push1D' class='entry method'><span>:</span>push1D <code>(x)</code></h4>
           
-                                        <a name='push2D'></a>
-          <h4 class='method'><span>:</span>push2D <code>(x, y)</code></h4>
+                                        <h4 id='push2D' class='entry method'><span>:</span>push2D <code>(x, y)</code></h4>
           
-                                        <a name='push3D'></a>
-          <h4 class='method'><span>:</span>push3D <code>(x, y, z)</code></h4>
+                                        <h4 id='push3D' class='entry method'><span>:</span>push3D <code>(x, y, z)</code></h4>
           
-                                        <a name='push4D'></a>
-          <h4 class='method'><span>:</span>push4D <code>(x, y, z, w)</code></h4>
+                                        <h4 id='push4D' class='entry method'><span>:</span>push4D <code>(x, y, z, w)</code></h4>
           
-                                        <a name='pushV2'></a>
-          <h4 class='method'><span>:</span>pushV2 <code>(v)</code></h4>
+                                        <h4 id='pushV2' class='entry method'><span>:</span>pushV2 <code>(v)</code></h4>
           
-                                        <a name='pushV3'></a>
-          <h4 class='method'><span>:</span>pushV3 <code>(v)</code></h4>
+                                        <h4 id='pushV3' class='entry method'><span>:</span>pushV3 <code>(v)</code></h4>
           
-                                        <a name='pushV4'></a>
-          <h4 class='method'><span>:</span>pushV4 <code>(v)</code></h4>
+                                        <h4 id='pushV4' class='entry method'><span>:</span>pushV4 <code>(v)</code></h4>
           
                               </section>
                     <section id='Swapping-and-deleting'>
           <h2 class='section'>Swapping and deleting</h2>
 
                     
-                                        <a name='swap'></a>
-          <h4 class='method'><span>:</span>swap <code>(i,j)</code></h4>
+                                        <h4 id='swap' class='entry method'><span>:</span>swap <code>(i,j)</code></h4>
           
                     <p>Swap elements <code>i</code> and <code>j</code>. </p>
-                                        <a name='delete'></a>
-          <h4 class='method'><span>:</span>delete <code>(i)</code></h4>
+                                        <h4 id='delete' class='entry method'><span>:</span>delete <code>(i)</code></h4>
           
                     <p>Delete element <code>i</code>. <strong>Warning</strong>: does not preserve the order of elements in the array.</p>
                     <p class='todo'><span>TODO</span> Could greatly optimize by using table.remove (this would also preserve order).</p>
@@ -240,26 +200,19 @@
           <h2 class='section'>Traversing</h2>
 
                     
-                                        <a name='foldScalars'></a>
-          <h4 class='method'><span>:</span>foldScalars <code>(f, acc)</code></h4>
+                                        <h4 id='foldScalars' class='entry method'><span>:</span>foldScalars <code>(f, acc)</code></h4>
           
-                                        <a name='fold1D'></a>
-          <h4 class='method'><span>:</span>fold1D <code>(f, acc)</code></h4>
+                                        <h4 id='fold1D' class='entry method'><span>:</span>fold1D <code>(f, acc)</code></h4>
           
-                                        <a name='fold2D'></a>
-          <h4 class='method'><span>:</span>fold2D <code>(f, acc)</code></h4>
+                                        <h4 id='fold2D' class='entry method'><span>:</span>fold2D <code>(f, acc)</code></h4>
           
-                                        <a name='fold3D'></a>
-          <h4 class='method'><span>:</span>fold3D <code>(f, acc)</code></h4>
+                                        <h4 id='fold3D' class='entry method'><span>:</span>fold3D <code>(f, acc)</code></h4>
           
-                                        <a name='fold4D'></a>
-          <h4 class='method'><span>:</span>fold4D <code>(f, acc)</code></h4>
+                                        <h4 id='fold4D' class='entry method'><span>:</span>fold4D <code>(f, acc)</code></h4>
           
-                                        <a name='foldV3'></a>
-          <h4 class='method'><span>:</span>foldV3 <code>(f, acc)</code></h4>
+                                        <h4 id='foldV3' class='entry method'><span>:</span>foldV3 <code>(f, acc)</code></h4>
           
-                                        <a name='foldV4'></a>
-          <h4 class='method'><span>:</span>foldV4 <code>(f, acc)</code></h4>
+                                        <h4 id='foldV4' class='entry method'><span>:</span>foldV4 <code>(f, acc)</code></h4>
           
                               </section>
                     <section id='Sorting'>
@@ -272,12 +225,10 @@
 <li><code>0</code> if <code>x</code> equals <code>y</code></li>
 <li><code>1</code> if <code>x</code> is greater than <code>y</code></li>
 </ul>
-                                        <a name='sort'></a>
-          <h4 class='method'><span>:</span>sort <code>(cmp, get)</code></h4>
+                                        <h4 id='sort' class='entry method'><span>:</span>sort <code>(cmp, get)</code></h4>
           
                     <p>Sort the elements of the buffer in place using <code>cmp</code> as a comparison function. <code>cmp</code> is given objects returned by optional <code>get</code> function. (defaults depends on <code>self.dim</code>, number for <code>1</code>, V2 for <code>2</code>, V3 for <code>3</code>,  V4 for <code>4</code>)</p>
-                                        <a name='sortOrder'></a>
-          <h4 class='method'><span>:</span>sortOrder <code>(cmp, get)</code></h4>
+                                        <h4 id='sortOrder' class='entry method'><span>:</span>sortOrder <code>(cmp, get)</code></h4>
           
                     <p>This is like <a href='#sort'>sort</a> except elements of the buffer are kept in place and an array of indexes defining the order is returned. </p>
                               </section>
@@ -285,8 +236,7 @@
           <h2 class='section'>Data properties </h2>
 
                     
-                                        <a name='dimExtents'></a>
-          <h4 class='method'><span>:</span>dimExtents <code>()</code></h4>
+                                        <h4 id='dimExtents' class='entry method'><span>:</span>dimExtents <code>()</code></h4>
           
                     <p>Returns a table of size <code>self.dim</code> containing tables with the minimal and maximal scalar values for each dimension in to form <code>{min = ..., max = ...}</code>.</p>
                               </section>

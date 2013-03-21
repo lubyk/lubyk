@@ -46,8 +46,7 @@
 
                     
                     <p class='summary'>The test suite is used to declare tests and group them by class or module.</p>
-                                        <a name='new'></a>
-          <h4 class='function'><span>.</span>new <code>(name)</code></h4>
+                                        <h4 id='new' class='entry function'><span>.</span>new <code>(name)</code></h4>
           
                     <p>Create a new test suite. It is good practice to use 'should' as local name for this suite since it makes tests more readable. The @name@ should be the exact name of the class or module being tested in case the coverage option is activated in test (it is ON by default).</p>
                     <p>Usage example:</p>
@@ -67,12 +66,10 @@ end</pre>
 function should.teardown()
   -- cleanup
 end</pre>
-                                        <a name='setup'></a>
-          <h4 class='function'><span>.</span>setup <code>()</code></h4>
+                                        <h4 id='setup' class='entry function'><span>.</span>setup <code>()</code></h4>
           
                     <p>Dummy setup function (does nothing).</p>
-                                        <a name='teardown'></a>
-          <h4 class='function'><span>.</span>teardown <code>()</code></h4>
+                                        <h4 id='teardown' class='entry function'><span>.</span>teardown <code>()</code></h4>
           
                     <p>Dummy teardown function (does nothing).</p>
                               </section>
@@ -80,8 +77,7 @@ end</pre>
           <h2 class='section'>Declare tests</h2>
 
                     
-                                        <a name='__newindex'></a>
-          <h4 class='method'><span>:</span>__newindex <code>(key, value)</code></h4>
+                                        <h4 id='__newindex' class='entry method'><span>:</span>__newindex <code>(key, value)</code></h4>
           
                     <p>Tests are declared by adding functions to the test suite. Note that these functions do not have access to 'self'.</p>
                     <p>Example test declaration:</p>
@@ -104,67 +100,52 @@ test.all()</pre>
           <h2 class='section'>Assertions</h2>
 
                     
-                                        <a name=''></a>
-          <h4 class='function'>fail <code>(msg)</code></h4>
+                                        <h4 id='fail' class='entry function'>fail <code>(msg)</code></h4>
           
                     <p>Force a test to fail with a given @msg@.</p>
-                                        <a name=''></a>
-          <h4 class='function'>assertFalse <code>(ok)</code></h4>
+                                        <h4 id='assertFalse' class='entry function'>assertFalse <code>(ok)</code></h4>
           
                     <p>Assert that @ok@ is false.</p>
-                                        <a name=''></a>
-          <h4 class='function'>assertTrue <code>(ok, msg)</code></h4>
+                                        <h4 id='assertTrue' class='entry function'>assertTrue <code>(ok, msg)</code></h4>
           
                     <p>Assert that @ok@ is true. If @msg@ exists, it is used in case of failure in place of the default fail message.</p>
-                                        <a name=''></a>
-          <h4 class='function'>assertEqual <code>(expected, value, resolution, up_count)</code></h4>
+                                        <h4 id='assertEqual' class='entry function'>assertEqual <code>(expected, value, resolution, up_count)</code></h4>
           
                     <p>Assert that @value@ is equal to @expected@. If @expected@ is a number, the @resolution@ parameter can be used to cope with numerical errors. The actual test for numbers is:</p>
                     <pre class='prettyprint lang-lua'>local ok = (value &gt;= expected - resolution) and (value &lt;= expected + resolution)
 </pre>
                     <p>For other types, this tests raw equality (same object). To compare table contents, use <a href='#assertValueEqual'>assertValueEqual</a>.</p>
-                                        <a name=''></a>
-          <h4 class='function'>assertValueEqual <code>(expected, value, resolution, up_count)</code></h4>
+                                        <h4 id='assertValueEqual' class='entry function'>assertValueEqual <code>(expected, value, resolution, up_count)</code></h4>
           
                     <p>For tables, recursively test that all keys contain the same values.</p>
-                                        <a name=''></a>
-          <h4 class='function'>assertTableEqual <code>(expected, value, resolution, up_count)</code></h4>
+                                        <h4 id='assertTableEqual' class='entry function'>assertTableEqual <code>(expected, value, resolution, up_count)</code></h4>
           
                     <p>This is like <a href='#assertValueEqual'>assertValueEqual</a> but does not check for table type.</p>
-                                        <a name=''></a>
-          <h4 class='function'>assertNotEqual <code>(unexpected, value)</code></h4>
+                                        <h4 id='assertNotEqual' class='entry function'>assertNotEqual <code>(unexpected, value)</code></h4>
           
                     <p>Asserts that @value@ is not equal to @unexpected@.</p>
-                                        <a name=''></a>
-          <h4 class='function'>assertMatch <code>(pattern, value)</code></h4>
+                                        <h4 id='assertMatch' class='entry function'>assertMatch <code>(pattern, value)</code></h4>
           
                     <p>Assert that @value@ matches @pattern@ using @string.match@.</p>
-                                        <a name=''></a>
-          <h4 class='function'>assertNotMatch <code>(pattern, value, msg)</code></h4>
+                                        <h4 id='assertNotMatch' class='entry function'>assertNotMatch <code>(pattern, value, msg)</code></h4>
           
                     <p>Assert that @value@ does not match @pattern@. If @msg@ is provided, use this in case of failure.</p>
-                                        <a name=''></a>
-          <h4 class='function'>assertError <code>(pattern, func)</code></h4>
+                                        <h4 id='assertError' class='entry function'>assertError <code>(pattern, func)</code></h4>
           
                     <p>Assert that calling @func@ generates an error message that matches @pattern@.</p>
-                                        <a name=''></a>
-          <h4 class='function'>assertPass <code>(func, teardown)</code></h4>
+                                        <h4 id='assertPass' class='entry function'>assertPass <code>(func, teardown)</code></h4>
           
                     <p>Assert that calling @func@ passes without errors. The optional @teardown@  function can be used to cleanup after the function call whether it passes or fails.</p>
-                                        <a name=''></a>
-          <h4 class='function'>assertLessThen <code>(expected, value)</code></h4>
+                                        <h4 id='assertLessThen' class='entry function'>assertLessThen <code>(expected, value)</code></h4>
           
                     <p>Assert that @value@ is less then @expected@.</p>
-                                        <a name=''></a>
-          <h4 class='function'>assertType <code>(expected, value)</code></h4>
+                                        <h4 id='assertType' class='entry function'>assertType <code>(expected, value)</code></h4>
           
                     <p>Assert that the Lua type of @value@ is @expected@ ('number', 'table', 'function', etc).</p>
-                                        <a name=''></a>
-          <h4 class='function'>assertNil <code>(value)</code></h4>
+                                        <h4 id='assertNil' class='entry function'>assertNil <code>(value)</code></h4>
           
                     <p>Assert that @value@ is nil.</p>
-                                        <a name=''></a>
-          <h4 class='function'>assertInRange <code>(t1, t2, value)</code></h4>
+                                        <h4 id='assertInRange' class='entry function'>assertInRange <code>(t1, t2, value)</code></h4>
           
                     <p>Assert that @value@ is in the range defined by [@t1@, @t2@[.</p>
                               </section>

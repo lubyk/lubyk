@@ -40,8 +40,7 @@
                     <section id='LuaBinder'>
           <h2 class='section'>dub.LuaBinder</h2>
 
-                              <a name='decisionTree'></a>
-          <h4 class='method'><span>:</span>decisionTree <code>(list)</code></h4>
+                              <h4 id='decisionTree' class='entry method'><span>:</span>decisionTree <code>(list)</code></h4>
           
                     <p class='summary'></p>
                     <p>local format  = string.format local lib     = { type = 'dub.LuaBinder', SELF = 'self', -- By default, we try to access userdata in field 'super'. This is not -- slower then checkudata if the element passed is a userdata. TYPE_ACCESSOR = 'checksdata', -- By default does an strcmp to ensure correct attribute key. ASSERT_ATTR_KEY = true, LUA_STACK_SIZE_NAME = 'LuaStackSize', CHECK_TO_NATIVE = { -- default is to use the same type (number = 'number') int        = 'number', }, TYPE_TO_CHECK = { double       = 'number', float        = 'number', size_t       = 'int', int          = 'int', uint         = 'int', uint8        = 'int', uint16       = 'int', uint32       = 'int', int8_t       = 'int', int16_t      = 'int', int32_t      = 'int', uint8_t      = 'int', uint16_t     = 'int', uint32_t     = 'int', char         = 'int', short        = 'int', LuaStackSize = 'int', ['unsigned char']  = 'int', ['signed int']     = 'int', ['unsigned int']   = 'int', ['signed short']   = 'int', ['unsigned short'] = 'int',</p>

@@ -41,8 +41,7 @@
                     <section id='Geometry'>
           <h2 class='section'>four.Geometry</h2>
 
-                              <a name='new'></a>
-          <h4 class='function'><span>.</span>new <code>(def)</code></h4>
+                              <h4 id='new' class='entry function'><span>.</span>new <code>(def)</code></h4>
           
                     <p class='summary'></p>
                     <p>-- Module definition</p>
@@ -60,32 +59,25 @@
 <li>@name@, a user defined way of naming the geometry (may be used by the renderer to report errors about the object).</li>
 </ul>
                     <p><strong>Warning</strong> Once a geometry object was rendered its structure is immutable: the buffers referenced by @data@ keys and @index@ cannot change. However the actual data of the buffers may change.</p>
-                                        <a name='set'></a>
-          <h4 class='method'><span>:</span>set <code>(def)</code></h4>
+                                        <h4 id='set' class='entry method'><span>:</span>set <code>(def)</code></h4>
           
                     <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
-                                        <a name='computeBoundRadius '></a>
-          <h4 class='method'><span>:</span>computeBoundRadius  <code>()</code></h4>
+                                        <h4 id='computeBoundRadius ' class='entry method'><span>:</span>computeBoundRadius  <code>()</code></h4>
           
                     <p>@computeBoundsRadius()@ computes the radius of the bounding sphere  containing all the 3D points of @self.data.vertex@ and stores it in  @self.bound_radius@. If @data.vertex@ is @nil@ the radius is zero.</p>
-                                        <a name='computeVertexNormals'></a>
-          <h4 class='method'><span>:</span>computeVertexNormals <code>(force)</code></h4>
+                                        <h4 id='computeVertexNormals' class='entry method'><span>:</span>computeVertexNormals <code>(force)</code></h4>
           
                     <p>@computeVertexNormals(force)@ computes per vertex normals for all  the 3D points of @self.data.vertex@ and stores them in @self.data.normal@. <strong>WARNING</strong> works only with @Geometry.TRIANGLE@ primitive. Does nothing if @data.normal@ exists and force is @false@ (default).</p>
-                                        <a name='Cuboid'></a>
-          <h4 class='function'><span>.</span>Cuboid <code>(extents, no_dups)</code></h4>
+                                        <h4 id='Cuboid' class='entry function'><span>.</span>Cuboid <code>(extents, no_dups)</code></h4>
           
                     <p>@Cuboid(V3(w, h, d) [, no_dups])@ is a cuboid centered on the  origin with the given extents. If [no_dups] is @true@ vertices in the mesh are not duplicated, better for computational geometry  but implies that normals do not define facets. </p>
-                                        <a name='Cube'></a>
-          <h4 class='function'><span>.</span>Cube <code>(s, no_dups)</code></h4>
+                                        <h4 id='Cube' class='entry function'><span>.</span>Cube <code>(s, no_dups)</code></h4>
           
                     <p>@Cube(s [, no_dups])@ is @Cuboid(V3(s, s, s) [, no_dups])</p>
-                                        <a name='Sphere'></a>
-          <h4 class='function'><span>.</span>Sphere <code>(r, level)</code></h4>
+                                        <h4 id='Sphere' class='entry function'><span>.</span>Sphere <code>(r, level)</code></h4>
           
                     <p>@Sphere(r[,level])@ is a sphere of radius @r@ centered on the origin. The optional parameter @level@ defines the subdivision level (defaults to @10@. Number of triangles is @4^level * 8@</p>
-                                        <a name='Plane'></a>
-          <h4 class='function'><span>.</span>Plane <code>(extents, segs)</code></h4>
+                                        <h4 id='Plane' class='entry function'><span>.</span>Plane <code>(extents, segs)</code></h4>
           
                     <p>@Plane(V2(w, h) [, V2(xseg, yseg))@ is an Oxy plane of width @w@ and  height @h@ centered on the origin. The plane is divided in @xseg@ segments along the x-axis and @yseg@ along the y-axis (both default to @1@).  </p>
                               </section>

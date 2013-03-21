@@ -53,12 +53,10 @@
           <h2 class='section'>Script</h2>
 
                     
-                                        <a name='scriptSource'></a>
-          <h4 class='function'><span>.</span>scriptSource <code>(level)</code></h4>
+                                        <h4 id='scriptSource' class='entry function'><span>.</span>scriptSource <code>(level)</code></h4>
           
                     <p>Find the source of the current file or the file up x levels in the call chain (-1 = up one level).</p>
-                                        <a name='scriptPath'></a>
-          <h4 class='function'><span>.</span>scriptPath <code>(level)</code></h4>
+                                        <h4 id='scriptPath' class='entry function'><span>.</span>scriptPath <code>(level)</code></h4>
           
                     <p>Find the path of the current script or the script up x levels in the call chain (-1 = up one level). The path is relative to the current directory.</p>
                     <pre class='prettyprint lang-lua'>-- get path of running script
@@ -66,12 +64,10 @@ local my_path = lk.scriptPath()
 --&gt; 'test/lk_test.lua'
 </pre>
                     <p>If you need an absolute path, use <a href='#absolutizePath'>absolutizePath</a>.</p>
-                                        <a name='scriptDir'></a>
-          <h4 class='function'><span>.</span>scriptDir <code>(level)</code></h4>
+                                        <h4 id='scriptDir' class='entry function'><span>.</span>scriptDir <code>(level)</code></h4>
           
                     <p>Find the directory of the current script or the directory of the script up x levels in the call chain (-1 = up one level). This is the same as <a href='#scriptPath'>scriptPath</a> but it returns the parent directory.</p>
-                                        <a name='deprecation'></a>
-          <h4 class='function'><span>.</span>deprecation <code>(lib_name, old, new, ...)</code></h4>
+                                        <h4 id='deprecation' class='entry function'><span>.</span>deprecation <code>(lib_name, old, new, ...)</code></h4>
           
                     <p>Declare a method as being deprecated. This should be used when method names are changed to avoid breaking code without warnings. The syntax is:</p>
                     <pre class='prettyprint lang-lua'>function lib.badName(...)
@@ -86,58 +82,46 @@ end
           <h2 class='section'>Filesystem</h2>
 
                     
-                                        <a name='fileType'></a>
-          <h4 class='function'><span>.</span>fileType <code>(path)</code></h4>
+                                        <h4 id='fileType' class='entry function'><span>.</span>fileType <code>(path)</code></h4>
           
                     <p>Test for file/directory existence at @path@. If the element exists, returns the file type such as <strong>'directory'</strong> or <strong>'file'</strong>. Returns nil if there is nothing at the given path.</p>
-                                        <a name='exist'></a>
-          <h4 class='function'><span>.</span>exist <code>lib.fileType</code></h4>
+                                        <h4 id='exist' class='entry function'><span>.</span>exist <code>lib.fileType</code></h4>
           
                     <p>Return true if the file or folder pointed by @path@ exists.</p>
-                                        <a name='content'></a>
-          <h4 class='function'><span>.</span>content <code>(basepath, path)</code></h4>
+                                        <h4 id='content' class='entry function'><span>.</span>content <code>(basepath, path)</code></h4>
           
                     <p>Return the content of a file as a lua string (not suitable for very long content where parsing the file chunks by chunks is better). The method accepts either a single @path@ argument or a @basepath@ and relative @path@.</p>
-                                        <a name='writeall'></a>
-          <h4 class='function'><span>.</span>writeall <code>(filepath, data, check_diff)</code></h4>
+                                        <h4 id='writeall' class='entry function'><span>.</span>writeall <code>(filepath, data, check_diff)</code></h4>
           
                     <p>Write @data@ to @filepath@, creating path folders if necessary. If @check_diff@ is true, only write if the content has changed to avoid changing stat information on the file.</p>
-                                        <a name='makePath'></a>
-          <h4 class='function'><span>.</span>makePath <code>(path)</code></h4>
+                                        <h4 id='makePath' class='entry function'><span>.</span>makePath <code>(path)</code></h4>
           
                     <p>Build necessary folders to create a given @path@.</p>
-                                        <a name='move'></a>
-          <h4 class='function'><span>.</span>move <code>(path, new_path)</code></h4>
+                                        <h4 id='move' class='entry function'><span>.</span>move <code>(path, new_path)</code></h4>
           
                     <p>Move a file or directory from @path@ to @new_path@. This is like "os.rename" but it also builds necessary path components in new_path.</p>
-                                        <a name='copy'></a>
-          <h4 class='function'><span>.</span>copy <code>(path, new_path)</code></h4>
+                                        <h4 id='copy' class='entry function'><span>.</span>copy <code>(path, new_path)</code></h4>
           
                     <p>Copy a file from @path@ to @new_path@. Builds necessary path components in new_path.</p>
-                                        <a name='rmFile'></a>
-          <h4 class='function'><span>.</span>rmFile <code>(path)</code></h4>
+                                        <h4 id='rmFile' class='entry function'><span>.</span>rmFile <code>(path)</code></h4>
           
                     <p>Delete the file located at @path@. Does nothing if the element at @path@ does not exist (already removed).</p>
-                                        <a name='rmTree'></a>
-          <h4 class='function'><span>.</span>rmTree <code>(path, recursive)</code></h4>
+                                        <h4 id='rmTree' class='entry function'><span>.</span>rmTree <code>(path, recursive)</code></h4>
           
                     <p>Remove the directory at @path@. If @recursive@ is true, remove recursively. <strong>This is a dangerous method</strong> if the source path is not ensured to be exempt of mistakes.</p>
-                                        <a name='pathDir'></a>
-          <h4 class='function'><span>.</span>pathDir <code>(filepath)</code></h4>
+                                        <h4 id='pathDir' class='entry function'><span>.</span>pathDir <code>(filepath)</code></h4>
           
                     <p>Return the parent folder and filename from a @filepath@. Usage:</p>
                     <pre class='prettyprint lang-lua'>local base, file = lk.pathDir(filepath)
 </pre>
                     <p>This can also be used on urls.</p>
-                                        <a name='absolutizePath'></a>
-          <h4 class='function'><span>.</span>absolutizePath <code>(path, basepath)</code></h4>
+                                        <h4 id='absolutizePath' class='entry function'><span>.</span>absolutizePath <code>(path, basepath)</code></h4>
           
                     <p>Return an absolute path from a @path@ and optional @basepath@. If basepath is not provided, the method uses the current directory. This method resolves @/../@ and @/./@ in paths and returns a clean path. Can also be used with urls.</p>
                     <p>For example:</p>
                     <pre class='prettyprint lang-lua'>local abs_path = lk.absolutizePath('foo/bar/../baz', '/home')
 --&gt; '/home/foo/baz'</pre>
-                                        <a name='absToRel'></a>
-          <h4 class='function'><span>.</span>absToRel <code>(abs_string, base)</code></h4>
+                                        <h4 id='absToRel' class='entry function'><span>.</span>absToRel <code>(abs_string, base)</code></h4>
           
                     <p>Transform an absolute path or url to a relative path with given base. For  example:</p>
                     <pre class='prettyprint lang-lua'>local rel = lk.absToRel('/home/foo/bar', '/home/foo/baz')
@@ -149,37 +133,30 @@ local rel = lk.absToRel('/home/foo/bar', '/home/foo')
           <h2 class='section'>Strings, Arrays</h2>
 
                     
-                                        <a name='strip'></a>
-          <h4 class='function'><span>.</span>strip <code>(str)</code></h4>
+                                        <h4 id='strip' class='entry function'><span>.</span>strip <code>(str)</code></h4>
           
                     <p>Removes white spaces at the beginning and end of the string @str@.</p>
-                                        <a name='split'></a>
-          <h4 class='function'><span>.</span>split <code>(str, pat)</code></h4>
+                                        <h4 id='split' class='entry function'><span>.</span>split <code>(str, pat)</code></h4>
           
                     <p>Split a string @str@ into elements separated by the pattern @pat@. The function returns a table.</p>
                     <pre class='prettyprint lang-lua'>local t = lk.split('foo/bar/baz', '/')
 --&gt; {'foo', 'bar', 'baz'}</pre>
-                                        <a name='join'></a>
-          <h4 class='function'><span>.</span>join <code>(list, sep)</code></h4>
+                                        <h4 id='join' class='entry function'><span>.</span>join <code>(list, sep)</code></h4>
           
                     <p>Join elements of a table @list@ with separator @sep@. Returns a string.</p>
                     <pre class='prettyprint lang-lua'>local x = lk.join({'foo', 'bar', 'baz'}, '.')
 --&gt; 'foo.bar.baz'</pre>
-                                        <a name='insertSorted'></a>
-          <h4 class='function'><span>.</span>insertSorted <code>(list, elem, key)</code></h4>
+                                        <h4 id='insertSorted' class='entry function'><span>.</span>insertSorted <code>(list, elem, key)</code></h4>
           
                     <p>Insert @elem@ into a @list@, keeping entries in "list" sorted. If elem is not a string, the @elem[key]@ is used to get a string for sorting.</p>
-                                        <a name='merge'></a>
-          <h4 class='function'><span>.</span>merge <code>(source, table)</code></h4>
+                                        <h4 id='merge' class='entry function'><span>.</span>merge <code>(source, table)</code></h4>
           
                     <p>Merge values in @table@ inside @source@. All keys are considered (array and hash).</p>
-                                        <a name='deepMerge'></a>
-          <h4 class='param'><span>.</span>deepMerge <code>= deepMerge</code></h4>
+                                        <h4 id='deepMerge' class='entry param'><span>.</span>deepMerge <code>= deepMerge</code></h4>
           
                     <p>nothing changed</p>
                     <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
-                                        <a name='deepMerge'></a>
-          <h4 class='function'><span>.</span>deepMerge <code>(base, key, value)</code></h4>
+                                        <h4 id='deepMerge' class='entry function'><span>.</span>deepMerge <code>(base, key, value)</code></h4>
           
                     <p>Deep merge @value@ into @base@ at @key@. Returns true if <strong>base</strong> has been changed. For example:</p>
                     <pre class='prettyprint lang-lua'>local base = {a = { b = 4, c = 5 }}
@@ -193,16 +170,14 @@ lk.deepMerge(base, 'a', { c = 6 })
           <h2 class='section'>Debugging</h2>
 
                     
-                                        <a name='traceRequire'></a>
-          <h4 class='function'><span>.</span>traceRequire <code>()</code></h4>
+                                        <h4 id='traceRequire' class='entry function'><span>.</span>traceRequire <code>()</code></h4>
           
                     <p>Print calls to @require@. This can be used to list all code dependencies. Usage:</p>
                     <pre class='prettyprint lang-lua'>lk.traceRequire()
 -- From now on, all require statements are printed.
 </pre>
                     <p>If you simply want to make sure no require is not called to autoload code after some point, you should use <a href='Autoload.html#strict'>Autoload.strict</a>.</p>
-                                        <a name='log'></a>
-          <h4 class='function'><span>.</span>log <code>(...)</code></h4>
+                                        <h4 id='log' class='entry function'><span>.</span>log <code>(...)</code></h4>
           
                     <p>Print a log message with the current file name and line. This is better then using "print" because it gives us some information on the context of the  print statement.</p>
                     <pre class='prettyprint lang-lua'>lk.log('foo')
@@ -212,12 +187,10 @@ lk.deepMerge(base, 'a', { c = 6 })
           <h2 class='section'>Miscellanous</h2>
 
                     
-                                        <a name='print'></a>
-          <h4 class='param'><span>.</span>print <code>= print</code></h4>
+                                        <h4 id='print' class='entry param'><span>.</span>print <code>= print</code></h4>
           
                     <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
-                                        <a name='spawn'></a>
-          <h4 class='function'><span>.</span>spawn <code>(code, ...)</code></h4>
+                                        <h4 id='spawn' class='entry function'><span>.</span>spawn <code>(code, ...)</code></h4>
           
                     <p>Start a new process with @code@, encoding arguments with yaml.</p>
                     <p>Here is an example that passes a table of arguments.</p>
@@ -225,8 +198,7 @@ lk.deepMerge(base, 'a', { c = 6 })
   require 'lubyk'
   lk.Doc.make(%s)
 ]], {target = 'doc', sources = 'lib', format = 'html'})</pre>
-                                        <a name='shellQuote'></a>
-          <h4 class='function'><span>.</span>shellQuote <code>(str)</code></h4>
+                                        <h4 id='shellQuote' class='entry function'><span>.</span>shellQuote <code>(str)</code></h4>
           
                     <p>Quote string @str@ so that it can be inserted in a shell command. Example:</p>
                     <pre class='prettyprint lang-lua'>os.execute(string.format('latex %s', lk.shellQuote(filepath)))</pre>
