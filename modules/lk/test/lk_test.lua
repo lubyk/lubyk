@@ -58,15 +58,36 @@ function should.rmTree()
   assertFalse(lk.exist(fixture.path('tmp/fo"o')))
 end
 
-function should.rmFile()
-  local path = fixture.path('tmp.txt')
+function should.move()
+  local path  = fixture.path('tmp.txt')
   lk.writeall(path, 'Hello')
+  local path2 = fixture.path('tmp2.txt')
   assertTrue(lk.exist(path))
-  assertPass(function()
-    lk.rmFile(path)
-    lk.rmFile(path)
-  end)
+  assertFalse(lk.exist(path2))
+
+  lk.move(path, path2)
+  assertTrue(lk.exist(path2))
   assertFalse(lk.exist(path))
+
+  -- cleanup
+  lk.rmFile(path)
+  lk.rmFile(path2)
+end
+
+function should.copy()
+  local path  = fixture.path('tmp.txt')
+  lk.writeall(path, 'Hello')
+  local path2 = fixture.path('tmp2.txt')
+  assertTrue(lk.exist(path))
+  assertFalse(lk.exist(path2))
+
+  lk.copy(path, path2)
+  assertTrue(lk.exist(path2))
+  assertTrue(lk.exist(path))
+
+  -- cleanup
+  lk.rmFile(path)
+  lk.rmFile(path2)
 end
 
 function should.writeall()

@@ -129,9 +129,15 @@ end
 -- Move a file or directory from @path@ to @new_path@. This is like "os.rename"
 -- but it also builds necessary path components in new_path.
 function lib.move(path, new_path)
-  local base = lib.pathDir(new_path)
-  lib.makePath(base)
+  lib.makePath(lib.pathDir(new_path))
   return os.rename(path, new_path)
+end
+
+-- Copy a file from @path@ to @new_path@. Builds necessary path components
+-- in new_path.
+function lib.copy(path, new_path)
+  lib.makePath(lib.pathDir(new_path))
+  return os.execute(string.format('cp %s %s', lib.shellQuote(path), lib.shellQuote(new_path)))
 end
 
 -- Delete the file located at @path@. Does nothing if the element at @path@ does

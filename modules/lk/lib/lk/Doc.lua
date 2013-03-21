@@ -296,7 +296,8 @@ function lib.new(path, def)
         -- Use 'class' key for children elements.
         class = child.__fullname,
         name  = child.__name,
-        { text = child.__summary },
+        child.__summary,
+        child.__img,
       }
 
       if child.__fixme then
@@ -330,12 +331,18 @@ end
 -- Generate the documentation for multiple files.
 --
 -- The @sources@ parameter lists paths to Lua files or directories to parse and
--- document. The @target@ parameter is the path to the directory where all the
--- output files will be written. @format@ is the type of output desired.
--- Only 'html' format is supported for now.
+-- document.
 --
--- You can also provide some html code for @header@ and @footer@ that will be
--- inserted in every html output page.
+-- + target:  parameter is the path to the directory where all the
+--            output files will be written.
+-- + format:  is the type of output desired. Only 'html' format is supported
+--            for now.
+-- + sources: lists path to glob for lua files. A source can also be a table
+--            with a @prepend@ key used to change the location of the files
+--            in the documentation.
+-- + copy:    lists the path to glob for static content to copy in @target@.
+-- + header:  html code that will be inserted in every html page as header.
+-- + footer:  html code that will be inserted in every html page as footer.
 --
 -- Usage:
 --
@@ -344,6 +351,7 @@ end
 --     sources = {
 --       'lib/doc/DocTest.lua',
 --       'lib/doc/Other.lua',
+--       {'doc', prepend = 'tutorial/foo'},
 --     },
 --     target = 'doc',
 --     format = 'html',
@@ -361,23 +369,18 @@ function lib.make(def)
   local mod_output = assert(private.mod_output[format])
   -- Prepare output
   lk.makePath(def.target)
-  -- Copy assets
+  -- Copy base assets
   private.copyAssets[def.format](def.target)
+  if def.copy then
+    private.copyFiles(def.copy, def.target)
+  end
+
 
   -- Parse all files and create a tree from the directories and
   -- files to parse.
   -- { name = 'xxxx', sub, { name = 'xxx', subsub }}.
   local tree = {}
-  for _, mpath in ipairs(def.sources) do
-    local path
-    if lk.fileType(mpath) == 'directory' then
-      for path in lk.Dir(mpath):glob '%.lua' do
-        private.insertInTree(tree, path, mpath)
-      end
-    else
-      private.insertInTree(tree, mpath, lk.pathDir(mpath))
-    end
-  end
+  private.parseSources(tree, def.sources)
 
   private.makeDoc(tree, def)
 end
@@ -392,9 +395,29 @@ function lib:toHtml(template)
   return private.output.html(self, template)
 end
 
-function private.insertInTree(tree, fullpath, base)
+function private.parseSources(tree, sources)
+  local prepend = sources.prepend
+  for _, mpath in ipairs(sources) do
+    if type(mpath) == 'table' then
+      private.parseSources(tree, mpath)
+    else
+      if lk.fileType(mpath) == 'directory' then
+        for path in lk.Dir(mpath):glob '%.lua' do
+          private.insertInTree(tree, path, mpath, prepend)
+        end
+      else
+        private.insertInTree(tree, mpath, lk.pathDir(mpath), prepend)
+      end
+    end
+  end
+end
+
+function private.insertInTree(tree, fullpath, base, prepend)
   -- Remove base from path
   local path = string.sub(fullpath, string.len(base) + 2, -1)
+  if prepend then
+    path = prepend .. '/' .. path
+  end
   local curr = tree
   local list = lk.split(path, '/')
   local last = #list
@@ -438,7 +461,11 @@ function private.makeDoc(tree, def)
       footer     = def.footer or DEFAULT_FOOTER,
     })
     elem.__title   = doc.sections[1].title
-    elem.__summary = doc.sections[1][1][1].text
+    elem.__summary = doc.sections[1][1][1]
+    local img = doc.sections[1][1][2]
+    if img and string.match(img.text or '', '^!%[') then
+      elem.__img = img
+    end
     elem.__todo    = doc.todo
     elem.__fixme   = doc.fixme
     local trg = def.target .. '/' .. doc.fullname .. '.' .. def.format
@@ -484,21 +511,30 @@ function private:parseFile(path)
           if matcher.output then
             matcher.output(self, line_i, unpack(m))
           end
+          local state_exit = state.exit
           if type(matcher.move) == 'function' then
+            if state_exit  then state_exit(self) end
             state, replay = matcher.move(self)
             if not state then
               local def = debug.getinfo(matcher.move)
               error("Error in state definition ".. string.match(def.source, '^@(.+)$') .. ':' .. def.linedefined)
             end
-          elseif matcher.move == false then
+            if state.enter then state.enter(self) end
+          elseif not matcher.move then
             -- do not change state
           else
-            state = matcher.move or state
+            if state_exit  then state_exit(self) end
+            state = matcher.move
+            if state.enter then state.enter(self) end
           end
           break
         end
       end
     end
+  end
+
+  if state.exit then
+    state.exit(self)
   end
 
   if state.eof then
@@ -810,7 +846,7 @@ parser.mcode = {
 
 parser.code = {
   -- first line
-  { match  = '^%-%-   (.*)$',
+  { match  = '^ *%-%-   (.*)$',
     output = function(self, i, d)
       local lang = string.match(d, '#([^ ]+)')
       if lang then
@@ -823,11 +859,11 @@ parser.code = {
     end,
     move = {
       -- code
-      { match  = '^%-%-   (.*)$',
+      { match  = '^ *%-%-   (.*)$',
         output = private.addToParaN,
       },
       -- empty line
-      { match  = '^%-%- *$', 
+      { match  = '^ *%-%- *$', 
         output = function(self, i)
           private.addToParaN(self, i, '')
         end,
@@ -984,22 +1020,53 @@ parser.end_comment = {
   },
   -- Match anything moves to raw code
   { match = '',
-    move = function() return parser.lua, true end,
+    move = function(self) return parser.lua, true end,
   }
 }
 
 parser.lua = {
-  { match  = '^function lib([:%.])([^%(]+) *(%(.-%))',
-    output = function(self, i, typ, fun, params)
+  enter = function(self)
+    if self.lit then
+      -- Make sure we use previous comment.
+      private.useGroup(self)
       self.group = {}
-      private.todoFixme(self, i, 'TODO', 'MISSING DOCUMENTATION')
-      private.newFunction(self, i, typ, fun, params)
+      self.para = {code = 'lua'}
+    end
+  end,
+  exit = function(self)
+    if self.lit then
+      private.flushPara(self)
+      private.useGroup(self)
+    end
+  end,
+  { match  = '^(function lib([:%.])([^%(]+) *(%(.-%)).*)$',
+    output = function(self, i, all, typ, fun, params)
+      if self.lit then
+        private.addToParaN(self, i, all)
+      else
+        self.group = {}
+        private.todoFixme(self, i, 'TODO', 'MISSING DOCUMENTATION')
+        private.newFunction(self, i, typ, fun, params)
+      end
     end,
   },
   -- end of function
-  { match  = '^end',
+  { match  = '^(end.*)$',
     output = function(self, i, d)
       self.in_func = nil
+      if self.lit then private.addToParaN(self, i, d) end
+    end,
+  },
+  -- enter literate programming
+  { match  = '^%-%- lit$',
+    output = function(self)
+      self.lit = true
+    end,
+  },
+  -- move out of literate programming
+  { match  = '^%-%- nolit$',
+    output = function(self)
+      self.lit = false
     end,
   },
   -- params
@@ -1018,20 +1085,28 @@ parser.lua = {
       private.todoFixme(self, ...)
     end,
   },
-  { match  = '^%-%- +(.+)$',
-    output = function(self, i, d)
+  { match  = '^ *%-%- +(.+)$',
+    move = function(self)
       -- Temporary group (not inserted in section).
       self.group = {}
-    end,                                   -- replay last line
-    move = function() return parser.group, true end,
+                           -- replay last line
+      return parser.group, true
+    end,
   },
   { match  = '^%-%-%[%[ *(.*)$',
     output = function(self, i, d)
-      private.addToPara(self, i, d)
       -- Temporary group (not inserted in section).
       self.group = {}
+      private.addToPara(self, i, d)
     end,
     move = function() return parser.mgroup end,
+  },
+  { match = '^(.*)$',
+    output = function(self, ...)
+      if self.lit then
+        private.addToParaN(self, ...)
+      end
+    end,
   },
 }
 
@@ -1123,6 +1198,17 @@ function private.mod_output.html(module, def, modules)
   end
   setmetatable(self, lib)
   return tmplt:run {self = self, private = private}
+end
+
+function private.copyFiles(list, target)
+  for _, mpath in ipairs(list) do
+    local len = string.len(mpath)
+    for src in lk.Dir(mpath):glob() do
+      local path = string.sub(src, len + 2)
+      local trg  = target .. '/' .. path
+      lk.copy(src, trg)
+    end
+  end
 end
 
 function private.copyAssets.html(target)
@@ -1221,12 +1307,12 @@ function private:textToHtml(text)
   p = string.gsub(p, '%*([^\n]-)%*', '<strong>%1</strong>')
   -- em
   p = string.gsub(p, '_(.-)_', '<em>%1</em>')
-  -- method link lk.Doc.make
-  p = string.gsub(p, ' ([a-z]+%.[A-Z]+[a-z][a-zA-Z]+)%.([a-zA-Z_]+)', " <a href='%1.html#%2'>%1.%2</a>")
+  -- method link lk.Doc#make
+  p = string.gsub(p, ' ([a-z]+%.[A-Z]+[a-z][a-zA-Z]+)#([a-zA-Z_]+)', " <a href='%1.html#%2'>%1#%2</a>")
   -- auto-link lk.Doc
   p = string.gsub(p, ' ([a-z]+%.[A-Z]+[a-z][a-zA-Z]+)([%. ])', " <a href='%1.html'>%1</a>%2")
-  -- method link #make
-  p = string.gsub(p, ' #([a-z]+[A-Za-z_]+)', " <a href='#%1'>%1</a>")
+  -- section link #Make or method link #foo
+  p = string.gsub(p, ' #([A-Za-z]+[A-Za-z_]+)', " <a href='#%1'>%1</a>")
   -- ![Dummy example image](img/box.jpg)
   p = string.gsub(p, '!%[(.-)%]%((.-)%)', "<img alt='%1' src='%2'/>")
   -- link [some text](http://example.com)
