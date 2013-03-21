@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>2D vectors</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+
+
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/docs.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class='row'>
+          <div class='span12'>
+             
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="row">
+
+        <div class='span3 local-nav'>
+          <ul class='nav nav-tabs nav-stacked affix'>
+                        <li><a href='#V2'><i class='icon-chevron-right'></i> lug.V2</a></li>
+                        <li><a href='#Constructor'><i class='icon-chevron-right'></i> Constructor</a></li>
+                        <li><a href='#Constants-'><i class='icon-chevron-right'></i> Constants </a></li>
+                        <li><a href='#Accessors'><i class='icon-chevron-right'></i> Accessors</a></li>
+                        <li><a href='#Functions'><i class='icon-chevron-right'></i> Functions</a></li>
+                        <li><a href='#TODO'><i class='icon-chevron-right'></i> TODO</a></li>
+                      </ul>
+        </div>
+
+        <div class='main span7'>
+
+                    <section id='V2'>
+          <h2 class='section'>2D vectors</h2>
+
+                    
+                    <p class='summary'>Given a vector @v@ we denote by @vi@ its one-based @i@th component.</p>
+                              </section>
+                    <section id='Constructor'>
+          <h2 class='section'>Constructor</h2>
+
+                    
+                                        <h4 id='new' class='entry function'><span>.</span>new <code>(x, y)</code></h4>
+          
+                    <p>Create a vector with the corresponding components.</p>
+                    <pre class='prettyprint lang-lua'>-- create from numbers
+local v = lug.V2(0.5, 12)
+</pre>
+                    <h4 class='sub-title'>Conversion</h4>
+                    <p>With a single argument, <code>four.V2</code> returns a vector by copying the first two values of the argument (<code>[]</code> accessor). This enables easy transformation from other vectors such as <a href='four.V3.html'>four.V3</a> or <a href='four.V4.html'>four.V4</a>.</p>
+                    <pre class='prettyprint lang-lua'>-- copy x and y values from a four.V3
+local v2 = lug.V2(v3)</pre>
+                              </section>
+                    <section id='Constants-'>
+          <h2 class='section'>Constants </h2>
+
+                    
+                                        <h4 id='zero' class='entry function'><span>.</span>zero <code>()</code></h4>
+          
+                    <p>Return vector <code>(0, 0)</code>.</p>
+                                        <h4 id='ox' class='entry function'><span>.</span>ox <code>()</code></h4>
+          
+                    <p>Return the unit vector <code>(1, 0)</code>.</p>
+                                        <h4 id='oy' class='entry function'><span>.</span>oy <code>()</code></h4>
+          
+                    <p>Return the unit vector <code>(0, 1)</code>.</p>
+                                        <h4 id='huge' class='entry function'><span>.</span>huge <code>()</code></h4>
+          
+                    <p>Return a vector whose components are <code>math.huge</code>.</p>
+                                        <h4 id='negHuge' class='entry function'><span>.</span>negHuge <code>()</code></h4>
+          
+                    <p>Return a vector whose components are <code>-math.huge</code>.</p>
+                              </section>
+                    <section id='Accessors'>
+          <h2 class='section'>Accessors</h2>
+
+                    
+                                        <h4 id='x' class='entry method'><span>:</span>x <code>()</code></h4>
+          
+                    <p>Return <code>x</code> component.</p>
+                                        <h4 id='y' class='entry method'><span>:</span>y <code>()</code></h4>
+          
+                    <p>Return <code>y</code> component.</p>
+                                        <h4 id='tuple' class='entry method'><span>:</span>tuple <code>()</code></h4>
+          
+                    <p>Return <code>x, y</code> components.</p>
+                                        <h4 id='tostring' class='entry method'><span>:</span>tostring <code>()</code></h4>
+          
+                    <p>Return a textual representation of the vector.</p>
+                              </section>
+                    <section id='Functions'>
+          <h2 class='section'>Functions</h2>
+
+                    
+                    <p>These functions also work with "self" notation in which case the first  argument is replaced by the object. For example:</p>
+                    <pre class='prettyprint lang-lua'>local v = lug.V2(1,2)
+local w = v:half()
+local l = v:norm()
+</pre>
+                    <p>Functions <a href='#neg'>neg</a>, <a href='#add'>add</a>, <a href='#sub'>sub</a> and <a href='#smul'>smul</a> are also accessible through operators:</p>
+                    <pre class='prettyprint lang-lua'>local v  = lug.V2(1,2)
+local nv = -v
+local w  = v + nv
+local n  = 4 * v
+local m  = v * 3</pre>
+                                        <h4 id='neg' class='entry function'><span>.</span>neg <code>(v)</code></h4>
+          
+                    <p>Return the inverse vector \(-\mathbf{v}\).</p>
+                                        <h4 id='add' class='entry function'><span>.</span>add <code>(u, v)</code></h4>
+          
+                    <p>Add two vectors: \(\mathbf{u} + \mathbf{v}\).</p>
+                                        <h4 id='sub' class='entry function'><span>.</span>sub <code>(u, v)</code></h4>
+          
+                    <p>Subtract two vectors: \(\mathbf{u} - \mathbf{v}\).</p>
+                                        <h4 id='mul' class='entry function'><span>.</span>mul <code>(u, v)</code></h4>
+          
+                    <p>Component wise multiplication: \(\mathbf{u} \circ \mathbf{v}\).</p>
+                                        <h4 id='div' class='entry function'><span>.</span>div <code>(u, v)</code></h4>
+          
+                    <p>Component wise division: \(\mathbf{u} ./ \mathbf{v}\).</p>
+                                        <h4 id='smul' class='entry function'><span>.</span>smul <code>(s, v)</code></h4>
+          
+                    <p>Scalar multiplication: \(s\times\mathbf{v}\).</p>
+                                        <h4 id='half' class='entry function'><span>.</span>half <code>(v)</code></h4>
+          
+                    <p>Return half vector: \(\mathbf{v} / 2\).</p>
+                                        <h4 id='dot' class='entry function'><span>.</span>dot <code>(u, v)</code></h4>
+          
+                    <p>Return dot product: \(\mathbf{u}\cdot\mathbf{v}\).</p>
+                                        <h4 id='norm' class='entry function'><span>.</span>norm <code>(v)</code></h4>
+          
+                    <p>Return norm: \(\mathbf{\overline{v}}\).</p>
+                                        <h4 id='norm2' class='entry function'><span>.</span>norm2 <code>(v)</code></h4>
+          
+                    <p>Return the squared norm: \(\mathbf{\overline{v}}^2\).</p>
+                                        <h4 id='unit' class='entry function'><span>.</span>unit <code>(v)</code></h4>
+          
+                    <p>Return the unit vector:</p>
+                    <p>$$\frac{\mathbf{v}}{\mathbf{\overline{v}}}$$</p>
+                                        <h4 id='homogene' class='entry function'><span>.</span>homogene <code>(v)</code></h4>
+          
+                    <p>@homogene(v)@ is the vector @v/V2.y(v)@.</p>
+                                        <h4 id='polarUnit' class='entry function'><span>.</span>polarUnit <code>(theta)</code></h4>
+          
+                    <p>@polarUnit(theta)@ is a unit vector whose angular polar coordinate is given by @theta@.</p>
+                                        <h4 id='ortho' class='entry function'><span>.</span>ortho <code>(v)</code></h4>
+          
+                    <p>@ortho(v)@ is @v@ rotated by @pi/2@.</p>
+                                        <h4 id='mix' class='entry function'><span>.</span>mix <code>(u, v, t)</code></h4>
+          
+                    <p>@mix(u, v, t)@ is the linear interpolation @u + t * (v - u)@.</p>
+                                        <h4 id='map' class='entry function'><span>.</span>map <code>(f, v)</code></h4>
+          
+                    <p>@map(f, v)@ is @V2(f(v1), f(v2))@.</p>
+                                        <h4 id='mapi' class='entry function'><span>.</span>mapi <code>(f, v)</code></h4>
+          
+                    <p>@mapi(f, v)@ is @V2(f(1, v1), f(2, v2)@.</p>
+                                        <h4 id='fold' class='entry function'><span>.</span>fold <code>(f, acc, v)</code></h4>
+          
+                    <p>@fold(f, acc, v)@ is @f(f(acc, v1), v2)@.</p>
+                                        <h4 id='foldi' class='entry function'><span>.</span>foldi <code>(f, acc, v)</code></h4>
+          
+                    <p>@foldi(f, acc, v)@ is @f(f(acc, 1, v1), 2, v2)@.</p>
+                                        <h4 id='iter' class='entry function'><span>.</span>iter <code>(f, v)</code></h4>
+          
+                    <p>@iter(f, v)@ is @f(v1) f(v2)@.</p>
+                                        <h4 id='iteri' class='entry function'><span>.</span>iteri <code>(f, v)</code></h4>
+          
+                    <p>@iteri(f, v)@ is @f(1, v1) f(2, v2)@.</p>
+                                        <h4 id='forAll' class='entry function'><span>.</span>forAll <code>(p, v)</code></h4>
+          
+                    <p>@forAll(p, v)@ is @p(v1) and p(v2).</p>
+                                        <h4 id='exists' class='entry function'><span>.</span>exists <code>(p, v)</code></h4>
+          
+                    <p>@exists(p, v)@ is @p(v1) or p(v2)@.</p>
+                                        <h4 id='eq' class='entry function'><span>.</span>eq <code>(u, v, eq)</code></h4>
+          
+                    <p>@eq(u, v [,eq])@ is @true@ if @u@ is equal to @v@ component wise. If [eq] is provided it used as the equality function.</p>
+                                        <h4 id='lt' class='entry function'><span>.</span>lt <code>(u, v, lt)</code></h4>
+          
+                    <p>@lt(u, v [,lt])@ is @true@ if @u@ is lower than @v@ component wise. If [lt] is provided it used as the comparison function.</p>
+                                        <h4 id='le' class='entry function'><span>.</span>le <code>(u, v, le)</code></h4>
+          
+                    <p>@le(u, v [,le])@ is @true@ if @u@ is lower or equal than @v@ component wise. If [le] is provided it used as the comparison function.</p>
+                                        <h4 id='compare' class='entry function'><span>.</span>compare <code>(u, v, cmp)</code></h4>
+          
+                    <p>@compare(u, v [, cmp])@ is:</p>
+                    <ul>
+<li>@-1@ if @u@ is smaller than @v@</li>
+<li>@0@ if @u@ is equal to @v@</li>
+<li>@1@ if @u@ is greater than @v@ where the order is the lexicographic order defined by using @cmp@ on the components (@cmp@ defaults to the standard order on floats).</li>
+</ul>
+                                        <h4 id='__unm' class='entry param'><span>.</span>__unm <code>= lib.neg</code></h4>
+          
+                    <p>h2. Operators</p>
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <h4 id='__add' class='entry param'><span>.</span>__add <code>= lib.add</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <h4 id='__sub' class='entry param'><span>.</span>__sub <code>= lib.sub</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <h4 id='__mul' class='entry param'><span>.</span>__mul <code>= lib.smul</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <h4 id='__tostring' class='entry param'><span>.</span>__tostring <code>= lib.tostring</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                              </section>
+                    <section id='TODO'>
+          <h2 class='section'>TODO</h2>
+
+                    
+                    <p class='todo'><span class='ref'><a href='#Functions'>Functions</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#Functions'>Functions</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#Functions'>Functions</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#Functions'>Functions</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#Functions'>Functions</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                              </section>
+                  </div>
+
+        <div class='span2 global-nav'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='lug.html'><span></span>lug</a></li>
+            
+                        <li class=''><a href='lug.Buffer.html'>Buffer</a></li>
+                        <li class=''><a href='lug.Color.html'>Color</a></li>
+                        <li class=''><a href='lug.Quat.html'>Quat</a></li>
+                        <li class='active'><a href='lug.V2.html'>V2</a></li>
+                        <li class=''><a href='lug.V3.html'>V3</a></li>
+                        <li class=''><a href='lug.V4.html'>V4</a></li>
+                      </ul>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+    <div class="container">
+       made with <a href='http://doc.lubyk.org/lk.Doc.html'>lk.Doc</a> 
+    </div>
+    </footer>
+
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        displayAlign: "left",
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
+    <script src='http://code.jquery.com/jquery.js'></script>
+    <script src='js/bootstrap.min.js'></script>
+  </body>
+</html>
+
