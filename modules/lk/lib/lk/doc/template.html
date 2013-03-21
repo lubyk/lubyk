@@ -67,12 +67,17 @@
         <div class='span2 global-nav'>
           <ul class='nav nav-tabs nav-stacked'>
             {% if self.module then %}
-            <li class='module'><a href='{{self.module}}.html'>{{self.module}}</a></li>
+            <li class='module'><a href='{{self.module}}.html'><span></span>{{self.module}}</a></li>
             {% end %}
+
             {% for _, name in ipairs(self.navigation) do 
               local fullname = self.navigation[name].__fullname
+              local class = fullname == self.fullname and 'active'
+              if not self.module and class then
+                class = 'module'
+              end
             %}
-            <li{{ fullname == self.fullname and " class='active'" or "" }}><a href='{{fullname}}.html'>{{name}}</a></li>
+            <li class='{{class}}'><a href='{{fullname}}.html'>{{name}}</a></li>
             {% end %}
           </ul>
         </div>

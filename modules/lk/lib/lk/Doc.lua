@@ -282,6 +282,7 @@ local lib     = class 'lk.Doc'
 local private = {}
 local parser  = {}
 local CODE = '§§'
+local DEFAULT_HEADER = [[ ]]
 local DEFAULT_FOOTER = [[ made with <a href='http://doc.lubyk.org/lk.Doc.html'>lk.Doc</a> ]]
 
 
@@ -305,7 +306,7 @@ function lib.new(path, def)
   local self = {
     path   = path,
     target = def.target,
-    header = def.header,
+    header = def.header or DEFAULT_HEADER,
     footer = def.footer or DEFAULT_FOOTER,
     navigation = def.navigation or {},
     children   = def.children or {},

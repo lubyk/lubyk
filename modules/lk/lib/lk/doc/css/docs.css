@@ -1,3 +1,4 @@
+.container {margin-top:20px}
 .header h1 {font-size:26px;}
 .header img {float:left; margin-right:30px; margin-bottom:10px}
 
@@ -21,7 +22,18 @@ p.summary { font-style:italic; margin-bottom:2em;}
 p code { color:#111; background:#e0e0e0; padding:2px; border:none; font-size:100%;}
 p code { color:#900; background:none; padding:0; border-radius:0;}
 .nav .active > a, .nav .active:hover > a { background:#ddd; color:black; }
+.nav .module:hover > a { background-color:#888;}
+
 .local-nav li:first-child a { font-weight:bold; color:black;}
+li.module a {color:white; background:#333}
+li.module span {
+  background-image:url(../img/glyphicons-halflings-white.png);
+  background-position: -240px -93px;
+  float:left;
+  width:20px;
+  height:20px;
+}
+
 p.todo  {background:#cc4; padding:3px; border:2px solid #880;}
 p.todo span {color:white;}
 p.fixme {background:#f99; padding:3px; border:2px solid #f00;}
