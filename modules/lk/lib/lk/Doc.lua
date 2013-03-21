@@ -18,6 +18,40 @@
     -- 
     -- Some more text.
 
+  # Parsing modes
+
+  By using the special comment @-- doc:[option]@, you can change how the parsing
+  is done.
+
+  ## Literate programming
+
+  The parser can generate full script documentation with all lua code when set
+  to "lit" (for literate). Turn this option off by setting "nolit".
+
+    -- doc:lit
+    -- This part is considered literate programming and all comments and lua
+    -- code will be shown in the documentation.
+    local x
+    
+    doSomething(x)
+
+    -- doc:nolit
+    -- End of literate part: only the library "lib" will be documented.
+
+  ## Loose documentation
+
+  By setting @-- doc:loose@, the parser will generate a single TODO about
+  missing documentation and will not generate any more TODO entries for
+  each undocummented function or parameter.
+  
+  Even if the function names look obvious while writing the code and
+  documentation seems superfluous, users will usually appreciate some real
+  phrases describing what the function does. Using "loose" is not a good
+  idea but can make the documentation more readable if most of the functions
+  are not documented.
+
+  # Extraction
+
   ## Function extraction
 
   All functions and methods defined against @lib@ are extracted even if they
@@ -52,6 +86,14 @@
     end
 
   ## Table parameters
+
+  All parameters defined against @lib@ are documented unless @-- nodoc@ is used.
+
+    lib.foo = 4
+    lib.bar = 5
+
+    -- nodoc
+    lib.old_foo = 4
 
   Since Lua is also used as a description language, it is often useful to
   document table keys. This is done by using @-- doc@. It is a good idea to
@@ -618,6 +660,7 @@ function private:newParam(i, key, params)
   self.group.param  = key
   self.group.params = params
   private.useGroup(self)
+  self.group = {}
 end
 
 function private:newTitle(i, title)
@@ -1012,6 +1055,21 @@ parser.end_comment = {
     output = private.newFunction,
     move   = function() return parser.lua end,
   },
+  -- lib param
+  { match  = 'lib%.([a-zA-Z_0-9]+) *= *(.+)$',
+    output = function(self, i, key, def)
+      if self.group[1] and self.group[1].heading then
+        -- Group is not for us
+        self.group = {}
+        if not self.loose then
+          private.todoFixme(self, i, 'TODO', 'MISSING DOCUMENTATION')
+        end
+        private.newParam(self, i, key, def)
+      else
+        private.newParam(self, i, key, def)
+      end
+    end
+  },
   -- global function
   { match  = '^function ([^:%.%(]+) *(%(.-%))',
     output = function(self, i, name, params)
@@ -1039,14 +1097,30 @@ parser.lua = {
       private.useGroup(self)
     end
   end,
+  -- Undocummented function
   { match  = '^(function lib([:%.])([^%(]+) *(%(.-%)).*)$',
     output = function(self, i, all, typ, fun, params)
       if self.lit then
         private.addToParaN(self, i, all)
       else
         self.group = {}
-        private.todoFixme(self, i, 'TODO', 'MISSING DOCUMENTATION')
+        if not self.loose then
+          private.todoFixme(self, i, 'TODO', 'MISSING DOCUMENTATION')
+        end
         private.newFunction(self, i, typ, fun, params)
+      end
+    end,
+  },
+  -- Undocummented param
+  { match  = '^(lib%.([a-zA-Z_0-9]+) *= *(.+))$',
+    output = function(self, i, all, param, def)
+      if self.lit then
+        private.addToParaN(self, i, all)
+      else
+        if not self.loose then
+          private.todoFixme(self, i, 'TODO', 'MISSING DOCUMENTATION')
+        end
+        private.newParam(self, i, param, def)
       end
     end,
   },
@@ -1057,20 +1131,23 @@ parser.lua = {
       if self.lit then private.addToParaN(self, i, d) end
     end,
   },
-  -- enter literate programming
-  { match  = '^%-%- lit$',
-    output = function(self)
-      self.lit = true
+  -- move out of literate programming
+  { match  = '^%-%- doc:no(.+)$',
+    output = function(self, i, d)
+      self[d] = false
     end,
   },
-  -- move out of literate programming
-  { match  = '^%-%- nolit$',
-    output = function(self)
-      self.lit = false
+  -- enter literate programming
+  { match  = '^%-%- doc:(.+)$',
+    output = function(self, i, d)
+      if d == 'loose' then
+        private.todoFixme(self, i, 'TODO', 'INCOMPLETE DOCUMENTATION')
+      end
+      self[d] = true
     end,
   },
   -- params
-  { match  = '= *{ %-%- *doc *$',
+  { match  = '{ %-%- *doc *$',
     move   = function() return parser.params end,
   },
   -- todo
@@ -1093,11 +1170,10 @@ parser.lua = {
       return parser.group, true
     end,
   },
-  { match  = '^%-%-%[%[ *(.*)$',
-    output = function(self, i, d)
+  { match  = '^%-%-%[%[',
+    output = function(self)
       -- Temporary group (not inserted in section).
       self.group = {}
-      private.addToPara(self, i, d)
     end,
     move = function() return parser.mgroup end,
   },

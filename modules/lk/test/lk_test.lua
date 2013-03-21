@@ -13,6 +13,15 @@ function should.absolutizePath()
   -- assertEqual('/foo/bar', lk.absolutizePath('/foo/bar', '/One/two'))
 end
 
+function should.merge()
+  local base = {a = { b = {x=1}}, c = {d = 4}}
+  lk.merge(base, {
+    a = 'hello',
+    d = 'boom',
+  })
+  assertValueEqual({a = 'hello', c = {d = 4}, d = 'boom'}, base)
+end
+
 function should.deepMerge()
   local base = {a = { b = {x=1}, c = {d = 4}}}
   local a2   = { b = {x=3}, c = {e = 5}, g = 2}

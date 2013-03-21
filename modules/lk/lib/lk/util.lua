@@ -322,6 +322,14 @@ function lib.insertSorted(list, elem, key)
   end
 end
 
+-- Merge values in @table@ inside @source@. All keys are considered (array and
+-- hash).
+function lib.merge(source, table)
+  for k, v in pairs(table) do
+    source[k] = v
+  end
+end
+
 local function deepMerge(base, key, value)
   local base_v = base[key]
   if type(value) == 'table' then
