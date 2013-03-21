@@ -17,7 +17,7 @@
   [SimpleShader.lua](examples/SimpleShader.lua)
 
 --]]------------------------------------------------------
--- doc:literal
+-- doc:lit
 
 -- # Require
 --

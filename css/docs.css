@@ -34,6 +34,12 @@ p.todo a:hover, p.fixme a:hover {color:#08c; text-decoration:none}
 footer.footer { margin-top:50px; font-size:10px; text-align:center; padding:30px 50px; background:#eee; border-top:1px solid #999 }
 
 
+@media (max-width: 979px) {
+  .local-nav {display:block; float:none;}
+  .local-nav .affix {position:relative;}
+  .main {padding-left:10px}
+}
+
 .nav .icon-chevron-right {
   float: right;
   margin-top: 2px;
