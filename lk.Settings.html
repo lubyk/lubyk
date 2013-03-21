@@ -53,7 +53,7 @@
                     <p>-- Copy on write local cow = {}</p>
                     <p>function cow.__index(tbl, key) return rawget(tbl._placeholder, key) end</p>
                     <p>function cow.__newindex(tbl, key, value) -- make a copy of defaults local copy = tbl._self[tbl._key] if copy == tbl then copy = {} for k, v in pairs(tbl._placeholder) do copy[k] = v end copy[key] = value -- remove placeholder and work on the copy alone from now tbl._self[tbl._key] = copy else copy[key] = value end end</p>
-                    <p>function private:prepareTables(defaults) -- This is to enable natural value setting for tables -- <a href='editor.Setting.html#foo'>editor.Setting#foo</a>.bar = 'baz' -- <-- this should copy table defaults for k, v in pairs(defaults) do if type(v) == 'table' and not rawget(self, k) then self[k] = setmetatable({_placeholder = v, _self = self, _key = k}, cow) end end end</p>
+                    <p>function private:prepareTables(defaults) -- This is to enable natural value setting for tables -- <a href='editor.Setting.html#foo'>editor.Setting.foo</a>.bar = 'baz' -- <-- this should copy table defaults for k, v in pairs(defaults) do if type(v) == 'table' and not rawget(self, k) then self[k] = setmetatable({_placeholder = v, _self = self, _key = k}, cow) end end end</p>
                               </section>
                   </div>
 

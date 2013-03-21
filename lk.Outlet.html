@@ -49,7 +49,7 @@
                     <p>return setmetatable(self, lib) end})</p>
                     <p>function doSend(self, ...) for _,inlet in ipairs(self.inlets) do inlet.receive(...) end end</p>
                     <p>self.opts = opts end</p>
-                    <p>local default_receive = <a href='lk.Inlet.html#receive'>lk.Inlet#receive</a> -- TODO: performance compile new 'instance.send' method by -- generating lua code and evaluating the code with upvalues. for _, inl in ipairs(self.inlets) do if inl == inlet then return end end local conn = {type = 'Basic'} self.links[inlet:url()] = conn table.insert(self.inlets, inlet)</p>
+                    <p>local default_receive = <a href='lk.Inlet.html#receive'>lk.Inlet.receive</a> -- TODO: performance compile new 'instance.send' method by -- generating lua code and evaluating the code with upvalues. for _, inl in ipairs(self.inlets) do if inl == inlet then return end end local conn = {type = 'Basic'} self.links[inlet:url()] = conn table.insert(self.inlets, inlet)</p>
                     <p>local msg = self.opts.connect if msg then local receive = inlet.receive if receive ~= default_receive then if type(msg) == 'function' then msg = msg() end receive(msg, conn) end end end</p>
                     <p>for i, inlet in ipairs(self.inlets) do if inlet:url() == target_url then table.remove(self.inlets, i) local link_def = self.links[target_url] if link_def then local msg = self.opts.disconnect if msg ~= nil then local receive = inlet.receive if receive ~= default_receive then if type(msg) == 'function' then msg = msg() end</p>
                     <pre class='prettyprint lang-lua'>        receive(msg)

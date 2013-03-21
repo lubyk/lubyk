@@ -57,7 +57,7 @@ return self</pre>
                     <p>--=============================================== PUBLIC METHODS</p>
                     <p>--- Return an iterator over the params of this function. local co = coroutine.create(private.paramsIterator) return function() local ok, value = coroutine.resume(co, self) if ok then return value end end end</p>
                     <p>return self.definition .. self.argsstring end</p>
-                    <p>-- Full name for function. lib.fullname = <a href='dub.Class.html#fullname'>dub.Class#fullname</a></p>
+                    <p>-- Full name for function. lib.fullname = <a href='dub.Class.html#fullname'>dub.Class.fullname</a></p>
                     <p>-- Full C name for function. if self.parent and self.parent.name then return self.parent:fullname() .. '::' .. self.cname else return self.cname end end</p>
                     <p>-- TODO: inspect xml return self.is_set_attr or self.is_get_attr or self.is_cast end</p>
                     <p>self.name = name if string.match(self.name, '^~') then self.destructor = true self.cname = string.gsub(self.name, '~', '_') elseif string.match(name, '^operator') then local n = string.match(name, '^operator(.+)$') local op = self.OP_TO_NAME[n] if op then self.cname = 'operator_' .. op else return false end else self.cname = self.name end return true end --=============================================== PRIVATE</p>
