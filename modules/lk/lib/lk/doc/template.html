@@ -29,8 +29,8 @@
 
       <div class="row">
 
-        <div class='span3'>
-          <ul class='nav nav-tabs nav-stacked local-nav affix'>
+        <div class='span3 local-nav'>
+          <ul class='nav nav-tabs nav-stacked affix'>
             {% for i, section in ipairs(self.sections) do %}
             <li><a href='#{{section.name}}'><i class='icon-chevron-right'></i> {{i == 1 and self.fullname or section.title}}</a></li>
             {% end %}
@@ -69,7 +69,7 @@
           {% end %}
         </div>
 
-        <div class='span2'>
+        <div class='span2 global-nav'>
           <ul class='nav nav-tabs nav-stacked'>
             {% if self.module then %}
             <li class='module'><a href='{{self.module}}.html'>{{self.module}}</a></li>

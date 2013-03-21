@@ -20,7 +20,7 @@
 
   # Parsing modes
 
-  By using the special comment @-- doc:[option]@, you can change how the parsing
+  By using the special comment `-- doc:[option]`, you can change how the parsing
   is done.
 
   ## Literate programming
@@ -40,7 +40,7 @@
 
   ## Loose documentation
 
-  By setting @-- doc:loose@, the parser will generate a single TODO about
+  By setting `-- doc:loose`, the parser will generate a single TODO about
   missing documentation and will not generate any more TODO entries for
   each undocummented function or parameter.
   
@@ -54,7 +54,7 @@
 
   ## Function extraction
 
-  All functions and methods defined against @lib@ are extracted even if they
+  All functions and methods defined against `lib` are extracted even if they
   are not yet documented. Example:
 
     function lib:foo(a, b)
@@ -79,7 +79,7 @@
     -- Out of file function definition (in C++ for example).
     -- function lib:connect(server)
 
-  To ignore functions, use @-- nodoc@ as documentation:
+  To ignore functions, use `-- nodoc` as documentation:
 
     -- nodoc
     function lib:badOldLegacyFunction(x, y)
@@ -87,7 +87,7 @@
 
   ## Table parameters
 
-  All parameters defined against @lib@ are documented unless @-- nodoc@ is used.
+  All parameters defined against `lib` are documented unless `-- nodoc` is used.
 
     lib.foo = 4
     lib.bar = 5
@@ -96,7 +96,7 @@
     lib.old_foo = 4
 
   Since Lua is also used as a description language, it is often useful to
-  document table keys. This is done by using @-- doc@. It is a good idea to
+  document table keys. This is done by using `-- doc`. It is a good idea to
   create a new for each table in order to document the table itself.
 
     -- # Attributes (example)
@@ -157,7 +157,7 @@ local ATTRIBS = { -- doc
 
   ## Math
 
-  The @[math]@ tag can be used to generate mathematics from latex code. When
+  The `[math]` tag can be used to generate mathematics from latex code. When
   outputing *html*, the page uses [MathJax](http://www.mathjax.org) when outputing html.
   Here is an example of mathematics inline and as standalone paragraph:
 
@@ -209,20 +209,24 @@ local ATTRIBS = { -- doc
     float x = 1.0;
     printf("Result = %.2f\n", x);
 
-  As you can see, you have to declare other languages with @#name@ if the code
+  As you can see, you have to declare other languages with `#name` if the code
   is not Lua.
 
   ## Styles
 
   You can enhance your comments with links, bold, italics and images.
 
-  Some links are automatically created when the parser sees @module.Class@ like
-  this: lk.Doc. A custom link is made with @[link title](http://example.com)@.
+  Some links are automatically created when the parser sees `module.Class` like
+  this: lk.Doc. A custom link is made with `[link title](http://example.com)`.
 
-  Bold is done by using stars: @some text with *bold* emphasis@. Italics are
-  inserted with underscores: @some text _with italic_ emphasis@.
+  Bold is done by using stars: `some text with *bold* emphasis`. Italics are
+  inserted with underscores: `some text _with italic_ emphasis`.
 
-  You can add images with @![alt text](/path/to/image.jpg)@.
+  You can add images with `![alt text](/path/to/image.jpg)`.
+
+  Inline code is inserted with backticks:
+  
+    -- This is `inline code`.
 
   ## Lists
 
@@ -248,7 +252,7 @@ local ATTRIBS = { -- doc
     + other long key: is used with a very long definition that
                       wraps around and even more text that goes
                       beyond.
-    + @last key@:     is a code key.
+    + `last key`:     is a code key.
 
   Renders as:
 
@@ -256,7 +260,7 @@ local ATTRIBS = { -- doc
   + other long key: is used with a very long definition that
                     wraps around and even more text that goes
                     beyond.
-  + @last key@:     is a code key.
+  + `last key`:     is a code key.
 
   ## TODO and FIXME
 
@@ -277,12 +281,13 @@ local ATTRIBS = { -- doc
 local lib     = class 'lk.Doc'
 local private = {}
 local parser  = {}
+local CODE = '§§'
 local DEFAULT_FOOTER = [[ made with <a href='http://doc.lubyk.org/lk.Doc.html'>lk.Doc</a> ]]
 
 
 -- # Class functions
 
--- Parse the content of a file given by @path@ and return an lk.Doc object 
+-- Parse the content of a file given by `path` and return an lk.Doc object 
 -- containing the documentation of the class.
 --
 -- Usage example:
@@ -293,7 +298,7 @@ local DEFAULT_FOOTER = [[ made with <a href='http://doc.lubyk.org/lk.Doc.html'>l
 --
 -- When documenting multiple files it is better to use #make.
 --
--- The @navigation@ and @children@ tables are used to display the 
+-- The `navigation` and `children` tables are used to display the 
 -- navigation menu on the right and class list in the document body.
 function lib.new(path, def)
   def = def or {}
@@ -372,7 +377,7 @@ end
 
 -- Generate the documentation for multiple files.
 --
--- The @sources@ parameter lists paths to Lua files or directories to parse and
+-- The `sources` parameter lists paths to Lua files or directories to parse and
 -- document.
 --
 -- + target:  parameter is the path to the directory where all the
@@ -380,9 +385,9 @@ end
 -- + format:  is the type of output desired. Only 'html' format is supported
 --            for now.
 -- + sources: lists path to glob for lua files. A source can also be a table
---            with a @prepend@ key used to change the location of the files
+--            with a `prepend` key used to change the location of the files
 --            in the documentation.
--- + copy:    lists the path to glob for static content to copy in @target@.
+-- + copy:    lists the path to glob for static content to copy in `target`.
 -- + header:  html code that will be inserted in every html page as header.
 -- + footer:  html code that will be inserted in every html page as footer.
 --
@@ -429,7 +434,7 @@ end
 
 -- # Methods
 
--- Render the documentation as html. If a @template@ is provided, it is used
+-- Render the documentation as html. If a `template` is provided, it is used
 -- instead of the default one. This is mainly used for testing since you usually
 -- want to have some navigation menus which are extracted by creating the
 -- documentation in batch mode with #make.
@@ -537,7 +542,8 @@ function private:parseFile(path)
   for k, v in pairs(parser) do
     v.name = k
   end
-  --
+  -- This is true on entering a state.
+  local entering = true
   for line in file:lines() do
     local replay = true
     line_i = line_i + 1
@@ -548,28 +554,33 @@ function private:parseFile(path)
       replay = false
       for i=1,#state do
         local matcher = state[i]
-        local m = {string.match(line, matcher.match)}
-        if m[1] then
-          if matcher.output then
-            matcher.output(self, line_i, unpack(m))
-          end
-          local state_exit = state.exit
-          if type(matcher.move) == 'function' then
-            if state_exit  then state_exit(self) end
-            state, replay = matcher.move(self)
-            if not state then
-              local def = debug.getinfo(matcher.move)
-              error("Error in state definition ".. string.match(def.source, '^@(.+)$') .. ':' .. def.linedefined)
+        if not matcher.on_enter or entering then
+          local m = {string.match(line, matcher.match)}
+          if m[1] then
+            if matcher.output then
+              matcher.output(self, line_i, unpack(m))
             end
-            if state.enter then state.enter(self) end
-          elseif not matcher.move then
-            -- do not change state
-          else
-            if state_exit  then state_exit(self) end
-            state = matcher.move
-            if state.enter then state.enter(self) end
+            local state_exit = state.exit
+            if type(matcher.move) == 'function' then
+              if state_exit  then state_exit(self) end
+              state, replay = matcher.move(self)
+              if not state then
+                local def = debug.getinfo(matcher.move)
+                error("Error in state definition ".. string.match(def.source, '^@(.+)$') .. ':' .. def.linedefined)
+              end
+              entering = true
+              if state.enter then state.enter(self) end
+            elseif not matcher.move then
+              -- do not change state
+              entering = false
+            else
+              if state_exit  then state_exit(self) end
+              state = matcher.move
+              entering = true
+              if state.enter then state.enter(self) end
+            end
+            break
           end
-          break
         end
       end
     end
@@ -891,7 +902,7 @@ parser.code = {
   -- first line
   { match  = '^ *%-%-   (.*)$',
     output = function(self, i, d)
-      local lang = string.match(d, '#([^ ]+)')
+      local lang = string.match(d, '#([^ ]+.+)')
       if lang then
         d = nil
       else
@@ -981,6 +992,12 @@ parser.math = {
 }
 
 parser.group = {
+  -- code
+  { match = '^ *%-%-   ',
+    on_enter = true, -- only match right after entering.
+    output   = private.flushPara,
+    move     = function() return parser.code, true end,
+  },
   -- end of comment
   { match  = '^ *[^%- ]',
     output = private.flushPara,
@@ -1093,8 +1110,13 @@ parser.lua = {
   end,
   exit = function(self)
     if self.lit then
-      private.flushPara(self)
-      private.useGroup(self)
+      if lk.strip(self.para.text or '') == '' then
+        -- Do not insert code for blank lines.
+        self.para = nil
+      else
+        private.flushPara(self)
+        private.useGroup(self)
+      end
     end
   end,
   -- Undocummented function
@@ -1312,8 +1334,10 @@ function private:paraToHtml(para)
     return "<p>"..private.mathjaxTag(self, para).."</p>"
   elseif para.code then
     local tag
-    if para.code == 'txt' then
-      tag = "<pre>"
+    local k =
+    string.match(para.code or '', '^txt( .+)?$')
+    if string.match(para.code, '^txt') then
+      tag = "<pre class='"..para.code.."'>"
     else
       tag = "<pre class='prettyprint lang-"..para.code.."'>"
     end
@@ -1375,20 +1399,29 @@ function private:textToHtml(text)
   -- TODO: Replace textToHtml with a walking parser to avoid double parsing.
   -- code
   local codes = {}
-  p = string.gsub(p, '@(.-)@', function(code)
+  p = string.gsub(p, '`(.-)`', function(code)
     table.insert(codes, '<code>'..code..'</code>')
-    return 'CODE'..#codes
+    return CODE..#codes
   end)
-  -- strong
-  p = string.gsub(p, '%*([^\n]-)%*', '<strong>%1</strong>')
-  -- em
-  p = string.gsub(p, '_(.-)_', '<em>%1</em>')
-  -- method link lk.Doc#make
-  p = string.gsub(p, ' ([a-z]+%.[A-Z]+[a-z][a-zA-Z]+)#([a-zA-Z_]+)', " <a href='%1.html#%2'>%1#%2</a>")
+  -- method link lk.Doc#make or lk.Doc.make
+  p = string.gsub(p, ' ([a-z]+%.[A-Z]+[a-z][a-zA-Z]+)[#%.]([a-zA-Z_]+)', function(class, fun)
+    table.insert(codes, string.format(" <a href='%s.html#%s'>%s#%s</a>", class, fun, class, fun))
+    return CODE..#codes
+  end)
   -- auto-link lk.Doc
   p = string.gsub(p, ' ([a-z]+%.[A-Z]+[a-z][a-zA-Z]+)([%. ])', " <a href='%1.html'>%1</a>%2")
   -- section link #Make or method link #foo
-  p = string.gsub(p, ' #([A-Za-z]+[A-Za-z_]+)', " <a href='#%1'>%1</a>")
+  p = string.gsub(p, ' #([A-Za-z]+[A-Za-z_]+)', function(name)
+    table.insert(codes, string.format(" <a href='#%s'>%s</a>", name, name))
+    return CODE..#codes
+  end)
+
+  -- strong
+  p = string.gsub(p, '%*([^\n]-)%*', '<strong>%1</strong>')
+  -- em
+  p = string.gsub(p, ' _(.-)_ ', ' <em>%1</em> ')
+  p = string.gsub(p, '^_(.-)_', '<em>%1</em>')
+  p = string.gsub(p, '_(.-)_$', '<em>%1</em>')
   -- ![Dummy example image](img/box.jpg)
   p = string.gsub(p, '!%[(.-)%]%((.-)%)', "<img alt='%1' src='%2'/>")
   -- link [some text](http://example.com)
@@ -1400,7 +1433,7 @@ function private:textToHtml(text)
   end)
 
   if #codes > 0 then
-    p = string.gsub(p, 'CODE([0-9]+)', function(id)
+    p = string.gsub(p, CODE..'([0-9]+)', function(id)
       return codes[tonumber(id)]
     end)
   end
