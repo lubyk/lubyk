@@ -45,9 +45,9 @@
           
                     <p class='summary'></p>
                     <p>-- MyWidget = lk.SubClass(mimas.Widget, ...) function lk.SubClass(class, ...) local defaults = {...}</p>
-                    <p>function class.<em></em>call(lib, ...) return lib.new(...) end</p>
-                    <p>if not class.<em>new then -- Keep track of the topmost "new" function. -- We need this because we only want to call the bottom most "init" -- function to avoid calling methods on a version of self without the -- correct metatable. class.</em>new = class.new end</p>
-                    <p>-- Create the new class local lib = {} lib.<em></em>index = lib</p>
+                    <p>function class.__call(lib, ...) return lib.new(...) end</p>
+                    <p>if not class._new then -- Keep track of the topmost "new" function. -- We need this because we only want to call the bottom most "init" -- function to avoid calling methods on a version of self without the -- correct metatable. class._new = class.new end</p>
+                    <p>-- Create the new class local lib = {} lib.__index = lib</p>
                     <p>-- Inherit methods from super class setmetatable(lib, class)</p>
                     <p>-- Default new local self = class._new(unpack(defaults)) setmetatable(self, lib) self:init(...) return self end</p>
                     <p>-- Default init (only the last defined init function is called). end</p>

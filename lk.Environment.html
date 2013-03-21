@@ -45,7 +45,7 @@
           
                     <p class='summary'></p>
                     <p>local lib = {type='lk.Environment'} <a href='lk.Environment.html'>lk.Environment</a> = lib</p>
-                    <p>setmetatable(lib, { -- new method <em></em>call = function(lib, code<em>str) local code = assert(loadstring(code</em>str)) -- new environment local env  = {} setmetatable(env, lib) setfenv(code, env) return code end})</p>
+                    <p>setmetatable(lib, { -- new method __call = function(lib, code_str) local code = assert(loadstring(code_str)) -- new environment local env  = {} setmetatable(env, lib) setfenv(code, env) return code end})</p>
                               </section>
                   </div>
 

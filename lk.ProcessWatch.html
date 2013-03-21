@@ -44,8 +44,8 @@
           <h4 class='method'><span>:</span>addDevice <code>(service)</code></h4>
           
                     <p class='summary'></p>
-                    <p>local lib = {} lib.<em></em>index     = lib <a href='lk.ProcessWatch.html'>lk.ProcessWatch</a> = lib</p>
-                    <p>setmetatable(lib, { -- new method <em></em>call = function(lib, mock<em>browser) local service</em>type = Lubyk.service<em>type local self = { processes = {}, -- weak table delegates = setmetatable({}, {</em>_mode = 'v'}), } setmetatable(self, lib)</p>
+                    <p>local lib = {} lib.__index     = lib <a href='lk.ProcessWatch.html'>lk.ProcessWatch</a> = lib</p>
+                    <p>setmetatable(lib, { -- new method __call = function(lib, mock_browser) local service_type = Lubyk.service_type local self = { processes = {}, -- weak table delegates = setmetatable({}, {__mode = 'v'}), } setmetatable(self, lib)</p>
                     <p>self.browser = lk.ServiceBrowser(service_type):addDelegate(self) return self end})</p>
                     <p>table.insert(self.delegates, delegate) for _, process in pairs(self.processes) do if process.online then delegate:processConnected(process) end end return self end</p>
                     <p>--- Return the remote process or create a disconnected process. local process = self.processes[name] if not process then process = lk.RemoteProcess(name) self.processes[name] = process end return process end</p>

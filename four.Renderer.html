@@ -46,16 +46,16 @@
           
                     <p class='summary'></p>
                     <p>-- Module definition</p>
-                    <p>local ffi = require 'ffi' local lib = { type = 'four.Renderer' } lib.<em></em>index = lib <a href='four.Renderer.html'>four.Renderer</a> = lib setmetatable(lib, { <em></em>call = function(lib, ...) return lib.new(...) end })</p>
+                    <p>local ffi = require 'ffi' local lib = { type = 'four.Renderer' } lib.__index = lib <a href='four.Renderer.html'>four.Renderer</a> = lib setmetatable(lib, { __call = function(lib, ...) return lib.new(...) end })</p>
                     <p>local V2 = four.V2 local V4 = four.V4 local Buffer = <a href='four.Buffer.html'>four.Buffer</a> local Geometry = four.Geometry</p>
                     <p>-- h2. Renderer backends</p>
                     <p>lib.GL32 = 1 lib.GLES = 2 lib.DEFAULT = lib.GL32</p>
                     <p>-- h2. Constructor</p>
-                    <p>--[[-- <code>Renderer(def)</code> is a new renderer. <code>def</code> keys:</p>
+                    <p>--[[-- @Renderer(def)@ is a new renderer. @def@ keys:</p>
                     <ul>
-<li><code>backend</code>, the renderer backend (defaults to <code>GL32</code>).</li>
-<li><code>size</code>, a <code>V2</code> defining the viewport size (defaults to V2(480,270).</li>
-<li><code>error_line_pattern</code>, a string used to parse GPU compiler logs. Must split a line in three part, before the GLSL file number, the file number, after the file number.</li>
+<li>@backend@, the renderer backend (defaults to @GL32@).</li>
+<li>@size@, a @V2@ defining the viewport size (defaults to V2(480,270).</li>
+<li>@error_line_pattern@, a string used to parse GPU compiler logs. Must split a line in three part, before the GLSL file number, the file number, after the file number.</li>
 </ul>
                                         <a name='set'></a>
           <h4 class='method'><span>:</span>set <code>(def)</code></h4>
@@ -109,7 +109,7 @@
                                         <a name='log'></a>
           <h4 class='method'><span>:</span>log <code>(msg)</code></h4>
           
-                    <p><code>self:log(msg)</code> is called by the backend renderer to log message  <code>msg</code>. Clients can override the function to redirect the renderer  log (the default implementation <code>print</code>s the message).</p>
+                    <p>@self:log(msg)@ is called by the backend renderer to log message  @msg@. Clients can override the function to redirect the renderer  log (the default implementation @print@s the message).</p>
                     <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
                                         <a name='logInfo'></a>
           <h4 class='method'><span>:</span>logInfo <code>(verbose)</code></h4>
@@ -121,11 +121,11 @@
                                         <a name='normalizeScreenPos'></a>
           <h4 class='method'><span>:</span>normalizeScreenPos <code>(pos, noflip)</code></h4>
           
-                    <p><code>r:normalizeScreenPos(pos [,noflip])</code> is the normalized position of  <code>pos</code> expressed relative to the top left (bottom left if <code>noflip</code> is true) corner of the rendering surface.</p>
+                    <p>@r:normalizeScreenPos(pos [,noflip])@ is the normalized position of  @pos@ expressed relative to the top left (bottom left if @noflip@ is true) corner of the rendering surface.</p>
                                         <a name='isRenderable'></a>
           <h4 class='method'><span>:</span>isRenderable <code>(cam, o)</code></h4>
           
-                    <p><code>renderable(cam, o)</code> is <code>true</code> if <code>o</code> can be rendered with <code>cam</code>.</p>
+                    <p>@renderable(cam, o)@ is @true@ if @o@ can be rendered with @cam@.</p>
                                         <a name='addRenderable'></a>
           <h4 class='method'><span>:</span>addRenderable <code>(cam, o)</code></h4>
           
@@ -133,7 +133,7 @@
                                         <a name='render'></a>
           <h4 class='method'><span>:</span>render <code>(cam, objs)</code></h4>
           
-                    <p><code>render(cam, objs)</code> renders the renderables in <code>objs</code> with <code>cam</code>.</p>
+                    <p>@render(cam, objs)@ renders the renderables in @objs@ with @cam@.</p>
                               </section>
                     <section id='TODO'>
           <h2 class='section'>TODO</h2>

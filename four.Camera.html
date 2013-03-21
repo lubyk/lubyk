@@ -51,23 +51,23 @@
                     <p>local function setOrthoMatrix(tv) local near, far = V2.tuple(tv.range) local hw = near * math.tan (tv.fov / 2) local hh = hw / tv.aspect tv.projection_matrix = M4.ortho(-hw, hw, -hh, hh, near, far) end</p>
                     <p>local function setPerspMatrix(tv) local near, far = V2.tuple(tv.range) local hw = near * math.tan (tv.fov / 2) local hh = hw / tv.aspect tv.projection_matrix = M4.persp(-hw, hw, -hh, hh, near, far) end</p>
                     <p>local function syncProjectionMatrix(tv)   if tv.projection == lib.PERSPECTIVE then setPerspMatrix(tv) elseif tv.projection == lib.ORTHOGRAPHIC then setOrthoMatrix(tv) elseif tv.projection == lib.CUSTOM then return  else assert(false) end end</p>
-                    <p>local is<em>projection</em>key =  { projection = true, range = true, fov = true, aspect = true,  projection_matrix = true }</p>
-                    <p>if k == "tv" then return rawget(t, k) elseif is<em>projection</em>key[k] then  local tv = t.tv  if k == "projection<em>matrix" and tv.dirty</em>matrix then  syncProjectionMatrix(tv)  end return tv[k] else return lib[k] end end</p>
-                    <p>if not is<em>projection</em>key[k] then t[k] = v  else local tv = t.tv  if k == "projection<em>matrix" then if tv.projection == lib.CUSTOM then tv[k] = v else  error("Cannot set projection matrix on non-custom projection camera") end else tv.projection</em>dirty = true; tv[k] = v end end end</p>
-                    <p>setmetatable(lib, { <em></em>call = function(lib, def) return lib.new(def) end })</p>
+                    <p>local is_projection_key =  { projection = true, range = true, fov = true, aspect = true,  projection_matrix = true }</p>
+                    <p>if k == "tv" then return rawget(t, k) elseif is_projection_key[k] then  local tv = t.tv  if k == "projection_matrix" and tv.dirty_matrix then  syncProjectionMatrix(tv)  end return tv[k] else return lib[k] end end</p>
+                    <p>if not is_projection_key[k] then t[k] = v  else local tv = t.tv  if k == "projection_matrix" then if tv.projection == lib.CUSTOM then tv[k] = v else  error("Cannot set projection matrix on non-custom projection camera") end else tv.projection_dirty = true; tv[k] = v end end end</p>
+                    <p>setmetatable(lib, { __call = function(lib, def) return lib.new(def) end })</p>
                     <p>-- h2. Camera projection types</p>
                     <p>lib.ORTHOGRAPHIC = 1 lib.PERSPECTIVE = 2 lib.CUSTOM = 3</p>
                     <p>-- h2. Constructor</p>
-                    <p>--[[-- <code>Camera(def)</code> is a new camera object. <code>def</code> keys:</p>
+                    <p>--[[-- @Camera(def)@ is a new camera object. @def@ keys:</p>
                     <ul>
-<li><code>transform</code>, defines the location and orientation of the camera. Default transform lies at the origin and looks down the z-axis.</li>
-<li><code>projection</code>, the kind of projection to use (defaults to <code>PERSPECTIVE</code>).</li>
-<li><code>range</code>, for non-<code>CUSTOM</code> projections defines the near and far clip plane  (defaults to <code>V2(1, 100)</code>). Clip planes are perpendicular to the camera  direction and are defined relative to the camera position.</li>
-<li><code>fov</code>, for non-<code>CUSTOM</code> projections defines the horizontal field of view (defaults to <code>math.pi / 4</code>)</li>
-<li><code>aspect</code>, for non-<code>CUSTOM</code> projections, defines the camera width/height  ratio</li>
-<li><code>viewport</code>, table with <code>origin</code> and <code>size</code> keys defining the viewport in normalized screen coordinates of the renderer. Defaults covers  the whole renderer viewport.</li>
-<li><code>background</code>, TODO</li>
-<li><code>effect_override</code>, specifies an effect to use instead of the renderable's  Effects.</li>
+<li>@transform@, defines the location and orientation of the camera. Default transform lies at the origin and looks down the z-axis.</li>
+<li>@projection@, the kind of projection to use (defaults to @PERSPECTIVE@).</li>
+<li>@range@, for non-@CUSTOM@ projections defines the near and far clip plane  (defaults to @V2(1, 100)@). Clip planes are perpendicular to the camera  direction and are defined relative to the camera position.</li>
+<li>@fov@, for non-@CUSTOM@ projections defines the horizontal field of view (defaults to @math.pi / 4@)</li>
+<li>@aspect@, for non-@CUSTOM@ projections, defines the camera width/height  ratio</li>
+<li>@viewport@, table with @origin@ and @size@ keys defining the viewport in normalized screen coordinates of the renderer. Defaults covers  the whole renderer viewport.</li>
+<li>@background@, TODO</li>
+<li>@effect_override@, specifies an effect to use instead of the renderable's  Effects.</li>
 </ul>
                                         <a name='set'></a>
           <h4 class='method'><span>:</span>set <code>(def)</code></h4>
@@ -76,7 +76,7 @@
                                         <a name='screenToDevice'></a>
           <h4 class='method'><span>:</span>screenToDevice <code>(pos)</code></h4>
           
-                    <p>c:screenToDevice(pos) is the normalized device coordinates of the normalized screen coordinates <code>pos</code> in <code>c</code>.</p>
+                    <p>c:screenToDevice(pos) is the normalized device coordinates of the normalized screen coordinates @pos@ in @c@.</p>
                               </section>
                     <section id='TODO'>
           <h2 class='section'>TODO</h2>

@@ -222,9 +222,12 @@ printf("Result = %.2f\n", x);
                     <p>Some links are automatically created when the parser sees <code>module.Class</code> like this: <a href='lk.Doc.html'>lk.Doc</a>. A custom link is made with <code>[link title](http://example.com)</code>.</p>
                     <p>Bold is done by using stars: <code>some text with *bold* emphasis</code>. Italics are inserted with underscores: <code>some text _with italic_ emphasis</code>.</p>
                     <p>You can add images with <code>![alt text](/path/to/image.jpg)</code>.</p>
+                    <p>Inline code is inserted with backticks:</p>
+                    <pre class='prettyprint lang-lua'>-- This is `inline code`.
+</pre>
                     <h4 class='sub-title'>Lists</h4>
                     <p>There are two kinds of lists available. The first one is simply a bullet list:</p>
-                    <pre>* First element
+                    <pre class='txt'>* First element
 * Second element with more text
   that wraps around
 * Third
@@ -236,11 +239,11 @@ printf("Result = %.2f\n", x);
 <li>Third</li>
 </ul>
                     <p>The second style is for definitions:</p>
-                    <pre>+ some key:       is used to do something.
+                    <pre class='txt'>+ some key:       is used to do something.
 + other long key: is used with a very long definition that
                   wraps around and even more text that goes
                   beyond.
-+ @last key@:     is a code key.
++ `last key`:     is a code key.
 </pre>
                     <p>Renders as:</p>
                     <table class='definition'>

@@ -44,11 +44,11 @@
           <h4 class='method'><span>:</span>findByPath <code>(path)</code></h4>
           
                     <p class='summary'></p>
-                    <p>local lib = {type='lk.RemoteProcess'} lib.<em></em>index      = lib <a href='lk.RemoteProcess.html'>lk.RemoteProcess</a> = lib</p>
-                    <p>setmetatable(lib, { -- new method <em></em>call = function(lib, name, remote_service) local instance = { name = name, inlets = {}, } setmetatable(instance, lib)</p>
-                    <p>if remote<em>service then instance:connect(remote</em>service) end</p>
+                    <p>local lib = {type='lk.RemoteProcess'} lib.__index      = lib <a href='lk.RemoteProcess.html'>lk.RemoteProcess</a> = lib</p>
+                    <p>setmetatable(lib, { -- new method __call = function(lib, name, remote_service) local instance = { name = name, inlets = {}, } setmetatable(instance, lib)</p>
+                    <p>if remote_service then instance:connect(remote_service) end</p>
                     <p>return instance end})</p>
-                    <p>self.name    = remote<em>service.name self.ip      = remote</em>service.ip self.info    = remote<em>service.info self.sub</em>url = remote<em>service.sub</em>url self.push    = remote<em>service.push self.req     = remote</em>service.req -- replace dummy 'send' self.send = function(...) remote_service.push:send(...) end self.online = true end</p>
+                    <p>self.name    = remote_service.name self.ip      = remote_service.ip self.info    = remote_service.info self.sub_url = remote_service.sub_url self.push    = remote_service.push self.req     = remote_service.req -- replace dummy 'send' self.send = function(...) remote_service.push:send(...) end self.online = true end</p>
                     <p>self.info    = nil self.sub_url = nil self.push    = nil self.req     = nil -- dummy self.send = lib.send self.online = false end</p>
                     <p>--print('Not connected', url) -- not connected -- This method is replaced on connection end</p>
                               </section>

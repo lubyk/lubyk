@@ -43,11 +43,11 @@
                     
                     <p class='summary'></p>
                     <p>--=============================================== LOAD PATHS</p>
-                    <p>-- These paths already come loaded with lubyk lib path -- through the lubyk loader "require 'lubyk'" local lua<em>paths  = package.path local lua</em>cpaths = package.cpath</p>
+                    <p>-- These paths already come loaded with lubyk lib path -- through the lubyk loader "require 'lubyk'" local lua_paths  = package.path local lua_cpaths = package.cpath</p>
                     <p>-- 1. local lib (foo.lua or lib/foo.lua) package.path  = './?.lua;./lib/?.lua;' package.cpath = './?.so;./lib/?.so;'</p>
                     <p>-- 2. user libs for _, path in ipairs(Lubyk.paths or {}) do package.path = package.path .. path .. '/?.lua;' end</p>
                     <p>for _, cpath in ipairs(Lubyk.cpaths or {}) do package.cpath = package.cpath .. cpath .. '/?.so;' end</p>
-                    <p>-- 3. Installed lubyk libs and lua paths package.path  = package.path  .. lua<em>paths package.cpath = package.cpath .. lua</em>cpaths</p>
+                    <p>-- 3. Installed lubyk libs and lua paths package.path  = package.path  .. lua_paths package.cpath = package.cpath .. lua_cpaths</p>
                                         <a name='---------'></a>
           <h4 class='klass'><a href='lk.Client.html'>Client</a></h4>
           

@@ -44,14 +44,14 @@
           <h4 class='method'><span>:</span>quit <code>(...)</code></h4>
           
                     <p class='summary'></p>
-                    <p>local lib = {type='lk.Service'} lib.<em></em>index = lib <a href='lk.Service.html'>lk.Service</a>  = lib</p>
-                    <p>setmetatable(lib, { <em></em>call = function(lib, ...) return lib.new(...) end })</p>
-                    <p>if type(opts) == 'function' then opts = {callback = opts} elseif not opts then opts = {} end local service<em>type, callback, type</em>name = opts.service<em>type, opts.callback, opts.type type</em>name = type<em>name or lib.type service</em>type = service<em>type or lubyk.service</em>type if not callback then -- dummy callback = function() return nil end end local info = opts.info or {} info.type = type_name local self = {name = name, callback = callback, info = (opts.info or {})}</p>
+                    <p>local lib = {type='lk.Service'} lib.__index = lib <a href='lk.Service.html'>lk.Service</a>  = lib</p>
+                    <p>setmetatable(lib, { __call = function(lib, ...) return lib.new(...) end })</p>
+                    <p>if type(opts) == 'function' then opts = {callback = opts} elseif not opts then opts = {} end local service_type, callback, type_name = opts.service_type, opts.callback, opts.type type_name = type_name or lib.type service_type = service_type or lubyk.service_type if not callback then -- dummy callback = function() return nil end end local info = opts.info or {} info.type = type_name local self = {name = name, callback = callback, info = (opts.info or {})}</p>
                     <p>--======================================= PUB server self.pub = zmq.Pub() self.info.pub = self.pub:port()</p>
                     <p>--======================================= REP server (sync) -- FIXME: REMOVE (risk of hanging) self.rep = zmq.SimpleRep(callback)</p>
                     <p>--======================================= PULL server (async) self.pull = zmq.SimplePull(callback)</p>
                     <p>self.info.pull = self.pull:port()</p>
-                    <p>--======================================= announce REP server self.registration = mdns.Registration(service<em>type, name, self.rep:port(), self.info, opts.registration</em>callback) -- TODO: act on name change ....</p>
+                    <p>--======================================= announce REP server self.registration = mdns.Registration(service_type, name, self.rep:port(), self.info, opts.registration_callback) -- TODO: act on name change ....</p>
                     <p>return setmetatable(self, lib) end</p>
                     <p>self.pub:send(...) end</p>
                     <p>self.rep:join(...) self.pull:join(...) end</p>

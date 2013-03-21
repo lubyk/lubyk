@@ -51,11 +51,11 @@
                     <p>function hi.glGetFloatv(pname) local param = ffi.new ("GLfloat[1]", 0) lo.glGetDoublev(pname, param) return param[0] end</p>
                     <p>function hi.glGetIntegerv(pname) local param = ffi.new ("GLint[1]", 0) lo.glGetIntegerv(pname, param) return param[0] end</p>
                     <p>function hi.glGetString(pname) local ptr = lo.glGetString(pname) if ptr == 0 then return "" else return ffi.string(ptr) end end</p>
-                    <p>function hi.glGetShaderiv (s, flag) local flag<em>v = ffi.new ("GLint[1]", 0) lo.glGetShaderiv (s, flag, flag</em>v); return flag_v[0] end</p>
+                    <p>function hi.glGetShaderiv (s, flag) local flag_v = ffi.new ("GLint[1]", 0) lo.glGetShaderiv (s, flag, flag_v); return flag_v[0] end</p>
                     <p>function hi.glShaderSource (s, src) -- TODO check ffi.cast and C null terminated string stuff local arr = ffi.new ("const GLchar <strong>[1]", ffi.cast ("GLchar </strong>", src))  lo.glShaderSource (s, 1, arr, nil) end</p>
-                    <p>function hi.glGetShaderInfoLog (s) local len = hi.glGetShaderiv (s, lo.GL<em>INFO</em>LOG_LENGTH) if (len == 0) then return "" else local log = ffi.new("GLchar [?]", len) lo.glGetShaderInfoLog (s, len, nil, log) return ffi.string (log, len - 1) end end</p>
-                    <p>function hi.glGetProgramiv (s, flag) local flag<em>v = ffi.new ("GLint[1]", 0) lo.glGetProgramiv (s, flag, flag</em>v); return flag_v[0] end</p>
-                    <p>function hi.glGetProgramInfoLog (s) local len = hi.glGetProgramiv (s, lo.GL<em>INFO</em>LOG_LENGTH) if (len == 0) then return "" else local log = ffi.new("GLchar [?]", len) lo.glGetProgramInfoLog (s, len, nil, log) return ffi.string (log, len - 1) end end</p>
+                    <p>function hi.glGetShaderInfoLog (s) local len = hi.glGetShaderiv (s, lo.GL_INFO_LOG_LENGTH) if (len == 0) then return "" else local log = ffi.new("GLchar [?]", len) lo.glGetShaderInfoLog (s, len, nil, log) return ffi.string (log, len - 1) end end</p>
+                    <p>function hi.glGetProgramiv (s, flag) local flag_v = ffi.new ("GLint[1]", 0) lo.glGetProgramiv (s, flag, flag_v); return flag_v[0] end</p>
+                    <p>function hi.glGetProgramInfoLog (s) local len = hi.glGetProgramiv (s, lo.GL_INFO_LOG_LENGTH) if (len == 0) then return "" else local log = ffi.new("GLchar [?]", len) lo.glGetProgramInfoLog (s, len, nil, log) return ffi.string (log, len - 1) end end</p>
                     <p>function hi.glGenBuffer() local id = ffi.new ("GLuint[1]", 0) lo.glGenBuffers(1, id) return id[0] end</p>
                     <p>function hi.glDeleteBuffer(id) local idptr = ffi.new("GLuint[1]", id) lo.glDeleteBuffers(1, idptr) end</p>
                     <p>function hi.glGenVertexArray() local id = ffi.new ("GLuint[1]", 0) lo.glGenVertexArrays(1, id) return id[0] end</p>

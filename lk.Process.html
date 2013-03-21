@@ -42,8 +42,8 @@
 
                     
                     <p class='summary'></p>
-                    <p>local lib   = {type='lk.Process'} lib.<em></em>index = lib <a href='lk.Process.html'>lk.Process</a>  = lib -- <a href='lk.Process.html'>lk.Process</a> inherits from <a href='lk.Patch.html'>lk.Patch</a> --setmetatable(lib, lk.Patch)</p>
-                    <p>setmetatable(lib, { -- new method <em></em>call = function(lib, name) local self = lk.Patch(name) local opts = { callback = function(...) return self:callback(...) end,</p>
+                    <p>local lib   = {type='lk.Process'} lib.__index = lib <a href='lk.Process.html'>lk.Process</a>  = lib -- <a href='lk.Process.html'>lk.Process</a> inherits from <a href='lk.Patch.html'>lk.Patch</a> --setmetatable(lib, lk.Patch)</p>
+                    <p>setmetatable(lib, { -- new method __call = function(lib, name) local self = lk.Patch(name) local opts = { callback = function(...) return self:callback(...) end,</p>
                     <pre class='prettyprint lang-lua'>registration_callback = function(reg, service)
   if Lubyk.zone .. ':' .. name ~= service.name then
     printf("Existing process '%s'. Quit.", name)

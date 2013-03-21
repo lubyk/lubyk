@@ -61,7 +61,7 @@
                                         <a name='glob'></a>
           <h4 class='method'><span>:</span>glob <code>(pattern)</code></h4>
           
-                    <p>Return an iterator to recursively find files matching <code>pattern</code> in the directory. The pattern syntax is the same as string.match.</p>
+                    <p>Return an iterator to recursively find files matching @pattern@ in the directory. The pattern syntax is the same as string.match.</p>
                     <pre class='prettyprint lang-lua'>-- Find files ending in ".lua".
 for file in lk.Dir('lib'):glob '%.lua$' do
   print(file)
@@ -81,7 +81,7 @@ end
                                         <a name='contains'></a>
           <h4 class='method'><span>:</span>contains <code>(pattern)</code></h4>
           
-                    <p>Return true if there is at least one child in the directory that matches <code>pattern</code>.</p>
+                    <p>Return true if there is at least one child in the directory that matches @pattern@.</p>
                               </section>
                   </div>
 

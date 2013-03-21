@@ -44,7 +44,7 @@
           <h4 class='method'><span>:</span>children <code>()</code></h4>
           
                     <p class='summary'></p>
-                    <p>local lib     = { type        = 'dub.Namespace', is<em>class    = false, } local private = {} lib.</em>_index   = lib <a href='dub.Namespace.html'>dub.Namespace</a> = lib -- Behaves like a class by default setmetatable(lib, dub.Class)</p>
+                    <p>local lib     = { type        = 'dub.Namespace', is_class    = false, } local private = {} lib.__index   = lib <a href='dub.Namespace.html'>dub.Namespace</a> = lib -- Behaves like a class by default setmetatable(lib, dub.Class)</p>
                     <p>--=============================================== dub.Namespace()</p>
                     <p>local name = self.name self.name = nil self.const_headers = {} self = dub.Class(self) setmetatable(self, lib) self:setName(name) return self end</p>
                     <p>return self.db:namespaces() end</p>

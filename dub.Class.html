@@ -50,7 +50,7 @@
                                         <a name='new'></a>
           <h4 class='function'><span>.</span>new <code>(self)</code></h4>
           
-                    <p>Create a new class definition. Most of the attributes are passed with <code>self</code>. Usage example:</p>
+                    <p>Create a new class definition. Most of the attributes are passed with @self@. Usage example:</p>
                     <pre class='prettyprint lang-lua'>local class = dub.Class {
   -- self can be a class or db (root)
   db      = self.db or self,
@@ -66,11 +66,11 @@
                                         <a name='findChild'></a>
           <h4 class='method'><span>:</span>findChild <code>(name)</code></h4>
           
-                    <p>Return a child element from <code>name</code> or nil if nothing is found. Uses the database internally.</p>
+                    <p>Return a child element from @name@ or nil if nothing is found. Uses the database internally.</p>
                                         <a name='method'></a>
           <h4 class='method'><span>:</span>method <code>lib.findChild</code></h4>
           
-                    <p>Return a method from a given <code>name</code>.</p>
+                    <p>Return a method from a given @name@.</p>
                     <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
                                         <a name='methods'></a>
           <h4 class='method'><span>:</span>methods <code>()</code></h4>
@@ -95,7 +95,7 @@
                                         <a name='fullname'></a>
           <h4 class='method'><span>:</span>fullname <code>()</code></h4>
           
-                    <p>The fullname of the class in the form of <code>parent::ClassName</code>.</p>
+                    <p>The fullname of the class in the form of @parent::ClassName@.</p>
                                         <a name='needCast'></a>
           <h4 class='method'><span>:</span>needCast <code>()</code></h4>
           

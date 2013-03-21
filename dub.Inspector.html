@@ -44,12 +44,12 @@
           <h4 class='method'><span>:</span>resolveType <code>(name)</code></h4>
           
                     <p class='summary'></p>
-                    <p>local lib     = { type = 'dub.Inspector', DOXYGEN<em>CMD = 'doxygen', } local private = {} lib.</em>_index   = lib <a href='dub.Inspector.html'>dub.Inspector</a> = lib</p>
-                    <p>--=============================================== dub.Inspector() setmetatable(lib, { <em></em>call = function(lib, opts) local self = {db = dub.MemoryStorage()} setmetatable(self, lib) if opts then self:parse(opts) end return self end })</p>
-                    <p>--=============================================== PUBLIC METHODS -- Add xml headers to the database. If not<em>lazy is set, parse everything -- directly (not when needed). Only set this option if the xml files -- will be removed before queries. self.db:parse(xml</em>dir, not<em>lazy, ignore</em>list) end</p>
+                    <p>local lib     = { type = 'dub.Inspector', DOXYGEN_CMD = 'doxygen', } local private = {} lib.__index   = lib <a href='dub.Inspector.html'>dub.Inspector</a> = lib</p>
+                    <p>--=============================================== dub.Inspector() setmetatable(lib, { __call = function(lib, opts) local self = {db = dub.MemoryStorage()} setmetatable(self, lib) if opts then self:parse(opts) end return self end })</p>
+                    <p>--=============================================== PUBLIC METHODS -- Add xml headers to the database. If not_lazy is set, parse everything -- directly (not when needed). Only set this option if the xml files -- will be removed before queries. self.db:parse(xml_dir, not_lazy, ignore_list) end</p>
                     <p>if type(opts) == 'string' then opts = {INPUT = opts} end assert(opts.INPUT, "Missing 'INPUT' field")</p>
-                    <p>if opts.html then opts.GENERATE<em>HTML = 'YES' opts.keep</em>xml = true end</p>
-                    <p>local doc<em>dir = opts.doc</em>dir if opts.keep<em>xml and not doc</em>dir then doc<em>dir = 'dub-doc' elseif not doc</em>dir then doc<em>dir = 'dub-tmp' local i = 0 while true do if lk.exist(doc</em>dir) then i = i + 1 doc_dir = string.format('dub-tmp-%i', i) else break end end end</p>
+                    <p>if opts.html then opts.GENERATE_HTML = 'YES' opts.keep_xml = true end</p>
+                    <p>local doc_dir = opts.doc_dir if opts.keep_xml and not doc_dir then doc_dir = 'dub-doc' elseif not doc_dir then doc_dir = 'dub-tmp' local i = 0 while true do if lk.exist(doc_dir) then i = i + 1 doc_dir = string.format('dub-tmp-%i', i) else break end end end</p>
                     <p>private.execute('mkdir -p ' .. doc_dir)</p>
                     <p>local doxypath = <a href='opts.Doxyfile.html'>opts.Doxyfile</a> if not doxypath then doxypath = doc_dir .. '/Doxyfile' local doxyfile = io.open(doxypath, 'w')</p>
                     <pre class='prettyprint lang-lua'>local doxytemplate = dub.Template {path = lk.scriptDir() .. '/Doxyfile'}
@@ -64,7 +64,7 @@ end
 doxyfile:write(doxytemplate:run({doc_dir = doc_dir, opts = opts}))
 doxyfile:close()</pre>
                     <p>end</p>
-                    <p>-- Generate xml self:doxygen(doxypath) -- Parse xml self:parseXml(doc<em>dir .. '/xml', true, opts.ignore) if not opts.keep</em>xml then if not opts.doc<em>dir then lk.rmTree(doc</em>dir, true) else lk.rmTree(doc_dir .. '/xml', true) end end end</p>
+                    <p>-- Generate xml self:doxygen(doxypath) -- Parse xml self:parseXml(doc_dir .. '/xml', true, opts.ignore) if not opts.keep_xml then if not opts.doc_dir then lk.rmTree(doc_dir, true) else lk.rmTree(doc_dir .. '/xml', true) end end end</p>
                     <p>private.execute(self.DOXYGEN_CMD .. ' ' .. doxyfile) end</p>
                     <p>-- A class in a namespace is queried with 'std::string'. -- A 'child' of the Inspector can be anything so we -- have to walk through the files to find what we -- are asked for. -- Object lives at the root of the name space. return self.db:findByFullname(name) end</p>
                     <p>-- Return an interator on all children known to the inspector. return self.db:children() end</p>

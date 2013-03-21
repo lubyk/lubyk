@@ -44,8 +44,8 @@
           <h4 class='method'><span>:</span>setName <code>(name)</code></h4>
           
                     <p class='summary'></p>
-                    <p>local lib     = { type = 'dub.Function', -- C function names to use for the binding function. OP<em>TO</em>NAME = { ['+']  = 'add', ['-']  = 'sub', ['- '] = 'unm', ['<strong>']  = 'mul', ['/']  = 'div', ['=='] = 'eq', ['<']  = 'lt', ['<='] = 'le', ['()'] = 'call', ['[]'] = 'index', -- set with equal ['=']  = 'sete', -- add equal ['+='] = 'adde', -- sub equal ['-='] = 'sube', -- mul equal ['</strong>='] = 'mule', -- div equal ['/='] = 'dive', } } local private = {} lib.<em></em>index   = lib <a href='dub.Function.html'>dub.Function</a>  = lib</p>
-                    <p>--=============================================== dub.Function() setmetatable(lib, { <em></em>call = function(lib, self) self.dub = self.dub or {} self.member = self.parent.is<em>class and not (self.static or self.ctor) self.has</em>defaults = self.params<em>list.first</em>default and true self.header = self.header or self.parent.header if self.has<em>defaults then self.first</em>default = self.params<em>list.first</em>default -- minimal number of arguments self.min<em>arg</em>size = self.first<em>default - 1 else self.min</em>arg<em>size = <a href='#self'>self</a>.params</em>list end setmetatable(self, lib) if not self:setName(self.name) then -- invalid name (usually an unknown operator) return nil end</p>
+                    <p>local lib     = { type = 'dub.Function', -- C function names to use for the binding function. OP_TO_NAME = { ['+']  = 'add', ['-']  = 'sub', ['- '] = 'unm', ['<strong>']  = 'mul', ['/']  = 'div', ['=='] = 'eq', ['<']  = 'lt', ['<='] = 'le', ['()'] = 'call', ['[]'] = 'index', -- set with equal ['=']  = 'sete', -- add equal ['+='] = 'adde', -- sub equal ['-='] = 'sube', -- mul equal ['</strong>='] = 'mule', -- div equal ['/='] = 'dive', } } local private = {} lib.__index   = lib <a href='dub.Function.html'>dub.Function</a>  = lib</p>
+                    <p>--=============================================== dub.Function() setmetatable(lib, { __call = function(lib, self) self.dub = self.dub or {} self.member = self.parent.is_class and not (self.static or self.ctor) self.has_defaults = self.params_list.first_default and true self.header = self.header or self.parent.header if self.has_defaults then self.first_default = self.params_list.first_default -- minimal number of arguments self.min_arg_size = self.first_default - 1 else self.min_arg_size = <a href='#self'>self</a>.params_list end setmetatable(self, lib) if not self:setName(self.name) then -- invalid name (usually an unknown operator) return nil end</p>
                     <pre class='prettyprint lang-lua'>if self.db:ignored(self:fullname()) or
    self.dub.ignore == true or
    (self.parent.is_class and self.parent:ignoreFunc(self.name)) then
@@ -58,11 +58,11 @@ return self</pre>
                     <p>--=============================================== PUBLIC METHODS</p>
                     <p>--- Return an iterator over the params of this function. local co = coroutine.create(private.paramsIterator) return function() local ok, value = coroutine.resume(co, self) if ok then return value end end end</p>
                     <p>return self.definition .. self.argsstring end</p>
-                    <p>-- Full name for function. lib.fullname = <a href='dub.Class.html'>dub.Class</a>.fullname</p>
+                    <p>-- Full name for function. lib.fullname = <a href='dub.Class.html#fullname'>dub.Class#fullname</a></p>
                     <p>-- Full C name for function. if self.parent and self.parent.name then return self.parent:fullname() .. '::' .. self.cname else return self.cname end end</p>
-                    <p>-- TODO: inspect xml return self.is<em>set</em>attr or self.is<em>get</em>attr or self.is_cast end</p>
-                    <p>self.name = name if string.match(self.name, '^~') then self.destructor = true self.cname = string.gsub(self.name, '~', '<em>') elseif string.match(name, '^operator') then local n = string.match(name, '^operator(.+)$') local op = self.OP</em>TO<em>NAME[n] if op then self.cname = 'operator</em>' .. op else return false end else self.cname = self.name end return true end --=============================================== PRIVATE</p>
-                    <p>function private:paramsIterator() for <em>, param in ipairs(self.params</em>list) do coroutine.yield(param) end end</p>
+                    <p>-- TODO: inspect xml return self.is_set_attr or self.is_get_attr or self.is_cast end</p>
+                    <p>self.name = name if string.match(self.name, '^~') then self.destructor = true self.cname = string.gsub(self.name, '~', '_') elseif string.match(name, '^operator') then local n = string.match(name, '^operator(.+)$') local op = self.OP_TO_NAME[n] if op then self.cname = 'operator_' .. op else return false end else self.cname = self.name end return true end --=============================================== PRIVATE</p>
+                    <p>function private:paramsIterator() for _, param in ipairs(self.params_list) do coroutine.yield(param) end end</p>
                               </section>
                   </div>
 

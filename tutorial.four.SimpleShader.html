@@ -34,8 +34,12 @@
                         <li><a href='#SimpleShader'><i class='icon-chevron-right'></i> tutorial.four.SimpleShader</a></li>
                         <li><a href='#Require'><i class='icon-chevron-right'></i> Require</a></li>
                         <li><a href='#Geometry'><i class='icon-chevron-right'></i> Geometry</a></li>
+                        <li><a href='#Renderer'><i class='icon-chevron-right'></i> Renderer</a></li>
+                        <li><a href='#Camera'><i class='icon-chevron-right'></i> Camera</a></li>
                         <li><a href='#Effect'><i class='icon-chevron-right'></i> Effect</a></li>
+                        <li><a href='#Renderable'><i class='icon-chevron-right'></i> Renderable</a></li>
                         <li><a href='#Window'><i class='icon-chevron-right'></i> Window</a></li>
+                        <li><a href='#Runtime'><i class='icon-chevron-right'></i> Runtime</a></li>
                       </ul>
         </div>
 
@@ -50,7 +54,6 @@
                     <p>Note that you must run this example with <code>luajit</code> since plain lua is not supported by four.</p>
                     <h4 class='sub-title'>Download source</h4>
                     <p><a href='examples/SimpleShader.lua'>SimpleShader.lua</a></p>
-                    <p></p>
                               </section>
                     <section id='Require'>
           <h2 class='section'>Require</h2>
@@ -92,15 +95,17 @@ local SATURATION = 0.4
              scalar_type = four.Buffer.UNSIGNED_INT }
 </pre>
                               
-                    <p>Create four vertices, one for each corner</p>
-                    <pre>(-1, 1)              (1, 1)
+                    <p>The drawing shows the coordinates and index values that we will use when filling the index.</p>
+                    <pre class='txt ascii'>(-1, 1)              (1, 1)
   +--------------------+
   | 2                3 |
   |                    |
   |                    |
   | 0                1 |
   +--------------------+
-(-1,-1)              (1, -1)</pre>
+(-1,-1)              (1, -1)
+</pre>
+                    <p>Create four vertices, one for each corner.</p>
                               
                     <pre class='prettyprint lang-lua'>  vb:push3D(-1.0, -1.0, 0.0)
   vb:push3D( 1.0, -1.0, 0.0)
@@ -122,107 +127,109 @@ local SATURATION = 0.4
   ib:push3D(1, 3, 2)
 </pre>
                               
-                    <p>Create the actual geometry object with <a href='four.Geometry.html'>four.Geometry</a>.</p>
+                    <p>Create the actual geometry object with <a href='four.Geometry.html'>four.Geometry</a>. Set the primitive to triangles and set index and data with the buffered we just prepared.</p>
                               
-                    <pre class='prettyprint lang-lua'>  return four.Geometry {</pre>
-                              
-                    <p>Declare the type of primitive to use (triangle here).</p>
-                              
-                    <pre class='prettyprint lang-lua'>    primitive = four.Geometry.TRIANGLE, </pre>
-                              
-                    <p>Declare the index buffer.</p>
-                              
-                    <pre class='prettyprint lang-lua'>    index = ib,</pre>
-                              
-                    <p>And set data with vertex and color information.</p>
-                              
-                    <pre class='prettyprint lang-lua'>    data = { vertex = vb, color = cb}
+                    <pre class='prettyprint lang-lua'>  return four.Geometry {
+    primitive = four.Geometry.TRIANGLE, 
+    index = ib,
+    data = { vertex = vb, color = cb}
   }
-end -- local function square()
 </pre>
                               
+                    <p>End of the local <code>square()</code> function definition.</p>
+                              
+                    <pre class='prettyprint lang-lua'>end
+</pre>
+                              </section>
+                    <section id='Renderer'>
+          <h2 class='section'>Renderer</h2>
+
+                    
                     <p>Create the renderer with <a href='four.Renderer.html'>four.Renderer</a>.</p>
                               
-                    <pre class='prettyprint lang-lua'>renderer = four.Renderer { size = four.V2(WIN_SIZE.w, WIN_SIZE.h) }
+                    <pre class='prettyprint lang-lua'>renderer = four.Renderer {
+  size = four.V2(WIN_SIZE.w, WIN_SIZE.h),
+}
 </pre>
-                              
+                              </section>
+                    <section id='Camera'>
+          <h2 class='section'>Camera</h2>
+
+                    
                     <p>Use <a href='four.Camera.html'>four.Camera</a> to create a simple camera.</p>
                               
                     <pre class='prettyprint lang-lua'>camera = four.Camera()
-</pre>
-                              
-                    <p>This is our renderable (an object that contains enough information to be rendered by four.</p>
-                              
-                    <pre class='prettyprint lang-lua'>obj = {</pre>
-                              
-                    <p>This is a uniform declaration. The value of this variable will be accessible in the shader (see <a href='#Effect'>Effect</a> below).</p>
-                              
-                    <pre class='prettyprint lang-lua'>  saturation = SATURATION,</pre>
-                              
-                    <p>Set geometry by calling the method defined above.</p>
-                              
-                    <pre class='prettyprint lang-lua'>  geometry   = square(),
-}
 </pre>
                               </section>
                     <section id='Effect'>
           <h2 class='section'>Effect</h2>
 
                     
-                    <p>We create a new <a href='four.Effect.html'>four.Effect</a> that will process our geometry and make something nice out of it. Apart from the uniforms declaration with <code>default_uniforms</code>, the rest is simply GLSL code.</p>
+                    <p>We create a new <a href='four.Effect.html'>four.Effect</a> that will process our geometry and make something nice out of it.</p>
+                    <p><code>default_uniforms</code> declares the uniforms and sets default values in case the renderable (in our case <code>obj</code>) does not redefine these values.</p>
+                    <p>The special value <a href='four.Effect.html#RENDER_FRAME_START_TIME'>RENDER_FRAME_START_TIME</a> set for <code>time</code> will give use the current time in seconds (0 = script start).</p>
                               
-                    <pre class='prettyprint lang-lua'>obj.effect = four.Effect {</pre>
-                              
-                    <p>This declares the uniforms and sets default values in case the renderable (in our case <code>obj</code>) does not redefine these values.</p>
-                              
-                    <pre class='prettyprint lang-lua'>  default_uniforms = {
-    saturation = 0.5,</pre>
-                              
-                    <p>This gives a 'time' uniform to our effect that reflects time in seconds (0 = script start).</p>
-                              
-                    <pre class='prettyprint lang-lua'>    time = four.Effect.RENDER_FRAME_START_TIME,
+                    <pre class='prettyprint lang-lua'>local effect = four.Effect {
+  default_uniforms = {
+    saturation = 0.5,
+    time = four.Effect.RENDER_FRAME_START_TIME,
   },
+}
 </pre>
                               
                     <p>Define the vertex shader. This shader simply passes values along to the fragment shader.</p>
                               
-                    <pre class='prettyprint lang-lua'>  vertex = four.Effect.Shader [[
-    in vec4 vertex;
-    in vec4 color;
-    out vec4 v_vertex;
-    // ignore color
-    // out vec4 v_color;
-    void main()
-    {
-      v_vertex = vertex;
-      // v_color  = color;
-      gl_Position = vertex;
-    }
-  ]],
+                    <pre class='prettyprint lang-lua'>effect.vertex = four.Effect.Shader [[
+  in vec4 vertex;
+  in vec4 color;
+  out vec4 v_vertex;
+  // ignore color
+  // out vec4 v_color;
+  void main()
+  {
+    v_vertex = vertex;
+    // v_color  = color;
+    gl_Position = vertex;
+  }
+]],
   </pre>
                               
                     <p>Define the fragment shader. This shader simply creates periodic colors based on pixel position and time.</p>
                               
-                    <pre class='prettyprint lang-lua'>  fragment = four.Effect.Shader [[
-    in vec4 v_vertex;
-    in vec4 v_color;
+                    <pre class='prettyprint lang-lua'>effect.fragment = four.Effect.Shader [[
+  in vec4 v_vertex;
+  in vec4 v_color;
 
-    // These uniform names must reflect the default_uniforms that we declared.
-    uniform float saturation;
-    uniform float time;
-    float t = time;
+  // These uniform names must reflect the default_uniforms that we declared.
+  uniform float saturation;
+  uniform float time;
+  float t = time;
 
-    out vec4 color;
+  out vec4 color;
 
-    void main() {
+  void main() {
 
-      vec4 v = 20 * (v_vertex + vec4(sin(t/10), sin(t/20), sin(t/30), 0.0));
-      float r = saturation + 0.25 * (sin(v.x) + sin(v.y));
-      float g = saturation + 0.25 * (sin(2*v.x) + sin(v.y));
-      float b = saturation + 0.25 * (sin(3*v.x) + sin(v.y));
-      color = vec4(b, r, g, 1);
-    }
-  ]]
+    vec4 v = 20 * (v_vertex + vec4(sin(t/10), sin(t/20), sin(t/30), 0.0));
+    float r = saturation + 0.25 * (sin(v.x) + sin(v.y));
+    float g = saturation + 0.25 * (sin(2*v.x) + sin(v.y));
+    float b = saturation + 0.25 * (sin(3*v.x) + sin(v.y));
+    color = vec4(b, r, g, 1);
+  }
+]]
+</pre>
+                              </section>
+                    <section id='Renderable'>
+          <h2 class='section'>Renderable</h2>
+
+                    
+                    <p>Create a simple renderable object. In four, a renderable is a table that contains enough information to be rendered.</p>
+                    <p>The @saturation@ parameter is a uniform declaration. The value of this variable will be accessible in the shader (see <a href='#Effect'>Effect</a> below).</p>
+                    <p>We set the geometry to the fullscreen square by calling our function and assign our simple effect.</p>
+                              
+                    <pre class='prettyprint lang-lua'>obj = {
+  saturation = SATURATION,
+  geometry   = square(),
+  effect     = effect,
 }
 </pre>
                               </section>
@@ -234,20 +241,14 @@ end -- local function square()
                               
                     <pre class='prettyprint lang-lua'>win = mimas.GLWindow()
 win:resize(WIN_SIZE.w, WIN_SIZE.h)
-win:move(WIN_POS.x, WIN_POS.y)</pre>
-                              
-                    <p>Show the window</p>
-                              
-                    <pre class='prettyprint lang-lua'>win:show()
+win:move(WIN_POS.x, WIN_POS.y)
 </pre>
                               
                     <p>We then setup some simple keyboard actions to toggle fullscreen with the space bar.</p>
-                              
-                    <pre class='prettyprint lang-lua'>function win:keyboard(key, press)</pre>
-                              
                     <p>Only react to key press (press = true).</p>
                               
-                    <pre class='prettyprint lang-lua'>  if key == mimas.Key_Space and press then
+                    <pre class='prettyprint lang-lua'>function win:keyboard(key, press)
+  if key == mimas.Key_Space and press then
     win:swapFullScreen()
   end
 end
@@ -260,13 +261,10 @@ end
 end
 </pre>
                               
-                    <p>OpenGL initialize function.</p>
+                    <p>OpenGL initialize function is called only once. We simply use it to log render engine information.</p>
                               
-                    <pre class='prettyprint lang-lua'>function win:initializeGL()</pre>
-                              
-                    <p>What do this do ?</p>
-                              
-                    <pre class='prettyprint lang-lua'>  renderer:logInfo()
+                    <pre class='prettyprint lang-lua'>function win:initializeGL()
+  renderer:logInfo()
 end  
 </pre>
                               
@@ -277,15 +275,23 @@ end
 end
 </pre>
                               
+                    <p>Show the window once all the the callbacks are in place.</p>
+                              
+                    <pre class='prettyprint lang-lua'>win:show()
+</pre>
+                              </section>
+                    <section id='Runtime'>
+          <h2 class='section'>Runtime</h2>
+
+                    
+                              
                     <h4 class='sub-title'>Timer</h4>
                     <p>Since our effect is a function of time, we update at 60 Hz. For this we create a timer that asks the window to update every few milliseconds.</p>
-                              
-                    <pre class='prettyprint lang-lua'>timer = lk.Timer(1/60, function()
-  win:update()</pre>
-                              
                     <p>We also change the uniform's saturation with a random value between [0, 0.8] for a stupid blink effect.</p>
                               
-                    <pre class='prettyprint lang-lua'>  obj.saturation = math.random() * 0.8
+                    <pre class='prettyprint lang-lua'>timer = lk.Timer(1/60, function()
+  win:update()
+  obj.saturation = math.random() * 0.8
 end)
 </pre>
                               
@@ -294,6 +300,7 @@ end)
                     <pre class='prettyprint lang-lua'>timer:start()
 </pre>
                               
+                    <h4 class='sub-title'>Run</h4>
                     <p>And finally, run the scheduler (enter main loop).</p>
                               
                     <pre class='prettyprint lang-lua'>run()

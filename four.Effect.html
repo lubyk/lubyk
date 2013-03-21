@@ -51,13 +51,13 @@
                     <p>local isShaderKey = { vertex = true, geometry = true, fragment = true }</p>
                     <p>if k == "shaders" then return rawget(t, k) elseif isShaderKey[k] then return t.shaders[k] else return lib[k] end end</p>
                     <p>if isShaderKey[k] then  local shaders = t.shaders shaders[k] = v  t.program_changed = true else rawset(t, k, v) end end</p>
-                    <p>setmetatable(lib, { <em></em>call = function(lib, ...) return lib.new(...) end})</p>
+                    <p>setmetatable(lib, { __call = function(lib, ...) return lib.new(...) end})</p>
                     <p>-- h2. Render states</p>
                     <p>--[[-- h3. Rasterization state</p>
                     <p><strong>Note</strong>. Faces with a counter clock-wise orientation are front faces.</p>
                     <p>Rasterization state is described by a table with the following keys:</p>
                     <ul>
-<li><code>face_cull</code>, faces to cull (defaults to <code>CULL_NONE</code>).</li>
+<li>@face_cull@, faces to cull (defaults to @CULL_NONE@).</li>
 </ul>
                     <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
                                         <a name='defaultRasterization '></a>
@@ -108,16 +108,16 @@
                                         <a name='new'></a>
           <h4 class='function'><span>.</span>new <code>(def)</code></h4>
           
-                    <p><code>Effect(def)</code> is a new effect object. <code>def</code> keys:</p>
+                    <p>@Effect(def)@ is a new effect object. @def@ keys:</p>
                     <ul>
-<li><code>default_uniforms</code>, key/value table, defining default values for uniforms.</li>
-<li><code>uniform</code>, uniform lookup function invoked before rendering a renderable. defaults to <code>function(self, cam, renderable, name) = return  renderable[name]</code>. If the function returns <code>nil</code>, <code>default_uniforms</code> is  used.</li>
-<li><code>vertex</code>, vertex shader source.</li>
-<li><code>geometry</code>, geometry shader source (optional).</li>
-<li><code>fragment</code>, fragment shader source.</li>
-<li><code>depth</code>, depth state keys to override the defaults (see Depth state).</li>
-<li><code>rasterization</code>, rasterization state keys to override the defaults  (see Rasterization state).</li>
-<li><code>opaque</code>, defines whether the effect is opaque. Renderables with  opaque effects are rendered before non-opaque ones.</li>
+<li>@default_uniforms@, key/value table, defining default values for uniforms.</li>
+<li>@uniform@, uniform lookup function invoked before rendering a renderable. defaults to @function(self, cam, renderable, name) = return  renderable[name]@. If the function returns @nil@, @default_uniforms@ is  used.</li>
+<li>@vertex@, vertex shader source.</li>
+<li>@geometry@, geometry shader source (optional).</li>
+<li>@fragment@, fragment shader source.</li>
+<li>@depth@, depth state keys to override the defaults (see Depth state).</li>
+<li>@rasterization@, rasterization state keys to override the defaults  (see Rasterization state).</li>
+<li>@opaque@, defines whether the effect is opaque. Renderables with  opaque effects are rendered before non-opaque ones.</li>
 </ul>
                                         <a name='set'></a>
           <h4 class='method'><span>:</span>set <code>(def)</code></h4>
@@ -183,11 +183,11 @@
                                         <a name='Normals'></a>
           <h4 class='function'><span>.</span>Normals <code>(def)</code></h4>
           
-                    <p><code>Normals(def)</code> renders the normals of geometry.</p>
+                    <p>@Normals(def)@ renders the normals of geometry.</p>
                     <ul>
-<li><code>normal_scale</code>, a scale factor to apply to the normals.</li>
-<li><code>normal_color_start</code>, color at the starting point of the vector.</li>
-<li><code>normal_color_end</code>, color at the end of vector. </li>
+<li>@normal_scale@, a scale factor to apply to the normals.</li>
+<li>@normal_color_start@, color at the starting point of the vector.</li>
+<li>@normal_color_end@, color at the end of vector. </li>
 </ul>
                               </section>
                     <section id='TODO'>

@@ -44,9 +44,9 @@
           <h4 class='function'><span>.</span>__newindex <code>(self, name, func)</code></h4>
           
                     <p class='summary'></p>
-                    <p>-- 'inlet' accessor metamethod local lib = {type='lk.InletMethod'} lib.<em></em>index    = lib <a href='lk.InletMethod.html'>lk.InletMethod</a> = lib</p>
-                    <p>setmetatable(lib, { -- new method <em></em>call = function(lib, node) -- Create inlet() method/accessor for a given node local instance = {node = node} setmetatable(instance, lib) return instance end})</p>
-                    <p>-- inlet.foo(xxx) -- Set an inlet callback local node = assert(self.node) local inlet = node.inlets[name] if not inlet then inlet = node.pending<em>inlets[name] if inlet then node.pending</em>inlets[name] = nil -- Not pending anymore inlet:setNode(node) else -- New inlet inlet = lk.Inlet(node, name) end -- Find inlet by name (not GC protected). node.inlets[name] = inlet end -- Each time we redeclare an inlet, we add it here and GC protect it. table.insert(node.slots.inlets, inlet)</p>
+                    <p>-- 'inlet' accessor metamethod local lib = {type='lk.InletMethod'} lib.__index    = lib <a href='lk.InletMethod.html'>lk.InletMethod</a> = lib</p>
+                    <p>setmetatable(lib, { -- new method __call = function(lib, node) -- Create inlet() method/accessor for a given node local instance = {node = node} setmetatable(instance, lib) return instance end})</p>
+                    <p>-- inlet.foo(xxx) -- Set an inlet callback local node = assert(self.node) local inlet = node.inlets[name] if not inlet then inlet = node.pending_inlets[name] if inlet then node.pending_inlets[name] = nil -- Not pending anymore inlet:setNode(node) else -- New inlet inlet = lk.Inlet(node, name) end -- Find inlet by name (not GC protected). node.inlets[name] = inlet end -- Each time we redeclare an inlet, we add it here and GC protect it. table.insert(node.slots.inlets, inlet)</p>
                               </section>
                   </div>
 

@@ -44,92 +44,92 @@
           <h4 class='function'><span>.</span>Color <code>(r, g, b, a)</code></h4>
           
                     <p class='summary'></p>
-                    <p>local lib = { type = 'four.Color' } lib.<em></em>index = lib <a href='four.Color.html'>four.Color</a> = lib setmetatable(lib, { <em></em>call = function(lib, ...) return  lib.Color(...) end })</p>
+                    <p>local lib = { type = 'four.Color' } lib.__index = lib <a href='four.Color.html'>four.Color</a> = lib setmetatable(lib, { __call = function(lib, ...) return  lib.Color(...) end })</p>
                     <p>local V4 = four.V4</p>
                     <p>-- h2. Constructors and accessors</p>
-                    <p>--[[-- <code>Color(r, g, b [,a])</code> is a color with the corresponding components. <code>a</code> is <code>1</code> if unspecified.</p>
-                    <p><code>Color(o)</code> is a color converted from the object <code>o</code>. Supported types for <code>o</code>: none.</p>
+                    <p>--[[-- @Color(r, g, b [,a])@ is a color with the corresponding components. @a@ is @1@ if unspecified.</p>
+                    <p>@Color(o)@ is a color converted from the object @o@. Supported types for @o@: none.</p>
                                         <a name='HSV'></a>
           <h4 class='function'><span>.</span>HSV <code>(h, s, v, a)</code></h4>
           
-                    <p><code>HSV(h, s, v [,a])</code> is an RGBA color with hue <code>h</code>, staturation <code>s</code>, and value <code>v</code>. <code>a</code> is <code>1</code> if unspecified.</p>
-                    <p><strong>Important</strong> HSV components are all in the <code>0</code> to <code>1</code> range.</p>
+                    <p>@HSV(h, s, v [,a])@ is an RGBA color with hue @h@, staturation @s@, and value @v@. @a@ is @1@ if unspecified.</p>
+                    <p><strong>Important</strong> HSV components are all in the @0@ to @1@ range.</p>
                                         <a name='r'></a>
           <h4 class='function'><span>.</span>r <code>(c)</code></h4>
           
-                    <p><code>r(c)</code> is the <code>r</code> component of <code>c</code>.</p>
+                    <p>@r(c)@ is the @r@ component of @c@.</p>
                                         <a name='g'></a>
           <h4 class='function'><span>.</span>g <code>(c)</code></h4>
           
-                    <p><code>g(c)</code> is the <code>g</code> component of <code>c</code>.</p>
+                    <p>@g(c)@ is the @g@ component of @c@.</p>
                                         <a name='b'></a>
           <h4 class='function'><span>.</span>b <code>(c)</code></h4>
           
-                    <p><code>b(c)</code> is the <code>b</code> component of <code>c</code>.</p>
+                    <p>@b(c)@ is the @b@ component of @c@.</p>
                                         <a name='a'></a>
           <h4 class='function'><span>.</span>a <code>(c)</code></h4>
           
-                    <p><code>a(c)</code> is the <code>a</code> component of <code>c</code>.</p>
+                    <p>@a(c)@ is the @a@ component of @c@.</p>
                                         <a name='h'></a>
           <h4 class='function'><span>.</span>h <code>(c)</code></h4>
           
-                    <p><code>h(c)</code> is the hue component of <code>c</code>.</p>
+                    <p>@h(c)@ is the hue component of @c@.</p>
                                         <a name='s'></a>
           <h4 class='function'><span>.</span>s <code>(c)</code></h4>
           
-                    <p><code>s(c)</code> is the staturation component of <code>c</code>.</p>
+                    <p>@s(c)@ is the staturation component of @c@.</p>
                                         <a name='v'></a>
           <h4 class='function'><span>.</span>v <code>(c)</code></h4>
           
-                    <p><code>v(c)</code> is the value component of <code>c</code>.</p>
+                    <p>@v(c)@ is the value component of @c@.</p>
                                         <a name='toHSV'></a>
           <h4 class='function'><span>.</span>toHSV <code>(c)</code></h4>
           
-                    <p><code>toHSV(c) is V4(h, s, v, a), the HSV components of </code>c@. </p>
+                    <p>@toHSV(c) is V4(h, s, v, a), the HSV components of @c@. </p>
                                         <a name='tuple'></a>
           <h4 class='param'><span>.</span>tuple <code>= V4.tuple</code></h4>
           
-                    <p><code>tuple(c)</code> is <code>r, g, b, a</code>, the components of <code>c</code>.</p>
+                    <p>@tuple(c)@ is @r, g, b, a@, the components of @c@.</p>
                                         <a name='tupleHSV'></a>
           <h4 class='function'><span>.</span>tupleHSV <code>(c)</code></h4>
           
-                    <p><code>tupleHSV(c)</code> is <code>h, s, v, a</code> the components of <code>c</code>.</p>
+                    <p>@tupleHSV(c)@ is @h, s, v, a@ the components of @c@.</p>
                                         <a name='tostring'></a>
           <h4 class='param'><span>.</span>tostring <code>= V4.tostring</code></h4>
           
-                    <p><code>tostring(c)</code> is a textual representation of <code>c</code>.</p>
+                    <p>@tostring(c)@ is a textual representation of @c@.</p>
                                         <a name='tostringHSV'></a>
           <h4 class='function'><span>.</span>tostringHSV <code>(c)</code></h4>
           
-                    <p><code>tostringHSV(c)</code> is a textual representation of <code>c</code>.</p>
+                    <p>@tostringHSV(c)@ is a textual representation of @c@.</p>
                                         <a name='void '></a>
           <h4 class='function'><span>.</span>void  <code>()</code></h4>
           
-                    <p><code>void()</code> is <code>Color(0, 0, 0, 0)</code>.</p>
+                    <p>@void()@ is @Color(0, 0, 0, 0)@.</p>
                                         <a name='black '></a>
           <h4 class='function'><span>.</span>black  <code>()</code></h4>
           
-                    <p><code>black()</code> is <code>Color(0, 0, 0, 1)</code>.</p>
+                    <p>@black()@ is @Color(0, 0, 0, 1)@.</p>
                                         <a name='white '></a>
           <h4 class='function'><span>.</span>white  <code>()</code></h4>
           
-                    <p><code>white()</code> is <code>Color(1, 1, 1, 1)</code>.</p>
+                    <p>@white()@ is @Color(1, 1, 1, 1)@.</p>
                                         <a name='gray'></a>
           <h4 class='function'><span>.</span>gray <code>(g, a)</code></h4>
           
-                    <p><code>gray(g [,a])</code> is <code>Color(g, g, g, a)</code>. <code>a</code> is <code>1</code> if unspecified.</p>
+                    <p>@gray(g [,a])@ is @Color(g, g, g, a)@. @a@ is @1@ if unspecified.</p>
                                         <a name='red'></a>
           <h4 class='function'><span>.</span>red <code>(a)</code></h4>
           
-                    <p><code>red([,a])</code> is <code>Color(1, 0, 0, a)</code>. <code>a</code> is <code>1</code> if unspecified.</p>
+                    <p>@red([,a])@ is @Color(1, 0, 0, a)@. @a@ is @1@ if unspecified.</p>
                                         <a name='green'></a>
           <h4 class='function'><span>.</span>green <code>(a)</code></h4>
           
-                    <p><code>green([,a])</code> is <code>Color(0, 1, 0, a)</code>. <code>a</code> is <code>1</code> if unspecified.</p>
+                    <p>@green([,a])@ is @Color(0, 1, 0, a)@. @a@ is @1@ if unspecified.</p>
                                         <a name='blue'></a>
           <h4 class='function'><span>.</span>blue <code>(a)</code></h4>
           
-                    <p><code>blue([,a])</code> is <code>Color(0, 0, 1, a)</code>. <code>a</code> is <code>1</code> if unspecified.</p>
+                    <p>@blue([,a])@ is @Color(0, 0, 1, a)@. @a@ is @1@ if unspecified.</p>
                               </section>
                   </div>
 

@@ -46,37 +46,37 @@
           
                     <p class='summary'></p>
                     <p>-- Module definition</p>
-                    <p>local lib = { type = 'four.Texture' } lib.<em></em>index = lib <a href='four.Texture.html'>four.Texture</a> = lib setmetatable(lib, { <em></em>call = function(lib, ...) return lib.new(...) end})</p>
+                    <p>local lib = { type = 'four.Texture' } lib.__index = lib <a href='four.Texture.html'>four.Texture</a> = lib setmetatable(lib, { __call = function(lib, ...) return lib.new(...) end})</p>
                     <p>-- h2. Texture type</p>
-                    <p>lib.TYPE<em>1D = 1 lib.TYPE</em>2D = 2 lib.TYPE<em>3D = 3 lib.TYPE</em>BUFFER = 4 -- TODO lib.TYPE<em>CUBE</em>MAP = 4 </p>
+                    <p>lib.TYPE_1D = 1 lib.TYPE_2D = 2 lib.TYPE_3D = 3 lib.TYPE_BUFFER = 4 -- TODO lib.TYPE_CUBE_MAP = 4 </p>
                     <p>-- h2. Texture filtering</p>
-                    <p>lib.MIN<em>NEAREST = 1 lib.MIN</em>LINEAR = 2 lib.MIN<em>NEAREST</em>MIPMAP<em>NEAREST = 3 lib.MIN</em>LINEAR<em>MIPMAP</em>NEAREST = 4 lib.MIN<em>NEAREST</em>MIPMAP<em>LINEAR = 5 lib.MIN</em>LINEAR<em>MIPMAP</em>LINEAR = 6</p>
-                    <p>lib.MAG<em>NEAREST = 7 lib.MAG</em>LINEAR = 8</p>
+                    <p>lib.MIN_NEAREST = 1 lib.MIN_LINEAR = 2 lib.MIN_NEAREST_MIPMAP_NEAREST = 3 lib.MIN_LINEAR_MIPMAP_NEAREST = 4 lib.MIN_NEAREST_MIPMAP_LINEAR = 5 lib.MIN_LINEAR_MIPMAP_LINEAR = 6</p>
+                    <p>lib.MAG_NEAREST = 7 lib.MAG_LINEAR = 8</p>
                     <p>-- h2. Texture wrapping</p>
-                    <p>lib.WRAP<em>CLAMP</em>TO<em>EDGE = 1 lib.WRAP</em>REPEAT = 2</p>
-                    <p>-- h2. Texture internal format -- A selection from http://www.opengl.org/wiki/Image<em>Formats#Required</em>formats -- More could be added. -- Suffixes -- <strong> UN, unsigned normalized -- </strong> F, floating point</p>
-                    <p>lib.R<em>8UN = 1 lib.R</em>32F = 2</p>
-                    <p>lib.RG<em>8UN = 3 lib.RG</em>32F = 4</p>
-                    <p>lib.RGB<em>8UN = 5 lib.RGB</em>32F = 6</p>
-                    <p>lib.RGBA<em>8UN = 7 lib.RGBA</em>32F = 8</p>
-                    <p>lib.SRGB<em>8UN = 9 lib.SRGBA</em>8UN = 10</p>
-                    <p>lib.DEPTH<em>24UN = 11 lib.DEPTH</em>STENCIL<em>24UN</em>8UN = 12 lib.DEPTH<em>32F = 13 lib.DEPTH</em>STENCIL<em>32F</em>8UN = 14</p>
-                    <p>--[[-- <code>Texture(def)</code> is a new texture object. <code>def</code> keys:</p>
+                    <p>lib.WRAP_CLAMP_TO_EDGE = 1 lib.WRAP_REPEAT = 2</p>
+                    <p>-- h2. Texture internal format -- A selection from http://www.opengl.org/wiki/Image_Formats#Required_formats -- More could be added. -- Suffixes -- <strong> UN, unsigned normalized -- </strong> F, floating point</p>
+                    <p>lib.R_8UN = 1 lib.R_32F = 2</p>
+                    <p>lib.RG_8UN = 3 lib.RG_32F = 4</p>
+                    <p>lib.RGB_8UN = 5 lib.RGB_32F = 6</p>
+                    <p>lib.RGBA_8UN = 7 lib.RGBA_32F = 8</p>
+                    <p>lib.SRGB_8UN = 9 lib.SRGBA_8UN = 10</p>
+                    <p>lib.DEPTH_24UN = 11 lib.DEPTH_STENCIL_24UN_8UN = 12 lib.DEPTH_32F = 13 lib.DEPTH_STENCIL_32F_8UN = 14</p>
+                    <p>--[[-- @Texture(def)@ is a new texture object. @def@ keys:</p>
                     <ul>
-<li><code>type</code>, the texture type (defaults to <code>TYPE_2D</code>). </li>
-<li><code>size</code>, the dimensions of the texture as a V3 vector (width, height, depth). <strong>Note</strong> a 1D texture of width <code>w</code> has a size <code>V3(w, 1, 1)</code>.  <strong>Note</strong> Irrelevant for <code>TYPE_BUFFER</code>.</li>
-<li><code>internal_format</code>, the internal format (defaults to <code>RGBA8UI</code>). Together with <code>size</code> (if applicable) implicetly defines the scalar  length of data. Should be number of components <strong> size.x </strong> size.y <strong> size.d. </strong>Warning* for <code>TYPE_BUFFER</code>, 3 components formats need  <code>GL_ARB_texture_buffer_object_rgb32</code>, but seems to work on OSX.</li>
-<li><code>wrap_s</code>, wrapping behaviour along <code>s</code> dimension  (defaults to <code>WRAP_REPEAT</code>). </li>
-<li><code>wrap_t</code>, wrapping behaviour along <code>t</code> dimension (if applicable,  defaults to <code>WRAP_REPEAT</code>). </li>
-<li><code>wrap_r</code>, wrapping behaviour along <code>r</code> dimension (if applicable,  defaults to <code>WRAP_REPEAT</code>).</li>
-<li><code>min_filter</code>, minification filter (defaults to <code>MIN_NEAREST_MIPMAP_LINEAR</code>).</li>
-<li><code>mag_filter</code>, magnificiation filter (defaults to <code>MAG_NEAREST</code>). </li>
-<li><code>generate_mipmaps</code>, <code>true</code> if mipmaps should be generated  (defaults to <code>false</code>). </li>
-<li><code>data</code>, a Buffer object with the image data (pixel by pixel in row order,  then layer order, the first pixel of the buffer is the image's lower left  frontmost pixel. Can be nil if you don't want to specify image data (e.g. for render to texture) but not for <code>TYPE_BUFFER</code>. </li>
+<li>@type@, the texture type (defaults to @TYPE_2D@). </li>
+<li>@size@, the dimensions of the texture as a V3 vector (width, height, depth). <strong>Note</strong> a 1D texture of width @w@ has a size @V3(w, 1, 1)@.  <strong>Note</strong> Irrelevant for @TYPE_BUFFER@.</li>
+<li>@internal_format@, the internal format (defaults to @RGBA8UI@). Together with @size@ (if applicable) implicetly defines the scalar  length of data. Should be number of components <strong> size.x </strong> size.y <strong> size.d. </strong>Warning* for @TYPE_BUFFER@, 3 components formats need  @GL_ARB_texture_buffer_object_rgb32@, but seems to work on OSX.</li>
+<li>@wrap_s@, wrapping behaviour along @s@ dimension  (defaults to @WRAP_REPEAT@). </li>
+<li>@wrap_t@, wrapping behaviour along @t@ dimension (if applicable,  defaults to @WRAP_REPEAT@). </li>
+<li>@wrap_r@, wrapping behaviour along @r@ dimension (if applicable,  defaults to @WRAP_REPEAT@).</li>
+<li>@min_filter@, minification filter (defaults to @MIN_NEAREST_MIPMAP_LINEAR@).</li>
+<li>@mag_filter@, magnificiation filter (defaults to @MAG_NEAREST@). </li>
+<li>@generate_mipmaps@, @true@ if mipmaps should be generated  (defaults to @false@). </li>
+<li>@data@, a Buffer object with the image data (pixel by pixel in row order,  then layer order, the first pixel of the buffer is the image's lower left  frontmost pixel. Can be nil if you don't want to specify image data (e.g. for render to texture) but not for @TYPE_BUFFER@. </li>
 </ul>
                     <p class='todo'><span>TODO</span> if array cube map, images of a cube map in given order.</p>
                     <ul>
-<li><code>updated</code>, if <code>true</code>, <code>data</code> will be read again by the renderer. The renderer sets the flag to <code>false</code> once he read the data.</li>
+<li>@updated@, if @true@, @data@ will be read again by the renderer. The renderer sets the flag to @false@ once he read the data.</li>
 </ul>
                                         <a name='set'></a>
           <h4 class='method'><span>:</span>set <code>(def)</code></h4>

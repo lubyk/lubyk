@@ -9,7 +9,7 @@
 
   ![effect screenshot](img/four_simple.png)
 
-  Note that you must run this example with @luajit@ since plain lua is not
+  Note that you must run this example with `luajit` since plain lua is not
   supported by four.
 
   ## Download source
@@ -41,13 +41,14 @@ local function square()
   -- Color buffer (colors for each coordinate).
   local cb = four.Buffer { dim = 4,
              scalar_type = four.Buffer.FLOAT }
-  -- Index buffer (actual triangles defined with vertices in @vb@).
+  -- Index buffer (actual triangles defined with vertices in `vb`).
   local ib = four.Buffer { dim = 1,
              scalar_type = four.Buffer.UNSIGNED_INT }
 
-  -- Create four vertices, one for each corner
+  -- The drawing shows the coordinates and index values that we will use
+  -- when filling the index.
   --
-  --   #txt
+  --   #txt ascii
   --   (-1, 1)              (1, 1)
   --     +--------------------+
   --     | 2                3 |
@@ -56,6 +57,8 @@ local function square()
   --     | 0                1 |
   --     +--------------------+
   --   (-1,-1)              (1, -1)
+  --
+  -- Create four vertices, one for each corner.
   vb:push3D(-1.0, -1.0, 0.0)
   vb:push3D( 1.0, -1.0, 0.0)
   vb:push3D(-1.0,  1.0, 0.0)
@@ -73,86 +76,99 @@ local function square()
   ib:push3D(0, 1, 2)
   ib:push3D(1, 3, 2)
 
-  -- Create the actual geometry object with four.Geometry.
+  -- Create the actual geometry object with four.Geometry. Set the primitive
+  -- to triangles and set index and data with the buffered we just prepared.
   return four.Geometry {
-    -- Declare the type of primitive to use (triangle here).
     primitive = four.Geometry.TRIANGLE, 
-    -- Declare the index buffer.
     index = ib,
-    -- And set data with vertex and color information.
     data = { vertex = vb, color = cb}
   }
-end -- local function square()
 
+  -- End of the local `square()` function definition.
+end
+
+-- # Renderer
+--
 -- Create the renderer with four.Renderer.
-renderer = four.Renderer { size = four.V2(WIN_SIZE.w, WIN_SIZE.h) }
+renderer = four.Renderer {
+  size = four.V2(WIN_SIZE.w, WIN_SIZE.h),
+}
 
+-- # Camera
+--
 -- Use four.Camera to create a simple camera.
 camera = four.Camera()
-
--- This is our renderable (an object that contains enough information to be
--- rendered by four.
-obj = {
-  -- This is a uniform declaration. The value of this variable will be
-  -- accessible in the shader (see #Effect below).
-  saturation = SATURATION,
-  -- Set geometry by calling the method defined above.
-  geometry   = square(),
-}
 
 -- # Effect
 --
 -- We create a new four.Effect that will process our geometry and make
--- something nice out of it. Apart from the uniforms declaration with
--- @default_uniforms@, the rest is simply GLSL code.
-obj.effect = four.Effect {
-  -- This declares the uniforms and sets default values in case the renderable
-  -- (in our case @obj@) does not redefine these values.
+-- something nice out of it.
+--
+-- `default_uniforms` declares the uniforms and sets default values in case
+-- the renderable (in our case `obj`) does not redefine these values.
+--
+-- The special value [RENDER_FRAME_START_TIME](four.Effect.html#RENDER_FRAME_START_TIME) set for `time` will
+-- give use the current time in seconds (0 = script start).
+local effect = four.Effect {
   default_uniforms = {
     saturation = 0.5,
-    -- This gives a 'time' uniform to our effect that reflects time in seconds
-    -- (0 = script start).
     time = four.Effect.RENDER_FRAME_START_TIME,
   },
+}
 
-  -- Define the vertex shader. This shader simply passes values along to the
-  -- fragment shader.
-  vertex = four.Effect.Shader [[
-    in vec4 vertex;
-    in vec4 color;
-    out vec4 v_vertex;
-    // ignore color
-    // out vec4 v_color;
-    void main()
-    {
-      v_vertex = vertex;
-      // v_color  = color;
-      gl_Position = vertex;
-    }
-  ]],
+-- Define the vertex shader. This shader simply passes values along to the
+-- fragment shader.
+effect.vertex = four.Effect.Shader [[
+  in vec4 vertex;
+  in vec4 color;
+  out vec4 v_vertex;
+  // ignore color
+  // out vec4 v_color;
+  void main()
+  {
+    v_vertex = vertex;
+    // v_color  = color;
+    gl_Position = vertex;
+  }
+]],
   
-  -- Define the fragment shader. This shader simply creates periodic colors
-  -- based on pixel position and time.
-  fragment = four.Effect.Shader [[
-    in vec4 v_vertex;
-    in vec4 v_color;
+-- Define the fragment shader. This shader simply creates periodic colors
+-- based on pixel position and time.
+effect.fragment = four.Effect.Shader [[
+  in vec4 v_vertex;
+  in vec4 v_color;
 
-    // These uniform names must reflect the default_uniforms that we declared.
-    uniform float saturation;
-    uniform float time;
-    float t = time;
+  // These uniform names must reflect the default_uniforms that we declared.
+  uniform float saturation;
+  uniform float time;
+  float t = time;
 
-    out vec4 color;
+  out vec4 color;
 
-    void main() {
+  void main() {
 
-      vec4 v = 20 * (v_vertex + vec4(sin(t/10), sin(t/20), sin(t/30), 0.0));
-      float r = saturation + 0.25 * (sin(v.x) + sin(v.y));
-      float g = saturation + 0.25 * (sin(2*v.x) + sin(v.y));
-      float b = saturation + 0.25 * (sin(3*v.x) + sin(v.y));
-      color = vec4(b, r, g, 1);
-    }
-  ]]
+    vec4 v = 20 * (v_vertex + vec4(sin(t/10), sin(t/20), sin(t/30), 0.0));
+    float r = saturation + 0.25 * (sin(v.x) + sin(v.y));
+    float g = saturation + 0.25 * (sin(2*v.x) + sin(v.y));
+    float b = saturation + 0.25 * (sin(3*v.x) + sin(v.y));
+    color = vec4(b, r, g, 1);
+  }
+]]
+
+-- # Renderable
+--
+-- Create a simple renderable object. In four, a renderable is a table that
+-- contains enough information to be rendered.
+--
+-- The @saturation@ parameter is a uniform declaration. The value of this
+-- variable will be accessible in the shader (see #Effect below).
+-- 
+-- We set the geometry to the fullscreen square by calling our function and
+-- assign our simple effect.
+obj = {
+  saturation = SATURATION,
+  geometry   = square(),
+  effect     = effect,
 }
 
 -- # Window
@@ -161,27 +177,26 @@ obj.effect = four.Effect {
 win = mimas.GLWindow()
 win:resize(WIN_SIZE.w, WIN_SIZE.h)
 win:move(WIN_POS.x, WIN_POS.y)
--- Show the window
-win:show()
 
 -- We then setup some simple keyboard actions to toggle fullscreen with
 -- the space bar.
+--
+-- Only react to key press (press = true).
 function win:keyboard(key, press)
-  -- Only react to key press (press = true).
   if key == mimas.Key_Space and press then
     win:swapFullScreen()
   end
 end
 
 -- In case we resize the window, we want our content to scale so we need to
--- update the renderer's @size@ attribute.
+-- update the renderer's `size` attribute.
 function win:resized(w, h)
   renderer.size = four.V2(w, h)
 end
 
--- OpenGL initialize function.
+-- OpenGL initialize function is called only once. We simply use it to log
+-- render engine information.
 function win:initializeGL()
-  -- What do this do ?
   renderer:logInfo()
 end  
 
@@ -191,19 +206,27 @@ function win:paintGL()
   renderer:render(camera, {obj})
 end
 
+-- Show the window once all the the callbacks are in place.
+win:show()
+
+-- # Runtime
+
 -- ## Timer
 -- Since our effect is a function of time, we update at 60 Hz. For this we
 -- create a timer that asks the window to update every few milliseconds.
+--
+-- We also change the uniform's saturation with a random value between
+-- [0, 0.8] for a stupid blink effect.
 timer = lk.Timer(1/60, function()
   win:update()
-  -- We also change the uniform's saturation with a random value between
-  -- [0, 0.8] for a stupid blink effect.
   obj.saturation = math.random() * 0.8
 end)
 
 -- Start the timer.
 timer:start()
 
+-- ## Run
+--
 -- And finally, run the scheduler (enter main loop).
 run()
 

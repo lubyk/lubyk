@@ -44,8 +44,8 @@
           <h4 class='function'><span>.</span>parse <code>(str)</code></h4>
           
                     <p class='summary'></p>
-                    <p>local lib     = { type          = 'dub.OptParser', } local private = {} lib.<em></em>index   = lib <a href='dub.OptParser.html'>dub.OptParser</a> = lib</p>
-                    <p>--=============================================== dub.Class() setmetatable(lib, { <em></em>call = function(lib, str) return lib.parse(str) end })</p>
+                    <p>local lib     = { type          = 'dub.OptParser', } local private = {} lib.__index   = lib <a href='dub.OptParser.html'>dub.OptParser</a> = lib</p>
+                    <p>--=============================================== dub.Class() setmetatable(lib, { __call = function(lib, str) return lib.parse(str) end })</p>
                     <p>local res = {} for line in str:gmatch("[^\r\n]+") do local key, value = line:match(' <strong>([A-Za-z_]+): </strong>(.-) <strong>$') if not key then return nil end local str = value:match('^"(.</strong>)"$') or value:match("^'(.<strong>)'$") if str then -- string value = str elseif value == 'false' then value = false elseif value == 'true' then value = true elseif value:match('^[0-9.]+$') then value = value </strong> 1 elseif value:match(',') then local list = {} for elem in value:gmatch('[^,]+') do elem = private.strip(elem) table.insert(list, elem) list[elem] = true end value = list end</p>
                     <pre class='prettyprint lang-lua'>res[key] = value</pre>
                     <p>end return res end</p>

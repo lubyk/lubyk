@@ -49,7 +49,7 @@
                                         <a name='new'></a>
           <h4 class='function'><span>.</span>new <code>(name)</code></h4>
           
-                    <p>Create a new test suite. It is good practice to use 'should' as local name for this suite since it makes tests more readable. The <code>name</code> should be the exact name of the class or module being tested in case the coverage option is activated in test (it is ON by default).</p>
+                    <p>Create a new test suite. It is good practice to use 'should' as local name for this suite since it makes tests more readable. The @name@ should be the exact name of the class or module being tested in case the coverage option is activated in test (it is ON by default).</p>
                     <p>Usage example:</p>
                     <pre class='prettyprint lang-lua'>local should = test.Suite 'lk.Dir'
 
@@ -61,7 +61,7 @@ end</pre>
           <h2 class='section'>Setup, teardown</h2>
 
                     
-                    <p>If you need to run some code before or after every test, you can define the <code>setup</code> (executed before each test) and/or <code>teardown</code> (executed after each test independantly of success or failure) functions:</p>
+                    <p>If you need to run some code before or after every test, you can define the @setup@ (executed before each test) and/or @teardown@ (executed after each test independantly of success or failure) functions:</p>
                     <pre class='prettyprint lang-lua'>local should = test.Suite 'lk.Dir'
 
 function should.teardown()
@@ -93,7 +93,7 @@ end</pre>
           <h2 class='section'>Run tests</h2>
 
                     
-                    <p>Use <code>test.all()</code> to run the tests in all suites at once. You can append this call at the end of the file to run the test when running the file:</p>
+                    <p>Use @test.all()@ to run the tests in all suites at once. You can append this call at the end of the file to run the test when running the file:</p>
                     <pre class='prettyprint lang-lua'>function should.testLast()
 end
 
@@ -107,19 +107,19 @@ test.all()</pre>
                                         <a name=''></a>
           <h4 class='function'>fail <code>(msg)</code></h4>
           
-                    <p>Force a test to fail with a given <code>msg</code>.</p>
+                    <p>Force a test to fail with a given @msg@.</p>
                                         <a name=''></a>
           <h4 class='function'>assertFalse <code>(ok)</code></h4>
           
-                    <p>Assert that <code>ok</code> is false.</p>
+                    <p>Assert that @ok@ is false.</p>
                                         <a name=''></a>
           <h4 class='function'>assertTrue <code>(ok, msg)</code></h4>
           
-                    <p>Assert that <code>ok</code> is true. If <code>msg</code> exists, it is used in case of failure in place of the default fail message.</p>
+                    <p>Assert that @ok@ is true. If @msg@ exists, it is used in case of failure in place of the default fail message.</p>
                                         <a name=''></a>
           <h4 class='function'>assertEqual <code>(expected, value, resolution, up_count)</code></h4>
           
-                    <p>Assert that <code>value</code> is equal to <code>expected</code>. If <code>expected</code> is a number, the <code>resolution</code> parameter can be used to cope with numerical errors. The actual test for numbers is:</p>
+                    <p>Assert that @value@ is equal to @expected@. If @expected@ is a number, the @resolution@ parameter can be used to cope with numerical errors. The actual test for numbers is:</p>
                     <pre class='prettyprint lang-lua'>local ok = (value &gt;= expected - resolution) and (value &lt;= expected + resolution)
 </pre>
                     <p>For other types, this tests raw equality (same object). To compare table contents, use <a href='#assertValueEqual'>assertValueEqual</a>.</p>
@@ -134,39 +134,39 @@ test.all()</pre>
                                         <a name=''></a>
           <h4 class='function'>assertNotEqual <code>(unexpected, value)</code></h4>
           
-                    <p>Asserts that <code>value</code> is not equal to <code>unexpected</code>.</p>
+                    <p>Asserts that @value@ is not equal to @unexpected@.</p>
                                         <a name=''></a>
           <h4 class='function'>assertMatch <code>(pattern, value)</code></h4>
           
-                    <p>Assert that <code>value</code> matches <code>pattern</code> using <code>string.match</code>.</p>
+                    <p>Assert that @value@ matches @pattern@ using @string.match@.</p>
                                         <a name=''></a>
           <h4 class='function'>assertNotMatch <code>(pattern, value, msg)</code></h4>
           
-                    <p>Assert that <code>value</code> does not match <code>pattern</code>. If <code>msg</code> is provided, use this in case of failure.</p>
+                    <p>Assert that @value@ does not match @pattern@. If @msg@ is provided, use this in case of failure.</p>
                                         <a name=''></a>
           <h4 class='function'>assertError <code>(pattern, func)</code></h4>
           
-                    <p>Assert that calling <code>func</code> generates an error message that matches <code>pattern</code>.</p>
+                    <p>Assert that calling @func@ generates an error message that matches @pattern@.</p>
                                         <a name=''></a>
           <h4 class='function'>assertPass <code>(func, teardown)</code></h4>
           
-                    <p>Assert that calling <code>func</code> passes without errors. The optional <code>teardown</code>  function can be used to cleanup after the function call whether it passes or fails.</p>
+                    <p>Assert that calling @func@ passes without errors. The optional @teardown@  function can be used to cleanup after the function call whether it passes or fails.</p>
                                         <a name=''></a>
           <h4 class='function'>assertLessThen <code>(expected, value)</code></h4>
           
-                    <p>Assert that <code>value</code> is less then <code>expected</code>.</p>
+                    <p>Assert that @value@ is less then @expected@.</p>
                                         <a name=''></a>
           <h4 class='function'>assertType <code>(expected, value)</code></h4>
           
-                    <p>Assert that the Lua type of <code>value</code> is <code>expected</code> ('number', 'table', 'function', etc).</p>
+                    <p>Assert that the Lua type of @value@ is @expected@ ('number', 'table', 'function', etc).</p>
                                         <a name=''></a>
           <h4 class='function'>assertNil <code>(value)</code></h4>
           
-                    <p>Assert that <code>value</code> is nil.</p>
+                    <p>Assert that @value@ is nil.</p>
                                         <a name=''></a>
           <h4 class='function'>assertInRange <code>(t1, t2, value)</code></h4>
           
-                    <p>Assert that <code>value</code> is in the range defined by [<code>t1</code>, <code>t2</code>[.</p>
+                    <p>Assert that @value@ is in the range defined by [@t1@, @t2@[.</p>
                               </section>
                   </div>
 
