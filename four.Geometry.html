@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>four.Geometry</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+
+
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/docs.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class='row'>
+          <div class='span12'>
+             <a href='http://lubyk.org'><img alt='lubyk logo' src='img/lubyk.png'/></a> <h1><a href='http://doc.lubyk.org'>Lubyk documentation</a></h1></a> 
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="row">
+
+        <div class='span3'>
+          <ul class='nav nav-tabs nav-stacked local-nav affix'>
+                        <li><a href='#Geometry'><i class='icon-chevron-right'></i> four.Geometry</a></li>
+                        <li><a href='#TODO'><i class='icon-chevron-right'></i> TODO</a></li>
+                      </ul>
+        </div>
+
+        <div class='main span7'>
+
+                    <section id='Geometry'>
+          <h2 class='section'>four.Geometry</h2>
+
+                              <a name='new'></a>
+          <h4 class='function'><span>.</span>new <code>(def)</code></h4>
+          
+                    <p class='summary'></p>
+                    <p>-- Module definition</p>
+                    <p>local lib = { type = 'four.Geometry' } lib.<em></em>index = lib <a href='four.Geometry.html'>four.Geometry</a> = lib setmetatable(lib, { <em></em>call = function(lib, ...) return lib.new(...) end})</p>
+                    <p>local Buffer = <a href='four.Buffer.html'>four.Buffer</a> local V2 = four.V2 local V3 = four.V3</p>
+                    <p>-- h2. Primitive constants -- Defines how the vertex stream is interpreted.</p>
+                    <p>lib.POINTS = 1 lib.LINE<em>STRIP = 2 lib.LINE</em>LOOP = 3 lib.LINES = 4 lib.LINE<em>STRIP</em>ADJACENCY = 5 lib.LINES<em>ADJACENCY = 6 lib.TRIANGLE</em>STRIP = 7 lib.TRIANGLE<em>FAN = 8 lib.TRIANGLES = 9 lib.TRIANGLE</em>STRIP<em>ADJACENCY = 10 lib.TRIANGLES</em>ADJACENCY = 11</p>
+                    <p>-- h2. Constructor</p>
+                    <p>--[[--  <code>Geometry(def)</code> is a new geometry object. <code>def</code> keys:</p>
+                    <ul>
+<li><code>primitive</code>, the geometrical primitive (defaults to <code>Geometry.TRIANGLES</code>).</li>
+<li><code>data</code>, table of named <code>Buffer</code>s all of the same length defining per vertex data. Table key names are used to bind to the corresponding vertex shader  inputs.</li>
+<li><code>index</code>, <code>Buffer</code> of <strong>unsigned</strong> ints or bytes (any dim),  indexing into <code>data</code> to define the actual sequence of primitives.  <strong>WARNING</strong> indices are zero-based.</li>
+<li><code>pre_transform</code>, an M4 matrix that the renderer pre-multiplies to the  renderable's transform.</li>
+<li><code>name</code>, a user defined way of naming the geometry (may be used by the renderer to report errors about the object).</li>
+</ul>
+                    <p><strong>Warning</strong> Once a geometry object was rendered its structure is immutable: the buffers referenced by <code>data</code> keys and <code>index</code> cannot change. However the actual data of the buffers may change.</p>
+                                        <a name='set'></a>
+          <h4 class='method'><span>:</span>set <code>(def)</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='computeBoundRadius '></a>
+          <h4 class='method'><span>:</span>computeBoundRadius  <code>()</code></h4>
+          
+                    <p><code>computeBoundsRadius()</code> computes the radius of the bounding sphere  containing all the 3D points of <code>self.data.vertex</code> and stores it in  <code>self.bound_radius</code>. If <code>data.vertex</code> is <code>nil</code> the radius is zero.</p>
+                                        <a name='computeVertexNormals'></a>
+          <h4 class='method'><span>:</span>computeVertexNormals <code>(force)</code></h4>
+          
+                    <p><code>computeVertexNormals(force)</code> computes per vertex normals for all  the 3D points of <code>self.data.vertex</code> and stores them in <code>self.data.normal</code>. <strong>WARNING</strong> works only with <code>Geometry.TRIANGLE</code> primitive. Does nothing if <code>data.normal</code> exists and force is <code>false</code> (default).</p>
+                                        <a name='Cuboid'></a>
+          <h4 class='function'><span>.</span>Cuboid <code>(extents, no_dups)</code></h4>
+          
+                    <p><code>Cuboid(V3(w, h, d) [, no_dups])</code> is a cuboid centered on the  origin with the given extents. If [no_dups] is <code>true</code> vertices in the mesh are not duplicated, better for computational geometry  but implies that normals do not define facets. </p>
+                                        <a name='Cube'></a>
+          <h4 class='function'><span>.</span>Cube <code>(s, no_dups)</code></h4>
+          
+                    <p><code>Cube(s [, no_dups])</code> is @Cuboid(V3(s, s, s) [, no_dups])</p>
+                                        <a name='Sphere'></a>
+          <h4 class='function'><span>.</span>Sphere <code>(r, level)</code></h4>
+          
+                    <p><code>Sphere(r[,level])</code> is a sphere of radius <code>r</code> centered on the origin. The optional parameter <code>level</code> defines the subdivision level (defaults to <code>10</code>. Number of triangles is <code>4^level * 8</code></p>
+                                        <a name='Plane'></a>
+          <h4 class='function'><span>.</span>Plane <code>(extents, segs)</code></h4>
+          
+                    <p><code>Plane(V2(w, h) [, V2(xseg, yseg))</code> is an Oxy plane of width <code>w</code> and  height <code>h</code> centered on the origin. The plane is divided in <code>xseg</code> segments along the x-axis and <code>yseg</code> along the y-axis (both default to <code>1</code>).  </p>
+                              </section>
+                    <section id='TODO'>
+          <h2 class='section'>TODO</h2>
+
+                    
+                    <p class='todo'><span class='ref'><a href='#set'>#set</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                              </section>
+                  </div>
+
+        <div class='span2'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='four.html'>four</a></li>
+                                    <li><a href='four.Buffer.html'>Buffer</a></li>
+                        <li><a href='four.Camera.html'>Camera</a></li>
+                        <li><a href='four.Color.html'>Color</a></li>
+                        <li><a href='four.Effect.html'>Effect</a></li>
+                        <li class='active'><a href='four.Geometry.html'>Geometry</a></li>
+                        <li><a href='four.M4.html'>M4</a></li>
+                        <li><a href='four.Quat.html'>Quat</a></li>
+                        <li><a href='four.Renderer.html'>Renderer</a></li>
+                        <li><a href='four.RendererGL32.html'>RendererGL32</a></li>
+                        <li><a href='four.Texture.html'>Texture</a></li>
+                        <li><a href='four.Transform.html'>Transform</a></li>
+                        <li><a href='four.V2.html'>V2</a></li>
+                        <li><a href='four.V3.html'>V3</a></li>
+                        <li><a href='four.V4.html'>V4</a></li>
+                        <li><a href='four.gl.html'>gl</a></li>
+                      </ul>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+    <div class="container">
+       made with <a href='http://doc.lubyk.org/lk.Doc.html'>lk.Doc</a> 
+    </div>
+    </footer>
+
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
+    <script src='http://code.jquery.com/jquery.js'></script>
+    <script src='js/bootstrap.min.js'></script>
+  </body>
+</html>
+

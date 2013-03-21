@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>four.Camera</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+
+
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/docs.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class='row'>
+          <div class='span12'>
+             <a href='http://lubyk.org'><img alt='lubyk logo' src='img/lubyk.png'/></a> <h1><a href='http://doc.lubyk.org'>Lubyk documentation</a></h1></a> 
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="row">
+
+        <div class='span3'>
+          <ul class='nav nav-tabs nav-stacked local-nav affix'>
+                        <li><a href='#Camera'><i class='icon-chevron-right'></i> four.Camera</a></li>
+                        <li><a href='#TODO'><i class='icon-chevron-right'></i> TODO</a></li>
+                      </ul>
+        </div>
+
+        <div class='main span7'>
+
+                    <section id='Camera'>
+          <h2 class='section'>four.Camera</h2>
+
+                              <a name='new'></a>
+          <h4 class='function'><span>.</span>new <code>(def)</code></h4>
+          
+                    <p class='summary'></p>
+                    <p>local lib = { type = 'four.Camera' } <a href='four.Camera.html'>four.Camera</a> = lib</p>
+                    <p>local V2 = four.V2 local V3 = four.V3 local M4 = four.M4 local Quat = four.Quat</p>
+                    <p>-- Projection parameters/matrix synchronization</p>
+                    <p>local function setOrthoMatrix(tv) local near, far = V2.tuple(tv.range) local hw = near * math.tan (tv.fov / 2) local hh = hw / tv.aspect tv.projection_matrix = M4.ortho(-hw, hw, -hh, hh, near, far) end</p>
+                    <p>local function setPerspMatrix(tv) local near, far = V2.tuple(tv.range) local hw = near * math.tan (tv.fov / 2) local hh = hw / tv.aspect tv.projection_matrix = M4.persp(-hw, hw, -hh, hh, near, far) end</p>
+                    <p>local function syncProjectionMatrix(tv)   if tv.projection == lib.PERSPECTIVE then setPerspMatrix(tv) elseif tv.projection == lib.ORTHOGRAPHIC then setOrthoMatrix(tv) elseif tv.projection == lib.CUSTOM then return  else assert(false) end end</p>
+                    <p>local is<em>projection</em>key =  { projection = true, range = true, fov = true, aspect = true,  projection_matrix = true }</p>
+                    <p>if k == "tv" then return rawget(t, k) elseif is<em>projection</em>key[k] then  local tv = t.tv  if k == "projection<em>matrix" and tv.dirty</em>matrix then  syncProjectionMatrix(tv)  end return tv[k] else return lib[k] end end</p>
+                    <p>if not is<em>projection</em>key[k] then t[k] = v  else local tv = t.tv  if k == "projection<em>matrix" then if tv.projection == lib.CUSTOM then tv[k] = v else  error("Cannot set projection matrix on non-custom projection camera") end else tv.projection</em>dirty = true; tv[k] = v end end end</p>
+                    <p>setmetatable(lib, { <em></em>call = function(lib, def) return lib.new(def) end })</p>
+                    <p>-- h2. Camera projection types</p>
+                    <p>lib.ORTHOGRAPHIC = 1 lib.PERSPECTIVE = 2 lib.CUSTOM = 3</p>
+                    <p>-- h2. Constructor</p>
+                    <p>--[[-- <code>Camera(def)</code> is a new camera object. <code>def</code> keys:</p>
+                    <ul>
+<li><code>transform</code>, defines the location and orientation of the camera. Default transform lies at the origin and looks down the z-axis.</li>
+<li><code>projection</code>, the kind of projection to use (defaults to <code>PERSPECTIVE</code>).</li>
+<li><code>range</code>, for non-<code>CUSTOM</code> projections defines the near and far clip plane  (defaults to <code>V2(1, 100)</code>). Clip planes are perpendicular to the camera  direction and are defined relative to the camera position.</li>
+<li><code>fov</code>, for non-<code>CUSTOM</code> projections defines the horizontal field of view (defaults to <code>math.pi / 4</code>)</li>
+<li><code>aspect</code>, for non-<code>CUSTOM</code> projections, defines the camera width/height  ratio</li>
+<li><code>viewport</code>, table with <code>origin</code> and <code>size</code> keys defining the viewport in normalized screen coordinates of the renderer. Defaults covers  the whole renderer viewport.</li>
+<li><code>background</code>, TODO</li>
+<li><code>effect_override</code>, specifies an effect to use instead of the renderable's  Effects.</li>
+</ul>
+                                        <a name='set'></a>
+          <h4 class='method'><span>:</span>set <code>(def)</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='screenToDevice'></a>
+          <h4 class='method'><span>:</span>screenToDevice <code>(pos)</code></h4>
+          
+                    <p>c:screenToDevice(pos) is the normalized device coordinates of the normalized screen coordinates <code>pos</code> in <code>c</code>.</p>
+                              </section>
+                    <section id='TODO'>
+          <h2 class='section'>TODO</h2>
+
+                    
+                    <p class='todo'><span class='ref'><a href='#set'>#set</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                              </section>
+                  </div>
+
+        <div class='span2'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='four.html'>four</a></li>
+                                    <li><a href='four.Buffer.html'>Buffer</a></li>
+                        <li class='active'><a href='four.Camera.html'>Camera</a></li>
+                        <li><a href='four.Color.html'>Color</a></li>
+                        <li><a href='four.Effect.html'>Effect</a></li>
+                        <li><a href='four.Geometry.html'>Geometry</a></li>
+                        <li><a href='four.M4.html'>M4</a></li>
+                        <li><a href='four.Quat.html'>Quat</a></li>
+                        <li><a href='four.Renderer.html'>Renderer</a></li>
+                        <li><a href='four.RendererGL32.html'>RendererGL32</a></li>
+                        <li><a href='four.Texture.html'>Texture</a></li>
+                        <li><a href='four.Transform.html'>Transform</a></li>
+                        <li><a href='four.V2.html'>V2</a></li>
+                        <li><a href='four.V3.html'>V3</a></li>
+                        <li><a href='four.V4.html'>V4</a></li>
+                        <li><a href='four.gl.html'>gl</a></li>
+                      </ul>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+    <div class="container">
+       made with <a href='http://doc.lubyk.org/lk.Doc.html'>lk.Doc</a> 
+    </div>
+    </footer>
+
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
+    <script src='http://code.jquery.com/jquery.js'></script>
+    <script src='js/bootstrap.min.js'></script>
+  </body>
+</html>
+

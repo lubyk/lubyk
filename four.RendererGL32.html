@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>four.RendererGL32</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+
+
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/docs.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class='row'>
+          <div class='span12'>
+             <a href='http://lubyk.org'><img alt='lubyk logo' src='img/lubyk.png'/></a> <h1><a href='http://doc.lubyk.org'>Lubyk documentation</a></h1></a> 
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="row">
+
+        <div class='span3'>
+          <ul class='nav nav-tabs nav-stacked local-nav affix'>
+                        <li><a href='#RendererGL32'><i class='icon-chevron-right'></i> four.RendererGL32</a></li>
+                      </ul>
+        </div>
+
+        <div class='main span7'>
+
+                    <section id='RendererGL32'>
+          <h2 class='section'>four.RendererGL32</h2>
+
+                              <a name='renderQueueFlush'></a>
+          <h4 class='method'><span>:</span>renderQueueFlush <code>(cam)</code></h4>
+          
+                    <p class='summary'></p>
+                    <p>-- Module definition </p>
+                    <p>local lib = { type = 'four.RendererGL32' } lib.<em></em>index = lib four.RendererGL32 = lib setmetatable(lib, { <em></em>call = function(lib, ...) return lib.new(...) end })</p>
+                    <p>local ffi = require 'ffi' local gl = four.gl local lo = four.gl.lo local Buffer = <a href='four.Buffer.html'>four.Buffer</a> local Geometry = <a href='four.Geometry.html'>four.Geometry</a> local Effect = <a href='four.Effect.html'>four.Effect</a> local Texture = <a href='four.Texture.html'>four.Texture</a> local V2 = four.V2 local V4 = four.V4 local M4 = four.M4</p>
+                    <p>-- h2. Constructor</p>
+                    <p>-- <code>RendererGL32(super)</code> is a new GL32 renderer, <code>super</code> is a <code>Renderer</code> object. local self =  {  super = super, limits = { max<em>vertex</em>attribs = 0 }, buffers = {},    -- Weakly maps Buffers to their gl buffer object id geometries = {}, -- Weakly maps Geometry object to gl geometry state effects = {},    -- Weakly maps Effects to their gl shader program id textures = {},   -- Weakly maps Textures to their gl texture object id programs = {}, -- Maps program sources to a weak reference of it program. queue = {},    -- Array of maps from effects to lists of renderables next<em>active</em>texture = 0, world<em>to</em>camera = nil, camera<em>to</em>clip = nil, camera<em>viewport</em>origin = nil, camera<em>resolution = nil } setmetatable(self.buffers, { </em><em>mode = "k"}) setmetatable(self.geometries, { </em><em>mode = "k" }) setmetatable(self.effects, { </em><em>mode = "k"}) setmetatable(self.textures, { </em><em>mode = "k"}) setmetatable(self.programs, { </em>_mode = "v"}) setmetatable(self, lib) return self end</p>
+                    <p>local typeGLenum = { [Buffer.FLOAT] = lo.GL<em>FLOAT, [Buffer.DOUBLE] = lo.GL</em>DOUBLE, [Buffer.INT] = lo.GL<em>INT, [Buffer.UNSIGNED</em>INT] = lo.GL<em>UNSIGNED</em>INT,  [Buffer.BYTE] = lo.GL<em>BYTE,  [Buffer.UNSIGNED</em>BYTE] = lo.GL<em>UNSIGNED</em>BYTE }</p>
+                    <p>local typeGLenumIsInt = { [lo.GL<em>FLOAT] = false, [lo.GL</em>DOUBLE] = false, [lo.GL<em>INT] = true, [lo.GL</em>UNSIGNED<em>INT] = true, [lo.GL</em>BYTE] = true, [lo.GL<em>UNSIGNED</em>BYTE] = true }</p>
+                    <p>local modeGLenum = { [Geometry.POINTS] = lo.GL<em>POINTS, [Geometry.LINE</em>STRIP] = lo.GL<em>LINE</em>STRIP, [Geometry.LINE<em>LOOP] = lo.GL</em>LINE<em>LOOP, [Geometry.LINES] = lo.GL</em>LINES, [Geometry.LINE<em>STRIP</em>ADJACENCY] = lo.GL<em>LINE</em>STRIP<em>ADJACENCY, [Geometry.LINES</em>ADJACENCY] = lo.GL<em>LINES</em>ADJACENCY, [Geometry.TRIANGLE<em>STRIP] = lo.GL</em>TRIANGLE<em>STRIP, [Geometry.TRIANGLE</em>FAN] = lo.GL<em>TRIANGLE</em>FAN, [Geometry.TRIANGLES] = lo.GL<em>TRIANGLES, [Geometry.TRIANGLE</em>STRIP<em>ADJACENCY] = lo.GL</em>TRIANGLE<em>STRIP</em>ADJACENCY, [Geometry.TRIANGLES<em>ADJACENCY] = lo.GL</em>TRIANGLES_ADJACENCY }</p>
+                    <p>local depthFuncGLenum =  { [Effect.DEPTH<em>FUNC</em>NEVER] = lo.GL<em>NEVER, [Effect.DEPTH</em>FUNC<em>LESS] = lo.GL</em>LESS, [Effect.DEPTH<em>FUNC</em>EQUAL] = lo.GL<em>EQUAL, [Effect.DEPTH</em>FUNC<em>LEQUAL] = lo.GL</em>LEQUAL, [Effect.DEPTH<em>FUNC</em>GREATER] = lo.GL<em>GREATER, [Effect.DEPTH</em>FUNC<em>NOTEQUAL] = lo.GL</em>NOTEQUAL, [Effect.DEPTH<em>FUNC</em>GEQUAL] = lo.GL<em>GEQUAL, [Effect.DEPTH</em>FUNC<em>ALWAYS] = lo.GL</em>ALWAYS }</p>
+                    <p>local texTargetGLenum =  { [Texture.TYPE<em>1D] = lo.GL</em>TEXTURE<em>1D, [Texture.TYPE</em>2D] = lo.GL<em>TEXTURE</em>2D, [Texture.TYPE<em>3D] = lo.GL</em>TEXTURE<em>3D, [Texture.TYPE</em>BUFFER] = lo.GL<em>TEXTURE</em>BUFFER }</p>
+                    <p>local texFilterGLenum =  { [Texture.MIN<em>NEAREST] = lo.GL</em>NEAREST, [Texture.MIN<em>LINEAR] = lo.GL</em>LINEAR, [Texture.MIN<em>NEAREST</em>MIPMAP<em>NEAREST] = lo.GL</em>NEAREST<em>MIPMAP</em>NEAREST, [Texture.MIN<em>LINEAR</em>MIPMAP<em>NEAREST] = lo.GL</em>LINEAR<em>MIPMAP</em>NEAREST, [Texture.MIN<em>NEAREST</em>MIPMAP<em>LINEAR] = lo.GL</em>NEAREST<em>MIPMAP</em>LINEAR, [Texture.MIN<em>LINEAR</em>MIPMAP<em>LINEAR] = lo.GL</em>LINEAR<em>MIPMAP</em>LINEAR, [Texture.MAG<em>NEAREST] = lo.GL</em>NEAREST, [Texture.MAG<em>LINEAR] = lo.GL</em>LINEAR }</p>
+                    <p>local texWrapGLenum =  { [Texture.WRAP<em>CLAMP</em>TO<em>EDGE] = lo.GL</em>CLAMP<em>TO</em>EDGE, [Texture.WRAP<em>REPEAT] = lo.GL</em>REPEAT }</p>
+                    <p>local texInternalFormatGLenum = { [Texture.R<em>8UN] = lo.GL</em>R8, [Texture.R<em>32F] = lo.GL</em>R32F, [Texture.RG<em>8UN] = lo.GL</em>RG8, [Texture.RG<em>32F] = lo.GL</em>RG32F, [Texture.RGB<em>8UN] = lo.GL</em>RGB8, [Texture.RGB<em>32F] = lo.GL</em>RGB32F, [Texture.RGBA<em>8UN] = lo.GL</em>RGBA8, [Texture.RGBA<em>32F] = lo.GL</em>RGBA32F, [Texture.SRGB<em>8UN] = lo.GL</em>SRGB8<em>ALPHA8, [Texture.SRGBA</em>8UN] = lo.GL<em>SRGB8, [Texture.DEPTH</em>24UN] = lo.GL<em>DEPTH</em>COMPONENT24, [Texture.DEPTH<em>STENCIL</em>24UN<em>8UN] = lo.GL</em>DEPTH24<em>STENCIL8, [Texture.DEPTH</em>32F] = lo.GL<em>DEPTH</em>COMPONENT32F, [Texture.DEPTH<em>STENCIL</em>32F<em>8UN] = lo.GL</em>DEPTH32F_STENCIL8 }</p>
+                    <p>local texFormatGLenum = { [Texture.R<em>8UN] = lo.GL</em>RED, [Texture.R<em>32F] = lo.GL</em>RED, [Texture.RG<em>8UN] = lo.GL</em>RG, [Texture.RG<em>32F] = lo.GL</em>RG, [Texture.RGB<em>8UN] = lo.GL</em>RGB, [Texture.RGB<em>32F] = lo.GL</em>RGB, [Texture.RGBA<em>8UN] = lo.GL</em>RGBA, [Texture.RGBA<em>32F] = lo.GL</em>RGBA, [Texture.SRGB<em>8UN] = lo.GL</em>RGB, [Texture.SRGBA<em>8UN] = lo.GL</em>RGBA, [Texture.DEPTH<em>24UN] = lo.GL</em>DEPTH<em>COMPONENT, [Texture.DEPTH</em>STENCIL<em>24UN</em>8UN] = lo.GL<em>DEPTH</em>STENCIL, [Texture.DEPTH<em>32F] = lo.GL</em>DEPTH<em>COMPONENT, [Texture.DEPTH</em>STENCIL<em>32F</em>8UN] = lo.GL<em>DEPTH</em>STENCIL }</p>
+                    <p>local vec<em>kind = 1 local mat</em>kind = 2 local samp_kind = 3</p>
+                    <p>-- N.B. this includes more types than is allowed in GL 3.2, list taken from -- GL 4.2. Apparently they don't know about parametric polymorphism. local uniformTypeInfo = {  [lo.GL<em>FLOAT] =  { kind = vec</em>kind, dim = 1, bind = lo.glUniform1f, glsl = "float" },  [lo.GL<em>FLOAT</em>VEC2] =  { kind = vec<em>kind, dim = 2, bind = lo.glUniform2f, glsl = "vec2" },  [lo.GL</em>FLOAT<em>VEC3] =  { kind = vec</em>kind, dim = 3, bind = lo.glUniform3f, glsl = "vec3" }, [lo.GL<em>FLOAT</em>VEC4] =  { kind = vec<em>kind, dim = 4, bind = lo.glUniform4f, glsl = "vec4" }, [lo.GL</em>DOUBLE] =  { kind = vec<em>kind, dim = 1, unsupported = true, glsl = "double" }, [lo.GL</em>DOUBLE<em>VEC2] =  { kind = vec</em>kind, dim = 2, unsupported = true, glsl = "dvec2" }, [lo.GL<em>DOUBLE</em>VEC3] =  { kind = vec<em>kind, dim = 3, unsupported = true, glsl = "dvec3" }, [lo.GL</em>DOUBLE<em>VEC4] =  { kind = vec</em>kind, dim = 4, unsupported = true, glsl = "dvec4" }, [lo.GL<em>INT] =  { kind = vec</em>kind, dim = 1, bind = lo.glUniform1i, glsl = "int" }, [lo.GL<em>INT</em>VEC2] =  { kind = vec<em>kind, dim = 2, bind = lo.glUniform2i, glsl = "ivec2" }, [lo.GL</em>INT<em>VEC3] =  { kind = vec</em>kind, dim = 3, bind = lo.glUniform3i, glsl = "ivec3" }, [lo.GL<em>INT</em>VEC4] =  { kind = vec<em>kind, dim = 4, bind = lo.glUniform4i, glsl = "ivec4" }, [lo.GL</em>UNSIGNED<em>INT] =  { kind = vec</em>kind, dim = 1, bind = lo.glUniform1ui, glsl = "unsigned int" }, [lo.GL<em>UNSIGNED</em>INT<em>VEC2] =  { kind = vec</em>kind, dim = 2, bind = lo.glUniform2ui, glsl = "uvec2" }, [lo.GL<em>UNSIGNED</em>INT<em>VEC3] =  { kind = vec</em>kind, dim = 3, bind = lo.glUniform3ui, glsl = "uvec3" }, [lo.GL<em>UNSIGNED</em>INT<em>VEC4] =  { kind = vec</em>kind, dim = 4, bind = lo.glUniform4ui, glsl = "uvec4" }, [lo.GL<em>BOOL] =  { kind = vec</em>kind, dim = 1, bind = lo.glUniform1f, glsl = "bool" }, [lo.GL<em>BOOL</em>VEC2] =  { kind = vec<em>kind, dim = 2, bind = lo.glUniform2f, glsl = "bvec2" }, [lo.GL</em>BOOL<em>VEC3] =  { kind = vec</em>kind, dim = 3, bind = lo.glUniform3f, glsl = "bvec3" }, [lo.GL<em>BOOL</em>VEC4] =  { kind = vec<em>kind, dim = 4, bind = lo.glUniform4f, glsl = "bvec4" }, [lo.GL</em>FLOAT<em>MAT2] =  { kind = mat</em>kind, dim = 4, bind = lo.glUniformMatrix2fv, glsl = "mat2" }, [lo.GL<em>FLOAT</em>MAT3] =  { kind = mat<em>kind, dim = 9, bind = lo.glUniformMatrix3fv, glsl = "mat3" }, [lo.GL</em>FLOAT<em>MAT4] =  { kind = mat</em>kind, dim = 16, bind = lo.glUniformMatrix4fv, glsl = "mat4" }, [lo.GL<em>FLOAT</em>MAT2x3] =  { kind = mat<em>kind, dim = 6, unsupported = true, glsl = "mat2x3" }, [lo.GL</em>FLOAT<em>MAT2x4] =  { kind = mat</em>kind, dim = 8, unsupported = true, glsl = "mat2x4" }, [lo.GL<em>FLOAT</em>MAT3x2] =  { kind = mat<em>kind, dim = 6, unsupported = true, glsl = "mat3x2" }, [lo.GL</em>FLOAT<em>MAT3x4] =  { kind = mat</em>kind, dim = 12, unsupported = true, glsl = "mat3x4" }, [lo.GL<em>FLOAT</em>MAT4x2] =  { kind = mat<em>kind, dim = 8, unsupported = true, glsl = "mat4x2" }, [lo.GL</em>FLOAT<em>MAT4x3] =  { kind = mat</em>kind, dim = 12, unsupported = true, glsl = "mat4x3" }, [lo.GL<em>DOUBLE</em>MAT2] =  { kind = mat<em>kind, dim = 4, unsupported = true, glsl = "dmat2" }, [lo.GL</em>DOUBLE<em>MAT3] =  { kind = mat</em>kind, dim = 9, unsupported = true, glsl = "dmat3" }, [lo.GL<em>DOUBLE</em>MAT4] =  { kind = mat<em>kind, dim = 16, unsupported = true, glsl = "dmat4" }, [lo.GL</em>DOUBLE<em>MAT2x3] =  { kind = mat</em>kind, dim = 6, unsupported = true, glsl = "dmat2x3" }, [lo.GL<em>DOUBLE</em>MAT2x4] =  { kind = mat<em>kind, dim = 8, unsupported = true, glsl = "dmat2x4" }, [lo.GL</em>DOUBLE<em>MAT3x2] =  { kind = mat</em>kind, dim = 6, unsupported = true, glsl = "dmat3x2" }, [lo.GL<em>DOUBLE</em>MAT3x4] =  { kind = mat<em>kind, dim = 12, unsupported = true, glsl = "dmat3x4" }, [lo.GL</em>DOUBLE<em>MAT4x2] =  { kind = mat</em>kind, dim = 8, unsupported = true, glsl = "dmat4x2" }, [lo.GL<em>DOUBLE</em>MAT4x3] =  { kind = mat<em>kind, dim = 12, unsupported = true, glsl = "dmat4x3" }, [lo.GL</em>SAMPLER<em>1D] =  { kind = samp</em>kind, dim = 1, unsupported = false, glsl = "sampler1D" }, [lo.GL<em>SAMPLER</em>2D] =  { kind = samp<em>kind, dim = 2, unsupported = false, glsl = "sampler2D" }, [lo.GL</em>SAMPLER<em>3D] =  { kind = samp</em>kind, dim = 3, unsupported = false, glsl = "sampler3D" }, [lo.GL<em>SAMPLER</em>CUBE] =  { kind = samp<em>kind, dim = 3, unsupported = true, glsl = "samplerCube" }, [lo.GL</em>SAMPLER<em>1D</em>SHADOW] =  { kind = samp<em>kind, dim = 1, unsupported = true,  glsl = "sampler1DShadow" }, [lo.GL</em>SAMPLER<em>2D</em>SHADOW] =  { kind = samp<em>kind, dim = 2, unsupported = true,  glsl = "sampler2DShadow" }, [lo.GL</em>SAMPLER<em>1D</em>ARRAY] =  { kind = samp<em>kind, dim = 1, unsupported = true,  glsl = "sampler1DArray" }, [lo.GL</em>SAMPLER<em>2D</em>ARRAY] =  { kind = samp<em>kind, dim = 2, unsupported = true,  glsl = "sampler2DArray" }, [lo.GL</em>SAMPLER<em>1D</em>ARRAY<em>SHADOW] =  { kind = samp</em>kind, dim = 1, unsupported = true,  glsl = "sampler1DArrayShadow" }, [lo.GL<em>SAMPLER</em>2D<em>ARRAY</em>SHADOW] =  { kind = samp<em>kind, dim = 2, unsupported = true,  glsl = "sampler2DArrayShadow" }, [lo.GL</em>SAMPLER<em>2D</em>MULTISAMPLE] =  { kind = samp<em>kind, dim = 2, unsupported = true, glsl = "sampler2DMS" }, [lo.GL</em>SAMPLER<em>2D</em>MULTISAMPLE<em>ARRAY] =  { kind = samp</em>kind, dim = 2, unsupported = true,  glsl = "sampler2DMSArray" }, [lo.GL<em>SAMPLER</em>CUBE<em>SHADOW] =  { kind = samp</em>kind, dim = 3, unsupported = true,  glsl = "samplerCubeShadow" }, [lo.GL<em>SAMPLER</em>BUFFER] =  { kind = samp<em>kind, dim = 1, unsupported = false, glsl = "samplerBuffer" }, [lo.GL</em>SAMPLER<em>2D</em>RECT] =  { kind = samp<em>kind, dim = 2, unsupported = true, glsl = "sampler2DRect" }, [lo.GL</em>SAMPLER<em>2D</em>RECT<em>SHADOW] =  { kind = samp</em>kind, dim = 2, unsupported = true,  glsl = "sampler2DRectShadow" }, [lo.GL<em>INT</em>SAMPLER<em>1D] =  { kind = samp</em>kind, dim = 1, unsupported = true, glsl = "isampler1D" }, [lo.GL<em>INT</em>SAMPLER<em>2D] =  { kind = samp</em>kind, dim = 2, unsupported = true, glsl = "isampler2D" }, [lo.GL<em>INT</em>SAMPLER<em>3D] =  { kind = samp</em>kind, dim = 3, unsupported = true, glsl = "isampler3D" }, [lo.GL<em>INT</em>SAMPLER<em>CUBE] =  { kind = samp</em>kind, dim = 3, unsupported = true, glsl = "isamplerCube" }, [lo.GL<em>INT</em>SAMPLER<em>1D</em>ARRAY] =  { kind = samp<em>kind, dim = 1, unsupported = true, glsl = "isampler1DArray" }, [lo.GL</em>INT<em>SAMPLER</em>2D<em>ARRAY] =  { kind = samp</em>kind, dim = 2, unsupported = true, glsl = "isampler2DArray" }, [lo.GL<em>INT</em>SAMPLER<em>2D</em>MULTISAMPLE] =  { kind = samp<em>kind, dim = 2, unsupported = true, glsl = "isampler2DMS" }, [lo.GL</em>INT<em>SAMPLER</em>2D<em>MULTISAMPLE</em>ARRAY] =  { kind = samp<em>kind, dim = 2, unsupported = true,  glsl = "isampler2DMSArray" }, [lo.GL</em>INT<em>SAMPLER</em>BUFFER] =  { kind = samp<em>kind, dim = 1, unsupported = false, glsl = "isamplerBuffer" }, [lo.GL</em>INT<em>SAMPLER</em>2D<em>RECT] =  { kind = samp</em>kind, dim = 2, unsupported = true, glsl = "isampler2DRect" }, [lo.GL<em>UNSIGNED</em>INT<em>SAMPLER</em>1D] =  { kind = samp<em>kind, dim = 1, unsupported = true, glsl = "usampler1D" }, [lo.GL</em>UNSIGNED<em>INT</em>SAMPLER<em>2D] =  { kind = samp</em>kind, dim = 2, unsupported = true, glsl = "usampler2D" }, [lo.GL<em>UNSIGNED</em>INT<em>SAMPLER</em>3D] =  { kind = samp<em>kind, dim = 3, unsupported = true, glsl = "usampler3D" }, [lo.GL</em>UNSIGNED<em>INT</em>SAMPLER<em>CUBE] =  { kind = samp</em>kind, dim = 3, unsupported = true, glsl = "usamplerCube" }, [lo.GL<em>UNSIGNED</em>INT<em>SAMPLER</em>1D<em>ARRAY] =  { kind = samp</em>kind, dim = 1, unsupported = true, glsl = "usampler2DArray" }, [lo.GL<em>UNSIGNED</em>INT<em>SAMPLER</em>2D<em>ARRAY] =  { kind = samp</em>kind, dim = 2, unsupported = true, glsl = "usampler2DArray" }, [lo.GL<em>UNSIGNED</em>INT<em>SAMPLER</em>2D<em>MULTISAMPLE] =  { kind = samp</em>kind, dim = 2, unsupported = true, glsl = "usampler2DMS" }, [lo.GL<em>UNSIGNED</em>INT<em>SAMPLER</em>2D<em>MULTISAMPLE</em>ARRAY] =  { kind = samp<em>kind, dim = 2, unsupported = true,  glsl = "usampler2DMSArray" }, [lo.GL</em>UNSIGNED<em>INT</em>SAMPLER<em>BUFFER] =  { kind = samp</em>kind, dim = 1, unsupported = false, glsl = "usamplerBuffer" }, [lo.GL<em>UNSIGNED</em>INT<em>SAMPLER</em>2D<em>RECT] =  { kind = samp</em>kind, dim = 2, unsupported = true, glsl = "usampler2DRect" }, [lo.GL<em>IMAGE</em>1D] =  { kind = samp<em>kind, dim = 1, unsupported = true, glsl = "image1D" }, [lo.GL</em>IMAGE<em>2D] =  { kind = samp</em>kind, dim = 2, unsupported = true, glsl = "image2D" }, [lo.GL<em>IMAGE</em>3D] =  { kind = samp<em>kind, dim = 3, unsupported = true, glsl = "image3D" }, [lo.GL</em>IMAGE<em>2D</em>RECT] =  { kind = samp<em>kind, dim = 2, unsupported = true, glsl = "image2DRect" }, [lo.GL</em>IMAGE<em>CUBE] =  { kind = samp</em>kind, dim = 3, unsupported = true, glsl = "imageCube" }, [lo.GL<em>IMAGE</em>BUFFER] =  { kind = samp<em>kind, dim = 1, unsupported = true, glsl = "imageBuffer" }, [lo.GL</em>IMAGE<em>1D</em>ARRAY] =  { kind = samp<em>kind, dim = 1, unsupported = true, glsl = "image1DArray" }, [lo.GL</em>IMAGE<em>2D</em>ARRAY] =  { kind = samp<em>kind, dim = 2, unsupported = true, glsl = "image2DArray" }, [lo.GL</em>IMAGE<em>2D</em>MULTISAMPLE] =  { kind = samp<em>kind, dim = 2, unsupported = true, glsl = "image2DMS" }, [lo.GL</em>IMAGE<em>2D</em>MULTISAMPLE<em>ARRAY] =  { kind = samp</em>kind, dim = 2, unsupported = true, glsl = "image2DMSArray" }, [lo.GL<em>INT</em>IMAGE<em>1D] =  { kind = samp</em>kind, dim = 1, unsupported = true, glsl = "iimage1D" }, [lo.GL<em>INT</em>IMAGE<em>2D] =  { kind = samp</em>kind, dim = 2, unsupported = true, glsl = "iimage2D" }, [lo.GL<em>INT</em>IMAGE<em>3D] =  { kind = samp</em>kind, dim = 3, unsupported = true, glsl = "iimage3D" }, [lo.GL<em>INT</em>IMAGE<em>2D</em>RECT] =  { kind = samp<em>kind, dim = 2, unsupported = true, glsl = "iimage2DRect" }, [lo.GL</em>INT<em>IMAGE</em>CUBE] =  { kind = samp<em>kind, dim = 3, unsupported = true, glsl = "iimageCube" }, [lo.GL</em>INT<em>IMAGE</em>BUFFER] =  { kind = samp<em>kind, dim = 1, unsupported = true, glsl = "iimageBuffer" }, [lo.GL</em>INT<em>IMAGE</em>1D<em>ARRAY] =  { kind = samp</em>kind, dim = 1, unsupported = true, glsl = "iimage1DArray" }, [lo.GL<em>INT</em>IMAGE<em>2D</em>ARRAY] =  { kind = samp<em>kind, dim = 2, unsupported = true, glsl = "iimage2DArray" }, [lo.GL</em>INT<em>IMAGE</em>2D<em>MULTISAMPLE] =  { kind = samp</em>kind, dim = 2, unsupported = true, glsl = "iimage2DMS" }, [lo.GL<em>INT</em>IMAGE<em>2D</em>MULTISAMPLE<em>ARRAY] =  { kind = samp</em>kind, dim = 2, unsupported = true, glsl = "iimage2DMSArray" }, [lo.GL<em>UNSIGNED</em>INT<em>IMAGE</em>1D] =  { kind = samp<em>kind, dim = 1, unsupported = true, glsl = "uimage1D" }, [lo.GL</em>UNSIGNED<em>INT</em>IMAGE<em>2D] =  { kind = samp</em>kind, dim = 2, unsupported = true, glsl = "uimage2D" }, [lo.GL<em>UNSIGNED</em>INT<em>IMAGE</em>3D] =  { kind = samp<em>kind, dim = 3, unsupported = true, glsl = "uimage3D" }, [lo.GL</em>UNSIGNED<em>INT</em>IMAGE<em>2D</em>RECT] =  { kind = samp<em>kind, dim = 3, unsupported = true, glsl = "uimage2DRect" }, [lo.GL</em>UNSIGNED<em>INT</em>IMAGE<em>CUBE] =  { kind = samp</em>kind, dim = 3, unsupported = true, glsl = "uimageCube" }, [lo.GL<em>UNSIGNED</em>INT<em>IMAGE</em>BUFFER] =  { kind = samp<em>kind, dim = 1, unsupported = true, glsl = "uimageBuffer" }, [lo.GL</em>UNSIGNED<em>INT</em>IMAGE<em>1D</em>ARRAY] =  { kind = samp<em>kind, dim = 1, unsupported = true, glsl = "uimage1DArray" }, [lo.GL</em>UNSIGNED<em>INT</em>IMAGE<em>2D</em>ARRAY] =  { kind = samp<em>kind, dim = 2, unsupported = true, glsl = "uimage2DArray" }, [lo.GL</em>UNSIGNED<em>INT</em>IMAGE<em>2D</em>MULTISAMPLE] =  { kind = samp<em>kind, dim = 2, unsupported = true, glsl = "uimage2DMS" }, [lo.GL</em>UNSIGNED<em>INT</em>IMAGE<em>2D</em>MULTISAMPLE<em>ARRAY] =  { kind = samp</em>kind, dim = 2, unsupported = true, glsl = "uimage2DMSArray" }, [lo.GL<em>UNSIGNED</em>INT<em>ATOMIC</em>COUNTER] =  { kind = samp<em>kind, dim = 1, unsupported = true, glsl = "atomic</em>uint" } }</p>
+                    <p>local function err<em>gl(e) if e == lo.GL</em>NO<em>ERROR then return "no error"  elseif e == lo.GL</em>INVALID<em>ENUM then return "invalid enum" elseif e == lo.GL</em>INVALID<em>VALUE then return "invalid value" elseif e == lo.GL</em>INVALID<em>OPERATION then return "invalid operation" elseif e == lo.GL</em>INVALID<em>FRAMEBUFFER</em>OPERATION then  return "invalid framebuffer operation" elseif e == lo.GL<em>OUT</em>OF_MEMORY then  return "out of memory" else return string.format("unknown error %d", e) end end</p>
+                    <p>local e = lo.glGetError () local loc = loc or "" if e ~= lo.GL<em>NO</em>ERROR then self:log(loc .. " GL error:" .. err_gl(e)) end end</p>
+                    <p>lo.glFrontFace(lo.GL<em>CCW) lo.glDisable(lo.GL</em>CULL_FACE)</p>
+                    <p>-- TODO move that to blend state or NOT lo.glEnable(lo.GL<em>BLEND) lo.glBlendEquation(lo.GL</em>FUNC<em>ADD) lo.glBlendFunc(lo.GL</em>SRC<em>ALPHA, lo.GL</em>ONE<em>MINUS</em>SRC_ALPHA) end</p>
+                    <p>local geti = gl.hi.glGetIntegerv self.limits.max<em>vertex</em>attribs = geti(lo.GL<em>MAX</em>VERTEX<em>ATTRIBS) self.limits.max</em>vertex<em>uniform</em>comps =  geti(lo.GL<em>MAX</em>VERTEX<em>UNIFORM</em>COMPONENTS ) self.limits.max<em>geometry</em>uniform<em>comps =  geti(lo.GL</em>MAX<em>GEOMETRY</em>UNIFORM<em>COMPONENTS ) self.limits.max</em>fragment<em>uniform</em>comps =  geti(lo.GL<em>MAX</em>FRAGMENT<em>UNIFORM</em>COMPONENTS ) self.limits.max<em>geometry</em>output<em>vertices =  geti(lo.GL</em>MAX<em>GEOMETRY</em>OUTPUT_VERTICES) end</p>
+                    <p>local bufferSpecForScalarType =  { [Buffer.FLOAT] = { byte<em>count = 4, ffi</em>spec = "GLfloat[?]" }, [Buffer.DOUBLE] = { byte<em>count = 8, ffi</em>spec = "GLdouble[?]" }, [Buffer.INT] = { byte<em>count = 4, ffi</em>spec = "GLint[?]" }, [Buffer.UNSIGNED<em>INT] = { byte</em>count = 4, ffi<em>spec = "GLuint[?]" }, [Buffer.BYTE] = { byte</em>count = 1, ffi<em>spec = "GLbyte[?]" },  [Buffer.UNSIGNED</em>BYTE] = { byte<em>count = 1, ffi</em>spec = "GLubyte[?]" } }</p>
+                    <p>local bufferUsageHintType =  { [Buffer.UPDATE<em>NEVER] = lo.GL</em>STATIC<em>DRAW, [Buffer.UPDATE</em>SOMETIMES] = lo.GL<em>DYNAMIC</em>DRAW, [Buffer.UPDATE<em>OFTEN] = lo.GL</em>STREAM_DRAW }</p>
+                    <p>local state = self.buffers[b] if state and not update then return state end</p>
+                    <p>if not state then  state = { id = gl.hi.glGenBuffer() } local function finalize () gl.hi.glDeleteBuffer(state.id) end state.finalizer = lk.Finalizer(finalize) self.buffers[b] = state end</p>
+                    <p>local len = b:scalarLength() local gltype = typeGLenum[b.scalar<em>type] local spec = bufferSpecForScalarType[b.scalar</em>type] local bytes = spec.byte<em>count * len local data = ffi.new(spec.ffi</em>spec, len, b.data) lo.glBindBuffer(lo.GL<em>ARRAY</em>BUFFER, state.id)</p>
+                    <p>-- TODO if we don't change size use glSubBufferData lo.glBufferData(lo.GL<em>ARRAY</em>BUFFER, bytes, data,  bufferUsageHintType[b.update]) b.updated = false if b.disposable then b:disposeBuffer() end return state end</p>
+                    <p>local state = self.geometries[g] if state then for k, buffer in pairs(g.data) do  if buffer.updated then self:bufferStateAllocate(buffer, true) end end if g.index.updated then  self:bufferStateAllocate(g.index, true)  state.index_length = g.index:scalarLength() end return state  end</p>
+                    <p>state = { vao = gl.hi.glGenVertexArray (), primitive = modeGLenum[g.primitive], index<em>length = g.index:scalarLength (), index</em>scalar<em>type = typeGLenum[g.index.scalar</em>type], index = nil,    -- g.index buffer object id data = {},      -- maps g.data keys to array with all info  -- for binding the buffer object  data_loc = {}}  -- maps g.data keys to current binding index function finalize () gl.hi.glDeleteVertexArray(state.vao) end state.finalizer = lk.Finalizer(finalize)</p>
+                    <p>lo.glBindVertexArray(state.vao)</p>
+                    <p>-- Allocate and bind index buffer local index = self:bufferStateAllocate(g.index) state.index = index.id lo.glBindBuffer(lo.GL<em>ELEMENT</em>ARRAY_BUFFER, state.index)</p>
+                    <p>-- Allocate each vertex data buffer. for k, buffer in pairs(g.data) do local data = self:bufferStateAllocate(buffer) local gltype = typeGLenum[buffer.scalar<em>type] state.data[k] = { id = data.id, dim = buffer.dim, scalar</em>type = gltype,  normalize = buffer.normalize } state.data_loc[k] = nil -- never bound yet end</p>
+                    <p>-- Important, unbind <strong>first</strong> the vao and then the index buffer lo.glBindVertexArray(0); lo.glBindBuffer(lo.GL<em>ARRAY</em>BUFFER, 0) lo.glBindBuffer(lo.GL<em>ELEMENT</em>ARRAY_BUFFER, 0)</p>
+                    <p>self.geometries[g] = state return state end </p>
+                    <p>local state = self.textures[t] local updated = t.updated or (t.data and t.data.updated) if state and not updated then return state end</p>
+                    <p>local img = nil if state and (t.data and t.data.updated) then  img = self:bufferStateAllocate(t.data, true) if t.type == Texture.TYPE_BUFFER then  -- No need to respecify the buffer return state  end end</p>
+                    <p>if not state then state = { id = gl.hi.glGenTexture() } local function finalize () gl.hi.glDeleteTexture(state.id) end state.finalizer = lk.Finalizer(finalize) self.textures[t] = state if t.data then img = self:bufferStateAllocate(t.data, false) end end</p>
+                    <p>lo.glPixelStorei(lo.GL<em>UNPACK</em>ALIGNMENT, 1)   if img then lo.glBindBuffer(lo.GL<em>PIXEL</em>UNPACK<em>BUFFER, img.id) end local target = texTargetGLenum[t.type]  local w, h, d = four.V3.tuple(t.size) lo.glBindTexture(target, state.id) if t.type == Texture.TYPE</em>1D then  lo.glTexParameteri(target, lo.GL<em>TEXTURE</em>MAG<em>FILTER,  texFilterGLenum[t.mag</em>filter]) lo.glTexParameteri(target, lo.GL<em>TEXTURE</em>MIN<em>FILTER,  texFilterGLenum[t.min</em>filter]) lo.glTexParameteri(target, lo.GL<em>TEXTURE</em>WRAP<em>S, texWrapGLenum[t.wrap</em>s]) lo.glTexImage1D(target, 0, texInternalFormatGLenum[t.internal<em>format], w, 0, texFormatGLenum[t.internal</em>format],  typeGLenum[t.data.scalar<em>type], nil) if (t.generate</em>mipmaps) then lo.glGenerateMipmap(target) end elseif t.type == Texture.TYPE<em>2D then  lo.glTexParameteri(target, lo.GL</em>TEXTURE<em>MAG</em>FILTER,  texFilterGLenum[t.mag<em>filter]) lo.glTexParameteri(target, lo.GL</em>TEXTURE<em>MIN</em>FILTER,  texFilterGLenum[t.min<em>filter]) lo.glTexParameteri(target, lo.GL</em>TEXTURE<em>WRAP</em>S, texWrapGLenum[t.wrap<em>s]) lo.glTexParameteri(target, lo.GL</em>TEXTURE<em>WRAP</em>T, texWrapGLenum[t.wrap<em>t]) lo.glTexImage2D(target, 0, texInternalFormatGLenum[t.internal</em>format], w, h, 0, texFormatGLenum[t.internal<em>format],  typeGLenum[t.data.scalar</em>type], nil) if (t.generate<em>mipmaps) then lo.glGenerateMipmap(target) end elseif t.type == Texture.TYPE</em>3D then  lo.glTexParameteri(target, lo.GL<em>TEXTURE</em>MAG<em>FILTER,  texFilterGLenum[t.mag</em>filter]) lo.glTexParameteri(target, lo.GL<em>TEXTURE</em>MIN<em>FILTER,  texFilterGLenum[t.min</em>filter]) lo.glTexParameteri(target, lo.GL<em>TEXTURE</em>WRAP<em>S, texWrapGLenum[t.wrap</em>s]) lo.glTexParameteri(target, lo.GL<em>TEXTURE</em>WRAP<em>T, texWrapGLenum[t.wrap</em>t]) lo.glTexParameteri(target, lo.GL<em>TEXTURE</em>WRAP<em>R, texWrapGLenum[t.wrap</em>r]) lo.glTexImage3D(target, 0, texInternalFormatGLenum[t.internal<em>format], w, h, d, 0, texFormatGLenum[t.internal</em>format],  typeGLenum[t.data.scalar<em>type], nil) if (t.generate</em>mipmaps) then lo.glGenerateMipmap(target) end elseif t.type == Texture.TYPE<em>BUFFER then  lo.glTexBuffer(target,texInternalFormatGLenum[t.internal</em>format], img.id) end lo.glBindTexture(target, 0) lo.glBindBuffer(lo.GL<em>PIXEL</em>UNPACK_BUFFER, 0) t.updated = false return state end</p>
+                    <p>lo.glBindVertexArray(gstate.vao) for a, aspec in pairs(estate.program.attribs) do if gstate.data<em>loc[a] ~= aspec.loc then  -- Program binding doesn't correspond to vao binding, rebind all vao -- vertex attributes and leave outer loop. for a, aspec in pairs(estate.program.attribs) do local data = gstate.data[a] if data then local ints = typeGLenumIsInt[data.scalar</em>type] local loc = aspec.loc lo.glBindBuffer(lo.GL<em>ARRAY</em>BUFFER, data.id) lo.glEnableVertexAttribArray(loc) if ints then lo.glVertexAttribIPointer(loc, data.dim, data.scalar<em>type, 0, nil) else lo.glVertexAttribPointer(loc, data.dim, data.scalar</em>type,  data.normalize, 0, nil) end gstate.data_loc[a] = loc else  self:log(string.format("Geometry is missing %s attribute", a)) end end break end end end</p>
+                    <p>local lines = lk.split(log,'\n') for i, l in ipairs(lines) do local function rewrite(pre, f, post)       local file = tonumber(f) lines[i] = string.format("%s%s%s", pre, src.files[file], post) end string.gsub(l, self.super.error<em>line</em>pattern, rewrite) end return table.concat(lines,'\n') end</p>
+                    <p>local s = lo.glCreateShader(type) gl.hi.glShaderSource(s, src.src) lo.glCompileShader(s) local fail = gl.hi.glGetShaderiv(s, lo.GL<em>COMPILE</em>STATUS) == lo.GL_FALSE if fail or self.super.debug then local msg = gl.hi.glGetShaderInfoLog(s) if msg ~= "" then self:log(self:rewriteShaderInfoLog(src, msg)) end end if fail then lo.glDeleteShader(s) s = -1 end return s end</p>
+                    <p>lo.glLinkProgram(pid) local fail = gl.hi.glGetProgramiv(pid, lo.GL<em>LINK</em>STATUS) == lo.GL_FALSE if fail or self.super.debug  then local msg = gl.hi.glGetProgramInfoLog(pid) if msg ~= "" then self:log(msg) end end return not fail end</p>
+                    <p>local p = pstate.id local a<em>name</em>max = gl.hi.glGetProgramiv(p,lo.GL<em>ACTIVE</em>ATTRIBUTE<em>MAX</em>LENGTH) local u<em>name</em>max = gl.hi.glGetProgramiv(p, lo.GL<em>ACTIVE</em>UNIFORM<em>MAX</em>LENGTH) local a<em>count = gl.hi.glGetProgramiv(p, lo.GL</em>ACTIVE<em>ATTRIBUTES) local u</em>count = gl.hi.glGetProgramiv(p, lo.GL<em>ACTIVE</em>UNIFORMS) local max<em>len = math.max(a</em>name<em>max, u</em>name<em>max) local s = ffi.new("GLchar [?]", max</em>len) local len = ffi.new("GLsizei [1]", 0) local size = ffi.new("GLsizei [1]", 0) local type = ffi.new("GLenum [1]", 0)</p>
+                    <p>for loc = 0, a<em>count - 1, 1 do  lo.glGetActiveAttrib(p, loc, max</em>len, len, size, type, s) local name = ffi.string (s, len[0]) pstate.attribs[name] = { loc = loc, type = type[0], size = size[0] }  end</p>
+                    <p>for i = 0, u<em>count - 1, 1 do  lo.glGetActiveUniform(p, i, max</em>len, len, size, type, s) local name = ffi.string (s, len[0]) local type = type[0] local info = uniformTypeInfo[type] local size = size[0] if info == nil or info.unsupported then  self:log(string.format("Unsupported uniform type: %s", info.glsl)) else if string.find(name, "%[%d%]") == nil then assert(size == 1) local loc = lo.glGetUniformLocation(p, name) pstate.uniforms[name] = { loc = loc, info = info } else -- Array of uniforms local locs = {} for i = 1,size do  local aname = string.gsub(name, "%d", i - 1) locs[i] = lo.glGetUniformLocation(p, aname) end local n, _ = string.gsub(name, "%[%d%]", "") pstate.uniforms[n] = { locs = locs, info = info }  end end end end</p>
+                    <p>local glslPreamble = "#version 150 core"</p>
+                    <p>local vsrc = effect:vertexShaderSource(glslPreamble)  local gsrc = effect:geometryShaderSource(glslPreamble) local fsrc = effect:fragmentShaderSource(glslPreamble) local fullsrc = vsrc.src .. (gsrc and gsrc.src or "") .. fsrc.src local state = self.programs[fullsrc] if state then return state end</p>
+                    <p>local state = { id = -1, attribs = {},  -- maps active attrib names to loc/type/siz uniforms = {}} -- maps active uniform names to loc/type/siz local function finalize ()  -- TODO it seems that Lua will sometime call the finalizer while  -- state is still available in the weak table self.programs[fullsrc].  -- This may lead another effect to pick it up and use it even though  -- it's no longer valid for OpenGL. We therefore clean the weaktable here. -- Something seems very broken and rotten (behaviour happens at least  -- in Luajit 2.0.0). self.programs[fullsrc] = nil if state.id ~= -1 then lo.glDeleteProgram(state.id) end end state.finalizer = lk.Finalizer(finalize) </p>
+                    <p>-- Compile and link program local vid = self:compileShader(vsrc, lo.GL<em>VERTEX</em>SHADER) local gid = gsrc and self:compileShader(gsrc, lo.GL<em>GEOMETRY</em>SHADER) local fid = self:compileShader(fsrc, lo.GL<em>FRAGMENT</em>SHADER)</p>
+                    <p>if vid ~= -1 and (gid == nil or gid ~= -1) and fid ~= -1 then local p = lo.glCreateProgram() lo.glAttachShader(p, vid); lo.glDeleteShader(vid) if gid then lo.glAttachShader(p, gid); lo.glDeleteShader(gid) end lo.glAttachShader(p, fid); lo.glDeleteShader(fid) if not self:linkProgram(p) then lo.glDeleteProgram(p)  else state.id = p self:setProgramInfo(state) end  end</p>
+                    <p>self.programs[fullsrc] = state return state end</p>
+                    <p>local state = self.effects[effect] if state and not effect.program_changed then return state end</p>
+                    <p>local state = { program = self:programStateAllocate(effect) } effect.program_changed = false self.effects[effect] = state return state end</p>
+                    <p>if u == Effect.MODEL<em>TO</em>WORLD then  return m2w elseif u == Effect.MODEL<em>TO</em>CAMERA then  return self.world<em>to</em>camera <strong> m2w  elseif u == Effect.MODEL<em>TO</em>CLIP then  return self.camera<em>to</em>clip </strong> self.world<em>to</em>camera <strong> m2w elseif u == Effect.WORLD<em>TO</em>CAMERA then  return self.world<em>to</em>camera elseif u == Effect.WORLD<em>TO</em>CLIP then return self.camera<em>to</em>clip </strong> self.world<em>to</em>camera elseif u == Effect.CAMERA<em>TO</em>CLIP then  return self.camera<em>to</em>clip elseif u == Effect.MODEL<em>NORMAL</em>TO<em>CAMERA then -- We don't have a M3 type yet. Do it the had-hoc here. local m = M4.transpose(M4.inv(self.world</em>to<em>camera * m2w)) local m3 = { m[1], m[2], m[3],    -- fst col m[5], m[6], m[7],    -- snd col m[9], m[10], m[11] } -- trd col return m3 elseif u == Effect.CAMERA</em>RESOLUTION then  return self.camera<em>resolution elseif u == Effect.RENDER</em>FRAME<em>START</em>TIME then  return self.super.frame<em>start</em>time end return nil end</p>
+                    <p>local str = string.format local GLFloatPtr = ffi.typeof("GLfloat [?]")</p>
+                    <p>local m2w = o.transform and o.transform.matrix or M4.id () if o.geometry.pre<em>transform then m2w = m2w * o.geometry.pre</em>transform end</p>
+                    <p>self.next<em>active</em>texture = 0 for u, uspec in pairs(estate.program.uniforms) do  local info = uspec.info local uv = effect.uniform(effect, cam, o, u) uv = uv or effect.default_uniforms[u]</p>
+                    <pre class='prettyprint lang-lua'>if uv == nil then
+  local name = uspec.locs and str("%s[%d]", u, #uspec.locs) or u
+  self:log(str("Uniform value %s %s: not found", info.glsl, name))
+elseif uspec.locs and type(uv) ~= "table" then
+  local name = str("%s[%d]", u, #uspec.locs)
+  self:log(str("Uniform value %s %s: found %s instead of table", 
+               info.glsl, name, type(uv)))
+                 
+elseif uspec.locs and #uv ~= #uspec.locs then 
+  local name = str("%s[%d]", u, #uspec.locs)
+  self:log(str("Uniform value %s %s: table too short (%d)", 
+               info.glsl, name, #uv))
+else
+  local uvals = uspec.locs and uv or { uv }
+  local locs = uspec.locs or { uspec.loc } 
+  if info.kind == vec_kind then 
+    if info.dim == 1 then
+      for i, loc in ipairs(locs) do 
+        local v = uvals[i]
+        if type(v) == "table" and v.special_uniform then 
+          v = self:getSpecialUniform(v, m2w)
+        end
+        info.bind(loc, v)
+      end
+    elseif info.dim == 2 then 
+      for i, loc in ipairs(locs) do 
+        local v = uvals[i]
+        if type(v) == "table" and v.special_uniform then 
+          v = self:getSpecialUniform(v, m2w)
+        end
+        info.bind(loc, v[1], v[2])
+      end
+    elseif info.dim == 3 then 
+      for i, loc in ipairs(locs) do 
+        local v = uvals[i]
+        if type(v) == "table" and v.special_uniform then 
+          v = self:getSpecialUniform(v, m2w)
+        end
+        info.bind(loc, v[1], v[2], v[3])
+      end
+    elseif info.dim == 4 then
+      for i, loc in ipairs(locs) do 
+        local v = uvals[i]
+        if type(v) == "table" and v.special_uniform then 
+          v = self:getSpecialUniform(v, m2w)
+        end
+        info.bind(loc, v[1], v[2], v[3], v[4])
+      end
+    else assert(false) 
+    end
+  elseif info.kind == mat_kind then 
+    for i, loc in ipairs(locs) do 
+      local v = uvals[i]
+      if type(v) == "table" and v.special_uniform then 
+        v = self:getSpecialUniform(v, m2w)
+      elseif v.type == 'four.Transform' then 
+        v = v.matrix 
+      end
+      local m = GLFloatPtr(info.dim, v)
+      info.bind(loc, 1, lo.GL_FALSE, m)
+    end
+  elseif info.kind == samp_kind then 
+    for i, loc in ipairs(locs) do 
+      local v = uvals[i]
+      if type(v) == "table" and v.special_uniform then 
+        v = getSpecialUniform(v, m2w)
+      end
+      local t = self:textureStateAllocate(v)
+      lo.glActiveTexture(lo.GL_TEXTURE0 + self.next_active_texture)
+      local target = texTargetGLenum[v.type] 
+      lo.glBindTexture(target,t.id)
+      lo.glUniform1i(loc, self.next_active_texture)
+      self.next_active_texture = self.next_active_texture + 1
+    end
+  end
+end</pre>
+                    <p>end end</p>
+                    <p>if r.cull<em>face == Effect.CULL</em>NONE then  lo.glDisable(lo.GL<em>CULL</em>FACE) else  lo.glEnable(lo.GL<em>CULL</em>FACE) if r.cull<em>face == Effect.CULL</em>FRONT then  lo.glCullFace(lo.GL<em>FRONT) else  lo.glCullFace(lo.GL</em>BACK)  end end end</p>
+                    <p>if not d.test then lo.glDisable(lo.GL<em>DEPTH</em>TEST)  else  lo.glEnable(lo.GL<em>DEPTH</em>TEST) lo.glDepthFunc(depthFuncGLenum[d.func]) if d.offset.factor == 0 and d.offset.units == 0 then  lo.glDisable(lo.GL<em>POLYGON</em>OFFSET<em>FILL) else lo.glEnable(lo.GL</em>POLYGON<em>OFFSET</em>FILL) lo.glPolygonOffset(d.offset.factor, d.offset.units) end end</p>
+                    <p>if d.write then lo.glDepthMask(lo.GL<em>TRUE)  else lo.glDepthMask(lo.GL</em>FALSE) end end</p>
+                    <p>local program = estate.program.id if program == -1 then return false end</p>
+                    <p>-- TODO if all these GL calls are too expensive track current state in  -- the renderer. Same goes for setupXXState() lo.glUseProgram(program) self:setupRasterizationState(effect.rasterization) self:setupDepthState(effect.depth) return true end</p>
+                    <p>-- Setup viewport  local wsize = self.super.size  local x, y = V2.tuple(self.camera<em>viewport</em>origin) local w, h = V2.tuple(self.camera_resolution) lo.glViewport(x, y, w, h) </p>
+                    <p>-- Clear buffers  local cbits = 0  local color = cam.background.color  local depth = cam.background.depth local stencil = cam.background.stencil </p>
+                    <p>if color then  local r, g, b, a = V4.tuple(color) lo.glClearColor(r, g, b, a) cbits = cbits + lo.GL<em>COLOR</em>BUFFER_BIT  end</p>
+                    <p>if depth then lo.glClearDepth(depth) lo.glDepthMask(lo.GL<em>TRUE) -- if set to lo.GL</em>FALSE, clearing has no effect. cbits = cbits + lo.GL<em>DEPTH</em>BUFFER_BIT end</p>
+                    <p>if stencil then  lo.glClearStencil(stencil) cbits = cbits + lo.GL<em>STENCIL</em>BUFFER_BIT end</p>
+                    <p>lo.glClear(cbits) end</p>
+                    <p>self.world<em>to</em>camera = M4.inv(cam.transform.matrix) self.camera<em>to</em>clip = cam.projection_matrix</p>
+                    <p>local wsize = self.super.size  self.camera<em>viewport</em>origin = V2.mul(cam.viewport.origin, wsize) self.camera_resolution = V2.mul(cam.viewport.size, wsize) end</p>
+                    <p>-- Renderer interface implementation</p>
+                    <p>self:initGlState() self:getGlLimits() end</p>
+                    <p>local get = gl.hi.glGetString return { vendor = get(lo.GL<em>VENDOR), renderer = get(lo.GL</em>RENDERER), version = get(lo.GL<em>VERSION), shading</em>language<em>version = get(lo.GL</em>SHADING<em>LANGUAGE</em>VERSION), -- TODO segfaults       extensions = gl.hi.glGetString(lo.GL_EXTENSIONS) } end</p>
+                    <p>local pass = 0 local addPasses addPasses = function(e)  if e.type and e.type == 'four.Effect' then  local estate = self:effectStateAllocate(e)  pass = pass + 1 self.queue[pass] = self.queue[pass] or { opak = {}, nopak = {} }  local q = e.opaque and self.queue[pass].opak or self.queue[pass].nopak  q[e] = q[e] or {}  table.insert(q[e], o) else for _, ep in ipairs(e) do addPasses(ep) end end end</p>
+                    <p>local gstate = self:geometryStateAllocate(o.geometry)  local effect = cam.effect_override or o.effect addPasses(effect) end</p>
+                    <p>local estate = self.effects[effect]  if self:setupEffect(effect, estate) then for <em>, o in ipairs(batch) do self:effectBindUniforms(effect, estate, cam, o) local gstate = self.geometries[o.geometry] self:geometryStateBind(gstate, estate) lo.glDrawElements(gstate.primitive, gstate.index</em>length,  gstate.index<em>scalar</em>type, nil) lo.glBindVertexArray(0) end end end</p>
+                              </section>
+                  </div>
+
+        <div class='span2'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='four.html'>four</a></li>
+                                    <li><a href='four.Buffer.html'>Buffer</a></li>
+                        <li><a href='four.Camera.html'>Camera</a></li>
+                        <li><a href='four.Color.html'>Color</a></li>
+                        <li><a href='four.Effect.html'>Effect</a></li>
+                        <li><a href='four.Geometry.html'>Geometry</a></li>
+                        <li><a href='four.M4.html'>M4</a></li>
+                        <li><a href='four.Quat.html'>Quat</a></li>
+                        <li><a href='four.Renderer.html'>Renderer</a></li>
+                        <li class='active'><a href='four.RendererGL32.html'>RendererGL32</a></li>
+                        <li><a href='four.Texture.html'>Texture</a></li>
+                        <li><a href='four.Transform.html'>Transform</a></li>
+                        <li><a href='four.V2.html'>V2</a></li>
+                        <li><a href='four.V3.html'>V3</a></li>
+                        <li><a href='four.V4.html'>V4</a></li>
+                        <li><a href='four.gl.html'>gl</a></li>
+                      </ul>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+    <div class="container">
+       made with <a href='http://doc.lubyk.org/lk.Doc.html'>lk.Doc</a> 
+    </div>
+    </footer>
+
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
+    <script src='http://code.jquery.com/jquery.js'></script>
+    <script src='js/bootstrap.min.js'></script>
+  </body>
+</html>
+

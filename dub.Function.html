@@ -19,7 +19,7 @@
       <div class="container">
         <div class='row'>
           <div class='span12'>
-             <a href='http://lubyk.org'><img alt='lubyk logo' src='img/lubyk.png'/> <h1>Lubyk documentation</h1></a> 
+             <a href='http://lubyk.org'><img alt='lubyk logo' src='img/lubyk.png'/></a> <h1><a href='http://doc.lubyk.org'>Lubyk documentation</a></h1></a> 
           </div>
         </div>
       </div>
@@ -58,7 +58,7 @@ return self</pre>
                     <p>--=============================================== PUBLIC METHODS</p>
                     <p>--- Return an iterator over the params of this function. local co = coroutine.create(private.paramsIterator) return function() local ok, value = coroutine.resume(co, self) if ok then return value end end end</p>
                     <p>return self.definition .. self.argsstring end</p>
-                    <p>-- Full name for function. lib.fullname = <a href='dub.Class.html#fullname'>dub.Class.fullname</a></p>
+                    <p>-- Full name for function. lib.fullname = <a href='dub.Class.html'>dub.Class</a>.fullname</p>
                     <p>-- Full C name for function. if self.parent and self.parent.name then return self.parent:fullname() .. '::' .. self.cname else return self.cname end end</p>
                     <p>-- TODO: inspect xml return self.is<em>set</em>attr or self.is<em>get</em>attr or self.is_cast end</p>
                     <p>self.name = name if string.match(self.name, '^~') then self.destructor = true self.cname = string.gsub(self.name, '~', '<em>') elseif string.match(name, '^operator') then local n = string.match(name, '^operator(.+)$') local op = self.OP</em>TO<em>NAME[n] if op then self.cname = 'operator</em>' .. op else return false end else self.cname = self.name end return true end --=============================================== PRIVATE</p>

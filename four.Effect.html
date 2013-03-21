@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>four.Effect</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+
+
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/docs.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class='row'>
+          <div class='span12'>
+             <a href='http://lubyk.org'><img alt='lubyk logo' src='img/lubyk.png'/></a> <h1><a href='http://doc.lubyk.org'>Lubyk documentation</a></h1></a> 
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="row">
+
+        <div class='span3'>
+          <ul class='nav nav-tabs nav-stacked local-nav affix'>
+                        <li><a href='#Effect'><i class='icon-chevron-right'></i> four.Effect</a></li>
+                        <li><a href='#TODO'><i class='icon-chevron-right'></i> TODO</a></li>
+                      </ul>
+        </div>
+
+        <div class='main span7'>
+
+                    <section id='Effect'>
+          <h2 class='section'>four.Effect</h2>
+
+                              <a name='__newindex'></a>
+          <h4 class='function'><span>.</span>__newindex <code>(t, k, v)</code></h4>
+          
+                    <p class='summary'></p>
+                    <p>local lib = { type = 'four.Effect' } <a href='four.Effect.html'>four.Effect</a> = lib</p>
+                    <p>local Color = <a href='four.Color.html'>four.Color</a> local Effect = lib</p>
+                    <p>-- Meta table to detect shader source changes. Allows the renderer to -- dynamically recompile the GPU program.</p>
+                    <p>local isShaderKey = { vertex = true, geometry = true, fragment = true }</p>
+                    <p>if k == "shaders" then return rawget(t, k) elseif isShaderKey[k] then return t.shaders[k] else return lib[k] end end</p>
+                    <p>if isShaderKey[k] then  local shaders = t.shaders shaders[k] = v  t.program_changed = true else rawset(t, k, v) end end</p>
+                    <p>setmetatable(lib, { <em></em>call = function(lib, ...) return lib.new(...) end})</p>
+                    <p>-- h2. Render states</p>
+                    <p>--[[-- h3. Rasterization state</p>
+                    <p><strong>Note</strong>. Faces with a counter clock-wise orientation are front faces.</p>
+                    <p>Rasterization state is described by a table with the following keys:</p>
+                    <ul>
+<li><code>face_cull</code>, faces to cull (defaults to <code>CULL_NONE</code>).</li>
+</ul>
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='defaultRasterization '></a>
+          <h4 class='function'><span>.</span>defaultRasterization  <code>1</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='CULL_FRONT'></a>
+          <h4 class='param'><span>.</span>CULL_FRONT <code>= 2</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='CULL_BACK'></a>
+          <h4 class='param'><span>.</span>CULL_BACK <code>= 3</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='defaultDepth'></a>
+          <h4 class='function'><span>.</span>defaultDepth <code>1</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='DEPTH_FUNC_LESS'></a>
+          <h4 class='param'><span>.</span>DEPTH_FUNC_LESS <code>= 2</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='DEPTH_FUNC_EQUAL'></a>
+          <h4 class='param'><span>.</span>DEPTH_FUNC_EQUAL <code>= 3</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='DEPTH_FUNC_LEQUAL'></a>
+          <h4 class='param'><span>.</span>DEPTH_FUNC_LEQUAL <code>= 4</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='DEPTH_FUNC_GREATER'></a>
+          <h4 class='param'><span>.</span>DEPTH_FUNC_GREATER <code>= 5</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='DEPTH_FUNC_NOTEQUAL'></a>
+          <h4 class='param'><span>.</span>DEPTH_FUNC_NOTEQUAL <code>= 6</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='DEPTH_FUNC_GEQUAL'></a>
+          <h4 class='param'><span>.</span>DEPTH_FUNC_GEQUAL <code>= 7</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='DEPTH_FUNC_ALWAYS'></a>
+          <h4 class='param'><span>.</span>DEPTH_FUNC_ALWAYS <code>= 8</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='new'></a>
+          <h4 class='function'><span>.</span>new <code>(def)</code></h4>
+          
+                    <p><code>Effect(def)</code> is a new effect object. <code>def</code> keys:</p>
+                    <ul>
+<li><code>default_uniforms</code>, key/value table, defining default values for uniforms.</li>
+<li><code>uniform</code>, uniform lookup function invoked before rendering a renderable. defaults to <code>function(self, cam, renderable, name) = return  renderable[name]</code>. If the function returns <code>nil</code>, <code>default_uniforms</code> is  used.</li>
+<li><code>vertex</code>, vertex shader source.</li>
+<li><code>geometry</code>, geometry shader source (optional).</li>
+<li><code>fragment</code>, fragment shader source.</li>
+<li><code>depth</code>, depth state keys to override the defaults (see Depth state).</li>
+<li><code>rasterization</code>, rasterization state keys to override the defaults  (see Rasterization state).</li>
+<li><code>opaque</code>, defines whether the effect is opaque. Renderables with  opaque effects are rendered before non-opaque ones.</li>
+</ul>
+                                        <a name='set'></a>
+          <h4 class='method'><span>:</span>set <code>(def)</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='Shader'></a>
+          <h4 class='function'><span>.</span>Shader <code>(src)</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='MODEL_TO_WORLD'></a>
+          <h4 class='param'><span>.</span>MODEL_TO_WORLD <code>= { special_uniform = true } </code></h4>
+          
+                    <p>h2. Special uniform values</p>
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='MODEL_TO_CAMERA'></a>
+          <h4 class='param'><span>.</span>MODEL_TO_CAMERA <code>= { special_uniform = true } </code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='MODEL_TO_CLIP'></a>
+          <h4 class='param'><span>.</span>MODEL_TO_CLIP <code>= { special_uniform = true } </code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='MODEL_NORMAL_TO_CAMERA'></a>
+          <h4 class='param'><span>.</span>MODEL_NORMAL_TO_CAMERA <code>= { special_uniform = true } </code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='WORLD_TO_CAMERA'></a>
+          <h4 class='param'><span>.</span>WORLD_TO_CAMERA <code>= { special_uniform = true } </code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='WORLD_TO_CLIP'></a>
+          <h4 class='param'><span>.</span>WORLD_TO_CLIP <code>= { special_uniform = true } </code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='CAMERA_TO_CLIP'></a>
+          <h4 class='param'><span>.</span>CAMERA_TO_CLIP <code>= { special_uniform = true } </code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='CAMERA_RESOLUTION'></a>
+          <h4 class='param'><span>.</span>CAMERA_RESOLUTION <code>= { special_uniform = true } </code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='RENDER_FRAME_START_TIME'></a>
+          <h4 class='param'><span>.</span>RENDER_FRAME_START_TIME <code>= { special_uniform = true }</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='vertexShaderSource'></a>
+          <h4 class='method'><span>:</span>vertexShaderSource <code>(pre)</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='fragmentShaderSource'></a>
+          <h4 class='method'><span>:</span>fragmentShaderSource <code>(pre)</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='geometryShaderSource'></a>
+          <h4 class='method'><span>:</span>geometryShaderSource <code>(pre)</code></h4>
+          
+                                        <a name='Wireframe'></a>
+          <h4 class='function'><span>.</span>Wireframe <code>(def)</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='Normals'></a>
+          <h4 class='function'><span>.</span>Normals <code>(def)</code></h4>
+          
+                    <p><code>Normals(def)</code> renders the normals of geometry.</p>
+                    <ul>
+<li><code>normal_scale</code>, a scale factor to apply to the normals.</li>
+<li><code>normal_color_start</code>, color at the starting point of the vector.</li>
+<li><code>normal_color_end</code>, color at the end of vector. </li>
+</ul>
+                              </section>
+                    <section id='TODO'>
+          <h2 class='section'>TODO</h2>
+
+                    
+                    <p class='todo'><span class='ref'><a href='#Effect'>Effect</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#Effect'>Effect</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#Effect'>Effect</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#Effect'>Effect</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#Effect'>Effect</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#Effect'>Effect</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#Effect'>Effect</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#Effect'>Effect</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#Effect'>Effect</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#Effect'>Effect</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#Effect'>Effect</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#Effect'>Effect</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#Effect'>Effect</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#set'>#set</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#Effect'>Effect</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#Effect'>Effect</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#Effect'>Effect</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#Effect'>Effect</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#Effect'>Effect</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#Effect'>Effect</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#Effect'>Effect</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#Effect'>Effect</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#Effect'>Effect</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#Effect'>Effect</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#vertexShaderSource'>#vertexShaderSource</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#vertexShaderSource'>#vertexShaderSource</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#fragmentShaderSource'>#fragmentShaderSource</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#Effect'>Effect</a></span><span>TODO</span> use discard ? </p>
+                    <p class='todo'><span class='ref'><a href='#Effect'>Effect</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                              </section>
+                  </div>
+
+        <div class='span2'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='four.html'>four</a></li>
+                                    <li><a href='four.Buffer.html'>Buffer</a></li>
+                        <li><a href='four.Camera.html'>Camera</a></li>
+                        <li><a href='four.Color.html'>Color</a></li>
+                        <li class='active'><a href='four.Effect.html'>Effect</a></li>
+                        <li><a href='four.Geometry.html'>Geometry</a></li>
+                        <li><a href='four.M4.html'>M4</a></li>
+                        <li><a href='four.Quat.html'>Quat</a></li>
+                        <li><a href='four.Renderer.html'>Renderer</a></li>
+                        <li><a href='four.RendererGL32.html'>RendererGL32</a></li>
+                        <li><a href='four.Texture.html'>Texture</a></li>
+                        <li><a href='four.Transform.html'>Transform</a></li>
+                        <li><a href='four.V2.html'>V2</a></li>
+                        <li><a href='four.V3.html'>V3</a></li>
+                        <li><a href='four.V4.html'>V4</a></li>
+                        <li><a href='four.gl.html'>gl</a></li>
+                      </ul>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+    <div class="container">
+       made with <a href='http://doc.lubyk.org/lk.Doc.html'>lk.Doc</a> 
+    </div>
+    </footer>
+
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
+    <script src='http://code.jquery.com/jquery.js'></script>
+    <script src='js/bootstrap.min.js'></script>
+  </body>
+</html>
+

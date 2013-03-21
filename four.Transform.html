@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>four.Transform</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+
+
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/docs.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class='row'>
+          <div class='span12'>
+             <a href='http://lubyk.org'><img alt='lubyk logo' src='img/lubyk.png'/></a> <h1><a href='http://doc.lubyk.org'>Lubyk documentation</a></h1></a> 
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="row">
+
+        <div class='span3'>
+          <ul class='nav nav-tabs nav-stacked local-nav affix'>
+                        <li><a href='#Transform'><i class='icon-chevron-right'></i> four.Transform</a></li>
+                        <li><a href='#TODO'><i class='icon-chevron-right'></i> TODO</a></li>
+                      </ul>
+        </div>
+
+        <div class='main span7'>
+
+                    <section id='Transform'>
+          <h2 class='section'>four.Transform</h2>
+
+                              <a name='new'></a>
+          <h4 class='function'><span>.</span>new <code>(def)</code></h4>
+          
+                    <p class='summary'></p>
+                    <p>local lib = { type = 'four.Transform' } <a href='four.Transform.html'>four.Transform</a> = lib</p>
+                    <p>local Quat = <a href='four.Quat.html'>four.Quat</a> local V3 = four.V3 local V4 = four.V4 local M4 = four.M4</p>
+                    <p>-- Transform decomposition/matrix synchronization</p>
+                    <p>local function syncMatrix(tv)  tv.matrix = M4.rigidqScale(tv.pos, tv.rot, tv.scale)  end</p>
+                    <p>local function syncDecomp(tv) local m = tv.matrix tv.pos = M4.getMove(m) tv.rot = Quat.ofM4(m) tv.scale = M4.getScale(m) end</p>
+                    <p>local function notify(tr, tv) for _, d in ipairs(tv.deps) do d(tr) end end</p>
+                    <p>local is<em>decomp</em>key = { pos = true, rot = true, scale = true }  if k == "tv" then return rawget(t, k) elseif is<em>decomp</em>key[k] then local tv = t.tv if tv.dirty<em>decomp then syncDecomp(tv) end return tv[k] elseif (k == "matrix") then local tv = t.tv if tv.dirty</em>matrix then syncMatrix(tv) end return tv[k] else return lib[k] end end</p>
+                    <p>if is<em>decomp</em>key[k] then  local tv = t.tv if tv.dirty<em>decomp then syncDecomp(tv) end -- other decomps. tv[k] = v tv.dirty</em>matrix = true  notify(t, tv) elseif (k == "matrix") then  local tv = t.tv  tv[k] = v tv.dirty<em>decomp = true tv.dirty</em>matrix = false notify(t, tv) elseif (k == "deps") then  local deps = t.tv.deps deps = {} for _, dep in ipairs(v) do table.insert(deps, dep) end else t[k] = v end end</p>
+                    <p>setmetatable(lib, { <em></em>call = function(lib, o) return lib.new(o) end })</p>
+                    <p>-- h2. Constructor</p>
+                    <p>local err_ambig = "Ambiguous transform (matrix and decomposition specified)"</p>
+                    <p>--[[-- <code>Transform(def)</code> is a new transform object. <code>def</code> keys:</p>
+                    <ul>
+<li><code>pos</code>, the position component of the transform as <code>V3</code> object.</li>
+<li><code>rot</code>, the rotation component of the transform as a <code>Quat</code> object.</li>
+<li><code>scale</code>, the scaling component of the transform.</li>
+<li><code>matrix</code>, the matrix of the transform (excludes <code>pos</code>, <code>rot</code>, <code>scale</code>).</li>
+<li><code>deps</code>, weak array of functions called whenever the transform changes.</li>
+</ul>
+                                        <a name='set'></a>
+          <h4 class='method'><span>:</span>set <code>(def)</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='insertDep'></a>
+          <h4 class='method'><span>:</span>insertDep <code>(d)</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='removeDep'></a>
+          <h4 class='method'><span>:</span>removeDep <code>(d)</code></h4>
+          
+                                        <a name='lookAt'></a>
+          <h4 class='method'><span>:</span>lookAt <code>(t, up)</code></h4>
+          
+                    <p><code>lookAt(pos[,up])</code> rotates the transform so that the forward points at <code>pos</code>. If <code>up</code> is unspecified <code>V3.oy ()</code> is used. The final <code>up</code> vector only matches if the forward direction is orthogonal to the forward direction.</p>
+                              </section>
+                    <section id='TODO'>
+          <h2 class='section'>TODO</h2>
+
+                    
+                    <p class='todo'><span class='ref'><a href='#set'>#set</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#insertDep'>#insertDep</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#insertDep'>#insertDep</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                              </section>
+                  </div>
+
+        <div class='span2'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='four.html'>four</a></li>
+                                    <li><a href='four.Buffer.html'>Buffer</a></li>
+                        <li><a href='four.Camera.html'>Camera</a></li>
+                        <li><a href='four.Color.html'>Color</a></li>
+                        <li><a href='four.Effect.html'>Effect</a></li>
+                        <li><a href='four.Geometry.html'>Geometry</a></li>
+                        <li><a href='four.M4.html'>M4</a></li>
+                        <li><a href='four.Quat.html'>Quat</a></li>
+                        <li><a href='four.Renderer.html'>Renderer</a></li>
+                        <li><a href='four.RendererGL32.html'>RendererGL32</a></li>
+                        <li><a href='four.Texture.html'>Texture</a></li>
+                        <li class='active'><a href='four.Transform.html'>Transform</a></li>
+                        <li><a href='four.V2.html'>V2</a></li>
+                        <li><a href='four.V3.html'>V3</a></li>
+                        <li><a href='four.V4.html'>V4</a></li>
+                        <li><a href='four.gl.html'>gl</a></li>
+                      </ul>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+    <div class="container">
+       made with <a href='http://doc.lubyk.org/lk.Doc.html'>lk.Doc</a> 
+    </div>
+    </footer>
+
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
+    <script src='http://code.jquery.com/jquery.js'></script>
+    <script src='js/bootstrap.min.js'></script>
+  </body>
+</html>
+

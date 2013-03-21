@@ -4,6 +4,7 @@
 h2.section {color:#777; border-top:1px solid #bbb; font-size:26px; margin:1em 0; padding-top:15px;}
 p, ul, .container pre.prettyprint, .container pre, table.definition { margin-left:40px;}
 .main ul li { margin-left:40px;}
+.main img {background:#444; padding:2px;}
 h4.sub-title {margin-top:50px; color:#797}
 h4 {margin-top:30px}
 table.definition .key {min-width:100px; font-weight:bold; padding-right:12px}

@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>four.Buffer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+
+
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/docs.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class='row'>
+          <div class='span12'>
+             <a href='http://lubyk.org'><img alt='lubyk logo' src='img/lubyk.png'/></a> <h1><a href='http://doc.lubyk.org'>Lubyk documentation</a></h1></a> 
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="row">
+
+        <div class='span3'>
+          <ul class='nav nav-tabs nav-stacked local-nav affix'>
+                        <li><a href='#Buffer'><i class='icon-chevron-right'></i> four.Buffer</a></li>
+                        <li><a href='#Constants'><i class='icon-chevron-right'></i> Constants</a></li>
+                        <li><a href='#Constructor'><i class='icon-chevron-right'></i> Constructor</a></li>
+                        <li><a href='#Getters-'><i class='icon-chevron-right'></i> Getters </a></li>
+                        <li><a href='#Setters'><i class='icon-chevron-right'></i> Setters</a></li>
+                        <li><a href='#Append-'><i class='icon-chevron-right'></i> Append </a></li>
+                        <li><a href='#Swapping-and-deleting'><i class='icon-chevron-right'></i> Swapping and deleting</a></li>
+                        <li><a href='#Traversing'><i class='icon-chevron-right'></i> Traversing</a></li>
+                        <li><a href='#Sorting'><i class='icon-chevron-right'></i> Sorting</a></li>
+                        <li><a href='#Data-properties-'><i class='icon-chevron-right'></i> Data properties </a></li>
+                        <li><a href='#TODO'><i class='icon-chevron-right'></i> TODO</a></li>
+                        <li><a href='#FIXME'><i class='icon-chevron-right'></i> FIXME</a></li>
+                      </ul>
+        </div>
+
+        <div class='main span7'>
+
+                    <section id='Buffer'>
+          <h2 class='section'>four.Buffer</h2>
+
+                    
+                    <p class='summary'>A buffer holds 1D to 4D int/float vectors in a linear lua array. See <a href='#new'>new</a> for usage.</p>
+                    <h4 class='sub-title'>Tutorial</h4>
+                    <p>See <a href='tutorial.four.SimpleShader.html'>SimpleShader</a> which uses buffers with a simple renderable.</p>
+                    <p class='todo'><span>TODO</span> INCOMPLETE DOCUMENTATION</p>
+                              </section>
+                    <section id='Constants'>
+          <h2 class='section'>Constants</h2>
+
+                    
+                    <h4 class='sub-title'>Buffer element type </h4>
+                    <p>Defines how the data will be stored on the GPU and how the shader will  view the data.</p>
+                                        <a name='FLOAT'></a>
+          <h4 class='param'><span>.</span>FLOAT <code>= 1</code></h4>
+          
+                                        <a name='DOUBLE'></a>
+          <h4 class='param'><span>.</span>DOUBLE <code>= 2</code></h4>
+          
+                                        <a name='INT'></a>
+          <h4 class='param'><span>.</span>INT <code>= 3</code></h4>
+          
+                                        <a name='UNSIGNED_INT'></a>
+          <h4 class='param'><span>.</span>UNSIGNED_INT <code>= 4</code></h4>
+          
+                                        <a name='BYTE'></a>
+          <h4 class='param'><span>.</span>BYTE <code>= 5</code></h4>
+          
+                                        <a name='UNSIGNED_BYTE'></a>
+          <h4 class='param'><span>.</span>UNSIGNED_BYTE <code>= 6</code></h4>
+          
+                              
+                    <h4 class='sub-title'>Buffer usage hints</h4>
+                    <p>Defines how the data will be updated (hint for renderer).</p>
+                                        <a name='UPDATE_NEVER'></a>
+          <h4 class='param'><span>.</span>UPDATE_NEVER <code>= 1</code></h4>
+          
+                                        <a name='UPDATE_SOMETIMES'></a>
+          <h4 class='param'><span>.</span>UPDATE_SOMETIMES <code>= 2</code></h4>
+          
+                                        <a name='UPDATE_OFTEN'></a>
+          <h4 class='param'><span>.</span>UPDATE_OFTEN <code>= 3</code></h4>
+          
+                              </section>
+                    <section id='Constructor'>
+          <h2 class='section'>Constructor</h2>
+
+                    
+                                        <a name='new'></a>
+          <h4 class='function'><span>.</span>new <code>(def)</code></h4>
+          
+                    <p>Create a <a href='four.Buffer.html'>four.Buffer</a> with parameters defined in <code>def</code>. Possible keys are:</p>
+                    <table class='definition'>
+  <tr><td class='key'>dim</td><td>the vectors dimension (defaults to <code>3</code>).</td></tr>
+  <tr><td class='key'>scalar_type</td><td>the vector's element type (defaults to <code>lib.FLOAT</code>).</td></tr>
+  <tr><td class='key'>data</td><td>an array of numbers (defaults to <code>{}</code>)</td></tr>
+  <tr><td class='key'>normalize</td><td><code>true</code> if the data should be normalized by the GPU (defaults to <code>false</code>).</td></tr>
+  <tr><td class='key'>update</td><td>the update frequency (defaults to <code>UPDATE_NEVER</code>)</td></tr>
+  <tr><td class='key'>disposable</td><td>if <code>true</code>, <code>data</code> is disposed by the renderer once uploaded to the GPU (defaults to <code>true</code>).</td></tr>
+  <tr><td class='key'>updated</td><td>if <code>true</code>, <code>data</code> will be read again by the renderer. The renderer sets the flag back to <code>false</code> once it read the data.</td></tr>
+
+</table>
+                    <p>Usage examples:</p>
+                    <p>Vertex buffer (3 values = xyz).</p>
+                    <pre class='prettyprint lang-lua'>local vb = four.Buffer { dim = 3,
+           scalar_type = four.Buffer.FLOAT } 
+</pre>
+                    <p>Color buffer (4 values = rgba)</p>
+                    <pre class='prettyprint lang-lua'>local cb = four.Buffer { dim = 4,
+           scalar_type = four.Buffer.FLOAT }
+</pre>
+                    <p>Index buffer (how values are used is defined in <a href='four.Geometry.html#primitive'>four.Geometry#primitive</a>).</p>
+                    <pre class='prettyprint lang-lua'>local ib = four.Buffer { dim = 1,
+           scalar_type = four.Buffer.UNSIGNED_INT }</pre>
+                                        <a name='set'></a>
+          <h4 class='method'><span>:</span>set <code>(def)</code></h4>
+          
+                                        <a name='length'></a>
+          <h4 class='method'><span>:</span>length <code>()</code></h4>
+          
+                                        <a name='scalarLength'></a>
+          <h4 class='method'><span>:</span>scalarLength <code>()</code></h4>
+          
+                                        <a name='disposeBuffer'></a>
+          <h4 class='method'><span>:</span>disposeBuffer <code>()</code></h4>
+          
+                              </section>
+                    <section id='Getters-'>
+          <h2 class='section'>Getters </h2>
+
+                    
+                                        <a name='getScalar'></a>
+          <h4 class='method'><span>:</span>getScalar <code>(i)</code></h4>
+          
+                                        <a name='get1D'></a>
+          <h4 class='method'><span>:</span>get1D <code>(i)</code></h4>
+          
+                                        <a name='get2D'></a>
+          <h4 class='method'><span>:</span>get2D <code>(i)</code></h4>
+          
+                                        <a name='get3D'></a>
+          <h4 class='method'><span>:</span>get3D <code>(i)</code></h4>
+          
+                                        <a name='get4D'></a>
+          <h4 class='method'><span>:</span>get4D <code>(i)</code></h4>
+          
+                                        <a name='getV2'></a>
+          <h4 class='method'><span>:</span>getV2 <code>(i)</code></h4>
+          
+                                        <a name='getV3'></a>
+          <h4 class='method'><span>:</span>getV3 <code>(i)</code></h4>
+          
+                                        <a name='getV4'></a>
+          <h4 class='method'><span>:</span>getV4 <code>(i)</code></h4>
+          
+                              </section>
+                    <section id='Setters'>
+          <h2 class='section'>Setters</h2>
+
+                    
+                                        <a name='setScalar'></a>
+          <h4 class='method'><span>:</span>setScalar <code>(i, x)</code></h4>
+          
+                                        <a name='set1D'></a>
+          <h4 class='method'><span>:</span>set1D <code>(i, x)</code></h4>
+          
+                                        <a name='set2D'></a>
+          <h4 class='method'><span>:</span>set2D <code>(i, x, y)</code></h4>
+          
+                                        <a name='set3D'></a>
+          <h4 class='method'><span>:</span>set3D <code>(i, x, y, z)</code></h4>
+          
+                                        <a name='set4D'></a>
+          <h4 class='method'><span>:</span>set4D <code>(i, x, y, z, w)</code></h4>
+          
+                                        <a name='setV2'></a>
+          <h4 class='method'><span>:</span>setV2 <code>(i, v)</code></h4>
+          
+                                        <a name='setV3'></a>
+          <h4 class='method'><span>:</span>setV3 <code>(i, v)</code></h4>
+          
+                                        <a name='setV4'></a>
+          <h4 class='method'><span>:</span>setV4 <code>(i, v)</code></h4>
+          
+                              </section>
+                    <section id='Append-'>
+          <h2 class='section'>Append </h2>
+
+                    
+                    <p><strong>Note</strong>: appending just adds elements at the end of the data, it  does not care about buffer dimension.</p>
+                                        <a name='push'></a>
+          <h4 class='method'><span>:</span>push <code>(...)</code></h4>
+          
+                                        <a name='push1D'></a>
+          <h4 class='method'><span>:</span>push1D <code>(x)</code></h4>
+          
+                                        <a name='push2D'></a>
+          <h4 class='method'><span>:</span>push2D <code>(x, y)</code></h4>
+          
+                                        <a name='push3D'></a>
+          <h4 class='method'><span>:</span>push3D <code>(x, y, z)</code></h4>
+          
+                                        <a name='push4D'></a>
+          <h4 class='method'><span>:</span>push4D <code>(x, y, z, w)</code></h4>
+          
+                                        <a name='pushV2'></a>
+          <h4 class='method'><span>:</span>pushV2 <code>(v)</code></h4>
+          
+                                        <a name='pushV3'></a>
+          <h4 class='method'><span>:</span>pushV3 <code>(v)</code></h4>
+          
+                                        <a name='pushV4'></a>
+          <h4 class='method'><span>:</span>pushV4 <code>(v)</code></h4>
+          
+                              </section>
+                    <section id='Swapping-and-deleting'>
+          <h2 class='section'>Swapping and deleting</h2>
+
+                    
+                                        <a name='swap'></a>
+          <h4 class='method'><span>:</span>swap <code>(i,j)</code></h4>
+          
+                    <p>Swap elements <code>i</code> and <code>j</code>. </p>
+                                        <a name='delete'></a>
+          <h4 class='method'><span>:</span>delete <code>(i)</code></h4>
+          
+                    <p>Delete element <code>i</code>. <strong>Warning</strong>: does not preserve the order of elements in the array.</p>
+                    <p class='todo'><span>TODO</span> Could greatly optimize by using table.remove (this would also preserve order).</p>
+                              </section>
+                    <section id='Traversing'>
+          <h2 class='section'>Traversing</h2>
+
+                    
+                                        <a name='foldScalars'></a>
+          <h4 class='method'><span>:</span>foldScalars <code>(f, acc)</code></h4>
+          
+                                        <a name='fold1D'></a>
+          <h4 class='method'><span>:</span>fold1D <code>(f, acc)</code></h4>
+          
+                                        <a name='fold2D'></a>
+          <h4 class='method'><span>:</span>fold2D <code>(f, acc)</code></h4>
+          
+                                        <a name='fold3D'></a>
+          <h4 class='method'><span>:</span>fold3D <code>(f, acc)</code></h4>
+          
+                                        <a name='fold4D'></a>
+          <h4 class='method'><span>:</span>fold4D <code>(f, acc)</code></h4>
+          
+                                        <a name='foldV3'></a>
+          <h4 class='method'><span>:</span>foldV3 <code>(f, acc)</code></h4>
+          
+                                        <a name='foldV4'></a>
+          <h4 class='method'><span>:</span>foldV4 <code>(f, acc)</code></h4>
+          
+                              </section>
+                    <section id='Sorting'>
+          <h2 class='section'>Sorting</h2>
+
+                    
+                    <p>Sorting methods use custom comparison function <code>cmp(x,y)</code> which should return:</p>
+                    <ul>
+<li><code>-1</code> if <code>x</code> is smaller than <code>y</code></li>
+<li><code>0</code> if <code>x</code> equals <code>y</code></li>
+<li><code>1</code> if <code>x</code> is greater than <code>y</code></li>
+</ul>
+                                        <a name='sort'></a>
+          <h4 class='method'><span>:</span>sort <code>(cmp, get)</code></h4>
+          
+                    <p>Sort the elements of the buffer in place using <code>cmp</code> as a comparison function. <code>cmp</code> is given objects returned by optional <code>get</code> function. (defaults depends on <code>self.dim</code>, number for <code>1</code>, V2 for <code>2</code>, V3 for <code>3</code>,  V4 for <code>4</code>)</p>
+                    <p class='fixme'><span>FIXME</span> This does not correspond to documentation (param <code>get</code> never used).</p>
+                                        <a name='sortOrder'></a>
+          <h4 class='method'><span>:</span>sortOrder <code>(cmp, get)</code></h4>
+          
+                    <p>This is like <a href='#sort'>sort</a> except elements of the buffer are kept in place and an array of indexes defining the order is returned. </p>
+                              </section>
+                    <section id='Data-properties-'>
+          <h2 class='section'>Data properties </h2>
+
+                    
+                                        <a name='dimExtents'></a>
+          <h4 class='method'><span>:</span>dimExtents <code>()</code></h4>
+          
+                    <p>Returns a table of size <code>self.dim</code> containing tables with the minimal and maximal scalar values for each dimension in to form <code>{min = ..., max = ...}</code>.</p>
+                              </section>
+                    <section id='TODO'>
+          <h2 class='section'>TODO</h2>
+
+                    
+                    <p class='todo'><span class='ref'><a href='#Buffer'>Buffer</a></span><span>TODO</span> INCOMPLETE DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#delete'>#delete</a></span><span>TODO</span> Could greatly optimize by using table.remove (this would also preserve order).</p>
+                              </section>
+                    <section id='FIXME'>
+          <h2 class='section'>FIXME</h2>
+
+                    
+                    <p class='fixme'><span class='ref'><a href='#sort'>#sort</a></span><span>FIXME</span> This does not correspond to documentation (param <code>get</code> never used).</p>
+                              </section>
+                  </div>
+
+        <div class='span2'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='four.html'>four</a></li>
+                                    <li class='active'><a href='four.Buffer.html'>Buffer</a></li>
+                        <li><a href='four.Camera.html'>Camera</a></li>
+                        <li><a href='four.Color.html'>Color</a></li>
+                        <li><a href='four.Effect.html'>Effect</a></li>
+                        <li><a href='four.Geometry.html'>Geometry</a></li>
+                        <li><a href='four.M4.html'>M4</a></li>
+                        <li><a href='four.Quat.html'>Quat</a></li>
+                        <li><a href='four.Renderer.html'>Renderer</a></li>
+                        <li><a href='four.RendererGL32.html'>RendererGL32</a></li>
+                        <li><a href='four.Texture.html'>Texture</a></li>
+                        <li><a href='four.Transform.html'>Transform</a></li>
+                        <li><a href='four.V2.html'>V2</a></li>
+                        <li><a href='four.V3.html'>V3</a></li>
+                        <li><a href='four.V4.html'>V4</a></li>
+                        <li><a href='four.gl.html'>gl</a></li>
+                      </ul>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+    <div class="container">
+       made with <a href='http://doc.lubyk.org/lk.Doc.html'>lk.Doc</a> 
+    </div>
+    </footer>
+
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
+    <script src='http://code.jquery.com/jquery.js'></script>
+    <script src='js/bootstrap.min.js'></script>
+  </body>
+</html>
+

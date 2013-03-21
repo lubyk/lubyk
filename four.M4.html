@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>four.M4</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+
+
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/docs.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class='row'>
+          <div class='span12'>
+             <a href='http://lubyk.org'><img alt='lubyk logo' src='img/lubyk.png'/></a> <h1><a href='http://doc.lubyk.org'>Lubyk documentation</a></h1></a> 
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="row">
+
+        <div class='span3'>
+          <ul class='nav nav-tabs nav-stacked local-nav affix'>
+                        <li><a href='#M4'><i class='icon-chevron-right'></i> four.M4</a></li>
+                        <li><a href='#TODO'><i class='icon-chevron-right'></i> TODO</a></li>
+                      </ul>
+        </div>
+
+        <div class='main span7'>
+
+                    <section id='M4'>
+          <h2 class='section'>four.M4</h2>
+
+                              <a name='ortho'></a>
+          <h4 class='function'><span>.</span>ortho <code>(l, r, b, t, n, f)</code></h4>
+          
+                    <p class='summary'></p>
+                    <p>local lib = { type = 'four.M4' } lib.<em></em>index = lib four.M4 = lib setmetatable(lib, { <em></em>call = function(lib, ...) return lib.M4(...) end })</p>
+                    <p>local V3 = four.V3</p>
+                    <p>-- h2. Constructor and accessors</p>
+                    <p>e21, e22, e23, e24, -- row 2 e31, e32, e33, e34, -- row 3 e41, e42, e43, e44) -- row 4 local m  if e12 then  m = { e11, e21, e31, e41,  -- col 1 e12, e22, e32, e42,  -- col 2 e13, e23, e33, e43,  -- col 3 e14, e24, e34, e44 } -- col 4 else if e11.type == "bt.Transform" then m = e11:toM4()  else assert(false, string.format("Cannot convert %s to %s", e11.type,  lib.type)) end end setmetatable(m, lib) return m end</p>
+                    <p>local M4 = lib.M4</p>
+                    <p>local b = (i - 1) * 4 return four.V4(m[b + 1], m[b + 2], m[b + 3], m[b + 4]) end</p>
+                    <p>-- h2. Converters</p>
+                    <p>return M4(r1[1], r1[2], r1[3], r1[4], r2[1], r2[2], r2[3], r2[4], r3[1], r3[2], r3[3], r3[4], r4[1], r4[2], r4[3], r4[4]) end</p>
+                    <p>return M4(c1[1], c2[1], c3[1], c4[1], c1[2], c2[2], c3[2], c4[2], c1[3], c2[3], c3[3], c4[3], c1[4], c2[4], c3[4], c4[4]) end</p>
+                    <p>return string.format("(% g % g % g % g )\n(% g % g % g % g )\n(% g % g % g % g )\n(% g % g % g % g )", m[1], m[5], m[ 9], m[13], m[2], m[6], m[10], m[14], m[3], m[7], m[11], m[15], m[4], m[8], m[12], m[16]) end</p>
+                    <p>-- h2. Constants </p>
+                    <p>return M4(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  0, 0, 0, 0) end</p>
+                    <p>return M4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1) end</p>
+                    <p>-- h2. Functions</p>
+                    <p>local r = {} for i in 1, 16 do r[i] = -a[i] end return r end</p>
+                    <p>local r = {} for i in 1, 16 do r[i] = a[i] + b[i] end return r end</p>
+                    <p>local r = {} for i in 1, 16 do r[i] = a[i] - b[i] end return r end</p>
+                    <p>return M4 (a[1] <strong> b[1] + a[5] </strong> b[2] + a[9] <strong> b[3] + a[13] </strong> b[4], -- row 1 a[1] <strong> b[5] + a[5] </strong> b[6] + a[9] <strong> b[7] + a[13] </strong> b[8], a[1] <strong> b[9] + a[5] </strong> b[10] + a[9] <strong> b[11] + a[13] </strong> b[12], a[1] <strong> b[13] + a[5] </strong> b[14] + a[9] <strong> b[15] + a[13] </strong> b[16], a[2] <strong> b[1] + a[6] </strong> b[2] + a[10] <strong> b[3] + a[14] </strong> b[4], -- row 2 a[2] <strong> b[5] + a[6] </strong> b[6] + a[10] <strong> b[7] + a[14] </strong> b[8], a[2] <strong> b[9] + a[6] </strong> b[10] + a[10] <strong> b[11] + a[14] </strong> b[12], a[2] <strong> b[13] + a[6] </strong> b[14] + a[10] <strong> b[15] + a[14] </strong> b[16], a[3] <strong> b[1] + a[7] </strong> b[2] + a[11] <strong> b[3] + a[15] </strong> b[4], -- row 3 a[3] <strong> b[5] + a[7] </strong> b[6] + a[11] <strong> b[7] + a[15] </strong> b[8], a[3] <strong> b[9] + a[7] </strong> b[10] + a[11] <strong> b[11] + a[15] </strong> b[12], a[3] <strong> b[13] + a[7] </strong> b[14] + a[11] <strong> b[15] + a[15] </strong> b[16], a[4] <strong> b[1] + a[8] </strong> b[2] + a[12] <strong> b[3] + a[16] </strong> b[4], -- row 4 a[4] <strong> b[5] + a[8] </strong> b[6] + a[12] <strong> b[7] + a[16] </strong> b[8], a[4] <strong> b[9] + a[8] </strong> b[10] + a[12] <strong> b[11] + a[16] </strong> b[12], a[4] <strong> b[13] + a[8] </strong> b[14] + a[12] <strong> b[15] + a[16] </strong> b[16]) end</p>
+                    <p>local r = {} for i in 1, 16 do r[i] = a[i] * b[i] end return r end</p>
+                    <p>local r = {} for i in 1, 16 do r[i] = a[i] / b[i] end return r end</p>
+                    <p>local r = {} for i in 1, 16 do r[i] = s * a[i] end return r end</p>
+                    <p>return M4(a[ 1], a[ 2], a[ 3], a[ 4], a[ 5], a[ 6], a[ 7], a[ 8], a[ 9], a[10], a[11], a[12], a[13], a[14], a[15], a[16]) end</p>
+                    <p>-- N.B. mij symbols for minors are written as zero-based row/column local d1 = (a[11] <strong> a[16]) - (a[12] </strong> a[15]) -- second minor local d2 = (a[7] <strong> a[16]) - (a[8] </strong> a[15]) local d3 = (a[7] <strong> a[12]) - (a[8] </strong> a[11])  local m00 = (a[6] <strong> d1) - (a[10] </strong> d2) + (a[14] <strong> d3)   -- minor local m10 = (a[5] </strong> d1) - (a[9] <strong> d2) + (a[13] </strong> d3) local d4 = (a[9] <strong> a[14]) - (a[10] </strong> a[13]) local d5 = (a[5] <strong> a[14]) - (a[6] </strong> a[13])  local d6 = (a[5] <strong> a[10]) - (a[6] </strong> a[9])  local m20 = (a[8] <strong> d4) - (a[12] </strong> d5) + (a[16] <strong> d6) local m30 = (a[7] </strong> d4) - (a[11] <strong> d5) + (a[15] </strong> d6)  return (a[1] <strong> m00) - (a[2] </strong> m10) + (a[3] <strong> m20) - (a[4] </strong> m30)  end</p>
+                    <p>-- N.B. mij symbols for minors are written as zero-based row/column local d1 = (a[11] <strong> a[16]) - (a[12] </strong> a[15]) -- second minor local d2 = (a[7] <strong> a[16]) - (a[8] </strong> a[15])   local d3 = (a[7] <strong> a[12]) - (a[8] </strong> a[11])   local m00 = (a[6] <strong> d1) - (a[10] </strong> d2) + (a[14] <strong> d3)    -- minor local m10 = (a[5] </strong> d1) - (a[9] <strong> d2) + (a[13] </strong> d3)   local d4 = (a[9] <strong> a[14]) - (a[10] </strong> a[13])  local d5 = (a[5] <strong> a[14]) - (a[6] </strong> a[13])  local d6 = (a[5] <strong> a[10]) - (a[6] </strong> a[9])  local m20 = (a[8] <strong> d4) - (a[12] </strong> d5) + (a[16] <strong> d6)   local m30 = (a[7] </strong> d4) - (a[11] <strong> d5) + (a[15] </strong> d6)  local d7 = (a[3] <strong> a[16]) - (a[4] </strong> a[15])  local d8 = (a[3] <strong> a[12]) - (a[4] </strong> a[11])   local m01 = (a[2] <strong> d1) - (a[10] </strong> d7) + (a[14] <strong> d8)   local m11 = (a[1] </strong> d1) - (a[9] <strong> d7) + (a[13] </strong> d8)   local d9 = (a[1] <strong> a[14]) - (a[2] </strong> a[13])   local d10 = (a[1] <strong> a[10]) - (a[2] </strong> a[9])   local m21 = (a[4] <strong> d4) - (a[12] </strong> d9) + (a[16] <strong> d10)   local m31 = (a[3] </strong> d4) - (a[11] <strong> d9) + (a[15] </strong> d10)  local d11 = (a[3] <strong> a[8]) - (a[4] </strong> a[7])  local m02 = (a[2] <strong> d2) - (a[6] </strong> d7) + (a[14] <strong> d11)   local m12 = (a[1] </strong> d2) - (a[5] <strong> d7) + (a[13] </strong> d11)   local d12 = (a[1] <strong> a[6]) - (a[2] </strong> a[5])   local m22 = (a[4] <strong> d5) - (a[8] </strong> d9) + (a[16] <strong> d12)   local m32  =(a[3] </strong> d5) - (a[7] <strong> d9) + (a[15] </strong> d12)   local m03 = (a[2] <strong> d3) - (a[6] </strong> d8) + (a[10] <strong> d11)   local m13 = (a[1] </strong> d3) - (a[5] <strong> d8) + (a[9] </strong> d11)   local m23 = (a[4] <strong> d6) - (a[8] </strong> d10) + (a[12] <strong> d12)   local m33 = (a[3] </strong> d6) - (a[7] <strong> d10) + (a[11] </strong> d12)   local det = (a[1] <strong> m00) - (a[2] </strong> m10) + (a[3] <strong> m20) - (a[4] </strong> m30) return M4 ( m00 / det, -m10 / det,  m20 / det, -m30 / det, -m01 / det,  m11 / det, -m21 / det,  m31 / det, m02 / det, -m12 / det,  m22 / det, -m32 / det, -m03 / det,  m13 / det, -m23 / det,  m33 / det) end</p>
+                    <p>-- h2. 3D space transforms</p>
+                    <p>-- <code>move(d)</code> is a matrix that translates 3D space by the vector <code>d</code>. return M4(1, 0, 0, d[1], 0, 1, 0, d[2], 0, 0, 1, d[3], 0, 0, 0, 1) end</p>
+                    <p>-- <code>getMove(m)</code> is a vector with the translation component of <code>m</code>.</p>
+                    <p>-- <code>rotMap(u, v)</code> is a matrix that rotates 3D space to map the <strong>unit</strong>  -- vector <code>u</code> on the <strong>unit</strong> vector <code>v</code>. local n = V3.cross(u, v) local e = V3.dot(u, v) local h = 1 / (1 + e)  local x = n[1]  local y = n[2]  local z = n[3]  local xy = x <strong> y  local xz = x </strong> z  local yz = y <strong> z return M4(e + h </strong> x <strong> x,    h </strong> xy - z,     h <strong> xz + y, 0, h </strong> xy + z, e + h <strong> y </strong> y,     h <strong> yz - x, 0, h </strong> xz - y,    h <strong> yz + x,  e + h </strong> z * z, 0, 0,             0,              0, 1) end</p>
+                    <p>-- <code>rotAxis(v, theta)</code> is a matrix that rotates 3D space by <code>theta</code> around  -- the <strong>unit</strong> vector <code>v</code>. local xy = u[1] <strong> u[2]  local xz = u[1] </strong> u[3]  local yz = u[2] <strong> u[3]  local c = math.cos(theta)  local one<em>c = 1. - c  local s = math.sin(theta) return M4(u[1] </strong> u[1] <strong> one</em>c + c, -- row 1 xy </strong> one<em>c - u[3] <strong> s, xz </strong> one</em>c + u[2] <strong> s, 0, xy </strong> one<em>c + u[3] <strong> s,  -- row 2 u[2] </strong> u[2] <strong> one</em>c + c, yz </strong> one<em>c - u[1] <strong> s,  0, xz </strong> one</em>c - u[2] <strong> s,  -- row 3 yz </strong> one<em>c + u[1] <strong> s, u[3] </strong> u[3] * one</em>c + c, 0, 0, 0, 0, 1)             -- row 4 end</p>
+                    <p>-- `rotZYX(r)` is a matrix that rotates 3D space first by <code>V3.x(r)</code> around  -- the x-axis, then by <code>V3.y(r)</code> around the y-axis and finally by <code>V3.y(r)</code>  -- around the z-axis local cz = math.cos(r[3]) local sz = math.sin(r[3]) local cy = math.cos(r[2]) local sy = math.sin(r[2]) local cx = math.cos(r[1]) local sx = math.sin(r[1]) return M4(cy <strong> cz, sy </strong> sx <strong> cz - cx </strong> sz, sy <strong> cx </strong> cz + sx <strong> sz, 0, cy </strong> sz, sy <strong> sx </strong> sz + cx <strong> cz, sy </strong> cx <strong> sz - sx </strong> cz, 0, -sy,                cy <strong> sx,                cy </strong> cx, 0, 0,                      0,                      0, 1) end</p>
+                    <p>-- <code>scale(s)</code> is a matrix that scales 3D space in the x, y, and z dimensions  -- according to <code>s</code>. return M4(s[1], 0   , 0   , 0, 0   , s[2], 0   , 0, 0   , 0   , s[3], 0, 0   , 0   , 0   , 1) end</p>
+                    <p>-- <code>getScale(s)</code> is a vector with the scale factors preformed by <code>m</code> in  -- each dimension. return V3(math.sqrt(m[1] <strong> m[1] + m[2] </strong> m[2] + m[3] <strong> m[3]), math.sqrt(m[5] </strong> m[5] + m[6] <strong> m[6] + m[7] </strong> m[7]), math.sqrt(m[9] <strong> m[9] + m[10] </strong> m[10] + m[11] * m[11])) end</p>
+                    <p>-- <code>rigid(d, axis, theta)</code> is the rigid body transform of 3D space -- that rotates by <code>axis</code>, <code>angle</code> and then translate by <code>d</code>. local r = lib.rotAxis(axis, theta) r[13] = d[1]; -- set translation in col 4 r[14] = d[2];  r[15] = d[3]; return r end</p>
+                    <p>-- `rigidq(d, q)` is the rigid body transform of 3D space -- that rotates by the quaternion `q` and then translates by `d`.  local r = <a href='four.Quat.html'>four.Quat</a>.toM4(q) r[13] = d[1]; -- set translation in col 4 r[14] = d[2]; r[15] = d[3]; return r end</p>
+                    <p>-- <code>rigidScale(d, axis, theta, s)</code> is like <code>rigid(d, axis, theta)</code> but  -- it starts by scaling according to <code>s</code>. local r = lib.rigid(d, axis, theta) r[1] = r[1] <strong> s[1] -- scale col 1 r[2] = r[2] </strong> s[1]   r[3] = r[3] <strong> s[1]   r[5] = r[5] </strong> s[2] -- scale col 2 r[6] = r[6] <strong> s[2] r[7] = r[7] </strong> s[2] r[9] = r[9] <strong> s[3] -- scale col 3 r[10] = r[10] </strong> s[3] r[11] = r[11] * s[3] return r end</p>
+                    <p>-- <code>rigidqScale(d, q, s)</code> is like <code>rigid(d, axis, theta)</code> but  -- it starts by scaling according to <code>scale</code>. local r = lib.rigidq(d, q)  r[1] = r[1] <strong> s[1] -- scale col 1 r[2] = r[2] </strong> s[1]   r[3] = r[3] <strong> s[1]   r[5] = r[5] </strong> s[2] -- scale col 2 r[6] = r[6] <strong> s[2] r[7] = r[7] </strong> s[2] r[9] = r[9] <strong> s[3] -- scale col 3 r[10] = r[10] </strong> s[3] r[11] = r[11] * s[3] return r end</p>
+                    <p>-- h2. Projection</p>
+                    <p>--[[-- <code>ortho(l, r, b, t, n, f)</code> maps the axis aligned box with corners <code>(l, b, -n)</code> and <code>(r, t, -f)</code> to the axis aligned cube with corners  (-1, -1, -1) and <code>(1, 1, 1)</code>.</p>
+                                        <a name='persp'></a>
+          <h4 class='function'><span>.</span>persp <code>(l, r, b, t, n, f)</code></h4>
+          
+                    <p><code>persp(l, r, b, t, n, f)</code> maps the frustum with top of  the underlying pyramid at the origin, near plane rectangle corners <code>(l, b, -n)</code>, <code>(r, t, -n)</code> and far plane at <code>-far</code> to  the axis aligned cube with corners <code>(-1, -1, -1)</code> and <code>(1, 1, 1)</code>.</p>
+                                        <a name='scale4D'></a>
+          <h4 class='function'><span>.</span>scale4D <code>(s)</code></h4>
+          
+                    <p>scales 4D space in the x, y, z and w dimensions according to <code>s</code></p>
+                                        <a name='map'></a>
+          <h4 class='function'><span>.</span>map <code>(f, m)</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='mapi'></a>
+          <h4 class='function'><span>.</span>mapi <code>(f, m)</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='fold'></a>
+          <h4 class='function'><span>.</span>fold <code>(f, acc, m)</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='foldi'></a>
+          <h4 class='function'><span>.</span>foldi <code>(f, acc, m)</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='iter'></a>
+          <h4 class='function'><span>.</span>iter <code>(f, m)</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='iter'></a>
+          <h4 class='function'><span>.</span>iter <code>(f, m)</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='forAll'></a>
+          <h4 class='function'><span>.</span>forAll <code>(p, m)</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='exists'></a>
+          <h4 class='function'><span>.</span>exists <code>(p, v)</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='equal'></a>
+          <h4 class='function'><span>.</span>equal <code>(a, b)</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='equalF'></a>
+          <h4 class='function'><span>.</span>equalF <code>(f, u, v)</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='compare'></a>
+          <h4 class='function'><span>.</span>compare <code>(u, v)</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='compareF'></a>
+          <h4 class='function'><span>.</span>compareF <code>(f, u, v)</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='__unm'></a>
+          <h4 class='param'><span>.</span>__unm <code>= lib.neg</code></h4>
+          
+                    <p>h2. Operators</p>
+                                        <a name='__add'></a>
+          <h4 class='param'><span>.</span>__add <code>= lib.add</code></h4>
+          
+                                        <a name='__sub'></a>
+          <h4 class='param'><span>.</span>__sub <code>= lib.sub</code></h4>
+          
+                                        <a name='__mul'></a>
+          <h4 class='param'><span>.</span>__mul <code>= lib.mul</code></h4>
+          
+                                        <a name='__tostring'></a>
+          <h4 class='param'><span>.</span>__tostring <code>= lib.tostring</code></h4>
+          
+                              </section>
+                    <section id='TODO'>
+          <h2 class='section'>TODO</h2>
+
+                    
+                    <p class='todo'><span class='ref'><a href='#M4'>M4</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#M4'>M4</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#M4'>M4</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#M4'>M4</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#M4'>M4</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#M4'>M4</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#M4'>M4</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#M4'>M4</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#M4'>M4</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#M4'>M4</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#M4'>M4</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#M4'>M4</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#M4'>M4</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#M4'>M4</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#M4'>M4</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#M4'>M4</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#M4'>M4</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                              </section>
+                  </div>
+
+        <div class='span2'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='four.html'>four</a></li>
+                                    <li><a href='four.Buffer.html'>Buffer</a></li>
+                        <li><a href='four.Camera.html'>Camera</a></li>
+                        <li><a href='four.Color.html'>Color</a></li>
+                        <li><a href='four.Effect.html'>Effect</a></li>
+                        <li><a href='four.Geometry.html'>Geometry</a></li>
+                        <li class='active'><a href='four.M4.html'>M4</a></li>
+                        <li><a href='four.Quat.html'>Quat</a></li>
+                        <li><a href='four.Renderer.html'>Renderer</a></li>
+                        <li><a href='four.RendererGL32.html'>RendererGL32</a></li>
+                        <li><a href='four.Texture.html'>Texture</a></li>
+                        <li><a href='four.Transform.html'>Transform</a></li>
+                        <li><a href='four.V2.html'>V2</a></li>
+                        <li><a href='four.V3.html'>V3</a></li>
+                        <li><a href='four.V4.html'>V4</a></li>
+                        <li><a href='four.gl.html'>gl</a></li>
+                      </ul>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+    <div class="container">
+       made with <a href='http://doc.lubyk.org/lk.Doc.html'>lk.Doc</a> 
+    </div>
+    </footer>
+
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
+    <script src='http://code.jquery.com/jquery.js'></script>
+    <script src='js/bootstrap.min.js'></script>
+  </body>
+</html>
+

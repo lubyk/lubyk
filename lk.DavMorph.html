@@ -19,7 +19,7 @@
       <div class="container">
         <div class='row'>
           <div class='span12'>
-             <a href='http://lubyk.org'><img alt='lubyk logo' src='img/lubyk.png'/> <h1>Lubyk documentation</h1></a> 
+             <a href='http://lubyk.org'><img alt='lubyk logo' src='img/lubyk.png'/></a> <h1><a href='http://doc.lubyk.org'>Lubyk documentation</a></h1></a> 
           </div>
         </div>
       </div>
@@ -45,9 +45,9 @@
                     <p>local private = {}</p>
                     <p>function lk.DavMorph(opts) local self = lk.Morph() self.openFile = private.openFile self.delete   = private.delete self.quit     = private.quit self.join = function(self) self.dav<em>thread:join() end opts.info = {} self.dav = lk.DavServer() opts.info.davport = self.dav.port -- Register WebDAV service when it has finished starting self.dav:onReady(function() self.dav</em>registration = mdns.Registration('<em>webdav.</em>tcp', Lubyk.zone .. '.lubyk', self.dav.port) -- Start lubyk service and announce Morph. self:start(opts) end) return self end</p>
                     <p>--=============================================== PRIVATE function private:delete() end</p>
-                    <p>function private:quit() self.dav_thread:quit() <a href='lk.Morph.html#quit'>lk.Morph.quit</a>(self) end</p>
+                    <p>function private:quit() self.dav_thread:quit() <a href='lk.Morph.html'>lk.Morph</a>.quit(self) end</p>
                     <p>--=============================================== Morph</p>
-                    <p>function private:openFile(filepath) -- super <a href='lk.Morph.html#openFile'>lk.Morph.openFile</a>(self, filepath) -- setup server self.dav:setRoot(self.root) end</p>
+                    <p>function private:openFile(filepath) -- super <a href='lk.Morph.html'>lk.Morph</a>.openFile(self, filepath) -- setup server self.dav:setRoot(self.root) end</p>
                               </section>
                   </div>
 

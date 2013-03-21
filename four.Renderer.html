@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>four.Renderer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+
+
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/docs.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class='row'>
+          <div class='span12'>
+             <a href='http://lubyk.org'><img alt='lubyk logo' src='img/lubyk.png'/></a> <h1><a href='http://doc.lubyk.org'>Lubyk documentation</a></h1></a> 
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="row">
+
+        <div class='span3'>
+          <ul class='nav nav-tabs nav-stacked local-nav affix'>
+                        <li><a href='#Renderer'><i class='icon-chevron-right'></i> four.Renderer</a></li>
+                        <li><a href='#TODO'><i class='icon-chevron-right'></i> TODO</a></li>
+                      </ul>
+        </div>
+
+        <div class='main span7'>
+
+                    <section id='Renderer'>
+          <h2 class='section'>four.Renderer</h2>
+
+                              <a name='new'></a>
+          <h4 class='function'><span>.</span>new <code>(def)</code></h4>
+          
+                    <p class='summary'></p>
+                    <p>-- Module definition</p>
+                    <p>local ffi = require 'ffi' local lib = { type = 'four.Renderer' } lib.<em></em>index = lib <a href='four.Renderer.html'>four.Renderer</a> = lib setmetatable(lib, { <em></em>call = function(lib, ...) return lib.new(...) end })</p>
+                    <p>local V2 = four.V2 local V4 = four.V4 local Buffer = <a href='four.Buffer.html'>four.Buffer</a> local Geometry = four.Geometry</p>
+                    <p>-- h2. Renderer backends</p>
+                    <p>lib.GL32 = 1 lib.GLES = 2 lib.DEFAULT = lib.GL32</p>
+                    <p>-- h2. Constructor</p>
+                    <p>--[[-- <code>Renderer(def)</code> is a new renderer. <code>def</code> keys:</p>
+                    <ul>
+<li><code>backend</code>, the renderer backend (defaults to <code>GL32</code>).</li>
+<li><code>size</code>, a <code>V2</code> defining the viewport size (defaults to V2(480,270).</li>
+<li><code>error_line_pattern</code>, a string used to parse GPU compiler logs. Must split a line in three part, before the GLSL file number, the file number, after the file number.</li>
+</ul>
+                                        <a name='set'></a>
+          <h4 class='method'><span>:</span>set <code>(def)</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='_setBackend'></a>
+          <h4 class='method'><span>:</span>_setBackend <code>()</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='_init'></a>
+          <h4 class='method'><span>:</span>_init <code>()</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='info'></a>
+          <h4 class='method'><span>:</span>info <code>()</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='caps'></a>
+          <h4 class='method'><span>:</span>caps <code>()</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='limits'></a>
+          <h4 class='method'><span>:</span>limits <code>()</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='stats'></a>
+          <h4 class='method'><span>:</span>stats <code>()</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='statsTable '></a>
+          <h4 class='function'><span>.</span>statsTable  <code>()</code></h4>
+          
+                                        <a name='resetStats'></a>
+          <h4 class='method'><span>:</span>resetStats <code>()</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='beginStats'></a>
+          <h4 class='method'><span>:</span>beginStats <code>(now)</code></h4>
+          
+                                        <a name='endStats'></a>
+          <h4 class='method'><span>:</span>endStats <code>()</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='addGeometryStats'></a>
+          <h4 class='method'><span>:</span>addGeometryStats <code>(g)</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span>TODO</span> this doesn't work once data was uploaded on the GPU.</p>
+                                        <a name='log'></a>
+          <h4 class='method'><span>:</span>log <code>(msg)</code></h4>
+          
+                    <p><code>self:log(msg)</code> is called by the backend renderer to log message  <code>msg</code>. Clients can override the function to redirect the renderer  log (the default implementation <code>print</code>s the message).</p>
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='logInfo'></a>
+          <h4 class='method'><span>:</span>logInfo <code>(verbose)</code></h4>
+          
+                                        <a name='logStats'></a>
+          <h4 class='method'><span>:</span>logStats <code>()</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='normalizeScreenPos'></a>
+          <h4 class='method'><span>:</span>normalizeScreenPos <code>(pos, noflip)</code></h4>
+          
+                    <p><code>r:normalizeScreenPos(pos [,noflip])</code> is the normalized position of  <code>pos</code> expressed relative to the top left (bottom left if <code>noflip</code> is true) corner of the rendering surface.</p>
+                                        <a name='isRenderable'></a>
+          <h4 class='method'><span>:</span>isRenderable <code>(cam, o)</code></h4>
+          
+                    <p><code>renderable(cam, o)</code> is <code>true</code> if <code>o</code> can be rendered with <code>cam</code>.</p>
+                                        <a name='addRenderable'></a>
+          <h4 class='method'><span>:</span>addRenderable <code>(cam, o)</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='render'></a>
+          <h4 class='method'><span>:</span>render <code>(cam, objs)</code></h4>
+          
+                    <p><code>render(cam, objs)</code> renders the renderables in <code>objs</code> with <code>cam</code>.</p>
+                              </section>
+                    <section id='TODO'>
+          <h2 class='section'>TODO</h2>
+
+                    
+                    <p class='todo'><span class='ref'><a href='#set'>#set</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#_setBackend'>#_setBackend</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#_init'>#_init</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#info'>#info</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#info'>#info</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#caps'>#caps</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#limits'>#limits</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#stats'>#stats</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#resetStats'>#resetStats</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#resetStats'>#resetStats</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#endStats'>#endStats</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#addGeometryStats'>#addGeometryStats</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#addGeometryStats'>#addGeometryStats</a></span><span>TODO</span> this doesn't work once data was uploaded on the GPU.</p>
+                    <p class='todo'><span class='ref'><a href='#log'>#log</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#logStats'>#logStats</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#addRenderable'>#addRenderable</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                              </section>
+                  </div>
+
+        <div class='span2'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='four.html'>four</a></li>
+                                    <li><a href='four.Buffer.html'>Buffer</a></li>
+                        <li><a href='four.Camera.html'>Camera</a></li>
+                        <li><a href='four.Color.html'>Color</a></li>
+                        <li><a href='four.Effect.html'>Effect</a></li>
+                        <li><a href='four.Geometry.html'>Geometry</a></li>
+                        <li><a href='four.M4.html'>M4</a></li>
+                        <li><a href='four.Quat.html'>Quat</a></li>
+                        <li class='active'><a href='four.Renderer.html'>Renderer</a></li>
+                        <li><a href='four.RendererGL32.html'>RendererGL32</a></li>
+                        <li><a href='four.Texture.html'>Texture</a></li>
+                        <li><a href='four.Transform.html'>Transform</a></li>
+                        <li><a href='four.V2.html'>V2</a></li>
+                        <li><a href='four.V3.html'>V3</a></li>
+                        <li><a href='four.V4.html'>V4</a></li>
+                        <li><a href='four.gl.html'>gl</a></li>
+                      </ul>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+    <div class="container">
+       made with <a href='http://doc.lubyk.org/lk.Doc.html'>lk.Doc</a> 
+    </div>
+    </footer>
+
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
+    <script src='http://code.jquery.com/jquery.js'></script>
+    <script src='js/bootstrap.min.js'></script>
+  </body>
+</html>
+

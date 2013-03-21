@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>four.V2</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+
+
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/docs.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class='row'>
+          <div class='span12'>
+             <a href='http://lubyk.org'><img alt='lubyk logo' src='img/lubyk.png'/></a> <h1><a href='http://doc.lubyk.org'>Lubyk documentation</a></h1></a> 
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="row">
+
+        <div class='span3'>
+          <ul class='nav nav-tabs nav-stacked local-nav affix'>
+                        <li><a href='#V2'><i class='icon-chevron-right'></i> four.V2</a></li>
+                        <li><a href='#TODO'><i class='icon-chevron-right'></i> TODO</a></li>
+                      </ul>
+        </div>
+
+        <div class='main span7'>
+
+                    <section id='V2'>
+          <h2 class='section'>four.V2</h2>
+
+                              <a name='V2'></a>
+          <h4 class='function'><span>.</span>V2 <code>(x, y)</code></h4>
+          
+                    <p class='summary'></p>
+                    <p>local lib = { type = 'four.V2' } lib.<em></em>index = lib four.V2 = lib setmetatable(lib, { <em></em>call = function(lib, ...) return lib.V2(...) end })</p>
+                    <p>-- h2. Constructor and accessors</p>
+                    <p>--[[-- <code>V2(x, y)</code> is a vector with the corresponding components.</p>
+                    <p><code>V2(o)</code> is a vector converted from the object <code>o</code>. Supported types for <code>o</code>: <code>bt.Vector3</code>.</p>
+                                        <a name='x'></a>
+          <h4 class='function'><span>.</span>x <code>(v)</code></h4>
+          
+                    <p><code>x(v)</code> is the <code>x</code> component of <code>v</code>.</p>
+                                        <a name='y'></a>
+          <h4 class='function'><span>.</span>y <code>(v)</code></h4>
+          
+                    <p><code>y(v)</code> is the <code>x</code> component of <code>v</code>.</p>
+                                        <a name='comp'></a>
+          <h4 class='function'><span>.</span>comp <code>(i, v)</code></h4>
+          
+                    <p><code>comp(i, v)</code> is the <code>i</code>th component of <code>v</code>.</p>
+                                        <a name='ofV3'></a>
+          <h4 class='function'><span>.</span>ofV3 <code>(v)</code></h4>
+          
+                    <p><code>ofV3(v)</code> is <code>V2(V3.x(v), V3.y(v))</code>.</p>
+                                        <a name='ofV4'></a>
+          <h4 class='function'><span>.</span>ofV4 <code>(v)</code></h4>
+          
+                    <p><code>ofV4(v)</code> is <code>V2(V4.x(v), V4.y(v))</code>.</p>
+                                        <a name='tuple'></a>
+          <h4 class='function'><span>.</span>tuple <code>(v)</code></h4>
+          
+                    <p><code>tuple(v)</code> is <code>x, y</code>, the components of <code>v</code>.</p>
+                                        <a name='tostring'></a>
+          <h4 class='function'><span>.</span>tostring <code>(v)</code></h4>
+          
+                    <p><code>tostring(v)</code> is a textual representation of <code>v</code>.</p>
+                                        <a name='zero'></a>
+          <h4 class='function'><span>.</span>zero <code>()</code></h4>
+          
+                    <p><code>zero()</code> is a vector <code>(0, 0)</code>.</p>
+                                        <a name='ox'></a>
+          <h4 class='function'><span>.</span>ox <code>()</code></h4>
+          
+                    <p><code>ox()</code> is a unit vector <code>(1, 0)</code>.</p>
+                                        <a name='oy'></a>
+          <h4 class='function'><span>.</span>oy <code>()</code></h4>
+          
+                    <p><code>oy()</code> is a unit vector <code>(0, 1)</code>.</p>
+                                        <a name='huge'></a>
+          <h4 class='function'><span>.</span>huge <code>()</code></h4>
+          
+                    <p><code>huge()</code> is a vector whose components are <code>math.huge</code>.</p>
+                                        <a name='neg_huge'></a>
+          <h4 class='function'><span>.</span>neg_huge <code>()</code></h4>
+          
+                    <p><code>neg_huge()</code> is a vector whose components are <code>-math.huge</code>.</p>
+                                        <a name='neg'></a>
+          <h4 class='function'><span>.</span>neg <code>(v)</code></h4>
+          
+                    <p><code>neg(v)</code> is the inverse vector <code>-v</code>.</p>
+                                        <a name='add'></a>
+          <h4 class='function'><span>.</span>add <code>(u, v)</code></h4>
+          
+                    <p><code>add(u, v)</code> is the vector addition <code>u + v</code>.</p>
+                                        <a name='sub'></a>
+          <h4 class='function'><span>.</span>sub <code>(u, v)</code></h4>
+          
+                    <p><code>sub(u, v)</code> is the vector subtraction <code>u - v</code>.</p>
+                                        <a name='mul'></a>
+          <h4 class='function'><span>.</span>mul <code>(u, v)</code></h4>
+          
+                    <p><code>mul(u, v)</code> is the component wise mutiplication <code>u * v</code>.</p>
+                                        <a name='div'></a>
+          <h4 class='function'><span>.</span>div <code>(u, v)</code></h4>
+          
+                    <p><code>div(u, v)</code> is the component wise division <code>u / v</code>.</p>
+                                        <a name='smul'></a>
+          <h4 class='function'><span>.</span>smul <code>(s, v)</code></h4>
+          
+                    <p><code>smul(s, v)</code> is the scalar mutiplication <code>sv</code>.</p>
+                                        <a name='half'></a>
+          <h4 class='function'><span>.</span>half <code>(v)</code></h4>
+          
+                    <p><code>half(v)</code> is the half vector <code>smul(0.5, v)</code>.</p>
+                                        <a name='dot'></a>
+          <h4 class='function'><span>.</span>dot <code>(u, v)</code></h4>
+          
+                    <p><code>dot(u, v)</code> is the dot product <code>u.v</code>.</p>
+                                        <a name='norm'></a>
+          <h4 class='function'><span>.</span>norm <code>(v)</code></h4>
+          
+                    <p><code>norm(v)</code> is the norm <code>|v|</code>.</p>
+                                        <a name='norm2'></a>
+          <h4 class='function'><span>.</span>norm2 <code>(v)</code></h4>
+          
+                    <p><code>norm2(v)</code> is the squared norm <code>|v|^2</code>.</p>
+                                        <a name='unit'></a>
+          <h4 class='function'><span>.</span>unit <code>(v)</code></h4>
+          
+                    <p><code>unit(v)</code> is the unit vector <code>v/|v|</code>.</p>
+                                        <a name='homogene'></a>
+          <h4 class='function'><span>.</span>homogene <code>(v)</code></h4>
+          
+                    <p><code>homogene(v)</code> is the vector <code>v/V2.y(v)</code>.</p>
+                                        <a name='polarUnit'></a>
+          <h4 class='function'><span>.</span>polarUnit <code>(theta)</code></h4>
+          
+                    <p><code>polarUnit(theta)</code> is a unit vector whose angular polar coordinate is given by <code>theta</code>.</p>
+                                        <a name='ortho'></a>
+          <h4 class='function'><span>.</span>ortho <code>(v)</code></h4>
+          
+                    <p><code>ortho(v)</code> is <code>v</code> rotated by <code>pi/2</code>.</p>
+                                        <a name='mix'></a>
+          <h4 class='function'><span>.</span>mix <code>(u, v, t)</code></h4>
+          
+                    <p><code>mix(u, v, t)</code> is the linear interpolation <code>u + t * (v - u)</code>.</p>
+                                        <a name='map'></a>
+          <h4 class='function'><span>.</span>map <code>(f, v)</code></h4>
+          
+                    <p><code>map(f, v)</code> is <code>V2(f(v1), f(v2))</code>.</p>
+                                        <a name='mapi'></a>
+          <h4 class='function'><span>.</span>mapi <code>(f, v)</code></h4>
+          
+                    <p><code>mapi(f, v)</code> is <code>V2(f(1, v1), f(2, v2)</code>.</p>
+                                        <a name='fold'></a>
+          <h4 class='function'><span>.</span>fold <code>(f, acc, v)</code></h4>
+          
+                    <p><code>fold(f, acc, v)</code> is <code>f(f(acc, v1), v2)</code>.</p>
+                                        <a name='foldi'></a>
+          <h4 class='function'><span>.</span>foldi <code>(f, acc, v)</code></h4>
+          
+                    <p><code>foldi(f, acc, v)</code> is <code>f(f(acc, 1, v1), 2, v2)</code>.</p>
+                                        <a name='iter'></a>
+          <h4 class='function'><span>.</span>iter <code>(f, v)</code></h4>
+          
+                    <p><code>iter(f, v)</code> is <code>f(v1) f(v2)</code>.</p>
+                                        <a name='iteri'></a>
+          <h4 class='function'><span>.</span>iteri <code>(f, v)</code></h4>
+          
+                    <p><code>iteri(f, v)</code> is <code>f(1, v1) f(2, v2)</code>.</p>
+                                        <a name='forAll'></a>
+          <h4 class='function'><span>.</span>forAll <code>(p, v)</code></h4>
+          
+                    <p><code>forAll(p, v)</code> is @p(v1) and p(v2).</p>
+                                        <a name='exists'></a>
+          <h4 class='function'><span>.</span>exists <code>(p, v)</code></h4>
+          
+                    <p><code>exists(p, v)</code> is <code>p(v1) or p(v2)</code>.</p>
+                                        <a name='eq'></a>
+          <h4 class='function'><span>.</span>eq <code>(u, v, eq)</code></h4>
+          
+                    <p><code>eq(u, v [,eq])</code> is <code>true</code> if <code>u</code> is equal to <code>v</code> component wise. If [eq] is provided it used as the equality function.</p>
+                                        <a name='lt'></a>
+          <h4 class='function'><span>.</span>lt <code>(u, v, lt)</code></h4>
+          
+                    <p><code>lt(u, v [,lt])</code> is <code>true</code> if <code>u</code> is lower than <code>v</code> component wise. If [lt] is provided it used as the comparison function.</p>
+                                        <a name='le'></a>
+          <h4 class='function'><span>.</span>le <code>(u, v, le)</code></h4>
+          
+                    <p><code>le(u, v [,le])</code> is <code>true</code> if <code>u</code> is lower or equal than <code>v</code> component wise. If [le] is provided it used as the comparison function.</p>
+                                        <a name='compare'></a>
+          <h4 class='function'><span>.</span>compare <code>(u, v, cmp)</code></h4>
+          
+                    <p><code>compare(u, v [, cmp])</code> is:</p>
+                    <ul>
+<li><code>-1</code> if <code>u</code> is smaller than <code>v</code></li>
+<li><code>0</code> if <code>u</code> is equal to <code>v</code></li>
+<li><code>1</code> if <code>u</code> is greater than <code>v</code> where the order is the lexicographic order defined by using <code>cmp</code> on the components (<code>cmp</code> defaults to the standard order on floats).</li>
+</ul>
+                                        <a name='__unm'></a>
+          <h4 class='param'><span>.</span>__unm <code>= lib.neg</code></h4>
+          
+                    <p>h2. Operators</p>
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='__add'></a>
+          <h4 class='param'><span>.</span>__add <code>= lib.add</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='__sub'></a>
+          <h4 class='param'><span>.</span>__sub <code>= lib.sub</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='__mul'></a>
+          <h4 class='param'><span>.</span>__mul <code>= lib.smul</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='__tostring'></a>
+          <h4 class='param'><span>.</span>__tostring <code>= lib.tostring</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                              </section>
+                    <section id='TODO'>
+          <h2 class='section'>TODO</h2>
+
+                    
+                    <p class='todo'><span class='ref'><a href='#V2'>V2</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#V2'>V2</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#V2'>V2</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#V2'>V2</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#V2'>V2</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                              </section>
+                  </div>
+
+        <div class='span2'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='four.html'>four</a></li>
+                                    <li><a href='four.Buffer.html'>Buffer</a></li>
+                        <li><a href='four.Camera.html'>Camera</a></li>
+                        <li><a href='four.Color.html'>Color</a></li>
+                        <li><a href='four.Effect.html'>Effect</a></li>
+                        <li><a href='four.Geometry.html'>Geometry</a></li>
+                        <li><a href='four.M4.html'>M4</a></li>
+                        <li><a href='four.Quat.html'>Quat</a></li>
+                        <li><a href='four.Renderer.html'>Renderer</a></li>
+                        <li><a href='four.RendererGL32.html'>RendererGL32</a></li>
+                        <li><a href='four.Texture.html'>Texture</a></li>
+                        <li><a href='four.Transform.html'>Transform</a></li>
+                        <li class='active'><a href='four.V2.html'>V2</a></li>
+                        <li><a href='four.V3.html'>V3</a></li>
+                        <li><a href='four.V4.html'>V4</a></li>
+                        <li><a href='four.gl.html'>gl</a></li>
+                      </ul>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+    <div class="container">
+       made with <a href='http://doc.lubyk.org/lk.Doc.html'>lk.Doc</a> 
+    </div>
+    </footer>
+
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
+    <script src='http://code.jquery.com/jquery.js'></script>
+    <script src='js/bootstrap.min.js'></script>
+  </body>
+</html>
+

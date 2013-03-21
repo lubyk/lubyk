@@ -19,7 +19,7 @@
       <div class="container">
         <div class='row'>
           <div class='span12'>
-             <a href='http://lubyk.org'><img alt='lubyk logo' src='img/lubyk.png'/> <h1>Lubyk documentation</h1></a> 
+             <a href='http://lubyk.org'><img alt='lubyk logo' src='img/lubyk.png'/></a> <h1><a href='http://doc.lubyk.org'>Lubyk documentation</a></h1></a> 
           </div>
         </div>
       </div>
@@ -32,6 +32,8 @@
         <div class='span3'>
           <ul class='nav nav-tabs nav-stacked local-nav affix'>
                         <li><a href='#Doc'><i class='icon-chevron-right'></i> lk.Doc</a></li>
+                        <li><a href='#Parsing-modes'><i class='icon-chevron-right'></i> Parsing modes</a></li>
+                        <li><a href='#Extraction'><i class='icon-chevron-right'></i> Extraction</a></li>
                         <li><a href='#Attributes-(example)'><i class='icon-chevron-right'></i> Attributes (example)</a></li>
                         <li><a href='#Usage'><i class='icon-chevron-right'></i> Usage</a></li>
                         <li><a href='#Class-functions'><i class='icon-chevron-right'></i> Class functions</a></li>
@@ -60,6 +62,32 @@ Some more text.
 -- 
 -- Some more text.
 </pre>
+                              </section>
+                    <section id='Parsing-modes'>
+          <h2 class='section'>Parsing modes</h2>
+
+                    
+                    <p>By using the special comment <code>-- doc:[option]</code>, you can change how the parsing is done.</p>
+                    <h4 class='sub-title'>Literate programming</h4>
+                    <p>The parser can generate full script documentation with all lua code when set to "lit" (for literate). Turn this option off by setting "nolit".</p>
+                    <pre class='prettyprint lang-lua'>-- doc:lit
+-- This part is considered literate programming and all comments and lua
+-- code will be shown in the documentation.
+local x
+
+doSomething(x)
+
+-- doc:nolit
+-- End of literate part: only the library "lib" will be documented.
+</pre>
+                    <h4 class='sub-title'>Loose documentation</h4>
+                    <p>By setting <code>-- doc:loose</code>, the parser will generate a single TODO about missing documentation and will not generate any more TODO entries for each undocummented function or parameter.</p>
+                    <p>Even if the function names look obvious while writing the code and documentation seems superfluous, users will usually appreciate some real phrases describing what the function does. Using "loose" is not a good idea but can make the documentation more readable if most of the functions are not documented.</p>
+                              </section>
+                    <section id='Extraction'>
+          <h2 class='section'>Extraction</h2>
+
+                    
                     <h4 class='sub-title'>Function extraction</h4>
                     <p>All functions and methods defined against <code>lib</code> are extracted even if they are not yet documented. Example:</p>
                     <pre class='prettyprint lang-lua'>function lib:foo(a, b)
@@ -88,6 +116,13 @@ function lib:badOldLegacyFunction(x, y)
 end
 </pre>
                     <h4 class='sub-title'>Table parameters</h4>
+                    <p>All parameters defined against <code>lib</code> are documented unless <code>-- nodoc</code> is used.</p>
+                    <pre class='prettyprint lang-lua'>lib.foo = 4
+lib.bar = 5
+
+-- nodoc
+lib.old_foo = 4
+</pre>
                     <p>Since Lua is also used as a description language, it is often useful to document table keys. This is done by using <code>-- doc</code>. It is a good idea to create a new for each table in order to document the table itself.</p>
                     <pre class='prettyprint lang-lua'>-- # Attributes (example)
 -- This is an example of attributes documentation.
@@ -244,14 +279,23 @@ lk.writeall('doc/File.html', doc:toHtml())
           <h4 class='function'><span>.</span>make <code>(def)</code></h4>
           
                     <p>Generate the documentation for multiple files.</p>
-                    <p>The <code>sources</code> parameter lists paths to Lua files or directories to parse and document. The <code>target</code> parameter is the path to the directory where all the output files will be written. <code>format</code> is the type of output desired. Only 'html' format is supported for now.</p>
-                    <p>You can also provide some html code for <code>header</code> and <code>footer</code> that will be inserted in every html output page.</p>
+                    <p>The <code>sources</code> parameter lists paths to Lua files or directories to parse and document.</p>
+                    <table class='definition'>
+  <tr><td class='key'>target</td><td>parameter is the path to the directory where all the output files will be written.</td></tr>
+  <tr><td class='key'>format</td><td>is the type of output desired. Only 'html' format is supported for now.</td></tr>
+  <tr><td class='key'>sources</td><td>lists path to glob for lua files. A source can also be a table with a <code>prepend</code> key used to change the location of the files in the documentation.</td></tr>
+  <tr><td class='key'>copy</td><td>lists the path to glob for static content to copy in <code>target</code>.</td></tr>
+  <tr><td class='key'>header</td><td>html code that will be inserted in every html page as header.</td></tr>
+  <tr><td class='key'>footer</td><td>html code that will be inserted in every html page as footer.</td></tr>
+
+</table>
                     <p>Usage:</p>
                     <pre class='prettyprint lang-lua'>require 'lubyk'
 lk.Doc.make {
   sources = {
     'lib/doc/DocTest.lua',
     'lib/doc/Other.lua',
+    {'doc', prepend = 'tutorial/foo'},
   },
   target = 'doc',
   format = 'html',
@@ -278,7 +322,6 @@ lk.Doc.make {
 
                     
                     <p class='todo'><span class='ref'><a href='#Usage'>Usage</a></span><span>TODO</span> This is a todo definition</p>
-                    <p class='todo'><span class='ref'><a href='#Methods'>Methods</a></span><span>TODO</span> Replace textToHtml with a walking parser to avoid double parsing.</p>
                               </section>
                     <section id='FIXME'>
           <h2 class='section'>FIXME</h2>

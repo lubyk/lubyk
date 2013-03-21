@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>four.Texture</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+
+
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/docs.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class='row'>
+          <div class='span12'>
+             <a href='http://lubyk.org'><img alt='lubyk logo' src='img/lubyk.png'/></a> <h1><a href='http://doc.lubyk.org'>Lubyk documentation</a></h1></a> 
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="row">
+
+        <div class='span3'>
+          <ul class='nav nav-tabs nav-stacked local-nav affix'>
+                        <li><a href='#Texture'><i class='icon-chevron-right'></i> four.Texture</a></li>
+                        <li><a href='#TODO'><i class='icon-chevron-right'></i> TODO</a></li>
+                      </ul>
+        </div>
+
+        <div class='main span7'>
+
+                    <section id='Texture'>
+          <h2 class='section'>four.Texture</h2>
+
+                              <a name='new'></a>
+          <h4 class='function'><span>.</span>new <code>(def)</code></h4>
+          
+                    <p class='summary'></p>
+                    <p>-- Module definition</p>
+                    <p>local lib = { type = 'four.Texture' } lib.<em></em>index = lib <a href='four.Texture.html'>four.Texture</a> = lib setmetatable(lib, { <em></em>call = function(lib, ...) return lib.new(...) end})</p>
+                    <p>-- h2. Texture type</p>
+                    <p>lib.TYPE<em>1D = 1 lib.TYPE</em>2D = 2 lib.TYPE<em>3D = 3 lib.TYPE</em>BUFFER = 4 -- TODO lib.TYPE<em>CUBE</em>MAP = 4 </p>
+                    <p>-- h2. Texture filtering</p>
+                    <p>lib.MIN<em>NEAREST = 1 lib.MIN</em>LINEAR = 2 lib.MIN<em>NEAREST</em>MIPMAP<em>NEAREST = 3 lib.MIN</em>LINEAR<em>MIPMAP</em>NEAREST = 4 lib.MIN<em>NEAREST</em>MIPMAP<em>LINEAR = 5 lib.MIN</em>LINEAR<em>MIPMAP</em>LINEAR = 6</p>
+                    <p>lib.MAG<em>NEAREST = 7 lib.MAG</em>LINEAR = 8</p>
+                    <p>-- h2. Texture wrapping</p>
+                    <p>lib.WRAP<em>CLAMP</em>TO<em>EDGE = 1 lib.WRAP</em>REPEAT = 2</p>
+                    <p>-- h2. Texture internal format -- A selection from http://www.opengl.org/wiki/Image<em>Formats#Required</em>formats -- More could be added. -- Suffixes -- <strong> UN, unsigned normalized -- </strong> F, floating point</p>
+                    <p>lib.R<em>8UN = 1 lib.R</em>32F = 2</p>
+                    <p>lib.RG<em>8UN = 3 lib.RG</em>32F = 4</p>
+                    <p>lib.RGB<em>8UN = 5 lib.RGB</em>32F = 6</p>
+                    <p>lib.RGBA<em>8UN = 7 lib.RGBA</em>32F = 8</p>
+                    <p>lib.SRGB<em>8UN = 9 lib.SRGBA</em>8UN = 10</p>
+                    <p>lib.DEPTH<em>24UN = 11 lib.DEPTH</em>STENCIL<em>24UN</em>8UN = 12 lib.DEPTH<em>32F = 13 lib.DEPTH</em>STENCIL<em>32F</em>8UN = 14</p>
+                    <p>--[[-- <code>Texture(def)</code> is a new texture object. <code>def</code> keys:</p>
+                    <ul>
+<li><code>type</code>, the texture type (defaults to <code>TYPE_2D</code>). </li>
+<li><code>size</code>, the dimensions of the texture as a V3 vector (width, height, depth). <strong>Note</strong> a 1D texture of width <code>w</code> has a size <code>V3(w, 1, 1)</code>.  <strong>Note</strong> Irrelevant for <code>TYPE_BUFFER</code>.</li>
+<li><code>internal_format</code>, the internal format (defaults to <code>RGBA8UI</code>). Together with <code>size</code> (if applicable) implicetly defines the scalar  length of data. Should be number of components <strong> size.x </strong> size.y <strong> size.d. </strong>Warning* for <code>TYPE_BUFFER</code>, 3 components formats need  <code>GL_ARB_texture_buffer_object_rgb32</code>, but seems to work on OSX.</li>
+<li><code>wrap_s</code>, wrapping behaviour along <code>s</code> dimension  (defaults to <code>WRAP_REPEAT</code>). </li>
+<li><code>wrap_t</code>, wrapping behaviour along <code>t</code> dimension (if applicable,  defaults to <code>WRAP_REPEAT</code>). </li>
+<li><code>wrap_r</code>, wrapping behaviour along <code>r</code> dimension (if applicable,  defaults to <code>WRAP_REPEAT</code>).</li>
+<li><code>min_filter</code>, minification filter (defaults to <code>MIN_NEAREST_MIPMAP_LINEAR</code>).</li>
+<li><code>mag_filter</code>, magnificiation filter (defaults to <code>MAG_NEAREST</code>). </li>
+<li><code>generate_mipmaps</code>, <code>true</code> if mipmaps should be generated  (defaults to <code>false</code>). </li>
+<li><code>data</code>, a Buffer object with the image data (pixel by pixel in row order,  then layer order, the first pixel of the buffer is the image's lower left  frontmost pixel. Can be nil if you don't want to specify image data (e.g. for render to texture) but not for <code>TYPE_BUFFER</code>. </li>
+</ul>
+                    <p class='todo'><span>TODO</span> if array cube map, images of a cube map in given order.</p>
+                    <ul>
+<li><code>updated</code>, if <code>true</code>, <code>data</code> will be read again by the renderer. The renderer sets the flag to <code>false</code> once he read the data.</li>
+</ul>
+                                        <a name='set'></a>
+          <h4 class='method'><span>:</span>set <code>(def)</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                              </section>
+                    <section id='TODO'>
+          <h2 class='section'>TODO</h2>
+
+                    
+                    <p class='todo'><span class='ref'><a href='#Texture'>Texture</a></span><span>TODO</span> if array cube map, images of a cube map in given order.</p>
+                    <p class='todo'><span class='ref'><a href='#set'>#set</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                              </section>
+                  </div>
+
+        <div class='span2'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='four.html'>four</a></li>
+                                    <li><a href='four.Buffer.html'>Buffer</a></li>
+                        <li><a href='four.Camera.html'>Camera</a></li>
+                        <li><a href='four.Color.html'>Color</a></li>
+                        <li><a href='four.Effect.html'>Effect</a></li>
+                        <li><a href='four.Geometry.html'>Geometry</a></li>
+                        <li><a href='four.M4.html'>M4</a></li>
+                        <li><a href='four.Quat.html'>Quat</a></li>
+                        <li><a href='four.Renderer.html'>Renderer</a></li>
+                        <li><a href='four.RendererGL32.html'>RendererGL32</a></li>
+                        <li class='active'><a href='four.Texture.html'>Texture</a></li>
+                        <li><a href='four.Transform.html'>Transform</a></li>
+                        <li><a href='four.V2.html'>V2</a></li>
+                        <li><a href='four.V3.html'>V3</a></li>
+                        <li><a href='four.V4.html'>V4</a></li>
+                        <li><a href='four.gl.html'>gl</a></li>
+                      </ul>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+    <div class="container">
+       made with <a href='http://doc.lubyk.org/lk.Doc.html'>lk.Doc</a> 
+    </div>
+    </footer>
+
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
+    <script src='http://code.jquery.com/jquery.js'></script>
+    <script src='js/bootstrap.min.js'></script>
+  </body>
+</html>
+

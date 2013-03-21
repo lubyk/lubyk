@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>four.Quat</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+
+
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/docs.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class='row'>
+          <div class='span12'>
+             <a href='http://lubyk.org'><img alt='lubyk logo' src='img/lubyk.png'/></a> <h1><a href='http://doc.lubyk.org'>Lubyk documentation</a></h1></a> 
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="row">
+
+        <div class='span3'>
+          <ul class='nav nav-tabs nav-stacked local-nav affix'>
+                        <li><a href='#Quat'><i class='icon-chevron-right'></i> four.Quat</a></li>
+                        <li><a href='#TODO'><i class='icon-chevron-right'></i> TODO</a></li>
+                      </ul>
+        </div>
+
+        <div class='main span7'>
+
+                    <section id='Quat'>
+          <h2 class='section'>four.Quat</h2>
+
+                              <a name='Quat'></a>
+          <h4 class='function'><span>.</span>Quat <code>(x, y, z, w)</code></h4>
+          
+                    <p class='summary'></p>
+                    <p>local lib = { type = 'four.Quat' } lib.<em></em>index = lib <a href='four.Quat.html'>four.Quat</a> = lib setmetatable(lib, { <em></em>call = function(lib, ...) return lib.Quat(...) end })</p>
+                    <p>local V3 = four.V3 local V4 = four.V4 local M4 = four.M4</p>
+                    <p>-- h2. Constructor and accessors</p>
+                    <p>--[[-- <code>Quat(x, y, z, w)</code> is a quaternion with the corresponding components.</p>
+                    <p><code>Quat(o)</code> is a quaternion converted from the object <code>o</code>. Supported types for <code>o</code>: <code>bt.Quaternion</code>.</p>
+                                        <a name='x'></a>
+          <h4 class='function'><span>.</span>x <code>(q)</code></h4>
+          
+                    <p><code>x(v)</code> is the <code>x</code> component of <code>v</code>.</p>
+                                        <a name='y'></a>
+          <h4 class='function'><span>.</span>y <code>(q)</code></h4>
+          
+                    <p><code>y(v)</code> is the <code>y</code> component of <code>v</code>.</p>
+                                        <a name='z'></a>
+          <h4 class='function'><span>.</span>z <code>(q)</code></h4>
+          
+                    <p><code>z(v)</code> is the <code>z</code> component of <code>v</code>.</p>
+                                        <a name='z'></a>
+          <h4 class='function'><span>.</span>z <code>(q)</code></h4>
+          
+                    <p><code>w(v)</code> is the <code>w</code> component of <code>v</code>.</p>
+                                        <a name='comp'></a>
+          <h4 class='function'><span>.</span>comp <code>(i, q)</code></h4>
+          
+                    <p><code>comp(i, q)</code> is the <code>i</code>th component of <code>v</code>.</p>
+                                        <a name='ofV4'></a>
+          <h4 class='function'><span>.</span>ofV4 <code>(v)</code></h4>
+          
+                    <p><code>ofV4(v)</code> is a quaternion with <code>v</code>'s components. </p>
+                                        <a name='toV4'></a>
+          <h4 class='function'><span>.</span>toV4 <code>(q)</code></h4>
+          
+                    <p><code>toV4(v)</code> is a vector with <code>q</code>'s components.</p>
+                                        <a name='tuple'></a>
+          <h4 class='function'><span>.</span>tuple <code>(q)</code></h4>
+          
+                    <p><code>tuple(q)</code> is <code>x, y, z, w</code>, the components of <code>q</code>.</p>
+                                        <a name='tostring'></a>
+          <h4 class='function'><span>.</span>tostring <code>(q)</code></h4>
+          
+                    <p><code>tostring(q)</code> is a textual representation of <code>q</code>.</p>
+                                        <a name='ofM4'></a>
+          <h4 class='function'><span>.</span>ofM4 <code>(m)</code></h4>
+          
+                    <p><code>ofM4(m)</code> is the unit quaternion for the rotation in the 3x3 top left matrix  of <code>m</code>.</p>
+                                        <a name='toM4'></a>
+          <h4 class='function'><span>.</span>toM4 <code>(q)</code></h4>
+          
+                    <p><code>toM4(q)</code> is the matrix corresponding to the rotation of the <strong>unit</strong>  quaternion <code>q</code>.</p>
+                                        <a name='quat_eps'></a>
+          <h4 class='param'><span>.</span>quat_eps <code>= 1e-9</code></h4>
+          
+                    <p>h2. Constants </p>
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='zero'></a>
+          <h4 class='function'><span>.</span>zero <code>()</code></h4>
+          
+                    <p><code>zero()</code> is the zero quaternion.</p>
+                                        <a name='id'></a>
+          <h4 class='function'><span>.</span>id <code>()</code></h4>
+          
+                    <p><code>id()</code> is the identity quaternion.</p>
+                                        <a name='neg'></a>
+          <h4 class='function'><span>.</span>neg <code>(q)</code></h4>
+          
+                    <p><code>neg(q)</code> is the quaternion <code>-q</code>.</p>
+                                        <a name='add'></a>
+          <h4 class='function'><span>.</span>add <code>(q, r)</code></h4>
+          
+                    <p><code>add(q, r)</code> is the quaternion addition <code>q + r</code>.</p>
+                                        <a name='sub'></a>
+          <h4 class='function'><span>.</span>sub <code>(q, r)</code></h4>
+          
+                    <p><code>sub(q, r)</code> is the quaternion subtraction <code>u - v</code>.</p>
+                                        <a name='mul'></a>
+          <h4 class='function'><span>.</span>mul <code>(q, r)</code></h4>
+          
+                    <p><code>mul(q, r)</code> is the quaternion multiplication <code>q * r</code></p>
+                                        <a name='smul'></a>
+          <h4 class='function'><span>.</span>smul <code>(s, q)</code></h4>
+          
+                    <p><code>smul(s, q)</code> is the scalar mutiplication <code>sq</code>.</p>
+                                        <a name='conj'></a>
+          <h4 class='function'><span>.</span>conj <code>(q)</code></h4>
+          
+                    <p><code>conj(q)</code> is the quaternion conjugate <code>q*</code>.</p>
+                                        <a name='norm'></a>
+          <h4 class='function'><span>.</span>norm <code>(q)</code></h4>
+          
+                    <p><code>norm(q)</code> is the norm <code>|q|</code>.</p>
+                                        <a name='norm2'></a>
+          <h4 class='function'><span>.</span>norm2 <code>(q)</code></h4>
+          
+                    <p><code>norm2(q)</code> is the squared norm <code>|q|^2</code>.</p>
+                                        <a name='unit'></a>
+          <h4 class='function'><span>.</span>unit <code>(q)</code></h4>
+          
+                    <p><code>unit(q)</code> is the <code>unit</code> quaternion <code>q/|q|</code>.</p>
+                                        <a name='inv'></a>
+          <h4 class='function'><span>.</span>inv <code>(q)</code></h4>
+          
+                    <p><code>inv(q)</code> is the quaternion inverse <code>q^-1</code></p>
+                                        <a name='slerp'></a>
+          <h4 class='function'><span>.</span>slerp <code>(q, r, t)</code></h4>
+          
+                    <p><code>slerp(q, r, t)</code> is the spherical spherical linear interpolation between  <code>q</code> and <code>r</code> at <code>t</code>. Non commutative, torque minimal and constant velocity.</p>
+                                        <a name='squad'></a>
+          <h4 class='function'><span>.</span>squad <code>(c, cq, cr, r, t)</code></h4>
+          
+                    <p><code>squad(c, cq, cr, r, t)</code> is the spherical cubic interpolation between <code>q</code>  and <code>r</code> at <code>t</code>. <code>cq</code> and <code>cr</code> respectively indicate the tangent  orientations at <code>q</code> and <code>r</code>.</p>
+                                        <a name='nlerp'></a>
+          <h4 class='function'><span>.</span>nlerp <code>(q, r, t)</code></h4>
+          
+                    <p><code>nlerp(q, r, t)</code> is the normalized linear interpolation between <code>q</code> and <code>r</code>  at <code>t</code>. Commutative torque minimal and inconstant velocity.</p>
+                                        <a name='rotMap'></a>
+          <h4 class='function'><span>.</span>rotMap <code>(u, v)</code></h4>
+          
+                    <p><code>rotMap(u, v)</code> is the unit quaternion for the rotation that maps the <strong>unit</strong> vector <code>u</code> on the <strong>unit</strong> vector <code>v</code>. </p>
+                                        <a name='rotAxis'></a>
+          <h4 class='function'><span>.</span>rotAxis <code>(u, theta)</code></h4>
+          
+                    <p><code>rotAxis(u, theta)</code> is the unit quaternion for the rotation that rotates 3D space by <code>theta</code> around the <strong>unit</strong> vector <code>u</code>.</p>
+                                        <a name='toZYX'></a>
+          <h4 class='function'><span>.</span>toZYX <code>(q)</code></h4>
+          
+                    <p><code>toZYX(q)</code> is a vector with the <code>x</code>, <code>y</code> and <code>z</code> axis angles of the <strong>unit</strong>  quaternion <code>q</code>.</p>
+                                        <a name='toAxis'></a>
+          <h4 class='function'><span>.</span>toAxis <code>(q)</code></h4>
+          
+                    <p><code>toAxis(q)</code> is <code>axis, angle</code> the rotation axis and angle of the  <strong>unit</strong> quaternion <code>q</code>. </p>
+                                        <a name='apply3D'></a>
+          <h4 class='function'><span>.</span>apply3D <code>(q, v)</code></h4>
+          
+                    <p><code>apply3D(q, v)</code> applies the rotation of the <strong>unit</strong> quaternion <code>q</code> to the vector <code>v</code>.</p>
+                                        <a name='apply4D'></a>
+          <h4 class='function'><span>.</span>apply4D <code>(q, v)</code></h4>
+          
+                    <p><code>apply4D(q, v)</code> applies the rotation of the <strong>unit</strong> quaternion <code>q</code>  to the vector <code>v</code>, the fourth component is left unchanged.</p>
+                                        <a name='__unm'></a>
+          <h4 class='param'><span>.</span>__unm <code>= lib.neg</code></h4>
+          
+                    <p>h2. Operators</p>
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='__add'></a>
+          <h4 class='param'><span>.</span>__add <code>= lib.add</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='__sub'></a>
+          <h4 class='param'><span>.</span>__sub <code>= lib.sub</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='__mul'></a>
+          <h4 class='param'><span>.</span>__mul <code>= lib.mul</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <a name='__tostring'></a>
+          <h4 class='param'><span>.</span>__tostring <code>= lib.tostring</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                              </section>
+                    <section id='TODO'>
+          <h2 class='section'>TODO</h2>
+
+                    
+                    <p class='todo'><span class='ref'><a href='#Quat'>Quat</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#Quat'>Quat</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#Quat'>Quat</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#Quat'>Quat</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#Quat'>Quat</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#Quat'>Quat</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                              </section>
+                  </div>
+
+        <div class='span2'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='four.html'>four</a></li>
+                                    <li><a href='four.Buffer.html'>Buffer</a></li>
+                        <li><a href='four.Camera.html'>Camera</a></li>
+                        <li><a href='four.Color.html'>Color</a></li>
+                        <li><a href='four.Effect.html'>Effect</a></li>
+                        <li><a href='four.Geometry.html'>Geometry</a></li>
+                        <li><a href='four.M4.html'>M4</a></li>
+                        <li class='active'><a href='four.Quat.html'>Quat</a></li>
+                        <li><a href='four.Renderer.html'>Renderer</a></li>
+                        <li><a href='four.RendererGL32.html'>RendererGL32</a></li>
+                        <li><a href='four.Texture.html'>Texture</a></li>
+                        <li><a href='four.Transform.html'>Transform</a></li>
+                        <li><a href='four.V2.html'>V2</a></li>
+                        <li><a href='four.V3.html'>V3</a></li>
+                        <li><a href='four.V4.html'>V4</a></li>
+                        <li><a href='four.gl.html'>gl</a></li>
+                      </ul>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+    <div class="container">
+       made with <a href='http://doc.lubyk.org/lk.Doc.html'>lk.Doc</a> 
+    </div>
+    </footer>
+
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
+    <script src='http://code.jquery.com/jquery.js'></script>
+    <script src='js/bootstrap.min.js'></script>
+  </body>
+</html>
+

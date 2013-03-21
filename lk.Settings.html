@@ -19,7 +19,7 @@
       <div class="container">
         <div class='row'>
           <div class='span12'>
-             <a href='http://lubyk.org'><img alt='lubyk logo' src='img/lubyk.png'/> <h1>Lubyk documentation</h1></a> 
+             <a href='http://lubyk.org'><img alt='lubyk logo' src='img/lubyk.png'/></a> <h1><a href='http://doc.lubyk.org'>Lubyk documentation</a></h1></a> 
           </div>
         </div>
       </div>
@@ -54,7 +54,7 @@
                     <p>-- Copy on write local cow = {}</p>
                     <p>function cow.<em></em>index(tbl, key) return rawget(tbl._placeholder, key) end</p>
                     <p>function cow.<em></em>newindex(tbl, key, value) -- make a copy of defaults local copy = tbl.<em>self[tbl.</em>key] if copy == tbl then copy = {} for k, v in pairs(tbl.<em>placeholder) do copy[k] = v end copy[key] = value -- remove placeholder and work on the copy alone from now tbl.</em>self[tbl._key] = copy else copy[key] = value end end</p>
-                    <p>function private:prepareTables(defaults) -- This is to enable natural value setting for tables -- <a href='editor.Setting.html#foo'>editor.Setting.foo</a>.bar = 'baz' -- <-- this should copy table defaults for k, v in pairs(defaults) do if type(v) == 'table' and not rawget(self, k) then self[k] = setmetatable({<em>placeholder = v, </em>self = self, _key = k}, cow) end end end</p>
+                    <p>function private:prepareTables(defaults) -- This is to enable natural value setting for tables -- <a href='editor.Setting.html'>editor.Setting</a>.foo.bar = 'baz' -- <-- this should copy table defaults for k, v in pairs(defaults) do if type(v) == 'table' and not rawget(self, k) then self[k] = setmetatable({<em>placeholder = v, </em>self = self, _key = k}, cow) end end end</p>
                               </section>
                   </div>
 

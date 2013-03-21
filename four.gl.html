@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>four.gl</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+
+
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/docs.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class='row'>
+          <div class='span12'>
+             <a href='http://lubyk.org'><img alt='lubyk logo' src='img/lubyk.png'/></a> <h1><a href='http://doc.lubyk.org'>Lubyk documentation</a></h1></a> 
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="row">
+
+        <div class='span3'>
+          <ul class='nav nav-tabs nav-stacked local-nav affix'>
+                        <li><a href='#gl'><i class='icon-chevron-right'></i> four.gl</a></li>
+                      </ul>
+        </div>
+
+        <div class='main span7'>
+
+                    <section id='gl'>
+          <h2 class='section'>four.gl</h2>
+
+                    
+                    <p class='summary'></p>
+                    <p>local ffi = require( "ffi" ) local libs =  { OSX = { x86 = "OpenGL.framework/OpenGL", x64 = "OpenGL.framework/OpenGL" }, Windows = { x86 = "OPENGL32.DLL", x64 = "OPENGL32.DLL" }, Linux = { x86 = "libGL.so", x64 = "libGL.so", arm = "libGL.so" }, BSD = { x86 = "libGL.so", x64 = "libGL.so" }, POSIX = { x86 = "libGL.so", x64 = "libGL.so" }, Other = { x86 = "libGL.so", x64 = "libGL.so" }}</p>
+                    <p>local lib = libs[ffi.os][ffi.arch] local lo = ffi.load(lib) local hi = {}</p>
+                    <p>four.gl = { lo = lo, hi = hi }</p>
+                    <p>-- hi, sligthly higher level interface to gl for some calls.</p>
+                    <p>function hi.glGetBooleanv(pname) local param = ffi.new ("GLboolean[1]", 0) lo.glGetBooleanv(pname, param) return (param[0] == 1) end</p>
+                    <p>function hi.glGetDoublev(pname) local param = ffi.new ("GLdouble[1]", 0) lo.glGetDoublev(pname, param) return param[0] end</p>
+                    <p>function hi.glGetFloatv(pname) local param = ffi.new ("GLfloat[1]", 0) lo.glGetDoublev(pname, param) return param[0] end</p>
+                    <p>function hi.glGetIntegerv(pname) local param = ffi.new ("GLint[1]", 0) lo.glGetIntegerv(pname, param) return param[0] end</p>
+                    <p>function hi.glGetString(pname) local ptr = lo.glGetString(pname) if ptr == 0 then return "" else return ffi.string(ptr) end end</p>
+                    <p>function hi.glGetShaderiv (s, flag) local flag<em>v = ffi.new ("GLint[1]", 0) lo.glGetShaderiv (s, flag, flag</em>v); return flag_v[0] end</p>
+                    <p>function hi.glShaderSource (s, src) -- TODO check ffi.cast and C null terminated string stuff local arr = ffi.new ("const GLchar <strong>[1]", ffi.cast ("GLchar </strong>", src))  lo.glShaderSource (s, 1, arr, nil) end</p>
+                    <p>function hi.glGetShaderInfoLog (s) local len = hi.glGetShaderiv (s, lo.GL<em>INFO</em>LOG_LENGTH) if (len == 0) then return "" else local log = ffi.new("GLchar [?]", len) lo.glGetShaderInfoLog (s, len, nil, log) return ffi.string (log, len - 1) end end</p>
+                    <p>function hi.glGetProgramiv (s, flag) local flag<em>v = ffi.new ("GLint[1]", 0) lo.glGetProgramiv (s, flag, flag</em>v); return flag_v[0] end</p>
+                    <p>function hi.glGetProgramInfoLog (s) local len = hi.glGetProgramiv (s, lo.GL<em>INFO</em>LOG_LENGTH) if (len == 0) then return "" else local log = ffi.new("GLchar [?]", len) lo.glGetProgramInfoLog (s, len, nil, log) return ffi.string (log, len - 1) end end</p>
+                    <p>function hi.glGenBuffer() local id = ffi.new ("GLuint[1]", 0) lo.glGenBuffers(1, id) return id[0] end</p>
+                    <p>function hi.glDeleteBuffer(id) local idptr = ffi.new("GLuint[1]", id) lo.glDeleteBuffers(1, idptr) end</p>
+                    <p>function hi.glGenVertexArray() local id = ffi.new ("GLuint[1]", 0) lo.glGenVertexArrays(1, id) return id[0] end</p>
+                    <p>function hi.glDeleteVertexArray(id) local idptr = ffi.new("GLuint[1]", id) lo.glDeleteVertexArrays(1, idptr) end</p>
+                    <p>function hi.glGenTexture() local id = ffi.new("GLuint[1]", 0)  lo.glGenTextures(1, id) return id[0] end</p>
+                    <p>function hi.glDeleteTexture(id) local idptr = ffi.new("GLuint[1]", id)  lo.glDeleteTextures(1, idptr) end</p>
+                    <p>-- lo, raw bindings to OpenGL</p>
+                    <p>--[[-- This was obtained from glcorearb.h version 2012/08/06, mostly via :</p>
+                    <p>s/^#ifndef.<strong>$// s/^#ifdef.</strong>$// s/^#endif.<strong>$// s/^#define +\([^ ]+\) +\([^ ]+\) </strong>$/static const GLenum \1 = \2;/ s/GLAPI //s s/APIENTRY //s s/.<strong>APIENTRYP.</strong>\n//s</p>
+                    <p>and a few manual ajdustements (reorder and manual adjustements). </p>
+                              </section>
+                  </div>
+
+        <div class='span2'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='four.html'>four</a></li>
+                                    <li><a href='four.Buffer.html'>Buffer</a></li>
+                        <li><a href='four.Camera.html'>Camera</a></li>
+                        <li><a href='four.Color.html'>Color</a></li>
+                        <li><a href='four.Effect.html'>Effect</a></li>
+                        <li><a href='four.Geometry.html'>Geometry</a></li>
+                        <li><a href='four.M4.html'>M4</a></li>
+                        <li><a href='four.Quat.html'>Quat</a></li>
+                        <li><a href='four.Renderer.html'>Renderer</a></li>
+                        <li><a href='four.RendererGL32.html'>RendererGL32</a></li>
+                        <li><a href='four.Texture.html'>Texture</a></li>
+                        <li><a href='four.Transform.html'>Transform</a></li>
+                        <li><a href='four.V2.html'>V2</a></li>
+                        <li><a href='four.V3.html'>V3</a></li>
+                        <li><a href='four.V4.html'>V4</a></li>
+                        <li class='active'><a href='four.gl.html'>gl</a></li>
+                      </ul>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+    <div class="container">
+       made with <a href='http://doc.lubyk.org/lk.Doc.html'>lk.Doc</a> 
+    </div>
+    </footer>
+
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
+    <script src='http://code.jquery.com/jquery.js'></script>
+    <script src='js/bootstrap.min.js'></script>
+  </body>
+</html>
+

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Simple fullscreen effect</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+
+
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/docs.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class='row'>
+          <div class='span12'>
+             <a href='http://lubyk.org'><img alt='lubyk logo' src='img/lubyk.png'/></a> <h1><a href='http://doc.lubyk.org'>Lubyk documentation</a></h1></a> 
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="row">
+
+        <div class='span3'>
+          <ul class='nav nav-tabs nav-stacked local-nav affix'>
+                        <li><a href='#SimpleShader'><i class='icon-chevron-right'></i> tutorial.four.SimpleShader</a></li>
+                        <li><a href='#Require'><i class='icon-chevron-right'></i> Require</a></li>
+                        <li><a href='#Geometry'><i class='icon-chevron-right'></i> Geometry</a></li>
+                        <li><a href='#Effect'><i class='icon-chevron-right'></i> Effect</a></li>
+                        <li><a href='#Window'><i class='icon-chevron-right'></i> Window</a></li>
+                      </ul>
+        </div>
+
+        <div class='main span7'>
+
+                    <section id='SimpleShader'>
+          <h2 class='section'>Simple fullscreen effect</h2>
+
+                    
+                    <p class='summary'>In this tutorial, we create a simple animation with <a href='mimas.html'>mimas</a> and <a href='four.html'>four</a>, showing how to connect all the pieces together from window declaration and callbacks to timers, geometry and effects.</p>
+                    <p><img alt='effect screenshot' src='img/four_simple.png'/></p>
+                    <p>Note that you must run this example with <code>luajit</code> since plain lua is not supported by four.</p>
+                    <h4 class='sub-title'>Download source</h4>
+                    <p><a href='examples/SimpleShader.lua'>SimpleShader.lua</a></p>
+                              </section>
+                    <section id='Require'>
+          <h2 class='section'>Require</h2>
+
+                    
+                    <p>Every script must start by requiring lubyk to setup file paths, load some globals such as "class" or "lk" and setup auto-loading of dependencies.</p>
+                              </section>
+                    <section id='Geometry'>
+          <h2 class='section'>Geometry</h2>
+
+                    
+                    <p>We must now prepare the geometry that we want to display. In this example, we simply create two triangles that fill the clip space (= screen).</p>
+                              </section>
+                    <section id='Effect'>
+          <h2 class='section'>Effect</h2>
+
+                    
+                    <p>We create a new <a href='four.Effect.html'>four.Effect</a> that will process our geometry and make something nice out of it. Apart from the uniforms declaration with <code>default_uniforms</code>, the rest is simply GLSL code.</p>
+                              </section>
+                    <section id='Window'>
+          <h2 class='section'>Window</h2>
+
+                    
+                    <p>We create an OpenGL window with mimas.GLWindow, set the size and position.</p>
+                              
+                    <h4 class='sub-title'>Timer</h4>
+                    <p>Since our effect is a function of time, we update at 60 Hz. For this we create a timer that asks the window to update every few milliseconds.</p>
+                              </section>
+                  </div>
+
+        <div class='span2'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='tutorial.four.html'>tutorial.four</a></li>
+                                    <li class='active'><a href='tutorial.four.SimpleShader.html'>SimpleShader</a></li>
+                      </ul>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+    <div class="container">
+       made with <a href='http://doc.lubyk.org/lk.Doc.html'>lk.Doc</a> 
+    </div>
+    </footer>
+
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
+    <script src='http://code.jquery.com/jquery.js'></script>
+    <script src='js/bootstrap.min.js'></script>
+  </body>
+</html>
+

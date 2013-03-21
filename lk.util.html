@@ -19,7 +19,7 @@
       <div class="container">
         <div class='row'>
           <div class='span12'>
-             <a href='http://lubyk.org'><img alt='lubyk logo' src='img/lubyk.png'/> <h1>Lubyk documentation</h1></a> 
+             <a href='http://lubyk.org'><img alt='lubyk logo' src='img/lubyk.png'/></a> <h1><a href='http://doc.lubyk.org'>Lubyk documentation</a></h1></a> 
           </div>
         </div>
       </div>
@@ -37,6 +37,7 @@
                         <li><a href='#Strings,-Arrays'><i class='icon-chevron-right'></i> Strings, Arrays</a></li>
                         <li><a href='#Debugging'><i class='icon-chevron-right'></i> Debugging</a></li>
                         <li><a href='#Miscellanous'><i class='icon-chevron-right'></i> Miscellanous</a></li>
+                        <li><a href='#TODO'><i class='icon-chevron-right'></i> TODO</a></li>
                       </ul>
         </div>
 
@@ -90,7 +91,7 @@ end
           
                     <p>Test for file/directory existence at <code>path</code>. If the element exists, returns the file type such as <strong>'directory'</strong> or <strong>'file'</strong>. Returns nil if there is nothing at the given path.</p>
                                         <a name='exist'></a>
-          <h4 class='function'><span>.</span>exist <code>(path)</code></h4>
+          <h4 class='function'><span>.</span>exist <code>lib.fileType</code></h4>
           
                     <p>Return true if the file or folder pointed by <code>path</code> exists.</p>
                                         <a name='content'></a>
@@ -109,6 +110,10 @@ end
           <h4 class='function'><span>.</span>move <code>(path, new_path)</code></h4>
           
                     <p>Move a file or directory from <code>path</code> to <code>new_path</code>. This is like "os.rename" but it also builds necessary path components in new_path.</p>
+                                        <a name='copy'></a>
+          <h4 class='function'><span>.</span>copy <code>(path, new_path)</code></h4>
+          
+                    <p>Copy a file from <code>path</code> to <code>new_path</code>. Builds necessary path components in new_path.</p>
                                         <a name='rmFile'></a>
           <h4 class='function'><span>.</span>rmFile <code>(path)</code></h4>
           
@@ -164,6 +169,15 @@ local rel = lk.absToRel('/home/foo/bar', '/home/foo')
           <h4 class='function'><span>.</span>insertSorted <code>(list, elem, key)</code></h4>
           
                     <p>Insert <code>elem</code> into a <code>list</code>, keeping entries in "list" sorted. If elem is not a string, the <code>elem[key]</code> is used to get a string for sorting.</p>
+                                        <a name='merge'></a>
+          <h4 class='function'><span>.</span>merge <code>(source, table)</code></h4>
+          
+                    <p>Merge values in <code>table</code> inside <code>source</code>. All keys are considered (array and hash).</p>
+                                        <a name='deepMerge'></a>
+          <h4 class='param'><span>.</span>deepMerge <code>= deepMerge</code></h4>
+          
+                    <p>nothing changed</p>
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
                                         <a name='deepMerge'></a>
           <h4 class='function'><span>.</span>deepMerge <code>(base, key, value)</code></h4>
           
@@ -198,6 +212,10 @@ lk.deepMerge(base, 'a', { c = 6 })
           <h2 class='section'>Miscellanous</h2>
 
                     
+                                        <a name='print'></a>
+          <h4 class='param'><span>.</span>print <code>= print</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
                                         <a name='spawn'></a>
           <h4 class='function'><span>.</span>spawn <code>(code, ...)</code></h4>
           
@@ -212,6 +230,13 @@ lk.deepMerge(base, 'a', { c = 6 })
           
                     <p>Quote string <code>str</code> so that it can be inserted in a shell command. Example:</p>
                     <pre class='prettyprint lang-lua'>os.execute(string.format('latex %s', lk.shellQuote(filepath)))</pre>
+                              </section>
+                    <section id='TODO'>
+          <h2 class='section'>TODO</h2>
+
+                    
+                    <p class='todo'><span class='ref'><a href='#Strings,-Arrays'>Strings,-Arrays</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#Miscellanous'>Miscellanous</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
                               </section>
                   </div>
 
