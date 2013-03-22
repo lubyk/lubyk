@@ -67,3 +67,15 @@
 [submodule "modules/osc"]
 	path = modules/osc
 	url = git://github.com/lubyk/osc.git
+[submodule "modules/lug"]
+	path = modules/lug
+	url = git://github.com/lubyk/lug.git
+[submodule "modules/lut"]
+	path = modules/lut
+	url = git://github.com/lubyk/lut.git
+[submodule "modules/lun"]
+	path = modules/lun
+	url = git://github.com/lubyk/lun.git
+[submodule "modules/luf"]
+	path = modules/luf
+	url = git://github.com/lubyk/luf.git

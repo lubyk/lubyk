@@ -449,6 +449,7 @@ function private.parseSources(tree, sources)
     if type(mpath) == 'table' then
       private.parseSources(tree, mpath)
     else
+      local mpath = lk.absolutizePath(mpath)
       if lk.fileType(mpath) == 'directory' then
         for path in lk.Dir(mpath):glob '%.lua' do
           private.insertInTree(tree, path, mpath, prepend)
@@ -466,29 +467,45 @@ function private.insertInTree(tree, fullpath, base, prepend)
   if prepend then
     path = prepend .. '/' .. path
   end
+  if not string.match(path, '/') and not string.match(base, '/lib$') then
+    -- base is too close to file, we need to have at least one
+    -- folder level to get module name. If we are scanning "lib", consider
+    -- files inside to be module definitions.
+    local o = base
+    base = lk.pathDir(base)
+    return private.insertInTree(tree, fullpath, base)
+  end
   local curr = tree
   local list = lk.split(path, '/')
   local last = #list
   for i, part in ipairs(list) do
+    -- transform foo/init.lua into foo.lua
+    local is_init
+
     if i == last then
+      is_init = part == 'init.lua'
       -- Remove extension
       part = string.match(part, '(.*)%.lua$')
     end
 
-    if not curr[part] then
-      local fullname
-      if curr.__fullname then
-        fullname = curr.__fullname .. '.' .. part
-      else
-        fullname = part
-      end
-      curr[part] = { __name = part, __fullname = fullname}
-      lk.insertSorted(curr, part)
-    end
-    curr = curr[part]
-
-    if i == last then
+    if is_init then
       curr.__file = fullpath
+    else
+      if not curr[part] then
+        local fullname
+        if curr.__fullname then
+          fullname = curr.__fullname .. '.' .. part
+        else
+          fullname = part
+        end
+        curr[part] = { __name = part, __fullname = fullname}
+        lk.insertSorted(curr, part)
+      end
+      curr = curr[part]
+
+      if i == last then
+        curr.__file = fullpath
+      end
     end
   end
 end
@@ -1357,6 +1374,7 @@ function private:paraToHtml(para)
       tag = "<pre class='prettyprint lang-"..para.code.."'>"
     end
     return tag .. 
+      private.autoLink(
       string.gsub(
       string.gsub(
       string.gsub(text,
@@ -1365,7 +1383,7 @@ function private:paraToHtml(para)
         '>', '&gt;'
       ),
         '%%%%', ''
-      )..
+      ), nil)..
       "</pre>"
   elseif para.span then
     return private.spanToHtml(self, para)
@@ -1408,23 +1426,41 @@ function private:spanToHtml(para)
          "</p>"
 end
 
+function private.autoLink(p, codes)
+  -- method link lk.Doc#make or lk.Doc.make
+  if codes then
+    -- para auto-link
+    p = string.gsub(p, ' ([a-z]+%.[A-Z]+[a-z][a-zA-Z]+)([#%.])([a-zA-Z_]+)', function(class, typ, fun)
+      table.insert(codes, string.format(" <a href='%s.html#%s'>%s%s%s</a>", class, fun, class, typ, fun))
+      return CODE..#codes
+    end)
+  else
+    -- code auto-link
+    p = string.gsub(p, '([a-z]+%.[A-Z]+[a-z][a-zA-Z]+)([#%.])([a-zA-Z_]+)', function(class, typ, fun)
+      return string.format("<a href='%s.html#%s'>%s%s%s</a>", class, fun, class, typ, fun)
+    end)
+  end
+  -- auto-link lk.Doc
+  p = string.gsub(p, ' ([a-z]+%.[A-Z]+[a-z0-9][a-zA-Z]*)([%. %(])', " <a href='%1.html'>%1</a>%2")
+  return p
+end
+
 function private:textToHtml(text)
   -- filter content
   local p = text or ''
   -- TODO: Replace textToHtml with a walking parser to avoid double parsing.
   -- code
   local codes = {}
+  p = string.gsub(p, '%[math%](.-)%[/math%]', function(latex)
+    table.insert(codes, private.mathjaxTag(self, {math = 'inline', text = latex}))
+    return CODE..#codes
+  end)
+
   p = string.gsub(p, '`(.-)`', function(code)
     table.insert(codes, '<code>'..code..'</code>')
     return CODE..#codes
   end)
-  -- method link lk.Doc#make or lk.Doc.make
-  p = string.gsub(p, ' ([a-z]+%.[A-Z]+[a-z][a-zA-Z]+)[#%.]([a-zA-Z_]+)', function(class, fun)
-    table.insert(codes, string.format(" <a href='%s.html#%s'>%s#%s</a>", class, fun, class, fun))
-    return CODE..#codes
-  end)
-  -- auto-link lk.Doc
-  p = string.gsub(p, ' ([a-z]+%.[A-Z]+[a-z][a-zA-Z]+)([%. ])', " <a href='%1.html'>%1</a>%2")
+  p = private.autoLink(p, codes)
   -- section link #Make or method link #foo
   p = string.gsub(p, ' #([A-Za-z]+[A-Za-z_]+)', function(name)
     table.insert(codes, string.format(" <a href='#%s'>%s</a>", name, name))
@@ -1442,9 +1478,6 @@ function private:textToHtml(text)
   -- link [some text](http://example.com)
   p = string.gsub(p, '%[([^%]]+)%]%(([^%)]+)%)', function(text, href)
     return "<a href='"..href.."'>"..text.."</a>"
-  end)
-  p = string.gsub(p, '%[math%](.-)%[/math%]', function(latex)
-    return private.mathjaxTag(self, {math = 'inline', text = latex})
   end)
 
   if #codes > 0 then
