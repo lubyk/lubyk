@@ -45,7 +45,7 @@
           
                     <p class='summary'></p>
                     <p>local lib = { type = 'four.Camera' } <a href='four.Camera.html'>four.Camera</a> = lib</p>
-                    <p>local V2 = four.V2 local V3 = four.V3 local M4 = four.M4 local Quat = four.Quat</p>
+                    <p>local V2 = <a href='four.V2.html'>four.V2</a> local V3 = <a href='four.V3.html'>four.V3</a> local M4 = <a href='four.M4.html'>four.M4</a> local Quat = four.Quat</p>
                     <p>-- Projection parameters/matrix synchronization</p>
                     <p>local function setOrthoMatrix(tv) local near, far = V2.tuple(tv.range) local hw = near * math.tan (tv.fov / 2) local hh = hw / tv.aspect tv.projection_matrix = M4.ortho(-hw, hw, -hh, hh, near, far) end</p>
                     <p>local function setPerspMatrix(tv) local near, far = V2.tuple(tv.range) local hw = near * math.tan (tv.fov / 2) local hh = hw / tv.aspect tv.projection_matrix = M4.persp(-hw, hw, -hh, hh, near, far) end</p>
@@ -122,6 +122,7 @@
         TeX: {
           extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
         },
+        displayAlign: "left",
         menuSettings: {
           zoom: "Hover",
           mpContext: true,

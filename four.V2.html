@@ -44,7 +44,7 @@
                               <h4 id='V2' class='entry function'><span>.</span>V2 <code>(x, y)</code></h4>
           
                     <p class='summary'></p>
-                    <p>local lib = { type = 'four.V2' } lib.__index = lib four.V2 = lib setmetatable(lib, { __call = function(lib, ...) return lib.V2(...) end })</p>
+                    <p>local lib = { type = 'four.V2' } lib.__index = lib <a href='four.V2.html'>four.V2</a> = lib setmetatable(lib, { __call = function(lib, ...) return lib.V2(...) end })</p>
                     <p>-- h2. Constructor and accessors</p>
                     <p>--[[-- @V2(x, y)@ is a vector with the corresponding components.</p>
                     <p>@V2(o)@ is a vector converted from the object @o@. Supported types for @o@: @bt.Vector3@.</p>
@@ -238,6 +238,7 @@
         TeX: {
           extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
         },
+        displayAlign: "left",
         menuSettings: {
           zoom: "Hover",
           mpContext: true,

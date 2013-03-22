@@ -51,7 +51,8 @@ footer.footer { margin-top:50px; font-size:10px; text-align:center; padding:30px
 @media (max-width: 979px) {
   .local-nav {display:block; float:none;}
   .local-nav .affix {position:relative;}
-  .main {padding-left:10px}
+  .global-nav {display:block; float:none; clear:both;}
+  .local-nav, .global-nav, .main {padding-left:10px; margin-bottom:20px;}
 }
 
 .nav .icon-chevron-right {

@@ -45,7 +45,7 @@
           
                     <p class='summary'></p>
                     <p>local lib = { type = 'four.Transform' } <a href='four.Transform.html'>four.Transform</a> = lib</p>
-                    <p>local Quat = <a href='four.Quat.html'>four.Quat</a> local V3 = four.V3 local V4 = four.V4 local M4 = four.M4</p>
+                    <p>local Quat = <a href='four.Quat.html'>four.Quat</a> local V3 = <a href='four.V3.html'>four.V3</a> local V4 = <a href='four.V4.html'>four.V4</a> local M4 = four.M4</p>
                     <p>-- Transform decomposition/matrix synchronization</p>
                     <p>local function syncMatrix(tv)  tv.matrix = M4.rigidqScale(tv.pos, tv.rot, tv.scale)  end</p>
                     <p>local function syncDecomp(tv) local m = tv.matrix tv.pos = M4.getMove(m) tv.rot = Quat.ofM4(m) tv.scale = M4.getScale(m) end</p>
@@ -125,6 +125,7 @@
         TeX: {
           extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
         },
+        displayAlign: "left",
         menuSettings: {
           zoom: "Hover",
           mpContext: true,

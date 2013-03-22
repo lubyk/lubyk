@@ -46,7 +46,7 @@
                     <p class='summary'></p>
                     <p>-- Module definition</p>
                     <p>local ffi = require 'ffi' local lib = { type = 'four.Renderer' } lib.__index = lib <a href='four.Renderer.html'>four.Renderer</a> = lib setmetatable(lib, { __call = function(lib, ...) return lib.new(...) end })</p>
-                    <p>local V2 = four.V2 local V4 = four.V4 local Buffer = <a href='four.Buffer.html'>four.Buffer</a> local Geometry = four.Geometry</p>
+                    <p>local V2 = <a href='four.V2.html'>four.V2</a> local V4 = <a href='four.V4.html'>four.V4</a> local Buffer = <a href='four.Buffer.html'>four.Buffer</a> local Geometry = four.Geometry</p>
                     <p>-- h2. Renderer backends</p>
                     <p>lib.GL32 = 1 lib.GLES = 2 lib.DEFAULT = lib.GL32</p>
                     <p>-- h2. Constructor</p>
@@ -177,6 +177,7 @@
         TeX: {
           extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
         },
+        displayAlign: "left",
         menuSettings: {
           zoom: "Hover",
           mpContext: true,

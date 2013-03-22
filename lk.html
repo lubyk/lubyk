@@ -44,10 +44,13 @@
                     <p class='summary'></p>
                     <p>--=============================================== LOAD PATHS</p>
                     <p>-- These paths already come loaded with lubyk lib path -- through the lubyk loader "require 'lubyk'" local lua_paths  = package.path local lua_cpaths = package.cpath</p>
-                    <p>-- 1. local lib (foo.lua or lib/foo.lua) package.path  = './?.lua;./lib/?.lua;' package.cpath = './?.so;./lib/?.so;'</p>
-                    <p>-- 2. user libs for _, path in ipairs(Lubyk.paths or {}) do package.path = package.path .. path .. '/?.lua;' end</p>
-                    <p>for _, cpath in ipairs(Lubyk.cpaths or {}) do package.cpath = package.cpath .. cpath .. '/?.so;' end</p>
+                    <p>-- 1. local lib (foo.lua or lib/foo.lua)                                          package.path  = './?.lua;./?/init.lua;'                                           package.cpath = './?.so;'                                                        </p>
+                    <p>-- 2. user libs                                                                   for _, path in ipairs(Lubyk.paths or {}) do                                       package.path = package.path .. path .. '/?.lua;' .. path .. '/?/init.so;'       end                                                                              </p>
+                    <p>for _, cpath in ipairs(Lubyk.cpaths or {}) do                                     package.cpath = package.cpath .. cpath .. '/?.so;'                              end        </p>
                     <p>-- 3. Installed lubyk libs and lua paths package.path  = package.path  .. lua_paths package.cpath = package.cpath .. lua_cpaths</p>
+                                        <h4 id='-----------' class='entry klass'><a href='lk.Autoload.html'>Autoload</a></h4>
+          
+                    <p class='summary'></p>
                                         <h4 id='---------' class='entry klass'><a href='lk.Client.html'>Client</a></h4>
           
                     <p class='summary'></p>
@@ -201,12 +204,12 @@
         <div class='span2 global-nav'>
           <ul class='nav nav-tabs nav-stacked'>
             
-                        <li class=''><a href='Autoload.html'>Autoload</a></li>
                         <li class=''><a href='_prototype.html'>_prototype</a></li>
                         <li class=''><a href='dub.html'>dub</a></li>
                         <li class=''><a href='fixture.html'>fixture</a></li>
                         <li class=''><a href='four.html'>four</a></li>
                         <li class='module'><a href='lk.html'>lk</a></li>
+                        <li class=''><a href='lug.html'>lug</a></li>
                         <li class=''><a href='test.html'>test</a></li>
                         <li class=''><a href='tutorial.html'>tutorial</a></li>
                       </ul>
@@ -229,6 +232,7 @@
         TeX: {
           extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
         },
+        displayAlign: "left",
         menuSettings: {
           zoom: "Hover",
           mpContext: true,

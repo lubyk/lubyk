@@ -46,7 +46,7 @@
 
                     
                     <p class='summary'>The test suite is used to declare tests and group them by class or module.</p>
-                                        <h4 id='new' class='entry function'><span>.</span>new <code>(name)</code></h4>
+                                        <h4 id='new' class='entry function'><span>.</span>new <code>(name, options)</code></h4>
           
                     <p>Create a new test suite. It is good practice to use 'should' as local name for this suite since it makes tests more readable. The @name@ should be the exact name of the class or module being tested in case the coverage option is activated in test (it is ON by default).</p>
                     <p>Usage example:</p>
@@ -54,7 +54,13 @@
 
 function should.listFilesInDirectory()
   -- ...
-end</pre>
+end
+</pre>
+                    <p>The optional <code>opt</code> table can contain the following keys to alter testing behavior:</p>
+                    <table class='definition'>
+  <tr><td class='key'><code>coverage</code></td><td>if set to false, untested functions will not be reported. If <code>test.missing</code> is set to 'mock', mock test functions will be printed for missing tests.</td></tr>
+
+</table>
                               </section>
                     <section id='Setup,-teardown'>
           <h2 class='section'>Setup, teardown</h2>
@@ -176,6 +182,7 @@ test.all()</pre>
         TeX: {
           extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
         },
+        displayAlign: "left",
         menuSettings: {
           zoom: "Hover",
           mpContext: true,

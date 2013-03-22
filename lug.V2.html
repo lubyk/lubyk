@@ -19,7 +19,7 @@
       <div class="container">
         <div class='row'>
           <div class='span12'>
-             
+             <a href='http://lubyk.org'><img alt='lubyk logo' src='img/lubyk.png'/></a> <h1><a href='http://doc.lubyk.org'>Lubyk documentation</a></h1></a> 
           </div>
         </div>
       </div>
@@ -48,7 +48,8 @@
           <h2 class='section'>2D vector</h2>
 
                     
-                    <p class='summary'>The vector is immutable when used through this API. It is highly discouraged to change a vector in place as this may break future code.</p>
+                    <p class='summary'>Immutable 2D vector class.</p>
+                    <p>The vectors are immutable when used through this API and it is highly discouraged to change a vector in place as this may break future code.</p>
                     <p>Simple usage example:</p>
                     <pre class='prettyprint lang-lua'>local v = lug.V2(3, 4)
 print(v:norm())
@@ -161,9 +162,6 @@ local m  = v * 3</pre>
                                         <h4 id='unit' class='entry function'><span>.</span>unit <code>(v)</code></h4>
           
                     <p>Unit vector: \(\mathbf{v}/|\mathbf{v}|\).</p>
-                                        <h4 id='homogene' class='entry function'><span>.</span>homogene <code>(v)</code></h4>
-          
-                    <p>Vector in homogenous (1D) space: \(\mathbf{v}/\mathbf{v}_y\).</p>
                                         <h4 id='ortho' class='entry function'><span>.</span>ortho <code>(v)</code></h4>
           
                     <p>Rotated vector by \(\pi/2\).</p>
@@ -268,12 +266,7 @@ end</pre>
           <ul class='nav nav-tabs nav-stacked'>
                         <li class='module'><a href='lug.html'><span></span>lug</a></li>
             
-                        <li class=''><a href='lug.Buffer.html'>Buffer</a></li>
-                        <li class=''><a href='lug.Color.html'>Color</a></li>
-                        <li class=''><a href='lug.Quat.html'>Quat</a></li>
                         <li class='active'><a href='lug.V2.html'>V2</a></li>
-                        <li class=''><a href='lug.V3.html'>V3</a></li>
-                        <li class=''><a href='lug.V4.html'>V4</a></li>
                       </ul>
         </div>
       </div>

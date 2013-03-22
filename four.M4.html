@@ -44,7 +44,7 @@
                               <h4 id='ortho' class='entry function'><span>.</span>ortho <code>(l, r, b, t, n, f)</code></h4>
           
                     <p class='summary'></p>
-                    <p>local lib = { type = 'four.M4' } lib.__index = lib four.M4 = lib setmetatable(lib, { __call = function(lib, ...) return lib.M4(...) end })</p>
+                    <p>local lib = { type = 'four.M4' } lib.__index = lib <a href='four.M4.html'>four.M4</a> = lib setmetatable(lib, { __call = function(lib, ...) return lib.M4(...) end })</p>
                     <p>local V3 = four.V3</p>
                     <p>-- h2. Constructor and accessors</p>
                     <p>e21, e22, e23, e24, -- row 2 e31, e32, e33, e34, -- row 3 e41, e42, e43, e44) -- row 4 local m  if e12 then  m = { e11, e21, e31, e41,  -- col 1 e12, e22, e32, e42,  -- col 2 e13, e23, e33, e43,  -- col 3 e14, e24, e34, e44 } -- col 4 else if e11.type == "bt.Transform" then m = e11:toM4()  else assert(false, string.format("Cannot convert %s to %s", e11.type,  lib.type)) end end setmetatable(m, lib) return m end</p>
@@ -204,6 +204,7 @@
         TeX: {
           extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
         },
+        displayAlign: "left",
         menuSettings: {
           zoom: "Hover",
           mpContext: true,
