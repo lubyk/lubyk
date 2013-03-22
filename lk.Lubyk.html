@@ -46,7 +46,7 @@
                     <p>local defaults = { zone = 'default', version = version, service_type = '_lubyk._tcp', --- WebDAV port for live coding dav_port = 8103, -- This is set to false by <a href='lk.Patch.html'>lk.Patch</a> so that <a href='lk.Process.html'>lk.Process</a> do not quit on closing windows. mimas_quit_on_close = true, -- The following settings are set in bootstrap loader lubyk.lua -- and are platform specific.</p>
                     <p>-- Main location for lubyk libraries lib = Lubyk and Lubyk.lib,</p>
                     <p>-- Platform code (linux,macosx,windows) plat= Lubyk and Lubyk.plat, }</p>
-                    <p>Lubyk = lk.Settings('lk', defaults) -- Cannot be changed, no need for copy on write. Lubyk.version = defaults.version Lubyk.version_str = string.format('%i.%i.%i', version.major, version.minor, version.patch)</p>
+                    <p>Lubyk = <a href='lk.Settings.html'>lk.Settings</a>('lk', defaults) -- Cannot be changed, no need for copy on write. Lubyk.version = defaults.version Lubyk.version_str = string.format('%i.%i.%i', version.major, version.minor, version.patch)</p>
                     <p>-- Default host name local function getMachineName() local file = io.popen('hostname') local name = file:read() local short_name = string.match(name or '', '^([^-.]+)') return short_name or name or 'unknown' end defaults.host = getMachineName()</p>
                               </section>
                   </div>

@@ -44,12 +44,12 @@
                               <h4 id='ortho' class='entry function'><span>.</span>ortho <code>(l, r, b, t, n, f)</code></h4>
           
                     <p class='summary'></p>
-                    <p>local lib = { type = 'four.M4' } lib.__index = lib <a href='four.M4.html'>four.M4</a> = lib setmetatable(lib, { __call = function(lib, ...) return lib.M4(...) end })</p>
+                    <p>local lib = { type = 'four.M4' } lib.__index = lib <a href='four.M4.html'>four.M4</a> = lib setmetatable(lib, { __call = function(lib, ...) return <a href='lib.M4.html'>lib.M4</a>(...) end })</p>
                     <p>local V3 = four.V3</p>
                     <p>-- h2. Constructor and accessors</p>
                     <p>e21, e22, e23, e24, -- row 2 e31, e32, e33, e34, -- row 3 e41, e42, e43, e44) -- row 4 local m  if e12 then  m = { e11, e21, e31, e41,  -- col 1 e12, e22, e32, e42,  -- col 2 e13, e23, e33, e43,  -- col 3 e14, e24, e34, e44 } -- col 4 else if e11.type == "bt.Transform" then m = e11:toM4()  else assert(false, string.format("Cannot convert %s to %s", e11.type,  lib.type)) end end setmetatable(m, lib) return m end</p>
                     <p>local M4 = lib.M4</p>
-                    <p>local b = (i - 1) * 4 return four.V4(m[b + 1], m[b + 2], m[b + 3], m[b + 4]) end</p>
+                    <p>local b = (i - 1) * 4 return <a href='four.V4.html'>four.V4</a>(m[b + 1], m[b + 2], m[b + 3], m[b + 4]) end</p>
                     <p>-- h2. Converters</p>
                     <p>return M4(r1[1], r1[2], r1[3], r1[4], r2[1], r2[2], r2[3], r2[4], r3[1], r3[2], r3[3], r3[4], r4[1], r4[2], r4[3], r4[4]) end</p>
                     <p>return M4(c1[1], c2[1], c3[1], c4[1], c1[2], c2[2], c3[2], c4[2], c1[3], c2[3], c3[3], c4[3], c1[4], c2[4], c3[4], c4[4]) end</p>

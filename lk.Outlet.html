@@ -44,7 +44,7 @@
           
                     <p class='summary'></p>
                     <p>-- 'inlet' accessor metamethod local lib   = {type = 'lk.Outlet'} lib.__index = lib <a href='lk.Outlet.html'>lk.Outlet</a>   = lib</p>
-                    <p>local doSend setmetatable(lib, { -- lk.Outlet(node) -- Create a new outlet and insert it into -- node. __call = function(lib, node, name, opts) local self = { name = name, node = node, opts = opts or {}, -- Connection information links = {}, -- Connection inlets inlets = {}, }</p>
+                    <p>local doSend setmetatable(lib, { -- <a href='lk.Outlet.html'>lk.Outlet</a>(node) -- Create a new outlet and insert it into -- node. __call = function(lib, node, name, opts) local self = { name = name, node = node, opts = opts or {}, -- Connection information links = {}, -- Connection inlets inlets = {}, }</p>
                     <p>function self.send(...) doSend(self, ...) end</p>
                     <p>return setmetatable(self, lib) end})</p>
                     <p>function doSend(self, ...) for _,inlet in ipairs(self.inlets) do inlet.receive(...) end end</p>

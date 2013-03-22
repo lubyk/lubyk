@@ -50,7 +50,7 @@
                     <p>lib.fullname = <a href='dub.Class.html#fullname'>dub.Class.fullname</a></p>
                     <p>--=============================================== PRIVATE</p>
                     <p>function private:resolveMethods(class, name_to_type) for method in self:methods() do local opts = { db            = self.db, parent        = class, name          = method.name, params_list   = private.resolveParams(method, name_to_type), return_value  = private.resolveType(method.return_value, name_to_type), definition    = method.definition, argsstring    = method.argsstring, location      = method.location, desc          = method.desc, static        = method.static, xml           = method.xml, member        = method.member, dtor          = method.dtor, ctor          = method.ctor, dub           = method.dub, is_set_attr   = method.is_set_attr, is_get_attr   = method.is_get_attr, is_cast       = method.is_cast, } if method.ctor then opts.name = class.name opts.return_value = <a href='dub.MemoryStorage.html#makeType'>dub.MemoryStorage.makeType</a>(class.name .. ' *') elseif method.dtor then opts.name = '~' .. class.name end</p>
-                    <pre class='prettyprint lang-lua'>local m = dub.Function(opts)
+                    <pre class='prettyprint lang-lua'>local m = <a href='dub.Function.html'>dub.Function</a>(opts)
 class.cache[m.name] = m
 table.insert(class.functions_list, m)</pre>
                     <p>end end</p>

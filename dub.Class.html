@@ -49,14 +49,14 @@
                                         <h4 id='new' class='entry function'><span>.</span>new <code>(self)</code></h4>
           
                     <p>Create a new class definition. Most of the attributes are passed with @self@. Usage example:</p>
-                    <pre class='prettyprint lang-lua'>local class = dub.Class {
+                    <pre class='prettyprint lang-lua'>local class = <a href='dub.Class.html'>dub.Class</a> {
   -- self can be a class or db (root)
   db      = self.db or self,
   parent  = parent,
   name    = name,
   xml     = elem,
   xml_headers  = {
-    {path = header.dir .. lk.Dir.sep .. elem.refid .. '.xml', dir = header.dir}
+    {path = header.dir .. <a href='lk.Dir.html#sep'>lk.Dir.sep</a> .. elem.refid .. '.xml', dir = header.dir}
   },
 }</pre>
                               

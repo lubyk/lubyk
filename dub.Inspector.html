@@ -44,14 +44,14 @@
           
                     <p class='summary'></p>
                     <p>local lib     = { type = 'dub.Inspector', DOXYGEN_CMD = 'doxygen', } local private = {} lib.__index   = lib <a href='dub.Inspector.html'>dub.Inspector</a> = lib</p>
-                    <p>--=============================================== dub.Inspector() setmetatable(lib, { __call = function(lib, opts) local self = {db = dub.MemoryStorage()} setmetatable(self, lib) if opts then self:parse(opts) end return self end })</p>
+                    <p>--=============================================== <a href='dub.Inspector.html'>dub.Inspector</a>() setmetatable(lib, { __call = function(lib, opts) local self = {db = <a href='dub.MemoryStorage.html'>dub.MemoryStorage</a>()} setmetatable(self, lib) if opts then self:parse(opts) end return self end })</p>
                     <p>--=============================================== PUBLIC METHODS -- Add xml headers to the database. If not_lazy is set, parse everything -- directly (not when needed). Only set this option if the xml files -- will be removed before queries. self.db:parse(xml_dir, not_lazy, ignore_list) end</p>
                     <p>if type(opts) == 'string' then opts = {INPUT = opts} end assert(opts.INPUT, "Missing 'INPUT' field")</p>
                     <p>if opts.html then opts.GENERATE_HTML = 'YES' opts.keep_xml = true end</p>
                     <p>local doc_dir = opts.doc_dir if opts.keep_xml and not doc_dir then doc_dir = 'dub-doc' elseif not doc_dir then doc_dir = 'dub-tmp' local i = 0 while true do if lk.exist(doc_dir) then i = i + 1 doc_dir = string.format('dub-tmp-%i', i) else break end end end</p>
                     <p>private.execute('mkdir -p ' .. doc_dir)</p>
                     <p>local doxypath = <a href='opts.Doxyfile.html'>opts.Doxyfile</a> if not doxypath then doxypath = doc_dir .. '/Doxyfile' local doxyfile = io.open(doxypath, 'w')</p>
-                    <pre class='prettyprint lang-lua'>local doxytemplate = dub.Template {path = lk.scriptDir() .. '/Doxyfile'}
+                    <pre class='prettyprint lang-lua'>local doxytemplate = <a href='dub.Template.html'>dub.Template</a> {path = lk.scriptDir() .. '/Doxyfile'}
 if type(opts.INPUT) == 'table' then
   opts.INPUT = lk.join(opts.INPUT, ' ')
 end

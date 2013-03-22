@@ -50,7 +50,7 @@
           
                     <p>Create a new test suite. It is good practice to use 'should' as local name for this suite since it makes tests more readable. The @name@ should be the exact name of the class or module being tested in case the coverage option is activated in test (it is ON by default).</p>
                     <p>Usage example:</p>
-                    <pre class='prettyprint lang-lua'>local should = test.Suite 'lk.Dir'
+                    <pre class='prettyprint lang-lua'>local should = <a href='test.Suite.html'>test.Suite</a> 'lk.Dir'
 
 function should.listFilesInDirectory()
   -- ...
@@ -67,7 +67,7 @@ end
 
                     
                     <p>If you need to run some code before or after every test, you can define the @setup@ (executed before each test) and/or @teardown@ (executed after each test independantly of success or failure) functions:</p>
-                    <pre class='prettyprint lang-lua'>local should = test.Suite 'lk.Dir'
+                    <pre class='prettyprint lang-lua'>local should = <a href='test.Suite.html'>test.Suite</a> 'lk.Dir'
 
 function should.teardown()
   -- cleanup

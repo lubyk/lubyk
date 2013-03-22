@@ -45,9 +45,9 @@
                     <p class='summary'></p>
                     <p>local lib = {type='lk.Client'} lib.__index = lib <a href='lk.Client.html'>lk.Client</a>   = lib</p>
                     <p>setmetatable(lib, { -- new method __call = function(lib, service_type, callback) if not callback then callback     = service_type service_type = lubyk.service_type end if not callback then -- dummy callback = function() end end</p>
-                    <p>local self = {callback = callback, subscriptions = {}} self.browser = lk.ServiceBrowser(service_type):addDelegate(self) </p>
+                    <p>local self = {callback = callback, subscriptions = {}} self.browser = <a href='lk.ServiceBrowser.html'>lk.ServiceBrowser</a>(service_type):addDelegate(self) </p>
                     <p>--======================================= SUB client</p>
-                    <p>self.sub = zmq.SimpleSub(self.callback)</p>
+                    <p>self.sub = <a href='zmq.SimpleSub.html'>zmq.SimpleSub</a>(self.callback)</p>
                     <p>setmetatable(self, lib) return self end})</p>
                     <p>-- resolve pending local subscription = self.subscriptions[service.name] if subscription and not subscription.connected then subscription.subscriber:connect(service.sub_url) subscription.connected = true end end</p>
                     <p>-- remove connection local subscription = self.subscriptions[service.name] if subscription then -- TODO: do we need to disconnect ? subscription.connected = false end end</p>

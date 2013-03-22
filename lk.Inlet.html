@@ -44,7 +44,7 @@
           
                     <p class='summary'></p>
                     <p>local lib   = {type='lk.Inlet'} lib.__index = lib <a href='lk.Inlet.html'>lk.Inlet</a>    = lib</p>
-                    <p>setmetatable(lib, { -- lk.Inlet(node) __call = function(lib, ...) return lib.new(...) end })</p>
+                    <p>setmetatable(lib, { -- <a href='lk.Inlet.html'>lk.Inlet</a>(node) __call = function(lib, ...) return lib.new(...) end })</p>
                     <p>-- Create a new inlet local self if type(node) == 'string' then -- Pending inlet. self = setmetatable({ name       = name, target_url = node, }, lib) else self = setmetatable({ name = name, }, lib) self:setNode(node) end</p>
                     <p>return self end</p>
                     <p>print('Inlet function not set.') end</p>

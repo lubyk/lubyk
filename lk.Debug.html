@@ -52,7 +52,7 @@
                                         <h4 id='new' class='entry function'><span>.</span>new <code>(name, ...)</code></h4>
           
                     <p>Create a new debug object with a name and some more arguments to be printed.</p>
-                    <pre class='prettyprint lang-lua'>obj.debug = lk.Debug("an obj", obj.id, obj.type)
+                    <pre class='prettyprint lang-lua'>obj.debug = <a href='lk.Debug.html'>lk.Debug</a>("an obj", obj.id, obj.type)
 -- optional callback function
 function obj.debug:callback()
   -- do something here
@@ -68,10 +68,10 @@ end</pre>
                     <p>Start logging program execution. The @hook_type@ can be 'l' (log every line), 'r' (log return from function) or 'c' (log function calls = default).</p>
                     <p>Usage:</p>
                     <pre class='prettyprint lang-lua'>-- start logging
-lk.Debug.logExecution('trial')
+<a href='lk.Debug.html#logExecution'>lk.Debug.logExecution</a>('trial')
 testFunction()
 -- stop logging
-lk.Debug.logExecution('trial', false)</pre>
+<a href='lk.Debug.html#logExecution'>lk.Debug.logExecution</a>('trial', false)</pre>
                               </section>
                   </div>
 

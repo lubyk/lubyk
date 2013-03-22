@@ -105,7 +105,7 @@ end
                     <p>If a function definition does not follow this convention, it can be documented with a commented version of the function definition:</p>
                     <pre class='prettyprint lang-lua'>-- Special function declaration.
 -- function lib:bing(a, b, c)
-lib.bing = lk.Doc.bang
+lib.bing = <a href='lk.Doc.html#bang'>lk.Doc.bang</a>
 
 -- Out of file function definition (in C++ for example).
 -- function lib:connect(server)
@@ -269,7 +269,7 @@ FIXME This is a fixme
                     <p>Parse the content of a file given by <code>path</code> and return an <a href='lk.Doc.html'>lk.Doc</a> object  containing the documentation of the class.</p>
                     <p>Usage example:</p>
                     <pre class='prettyprint lang-lua'>require 'lubyk'
-local doc = lk.Doc('path/to/File.lua', {target = 'doc'})
+local doc = <a href='lk.Doc.html'>lk.Doc</a>('path/to/File.lua', {target = 'doc'})
 lk.writeall('doc/File.html', doc:toHtml())
 </pre>
                     <p>When documenting multiple files it is better to use <a href='#make'>make</a>.</p>
@@ -289,7 +289,7 @@ lk.writeall('doc/File.html', doc:toHtml())
 </table>
                     <p>Usage:</p>
                     <pre class='prettyprint lang-lua'>require 'lubyk'
-lk.Doc.make {
+<a href='lk.Doc.html#make'>lk.Doc.make</a> {
   sources = {
     'lib/doc/DocTest.lua',
     'lib/doc/Other.lua',
@@ -303,7 +303,7 @@ lk.Doc.make {
       &lt;h1&gt;Lubyk documentation&lt;/h1&gt;
     &lt;/a&gt;
   ]],
-  footer = [[ made with &lt;a href='lk.Doc.html'&gt;lk.Doc&lt;/a&gt; ]],
+  footer = [[ made with &lt;a href='<a href='lk.Doc.html#html'>lk.Doc.html</a>'&gt;lk.Doc&lt;/a&gt; ]],
 }</pre>
                               </section>
                     <section id='Methods'>

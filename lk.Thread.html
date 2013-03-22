@@ -45,7 +45,7 @@
                     <p class='summary'></p>
                     <p>local lib   = {type = 'lk.Thread'} local sched = sched lib.__index = lib <a href='lk.Thread.html'>lk.Thread</a>   = lib</p>
                     <p>local WeakValue = {__mode = 'v'}</p>
-                    <p>setmetatable(lib, { __call = function(lib, func, at) local self = { co = coroutine.create(func), func = func, should_run = true, } setmetatable(self, lib) local wrap = { -- weak link to thread t  = setmetatable({t = self}, WeakValue), } self.wrap = wrap self.finalizer = lk.Finalizer(function() sched:remove(wrap) end) sched:scheduleAt(at or 0, self.wrap) return self end })</p>
+                    <p>setmetatable(lib, { __call = function(lib, func, at) local self = { co = coroutine.create(func), func = func, should_run = true, } setmetatable(self, lib) local wrap = { -- weak link to thread t  = setmetatable({t = self}, WeakValue), } self.wrap = wrap self.finalizer = <a href='lk.Finalizer.html'>lk.Finalizer</a>(function() sched:remove(wrap) end) sched:scheduleAt(at or 0, self.wrap) return self end })</p>
                     <p>-- The calling threads joins with this thread. if self.co then coroutine.yield('join', self) else -- ignore: dead thread end end</p>
                     <p>return self.should_run end</p>
                     <p>self.should_run = false if self.wrap.fd then sched:removeFd(self.wrap) end self.wrap.at = 0 self.co = nil end</p>

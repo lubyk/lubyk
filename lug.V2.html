@@ -51,7 +51,7 @@
                     <p class='summary'>Immutable 2D vector class.</p>
                     <p>The vectors are immutable when used through this API and it is highly discouraged to change a vector in place as this may break future code.</p>
                     <p>Simple usage example:</p>
-                    <pre class='prettyprint lang-lua'>local v = lug.V2(3, 4)
+                    <pre class='prettyprint lang-lua'>local v = <a href='lug.V2.html'>lug.V2</a>(3, 4)
 print(v:norm())
 --&gt; 5
 
@@ -60,7 +60,7 @@ print(v[1], v:x())
 --&gt; 2  2
 
 -- Add two vectors
-print(v + lug.V2(2, 1))
+print(v + <a href='lug.V2.html'>lug.V2</a>(2, 1))
 --&gt; (5 5)
 </pre>
                               </section>
@@ -72,12 +72,12 @@ print(v + lug.V2(2, 1))
           
                     <p>Create a vector with the corresponding components.</p>
                     <pre class='prettyprint lang-lua'>-- Create new vector from two numbers.
-local v = lug.V2(0.5, 12)
+local v = <a href='lug.V2.html'>lug.V2</a>(0.5, 12)
 </pre>
                     <h4 class='sub-title'>Conversion</h4>
                     <p>With a single argument, <code>lug.V2</code> returns a vector by copying the first two values of the argument (<code>[]</code> accessor). This enables easy transformation from other vectors such as <a href='lug.V3.html'>lug.V3</a> or <a href='lug.V4.html'>lug.V4</a>.</p>
-                    <pre class='prettyprint lang-lua'>-- Copy x and y values from a lug.V3.
-local v2 = lug.V2(v3)</pre>
+                    <pre class='prettyprint lang-lua'>-- Copy x and y values from a <a href='lug.V3.html'>lug.V3</a>.
+local v2 = <a href='lug.V2.html'>lug.V2</a>(v3)</pre>
                                         <h4 id='polarUnit' class='entry function'><span>.</span>polarUnit <code>(theta)</code></h4>
           
                     <p>A unit vector with \(\theta\) polar coordinate.</p>
@@ -124,7 +124,7 @@ local v2 = lug.V2(v3)</pre>
 
                     
                     <p>Functions <a href='#neg'>neg</a>, <a href='#add'>add</a>, <a href='#sub'>sub</a> and <a href='#smul'>smul</a> are also accessible through operators:</p>
-                    <pre class='prettyprint lang-lua'>local v  = lug.V2(1,2)
+                    <pre class='prettyprint lang-lua'>local v  = <a href='lug.V2.html'>lug.V2</a>(1,2)
 local nv = -v
 local w  = v + nv
 local n  = 4 * v

@@ -46,11 +46,11 @@
                     <p>local lib = {type='lk.Service'} lib.__index = lib <a href='lk.Service.html'>lk.Service</a>  = lib</p>
                     <p>setmetatable(lib, { __call = function(lib, ...) return lib.new(...) end })</p>
                     <p>if type(opts) == 'function' then opts = {callback = opts} elseif not opts then opts = {} end local service_type, callback, type_name = opts.service_type, opts.callback, opts.type type_name = type_name or lib.type service_type = service_type or lubyk.service_type if not callback then -- dummy callback = function() return nil end end local info = opts.info or {} info.type = type_name local self = {name = name, callback = callback, info = (opts.info or {})}</p>
-                    <p>--======================================= PUB server self.pub = zmq.Pub() self.info.pub = self.pub:port()</p>
-                    <p>--======================================= REP server (sync) -- FIXME: REMOVE (risk of hanging) self.rep = zmq.SimpleRep(callback)</p>
-                    <p>--======================================= PULL server (async) self.pull = zmq.SimplePull(callback)</p>
+                    <p>--======================================= PUB server self.pub = <a href='zmq.Pub.html'>zmq.Pub</a>() self.info.pub = self.pub:port()</p>
+                    <p>--======================================= REP server (sync) -- FIXME: REMOVE (risk of hanging) self.rep = <a href='zmq.SimpleRep.html'>zmq.SimpleRep</a>(callback)</p>
+                    <p>--======================================= PULL server (async) self.pull = <a href='zmq.SimplePull.html'>zmq.SimplePull</a>(callback)</p>
                     <p>self.info.pull = self.pull:port()</p>
-                    <p>--======================================= announce REP server self.registration = mdns.Registration(service_type, name, self.rep:port(), self.info, opts.registration_callback) -- TODO: act on name change ....</p>
+                    <p>--======================================= announce REP server self.registration = <a href='mdns.Registration.html'>mdns.Registration</a>(service_type, name, self.rep:port(), self.info, opts.registration_callback) -- TODO: act on name change ....</p>
                     <p>return setmetatable(self, lib) end</p>
                     <p>self.pub:send(...) end</p>
                     <p>self.rep:join(...) self.pull:join(...) end</p>

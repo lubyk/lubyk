@@ -46,7 +46,7 @@
                     <p>local lib = {type='lk.OutletMethod'} lib.__index     = lib <a href='lk.OutletMethod.html'>lk.OutletMethod</a> = lib</p>
                     <p>setmetatable(lib, {__call = function(lib, ...) return lib.new(...) end})</p>
                     <p>-- Create lubyk.o declaration/accessor table for a given node local self = {_node = node} return setmetatable(self, lib) end</p>
-                    <p>local node = self._node -- Declare or update an outlet. local outlet = node.outlets[name] if not outlet then outlet = lk.Outlet(node, name) node.outlets[name] = outlet end</p>
+                    <p>local node = self._node -- Declare or update an outlet. local outlet = node.outlets[name] if not outlet then outlet = <a href='lk.Outlet.html'>lk.Outlet</a>(node, name) node.outlets[name] = outlet end</p>
                     <p>outlet:set(def)</p>
                     <p>-- Ordered list of outlets, GC protected. table.insert(node.slots.outlets, outlet) rawset(self, name, outlet.send) end</p>
                               </section>

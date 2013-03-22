@@ -81,18 +81,18 @@ local SATURATION = 0.4
                               
                     <p>Vertex buffer (list of coordinates).</p>
                               
-                    <pre class='prettyprint lang-lua'>  local vb = four.Buffer { dim = 3,
-             scalar_type = four.Buffer.FLOAT } </pre>
+                    <pre class='prettyprint lang-lua'>  local vb = <a href='four.Buffer.html'>four.Buffer</a> { dim = 3,
+             scalar_type = <a href='four.Buffer.html#FLOAT'>four.Buffer.FLOAT</a> } </pre>
                               
                     <p>Color buffer (colors for each coordinate).</p>
                               
-                    <pre class='prettyprint lang-lua'>  local cb = four.Buffer { dim = 4,
-             scalar_type = four.Buffer.FLOAT }</pre>
+                    <pre class='prettyprint lang-lua'>  local cb = <a href='four.Buffer.html'>four.Buffer</a> { dim = 4,
+             scalar_type = <a href='four.Buffer.html#FLOAT'>four.Buffer.FLOAT</a> }</pre>
                               
                     <p>Index buffer (actual triangles defined with vertices in <code>vb</code>).</p>
                               
-                    <pre class='prettyprint lang-lua'>  local ib = four.Buffer { dim = 1,
-             scalar_type = four.Buffer.UNSIGNED_INT }
+                    <pre class='prettyprint lang-lua'>  local ib = <a href='four.Buffer.html'>four.Buffer</a> { dim = 1,
+             scalar_type = <a href='four.Buffer.html#UNSIGNED_INT'>four.Buffer.UNSIGNED_INT</a> }
 </pre>
                               
                     <p>The drawing shows the coordinates and index values that we will use when filling the index.</p>
@@ -115,10 +115,10 @@ local SATURATION = 0.4
                               
                     <p>Colors for the positions above.</p>
                               
-                    <pre class='prettyprint lang-lua'>  cb:pushV4(four.Color.red())
-  cb:pushV4(four.Color.green())
-  cb:pushV4(four.Color.blue())
-  cb:pushV4(four.Color.white())
+                    <pre class='prettyprint lang-lua'>  cb:pushV4(<a href='four.Color.html#red'>four.Color.red</a>())
+  cb:pushV4(<a href='four.Color.html#green'>four.Color.green</a>())
+  cb:pushV4(<a href='four.Color.html#blue'>four.Color.blue</a>())
+  cb:pushV4(<a href='four.Color.html#white'>four.Color.white</a>())
 </pre>
                               
                     <p>Create two triangles made of 3 vertices. Note that the index is zero based.</p>
@@ -129,8 +129,8 @@ local SATURATION = 0.4
                               
                     <p>Create the actual geometry object with <a href='four.Geometry.html'>four.Geometry</a>. Set the primitive to triangles and set index and data with the buffered we just prepared.</p>
                               
-                    <pre class='prettyprint lang-lua'>  return four.Geometry {
-    primitive = four.Geometry.TRIANGLE, 
+                    <pre class='prettyprint lang-lua'>  return <a href='four.Geometry.html'>four.Geometry</a> {
+    primitive = <a href='four.Geometry.html#TRIANGLE'>four.Geometry.TRIANGLE</a>, 
     index = ib,
     data = { vertex = vb, color = cb}
   }
@@ -147,8 +147,8 @@ local SATURATION = 0.4
                     
                     <p>Create the renderer with <a href='four.Renderer.html'>four.Renderer</a>.</p>
                               
-                    <pre class='prettyprint lang-lua'>renderer = four.Renderer {
-  size = four.V2(WIN_SIZE.w, WIN_SIZE.h),
+                    <pre class='prettyprint lang-lua'>renderer = <a href='four.Renderer.html'>four.Renderer</a> {
+  size = <a href='four.V2.html'>four.V2</a>(WIN_SIZE.w, WIN_SIZE.h),
 }
 </pre>
                               </section>
@@ -158,7 +158,7 @@ local SATURATION = 0.4
                     
                     <p>Use <a href='four.Camera.html'>four.Camera</a> to create a simple camera.</p>
                               
-                    <pre class='prettyprint lang-lua'>camera = four.Camera()
+                    <pre class='prettyprint lang-lua'>camera = <a href='four.Camera.html'>four.Camera</a>()
 </pre>
                               </section>
                     <section id='Effect'>
@@ -169,17 +169,17 @@ local SATURATION = 0.4
                     <p><code>default_uniforms</code> declares the uniforms and sets default values in case the renderable (in our case <code>obj</code>) does not redefine these values.</p>
                     <p>The special value <a href='four.Effect.html#RENDER_FRAME_START_TIME'>RENDER_FRAME_START_TIME</a> set for <code>time</code> will give use the current time in seconds (0 = script start).</p>
                               
-                    <pre class='prettyprint lang-lua'>local effect = four.Effect {
+                    <pre class='prettyprint lang-lua'>local effect = <a href='four.Effect.html'>four.Effect</a> {
   default_uniforms = {
     saturation = 0.5,
-    time = four.Effect.RENDER_FRAME_START_TIME,
+    time = <a href='four.Effect.html#RENDER_FRAME_START_TIME'>four.Effect.RENDER_FRAME_START_TIME</a>,
   },
 }
 </pre>
                               
                     <p>Define the vertex shader. This shader simply passes values along to the fragment shader.</p>
                               
-                    <pre class='prettyprint lang-lua'>effect.vertex = four.Effect.Shader [[
+                    <pre class='prettyprint lang-lua'>effect.vertex = <a href='four.Effect.html#Shader'>four.Effect.Shader</a> [[
   in vec4 vertex;
   in vec4 color;
   out vec4 v_vertex;
@@ -195,7 +195,7 @@ local SATURATION = 0.4
                               
                     <p>Define the fragment shader. This shader simply creates periodic colors based on pixel position and time.</p>
                               
-                    <pre class='prettyprint lang-lua'>effect.fragment = four.Effect.Shader [[
+                    <pre class='prettyprint lang-lua'>effect.fragment = <a href='four.Effect.html#Shader'>four.Effect.Shader</a> [[
   in vec4 v_vertex;
   in vec4 v_color;
 
@@ -239,7 +239,7 @@ local SATURATION = 0.4
                     
                     <p>We create an OpenGL window with mimas.GLWindow, set the size and position.</p>
                               
-                    <pre class='prettyprint lang-lua'>win = mimas.GLWindow()
+                    <pre class='prettyprint lang-lua'>win = <a href='mimas.GLWindow.html'>mimas.GLWindow</a>()
 win:resize(WIN_SIZE.w, WIN_SIZE.h)
 win:move(WIN_POS.x, WIN_POS.y)
 </pre>
@@ -257,7 +257,7 @@ end
                     <p>In case we resize the window, we want our content to scale so we need to update the renderer's <code>size</code> attribute.</p>
                               
                     <pre class='prettyprint lang-lua'>function win:resized(w, h)
-  renderer.size = four.V2(w, h)
+  renderer.size = <a href='four.V2.html'>four.V2</a>(w, h)
 end
 </pre>
                               
@@ -289,7 +289,7 @@ end
                     <p>Since our effect is a function of time, we update at 60 Hz. For this we create a timer that asks the window to update every few milliseconds.</p>
                     <p>We also change the uniform's saturation with a random value between [0, 0.8] for a stupid blink effect.</p>
                               
-                    <pre class='prettyprint lang-lua'>timer = lk.Timer(1/60, function()
+                    <pre class='prettyprint lang-lua'>timer = <a href='lk.Timer.html'>lk.Timer</a>(1/60, function()
   win:update()
   obj.saturation = math.random() * 0.8
 end)

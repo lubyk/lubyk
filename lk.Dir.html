@@ -61,7 +61,7 @@
           
                     <p>Return an iterator to recursively find files matching @pattern@ in the directory. The pattern syntax is the same as string.match.</p>
                     <pre class='prettyprint lang-lua'>-- Find files ending in ".lua".
-for file in lk.Dir('lib'):glob '%.lua$' do
+for file in <a href='lk.Dir.html'>lk.Dir</a>('lib'):glob '%.lua$' do
   print(file)
 end
 --&gt; lib/lk/Dir.lua
@@ -70,7 +70,7 @@ end
                                         <h4 id='list' class='entry method'><span>:</span>list <code>()</code></h4>
           
                     <p>Return an iterator over the paths in the directory. The returned values are paths, not just filenames.</p>
-                    <pre class='prettyprint lang-lua'>for file in lk.Dir('lib'):list() do
+                    <pre class='prettyprint lang-lua'>for file in <a href='lk.Dir.html'>lk.Dir</a>('lib'):list() do
   print(file)
 end
 --&gt; lib/lk
