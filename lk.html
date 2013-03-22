@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>lk</title>
+    <title>Lubyk core module</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -38,16 +38,10 @@
         <div class='main span7'>
 
                     <section id='lk'>
-          <h2 class='section'>lk</h2>
+          <h2 class='section'>Lubyk core module</h2>
 
                     
-                    <p class='summary'></p>
-                    <p>--=============================================== LOAD PATHS</p>
-                    <p>-- These paths already come loaded with lubyk lib path -- through the lubyk loader "require 'lubyk'" local lua_paths  = package.path local lua_cpaths = package.cpath</p>
-                    <p>-- 1. local lib (foo.lua or lib/foo.lua)                                          package.path  = './?.lua;./?/init.lua;'                                           package.cpath = './?.so;'                                                        </p>
-                    <p>-- 2. user libs                                                                   for _, path in ipairs(Lubyk.paths or {}) do                                       package.path = package.path .. path .. '/?.lua;' .. path .. '/?/init.so;'       end                                                                              </p>
-                    <p>for _, cpath in ipairs(Lubyk.cpaths or {}) do                                     package.cpath = package.cpath .. cpath .. '/?.so;'                              end        </p>
-                    <p>-- 3. Installed lubyk libs and lua paths package.path  = package.path  .. lua_paths package.cpath = package.cpath .. lua_cpaths</p>
+                    <p class='summary'>This file is loaded just after the load paths have been changed and loads Lubyk essentials.</p>
                                         <h4 id='-----------' class='entry klass'><a href='lk.Autoload.html'>Autoload</a></h4>
           
                     <p class='summary'></p>
