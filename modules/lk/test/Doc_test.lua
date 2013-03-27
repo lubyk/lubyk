@@ -115,6 +115,39 @@ function should.makeDoc()
   }
 end
 
+function should.parseCode()
+  local doc = lk.Doc(nil, {
+    name = 'foo.Bam',
+    code = [=[
+--[[--
+  # Title
+
+  Summary
+--]]--
+
+p { -- doc
+
+  -- Foo bar baz
+  f = 5,
+}
+
+    ]=],
+  })
+  assertValueEqual({
+    p = {
+      f = {
+        params = '5',
+        tparam = 'f',
+        {text = 'Foo bar baz'},
+      },
+      {
+        params = '5',
+        tparam = 'f',
+        {text = 'Foo bar baz'},
+      },
+    },
+  }, doc.params)
+end
 
 test.all()
 

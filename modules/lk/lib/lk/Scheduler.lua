@@ -217,9 +217,8 @@ function lib:scheduleAt(at, thread)
     end
     ne = prev.at_next
   end
-  if self.mimas and self.at_next.at ~= previous_at then
-    -- We need to reschedule because this method can be called from a GUI
-    -- callback and we won't get back to the loop to do this.
+  if self.at_next.at ~= previous_at then
+    -- We need to give some time to the GUI.
     self.poller:resumeAt(self.at_next.at)
   end
 end

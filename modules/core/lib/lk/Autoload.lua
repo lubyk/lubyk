@@ -2,7 +2,9 @@ local lib  = {}
 local lib2 = {}
 local private = {}
 
-Autoload   = lib
+lk.Autoload = lib
+-- Compatibility
+Autoload = lib
 
 setmetatable(lib, {
   -- new method

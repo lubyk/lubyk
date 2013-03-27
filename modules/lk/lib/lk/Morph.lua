@@ -376,10 +376,10 @@ function private:createProcess(definition)
   local name = definition.name
   if name == '_views' then
     -- ERROR, not allowed
-    printf("Cannot create a process named '_views' (reserved name).")
+    print(string.format("Cannot create a process named '_views' (reserved name)."))
   elseif processes[name] then
     -- ERROR
-    printf("Cannot create existing process '%s'.", definition.name)
+    print(string.format("Cannot create existing process '%s'.", definition.name))
   else
     private.process.add(self, name, definition)
   end

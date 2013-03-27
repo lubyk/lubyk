@@ -1,7 +1,10 @@
-require 'Autoload'
-lk = Autoload('lk')
+lk = {}
+require 'lk.Autoload'
+local Autoload = lk.Autoload
+lk = lk.Autoload('lk')
+lk.Autoload = Autoload
 -- autoload stuff in _G
-Autoload.global()
+lk.Autoload.global()
 
 require 'lk.core_c'
 local time_ref = lk.TimeRef()
@@ -19,8 +22,9 @@ function lk.bitTest(flags, bit)
 end
 
 local CALL_TO_NEW = {__call = function(lib, ...) return lib.new(...) end}
-function class(class_name)
-  local lib = { type = class_name }
+function class(class_name, tbl)
+  local lib = tbl or {}
+  lib.type = class_name
   lib.__index = lib
 
   local base, klass = string.match(class_name, '^(.+)%.(.+)$')

@@ -52,6 +52,8 @@
           <h4 id='{{group.class_fun}}' class='entry function'><span>.</span>{{group.class_fun}} <code>{{group.params}}</code></h4>
           {% elseif group.global_fun then %}
           <h4 id='{{group.global_fun}}' class='entry function'>{{group.global_fun}} <code>{{group.params}}</code></h4>
+          {% elseif group.tparam then %}
+          <h4 id='{{group.tparam}}' class='entry tparam'>{{group.tparam}} <code>= {{group.params}}</code></h4>
           {% elseif group.param then %}
           <h4 id='{{group.param}}' class='entry param'><span>.</span>{{group.param}} <code>= {{group.params}}</code></h4>
           {% end %}

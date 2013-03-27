@@ -8,18 +8,17 @@ test = {
   only       = false,
   verbose    = false,
   abort      = false,
-  coverage   = false,
+  -- Untested functions are listed. If mock contains a string, it is used as
+  -- body to generate mockups of untested functions.
+  mock       = false,
 }
+
 -- We do not use Autoload because the "test" global is used to store global
 -- values like "test.memory" or whatnot. Maybe this should be fixed in projects
 -- using testing.
 require 'test.Suite'
 
 local lib = test
-
-function lib:testWithUser()
-  return lib.UserSuite(self._info.name)
-end
 
 function lib:timeout(timeout, func)
   -- if not self._suite._info.user_suite then
@@ -38,15 +37,13 @@ end
 --- Test suite requiring user interaction/visual feedback. These
 -- tests are turned off when running more then a single file.
 function lib.UserSuite(name)
-  local suite = {_info = {name = name .. '[ux]', tests = {}, errors = {}, user_suite = true}}
+  local self = test.Suite(name .. '[ux]', {
+    user_suite = true,
+    coverage   = false,
+  })
   -- this is to enable syntax like: withUser.should.receiveClick()
-  suite.should = suite
-  setmetatable(suite, lib)
-  table.insert(lib.suites, suite)
-  -- default setup and teardown functions
-  suite.setup    = function() end
-  suite.teardown = function() end
-  return suite
+  self.should = self
+  return self
 end
 
 function lib.all()

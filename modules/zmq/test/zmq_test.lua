@@ -11,7 +11,14 @@
 require 'lubyk'
 
 
-local should = test.Suite('zmq.Socket')
+local should = test.Suite 'zmq.Socket'
+
+function should.haveSameFlagsAsLkPoller()
+  -- Compatiblitity between lk.Poller and zmq.Poller. If zmq constants change,
+  -- we must update lk's values.
+  assertEqual(lk.Poller.READ_FLAG,  zmq.POLLIN)
+  assertEqual(lk.Poller.WRITE_FLAG, zmq.POLLOUT)
+end
 
 function should.bind_to_random_port()
   local socket = zmq.Socket(zmq.PUSH)

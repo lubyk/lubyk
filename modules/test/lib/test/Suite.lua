@@ -23,12 +23,45 @@ test.__index = test
 --   function should.listFilesInDirectory()
 --     -- ...
 --   end
-function lib.new(name)
-  local self = {_info = {name = name, tests = {}, errors = {}}}
+-- 
+-- The optional `opt` table can contain the following keys to alter testing
+-- behavior:
+--
+-- + `coverage`: if set to false, untested functions will not be reported. If
+--               `test.missing` is set to 'mock', mock test functions will be
+--               printed for missing tests.
+function lib.new(name, options)
+  options = options or {}
+  local self = {
+    _info = {
+      name = name,
+      tests = {},
+      errors = {},
+      user_suite = options.user_suite,
+    },
+  }
+  if options.coverage == false then
+    self._info.coverage = false
+  else
+    self._info.coverage = true
+  end
   setmetatable(self, lib)
   table.insert(test.suites, self)
   -- default setup and teardown functions
   return self
+end
+
+-- Return tests to only run in single mode (not in batch) because they require
+-- user interaction. Usage:
+--
+--   local should   = test.Suite 'lk.Dir'
+--   local withUser = should:testWithUser()
+--
+--   function withUser.should.displayTable()
+--   end
+--
+function lib:testWithUser()
+  return test.UserSuite(self._info.name)
 end
 
 
@@ -112,7 +145,7 @@ local function formatArg(arg)
   elseif argtype == "number" or argtype == "boolean" or argtype == "nil" then
     return tostring(arg)
   else
-    return "["..tostring(arg).."]"
+    return tostring(arg)
   end
 end
 
@@ -248,17 +281,20 @@ end
 --=============================================== PRIVATE
 
 function private:runSuite()
-  if test.coverage then
+  if self._info.coverage then
     -- Make sure all functions are called at least once.
     local parent, meta = _G, _G
     for _, part in ipairs(lk.split(self._info.name, '%.')) do
       parent = meta
       meta   = meta[part]
+      if not meta then break end
     end
+    _G.assert(meta, string.format("Testing coverage but '%s' metatable not found.", self._info.name))
+
     local coverage = {}
     for k, v in pairs(meta) do
       if type(v) == 'function' then
-        coverage[k] = false
+        coverage[k] = v
         -- Dummy function to catch first call without using debug hook.
         meta[k] = function(...)
           coverage[k] = true
@@ -271,13 +307,30 @@ function private:runSuite()
     function self.testAllFunctions()
       local all_ok = true
       local not_tested = {}
-      for k, ok in pairs(coverage) do
-        if not ok then
-          table.insert(not_tested, "'"..k.."'")
+      for k, info in pairs(coverage) do
+        if info ~= true then
+          if test.mock then
+            k = string.upper(string.sub(k, 1, 1))..string.sub(k, 2, -1)
+            lk.insertSorted(not_tested, {
+              text = 'function should.respondTo'..k..'()\n'..test.mock..'end',
+              line = tonumber(debug.getinfo(info).linedefined),
+            }, 'line')
+          else
+            lk.insertSorted(not_tested, "'"..k.."'")
+          end
           all_ok = false
         end
       end
-      assertTrue(all_ok, string.format("Missing tests for %s", lk.join(not_tested, ', ')))
+      local list
+      if test.mock then
+        list = '\n\n'
+        for _, info in ipairs(not_tested) do
+          list = list .. '\n\n' .. info.text .. ' --' .. info.line
+        end
+      else
+        list = lk.join(not_tested, ', ')
+      end
+      assertTrue(all_ok, string.format("Missing tests for %s", list))
     end
   end
 

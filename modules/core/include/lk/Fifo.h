@@ -156,6 +156,7 @@ protected:
       return true;
     } else {
       // buffer full
+      delete data;
       return false;
     }
   }

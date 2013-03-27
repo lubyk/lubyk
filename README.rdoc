@@ -16,6 +16,17 @@ See the "CREDITS" file for the list of included open source projects.
 
 Lubyk is currently *alpha* software.
 
+=== Minimal installation
+
+If you just need the core parts (to use dub for example), you can install with:
+
+  ...> git clone git://github.com/lubyk/lubyk.git
+  ...> cd lubyk
+  ...> mkdir build
+  ...> cd build
+  ...> cmake ..
+  ...> make install
+
 === Mac OS X
 
 In order to build everything, you need to have Qt SDK 4.8 and CMake installed:

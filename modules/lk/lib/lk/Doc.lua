@@ -138,9 +138,7 @@ local ATTRIBS = { -- doc
 
 --[[
 
-  # Usage
-
-  ## Preamble
+  # Preamble
 
   You must start your file with a preample containing a title for the class
   or module and some description.
@@ -155,7 +153,7 @@ local ATTRIBS = { -- doc
     
     --]%%]---------------------------------------
 
-  ## Math
+  # Math
 
   The `[math]` tag can be used to generate mathematics from latex code. When
   outputing *html*, the page uses [MathJax](http://www.mathjax.org) when outputing html.
@@ -176,7 +174,7 @@ local ATTRIBS = { -- doc
 
   If you *hover* with the mouse over the formula, it zooms.
   
-  ## Lua code
+  # Lua code
   
   You can insert code snippets by indenting the code with two spaces. Here is
   an example of some normal text and some Lua and C++ code.
@@ -212,7 +210,7 @@ local ATTRIBS = { -- doc
   As you can see, you have to declare other languages with `#name` if the code
   is not Lua.
 
-  ## Styles
+  # Styles
 
   You can enhance your comments with links, bold, italics and images.
 
@@ -228,7 +226,7 @@ local ATTRIBS = { -- doc
   
     -- This is `inline code`.
 
-  ## Lists
+  # Lists
 
   There are two kinds of lists available. The first one is simply a bullet list:
 
@@ -262,20 +260,30 @@ local ATTRIBS = { -- doc
                     beyond.
   + `last key`:     is a code key.
 
-  ## TODO and FIXME
+  # Special paragraphs
 
-  You can create TODO and FIXME marks like this
+  You can create special paragraphs by starting them with one of the special
+  keywords in upercase:  `TODO, FIXME, WARN, NOTE`.
 
     TODO This is a todo definition
 
     FIXME This is a fixme
 
+    NOTE This paragraph is a note.
 
-  These end up like this (and are repeated at the end of the file).
+    WARN This is a warning.
+
+
+  These end up like this (todo and fixme and are repeated at the end of
+  the file).
 
   TODO This is a todo definition
 
   FIXME This is a fixme
+
+  NOTE This paragraph is a note.
+
+  WARN This is a warning.
 
 --]]------------------------------------------------------
 local lib     = class 'lk.Doc'
@@ -299,18 +307,29 @@ local DEFAULT_FOOTER = [[ made with <a href='http://doc.lubyk.org/lk.Doc.html'>l
 --
 -- When documenting multiple files it is better to use #make.
 --
--- The `navigation` and `children` tables are used to display the 
--- navigation menu on the right and class list in the document body.
+-- Possible keys in `def` (all are optional if `path` is given):
+--
+-- + code       : If `path` is nil, parse the given code.
+-- + name       : Used when no `path` is provided.
+-- + navigation : Navigation menu on the right.
+-- + children   : List of classes (in main content part).
+-- + header     : Html code to display in header.
+-- + footer     : Html code to display in footer.
+-- + target     : Target directory (only used when using PNG image generation
+--                for math code.
 function lib.new(path, def)
   def = def or {}
   local self = {
     path   = path,
+    name   = def.name,
     target = def.target,
     header = def.header or DEFAULT_HEADER,
     footer = def.footer or DEFAULT_FOOTER,
     navigation = def.navigation or {},
     children   = def.children or {},
     sections = {},
+    -- List of documented parameters.
+    params   = {},
   }
   
   if def.navigation then
@@ -321,13 +340,17 @@ function lib.new(path, def)
     else
       self.fullname = self.name
     end
-  else
+  elseif path then
     self.module, self.name, self.fullname = private.getName(path)
+  else
+    assert(self.name)
   end
 
   setmetatable(self, lib)
   if path then
     private.parseFile(self, path)
+  elseif def.code then
+    private.parseCode(self, def.code)
   else
     -- make dummy doc
     private.newSection(self, 0, self.name)
@@ -554,15 +577,30 @@ end
 
 function private:parseFile(path)
   local file = assert(io.open(path, "r"))
-  local line_i = 0
+  local it = file:lines()
+  private.doParse(self, function()
+    return it()
+  end)
+  io.close(file)
+end
+
+function private:parseCode(code)
+  local lines = lk.split(code, '\n')
+  local it = ipairs(lines)
+  local i = 0
+  private.doParse(self, function()
+    local _, l = it(lines, i)
+    i = i + 1
+    return l
+  end)
+end
+
+function private:doParse(iterator)
   local state = parser.start
-  -- debugging
-  for k, v in pairs(parser) do
-    v.name = k
-  end
+  local line_i = 0
   -- This is true on entering a state.
   local entering = true
-  for line in file:lines() do
+  for line in iterator do
     local replay = true
     line_i = line_i + 1
     while replay do
@@ -624,17 +662,31 @@ function private:parseFile(path)
 end
 
 --=============================================== Helpers
+local USED_TYPES = {
+  TODO  = true,
+  FIXME = true,
+  WARN  = true,
+  NOTE  = true,
+}
 
-function private:todoFixme(i, typ, text)
+function private:addTodo(i, text)
+  private.todoFixme(self, i, '', 'TODO', text)
+  private.flushPara(self)
+end
+
+function private:todoFixme(i, all, typ, text)
+  if not USED_TYPES[typ] then
+    return private.addToPara(self, i, all)
+  end
   local group = self.in_func or self.group
 
   typ = string.lower(typ)
   table.insert(group, self.para)
-  local para = {
+  self.para = {
     span = typ,
     text = text,
   }
-  table.insert(group, para)
+  --table.insert(group, self.para)
   local list = self[typ]
   if not list then
     -- Section for todo or fixme
@@ -655,7 +707,6 @@ function private:todoFixme(i, typ, text)
     file  = self.fullname,
     section_name = self.section.name,
   })
-  self.para = nil
 end
 
 function private:newFunction(i, typ, fun, params)
@@ -680,7 +731,8 @@ function private:newFunction(i, typ, fun, params)
   self.in_func = self.group
 end
 
-function private:newParam(i, key, params)
+function private:newParam(i, key, params, typ)
+  typ = typ or 'param'
   local i = #self.group
   if self.group[i] and self.group[i].text == 'nodoc' then
     -- ignore last para
@@ -689,20 +741,28 @@ function private:newParam(i, key, params)
     return
   end
 
-  -- The current section becomes the params section.
-  self.params = self.section
-
   -- Store last group as param definition
-  self.group.param  = key
+  self.group[typ] = key
   self.group.params = params
+
+  if typ == 'tparam' then
+    -- This is to have creation order
+    table.insert(self.curr_param, self.group)
+    self.curr_param[key] = self.group
+  else
+    table.insert(self.params, self.group)
+    self.params[key] = self.group
+  end
+
   private.useGroup(self)
   self.group = {}
 end
 
-function private:newTitle(i, title)
+function private:newTitle(i, title, typ)
+  typ = typ or 'title'
   private.flushPara(self)
   table.insert(self.group, {
-    heading = true, text = title
+    heading = typ, text = title
   })
   private.useGroup(self)
 end
@@ -848,12 +908,8 @@ parser.mgroup = {
   { match  = '^ *function lib([:%.])([^%(]+)(.*)$',
     output = private.newFunction,
   },
-  -- todo
-  { match = '^ *(TODO):? ?(.*)$',
-    output = private.todoFixme,
-  },
-  -- fixme
-  { match = '^ *(FIXME):? ?(.*)$',
+  -- todo, fixme, warn
+  { match = '^ *(([A-Z][A-Z][A-Z][A-Z]+):? ?(.*))$',
     output = private.todoFixme,
   },
   -- [math] section
@@ -1054,12 +1110,8 @@ parser.group = {
   { match = '^ *%-%- *%[math%]',
     move  = function() return parser.math, true end,
   },
-  -- todo
-  { match = '^ *%-%- *(TODO):? ?(.*)$',
-    output = private.todoFixme,
-  },
-  -- fixme
-  { match = '^ *%-%- *(FIXME):? ?(.*)$',
+  -- todo, fixme, warn
+  { match = '^ *%-%- *(([A-Z][A-Z][A-Z][A-Z]+):? ?(.*))$',
     output = private.todoFixme,
   },
   -- list
@@ -1088,6 +1140,7 @@ parser.group = {
   { match = '^ *%-%- *(.+)$',
     output = private.addToPara,
   },
+  eof = private.flushPara,
 }
 
 -- This is called just after the comment block ends.
@@ -1103,14 +1156,16 @@ parser.end_comment = {
       local def2 = string.match(def, '^(.-) *%-%- *doc *$')
       if def2 then
         -- Special case where a lib attribute itself is documented
-        private.newTitle(self, i, key .. ' = ')
+        self.curr_param = {}
+        self.params[key] = self.curr_param
+        private.newTitle(self, i, '.'..key .. ' = ')
         self.force_move = parser.params
       else
         if self.group[1] and self.group[1].heading then
           -- Group is not for us
           self.group = {}
           if not self.loose then
-            private.todoFixme(self, i, 'TODO', 'MISSING DOCUMENTATION')
+            private.addTodo(self, i, 'MISSING DOCUMENTATION')
           end
           private.newParam(self, i, key, def)
         else
@@ -1159,7 +1214,7 @@ parser.lua = {
       else
         self.group = {}
         if not self.loose then
-          private.todoFixme(self, i, 'TODO', 'MISSING DOCUMENTATION')
+          private.addTodo(self, i, 'MISSING DOCUMENTATION')
         end
         private.newFunction(self, i, typ, fun, params)
       end
@@ -1167,14 +1222,26 @@ parser.lua = {
   },
   -- Undocummented param
   { match  = '^(lib%.([a-zA-Z_0-9]+) *= *(.+))$',
-    output = function(self, i, all, param, def)
+    output = function(self, i, all, key, def)
       if self.lit then
         private.addToParaN(self, i, all)
       else
-        if not self.loose then
-          private.todoFixme(self, i, 'TODO', 'MISSING DOCUMENTATION')
+        self.group = {}
+        -- document all params
+        -- string.match(def, '^({) *$') or
+        local def2 = string.match(def, '^(.-) *%-%- *doc *$')
+        if def2 then
+          -- Special case where a lib attribute itself is documented
+          self.curr_param = {}
+          self.params[key] = self.curr_param
+          private.newTitle(self, i, '.'..key .. ' = {')
+          self.force_move = parser.params
+        else
+          if not self.loose then
+            private.addTodo(self, i, 'MISSING DOCUMENTATION')
+          end
+          private.newParam(self, i, key, def)
         end
-        private.newParam(self, i, param, def)
       end
     end,
   },
@@ -1195,26 +1262,23 @@ parser.lua = {
   { match  = '^%-%- doc:(.+)$',
     output = function(self, i, d)
       if d == 'loose' then
-        private.todoFixme(self, i, 'TODO', 'INCOMPLETE DOCUMENTATION')
+        private.addTodo(self, i, 'INCOMPLETE DOCUMENTATION')
       end
       self[d] = true
     end,
   },
   -- params
-  { match  = '{ %-%- *doc *$',
-    move   = function() return parser.params end,
-  },
-  -- todo
-  { match = '^ *%-%- *(TODO):? ?(.*)$',
-    output = function(self, ...)
-      private.todoFixme(self, ...)
+  { match  = '^ *(.-) *{ %-%- *doc *$',
+    output = function(self, i, key)
+      self.curr_param = {}
+      -- FIXME: Document `params` usage and results.
+      self.params[key] = self.curr_param
     end,
+    move = function() return parser.params end,
   },
-  -- fixme
-  { match = '^ *%-%- *(FIXME):? ?(.*)$',
-    output = function(self, ...)
-      private.todoFixme(self, ...)
-    end,
+  -- todo, fixme, warn
+  { match = '^ *%-%- *([A-Z][A-Z][A-Z][A-Z]+):? ?(.*)$',
+    output = private.todoFixme,
   },
   { match  = '^ *%-%- +(.+)$',
     move = function(self)
@@ -1241,6 +1305,12 @@ parser.lua = {
 }
 
 parser.params = {
+  { match  = '^ *%-%- *## *(.*)$',
+    output = function(self, i, d)
+      private.newTitle(self, i, d, 'param')
+      private.useGroup(self)
+    end,
+  },
   { match  = '^ *%-%- +(.+)$',
     output = function(self, i, d)
       -- Temporary group (not inserted in section).
@@ -1265,10 +1335,16 @@ parser.params = {
   },
   -- param definition
   { match  = '^ *([a-zA-Z0-9_]+) *= *(.*), *$',
-    output = private.newParam,
+    output = function(self, i, key, d)
+      private.newParam(self, i, key, d, 'tparam')
+    end,
   },
   -- end of params definition
   { match = '^}',
+    output = function(self, i)
+      private.newTitle(self, i, '}', 'end')
+      private.useGroup(self)
+    end,
     move = function(self)
       self.back = nil
       return parser.lua
@@ -1281,6 +1357,12 @@ parser.params = {
     end,
   },
 }
+
+
+-- debugging
+for k, v in pairs(parser) do
+  v.name = k
+end
 
 --=============================================== 
 
@@ -1361,7 +1443,7 @@ function private:paraToHtml(para)
   if para.class then
     return "<p class='"..para.class.."'>"..private.textToHtml(self, text).."</p>"
   elseif para.heading then
-    return "<h4 class='sub-title'>"..private.textToHtml(self, text).."</h4>"
+    return "<h4 class='sub-"..para.heading.."'>"..private.textToHtml(self, text).."</h4>"
   elseif para.math then
     return "<p>"..private.mathjaxTag(self, para).."</p>"
   elseif para.code then
@@ -1463,6 +1545,11 @@ function private:textToHtml(text)
   p = private.autoLink(p, codes)
   -- section link #Make or method link #foo
   p = string.gsub(p, ' #([A-Za-z]+[A-Za-z_]+)', function(name)
+    table.insert(codes, string.format(" <a href='#%s'>%s</a>", name, name))
+    return CODE..#codes
+  end)
+
+  p = string.gsub(p, '^#([A-Za-z]+[A-Za-z_]+)', function(name)
     table.insert(codes, string.format(" <a href='#%s'>%s</a>", name, name))
     return CODE..#codes
   end)
