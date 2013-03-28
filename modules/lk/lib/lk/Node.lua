@@ -340,59 +340,31 @@ function lib:remove()
 end
 
 function lib:declareParams(hash)
-  local defaults = {}
-  self.defaults = defaults
+  local params_def = {}
+  self.params_def = params_def
   local env = self.env
   local accessors = self.accessors
   for k, v in pairs(hash) do
     if type(k) ~= 'string' then
       self:error("Default keys must be strings.")
     end
-    if type(v) == 'table' then
-      -- Transform foo = {x = 3} to
-      -- 'foo.x' => accessor
-      local base = env[k]
-      if not base then
-        base = {}
-        env[k] = base
-      end
-      -- Only one level deep.
-      for sk, sv in pairs(v) do
-        if type(sk) ~= 'string' then
-          self:error(string.format("Default in '%s' must be a string.", k))
-        end
-        local pname = k .. '.' .. sk
-        if not accessors[pname] then
-          accessors[pname] = function(value)
-            -- This is executed during setParams.
-            local rbase = env[k]
-            if rbase then
-              rbase[sk] = value
-              -- So that param dump sees this value.
-              env._pdump[pname] = rbase[sk]
-            end
-            local recv = accessors[k]
-            if recv then
-              recv(rbase)
-            end
-          end
-        end
-        -- This is done just once to set default values.
-        defaults[pname] = sv
-        env[pname] = sv
-        if base[sk] == nil then
-          base[sk] = sv
-        end
-      end
-    else
-      defaults[k] = v
-      if env[k] == nil then
-        -- Do not overwrite current values on script reload.
-        env[k] = v
-        local recv = accessors[k]
-        if recv then
-          recv(v)
-        end
+    if type(v) ~= 'table' then
+      -- Short declaration. No min/max nor units.
+      v = {default = v}
+    elseif v.min and not v.max or
+           v.max and not v.min then
+      self:error(string.format("Incomplete min/max definition for '%s'.", k))
+    elseif v.min and not (type(v.min) == 'number' and type(v.max) == 'number') then
+      self:error(string.format("Invalid min/max (not numbers) for '%s'.", k))
+    end
+    local vd = v.default
+    params_def[k] = v
+    if env[k] == nil then
+      -- Do not overwrite current values on script reload.
+      env[k] = vd
+      local recv = accessors[k]
+      if recv then
+        recv(vd)
       end
     end
   end
@@ -410,17 +382,23 @@ local function doSetParams()
   -- Special pos.x accessors need to register
   -- set value in pdump directly.
   env._pdump     = pdump
-  local accessors= self.accessors
-  local defaults = self.defaults or {}
+  local accessors  = self.accessors
+  local params_def = self.params_def or {}
   if params == true then
     -- Query asked for a dump of the params.
-    pdump = defaults
+    pdump = params_def
   else
     for k, value in pairs(params) do
-      if not defaults[k] then
+      local def = params_def[k]
+      if not def then
         -- Error notification: Invalid param.
         self:error(string.format("Trying to set invalid parameter '%s'.", k))
       else
+        if def.min then
+          value = (value < def.min and def.min) or
+                  (value > def.max and def.max) or
+                  value
+        end
         env[k] = value
         local recv = accessors[k]
         if recv then
@@ -433,11 +411,12 @@ local function doSetParams()
       end
     end
   end
+
   -- Call 'param.changed' function in env if
   -- it exists.
   local func = accessors.changed
   if func then
-    func(params)
+    func(pdump)
   end
 end
 
@@ -453,9 +432,9 @@ end
 --- Receive a single param change from a source inside the process so
 -- we need to notify.
 function lib:setParam(k, value)
-  local defaults  = self.defaults or {}
+  local params_def  = self.params_def or {}
   local accessors = self.accessors
-  if not defaults[k] then
+  if not params_def[k] then
     -- Error notification: Invalid param.
     self:error(string.format("Trying to set invalid parameter '%s'.", k))
   else
@@ -487,22 +466,25 @@ function private:dumpParams(params)
     -- Optimization, send partial dump back.
     return self.pdump
   else
-    local defaults = self.defaults
-    if defaults then
+    local params_def = self.params_def
+    if params_def then
       local env = self.env
       local res = {}
       if params == true then
         -- Dump all
-        for k, _ in pairs(defaults) do
-          res[k] = env[k]
+        for k, def in pairs(params_def) do
+          def.value = env[k]
+          res[k] = def
         end
       else
         for k, _ in pairs(params) do
           -- Invalid param ?
-          if not defaults[k] then
+          local def = params_def[k]
+          if not def then
             -- Mark as invalid
-            res[k] = {}
+            res[k] = {err = 'invalid parameter'}
           else
+            -- Only notify value
             res[k] = env[k]
           end
         end

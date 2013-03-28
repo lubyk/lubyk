@@ -19,7 +19,7 @@ setmetatable(lib, {
     -- FIXME: remove warning
     if interval > 10 then
       -- We changed interval from milliseconds to seconds.
-      printf("Using interval of %f seconds.\n%s\n", interval, debug.traceback())
+      print(string.format("Using interval of %f seconds.\n%s\n", interval, debug.traceback()))
     end
     local self = {
       interval = interval,

@@ -79,7 +79,7 @@ function lib:wait(delay)
   -- FIXME: remove warning
   if delay > 10 then
     -- We changed interval from milliseconds to seconds.
-    printf("Using interval of %f seconds.\n%s\n", interval, debug.traceback())
+    print(string.format("Using interval of %f seconds.\n%s\n", interval, debug.traceback()))
   end
   if delay == 0 then
     coroutine.yield('wait', 0)

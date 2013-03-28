@@ -1,7 +1,6 @@
 --[[------------------------------------------------------
 
-  lk.Morph
-  --------
+  # Morph server
 
   This Service announces itself with "morph" type and
   "Morpheus" name. It's role is to provide save and restore
@@ -16,10 +15,7 @@
   information on machine assignement of the processes.
 
 --]]------------------------------------------------------
-
-local lib = {type='lk.Morph'}
-lib.__index = lib
-lk.Morph    = lib
+local lib = class 'lk.Morph'
 
 local private = {
   -- Actions triggered on a 'set' operation (while reading project).
@@ -36,9 +32,7 @@ local private = {
   view    = {},
 }
 
-setmetatable(lib, {
-  -- new method
- __call = function(lib, opts)
+function lib.new(opts)
   local self = {
     -- Version of lubyk used to create project
     lubyk      = {version = Lubyk.version},
@@ -56,7 +50,7 @@ setmetatable(lib, {
     self:start(opts)
   end
   return self
-end})
+end
 
 function lib:start(opts)
   local srv_opts = {
@@ -568,6 +562,13 @@ function private.process.changed(self, process, changes)
                   end
                 end
               end
+            elseif k == '_' then
+              for param, pval in pairs(v) do
+                if type(pval) ~= 'table' then
+                  -- TODO: only store values (if pval is not a table).
+                  print(string.format("MORPH TODO. param '%s' => %s.", param, pval))
+                end
+              end
             else
               patch_changed = lk.deepMerge(cache_node, k, v) or patch_changed
             end
@@ -586,6 +587,8 @@ function private.process.changed(self, process, changes)
     end
   end
   if patch_changed then
+    -- TODO: mark patch as dirty and only save on "save operation".
+    -- Same goes for node scripts and so on.
     private.process.writeFile(process)
   end                                         
 end
