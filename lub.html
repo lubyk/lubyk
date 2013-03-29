@@ -90,40 +90,40 @@ end
                     
                                         <h4 id='fileType' class='entry function'><span>.</span>fileType <code>(path)</code></h4>
           
-                    <p>Test for file/directory existence at @path@. If the element exists, returns the file type such as <strong>'directory'</strong> or <strong>'file'</strong>. Returns nil if there is nothing at the given path.</p>
+                    <p>Test for file/directory existence at <code>path</code>. If the element exists, returns the file type such as <strong>'directory'</strong> or <strong>'file'</strong>. Returns nil if there is nothing at the given path.</p>
                                         <h4 id='exist' class='entry function'><span>.</span>exist <code>lib.fileType</code></h4>
           
-                    <p>Return true if the file or folder pointed by @path@ exists.</p>
+                    <p>Return true if the file or folder pointed by <code>path</code> exists.</p>
                                         <h4 id='content' class='entry function'><span>.</span>content <code>(basepath, path)</code></h4>
           
-                    <p>Return the content of a file as a lua string (not suitable for very long content where parsing the file chunks by chunks is better). The method accepts either a single @path@ argument or a @basepath@ and relative @path@.</p>
+                    <p>Return the content of a file as a lua string (not suitable for very long content where parsing the file chunks by chunks is better). The method accepts either a single <code>path</code> argument or a <code>basepath</code> and relative <code>path</code>.</p>
                                         <h4 id='writeall' class='entry function'><span>.</span>writeall <code>(filepath, data, check_diff)</code></h4>
           
-                    <p>Write @data@ to @filepath@, creating path folders if necessary. If @check_diff@ is true, only write if the content has changed to avoid changing stat information on the file.</p>
+                    <p>Write <code>data</code> to <code>filepath</code>, creating path folders if necessary. If <code>check_diff</code> is true, only write if the content has changed to avoid changing stat information on the file.</p>
                                         <h4 id='makePath' class='entry function'><span>.</span>makePath <code>(path)</code></h4>
           
-                    <p>Build necessary folders to create a given @path@.</p>
+                    <p>Build necessary folders to create a given <code>path</code>.</p>
                                         <h4 id='move' class='entry function'><span>.</span>move <code>(path, new_path)</code></h4>
           
-                    <p>Move a file or directory from @path@ to @new_path@. This is like "os.rename" but it also builds necessary path components in new_path.</p>
+                    <p>Move a file or directory from <code>path</code> to <code>new_path</code>. This is like "os.rename" but it also builds necessary path components in new_path.</p>
                                         <h4 id='copy' class='entry function'><span>.</span>copy <code>(path, new_path)</code></h4>
           
-                    <p>Copy a file from @path@ to @new_path@. Builds necessary path components in new_path.</p>
+                    <p>Copy a file from <code>path</code> to <code>new_path</code>. Builds necessary path components in new_path.</p>
                                         <h4 id='rmFile' class='entry function'><span>.</span>rmFile <code>(path)</code></h4>
           
-                    <p>Delete the file located at @path@. Does nothing if the element at @path@ does not exist (already removed).</p>
+                    <p>Delete the file located at <code>path</code>. Does nothing if the element at <code>path</code> does not exist (already removed).</p>
                                         <h4 id='rmTree' class='entry function'><span>.</span>rmTree <code>(path, recursive)</code></h4>
           
-                    <p>Remove the directory at @path@. If @recursive@ is true, remove recursively. <strong>This is a dangerous method</strong> if the source path is not ensured to be exempt of mistakes.</p>
+                    <p>Remove the directory at <code>path</code>. If <code>recursive</code> is true, remove recursively. <strong>This is a dangerous method</strong> if the source path is not ensured to be exempt of mistakes.</p>
                                         <h4 id='pathDir' class='entry function'><span>.</span>pathDir <code>(filepath)</code></h4>
           
-                    <p>Return the parent folder and filename from a @filepath@. Usage:</p>
+                    <p>Return the parent folder and filename from a <code>filepath</code>. Usage:</p>
                     <pre class='prettyprint lang-lua'>local base, file = lub.pathDir(filepath)
 </pre>
                     <p>This can also be used on urls.</p>
                                         <h4 id='absolutizePath' class='entry function'><span>.</span>absolutizePath <code>(path, basepath)</code></h4>
           
-                    <p>Return an absolute path from a @path@ and optional @basepath@. If basepath is not provided, the method uses the current directory. This method resolves @/../@ and @/./@ in paths and returns a clean path. Can also be used with urls.</p>
+                    <p>Return an absolute path from a <code>path</code> and optional <code>basepath</code>. If basepath is not provided, the method uses the current directory. This method resolves <code>/../</code> and <code>/./</code> in paths and returns a clean path. Can also be used with urls.</p>
                     <p>For example:</p>
                     <pre class='prettyprint lang-lua'>local abs_path = lub.absolutizePath('foo/bar/../baz', '/home')
 --&gt; '/home/foo/baz'</pre>
@@ -141,26 +141,26 @@ local rel = lub.absToRel('/home/foo/bar', '/home/foo')
                     
                                         <h4 id='strip' class='entry function'><span>.</span>strip <code>(str)</code></h4>
           
-                    <p>Removes white spaces at the beginning and end of the string @str@.</p>
+                    <p>Removes white spaces at the beginning and end of the string <code>str</code>.</p>
                                         <h4 id='split' class='entry function'><span>.</span>split <code>(str, pat)</code></h4>
           
-                    <p>Split a string @str@ into elements separated by the pattern @pat@. The function returns a table.</p>
+                    <p>Split a string <code>str</code> into elements separated by the pattern <code>pat</code>. The function returns a table.</p>
                     <pre class='prettyprint lang-lua'>local t = lub.split('foo/bar/baz', '/')
 --&gt; {'foo', 'bar', 'baz'}</pre>
                                         <h4 id='join' class='entry function'><span>.</span>join <code>(list, sep)</code></h4>
           
-                    <p>Join elements of a table @list@ with separator @sep@. Returns a string.</p>
+                    <p>Join elements of a table <code>list</code> with separator <code>sep</code>. Returns a string.</p>
                     <pre class='prettyprint lang-lua'>local x = lub.join({'foo', 'bar', 'baz'}, '.')
 --&gt; 'foo.bar.baz'</pre>
                                         <h4 id='insertSorted' class='entry function'><span>.</span>insertSorted <code>(list, elem, key)</code></h4>
           
-                    <p>Insert @elem@ into a @list@, keeping entries in "list" sorted. If elem is not a string, the @elem[key]@ is used to get a string for sorting.</p>
+                    <p>Insert <code>elem</code> into a <code>list</code>, keeping entries in "list" sorted. If elem is not a string, the <code>elem[key]</code> is used to get a string for sorting.</p>
                                         <h4 id='merge' class='entry function'><span>.</span>merge <code>(source, table)</code></h4>
           
-                    <p>Merge values in @table@ inside @source@. All keys are considered (array and hash).</p>
+                    <p>Merge values in <code>table</code> inside <code>source</code>. All keys are considered (array and hash).</p>
                                         <h4 id='deepMerge' class='entry function'><span>.</span>deepMerge <code>(base, key, value)</code></h4>
           
-                    <p>Deep merge @value@ into @base@ at @key@. Returns true if <strong>base</strong> has been changed. For example:</p>
+                    <p>Deep merge <code>value</code> into <code>base</code> at <code>key</code>. Returns true if <strong>base</strong> has been changed. For example:</p>
                     <pre class='prettyprint lang-lua'>local base = {a = { b = 4, c = 5 }}
 lub.deepMerge(base, 'a', { c = 5 })
 --&gt; false (nothing changed)
@@ -174,7 +174,7 @@ lub.deepMerge(base, 'a', { c = 6 })
                     
                                         <h4 id='traceRequire' class='entry function'><span>.</span>traceRequire <code>()</code></h4>
           
-                    <p>Print calls to @require@. This can be used to list all code dependencies. Usage:</p>
+                    <p>Print calls to <code>require</code>. This can be used to list all code dependencies. Usage:</p>
                     <pre class='prettyprint lang-lua'>lub.traceRequire()
 -- From now on, all require statements are printed.
 </pre>
@@ -192,7 +192,7 @@ lub.deepMerge(base, 'a', { c = 6 })
           
                                         <h4 id='shellQuote' class='entry function'><span>.</span>shellQuote <code>(str)</code></h4>
           
-                    <p>Quote string @str@ so that it can be inserted in a shell command. Example:</p>
+                    <p>Quote string <code>str</code> so that it can be inserted in a shell command. Example:</p>
                     <pre class='prettyprint lang-lua'>os.execute(string.format('latex %s', lub.shellQuote(filepath)))</pre>
                               </section>
                     <section id='Classes'>
@@ -230,7 +230,7 @@ lub.deepMerge(base, 'a', { c = 6 })
 
     <footer class="footer">
     <div class="container">
-       made with <a title='last change: 09c8e84 2013-03-29 21:08:52 +0100' href='http://doc.lubyk.org/lub.Doc.html'>lub.Doc</a> 
+       made with <a title='last change: 249ac1e 2013-03-29 21:28:58 +0100' href='http://doc.lubyk.org/lub.Doc.html'>lub.Doc</a> 
     </div>
     </footer>
 
