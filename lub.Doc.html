@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Documentation extractor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+
+
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/docs.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class='row'>
+          <div class='span12'>
+             <a href='http://lubyk.org'><img alt='lubyk logo' src='img/lubyk.png'/></a> <h1><a href='http://doc.lubyk.org'>Lubyk documentation</a></h1></a> 
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="row">
+
+        <div class='span3 local-nav'>
+          <ul class='nav nav-tabs nav-stacked affix'>
+                        <li><a href='#Doc'><i class='icon-chevron-right'></i> lub.Doc</a></li>
+                        <li><a href='#Parsing-modes'><i class='icon-chevron-right'></i> Parsing modes</a></li>
+                        <li><a href='#Extraction'><i class='icon-chevron-right'></i> Extraction</a></li>
+                        <li><a href='#Attributes-(example)'><i class='icon-chevron-right'></i> Attributes (example)</a></li>
+                        <li><a href='#Preamble'><i class='icon-chevron-right'></i> Preamble</a></li>
+                        <li><a href='#Math'><i class='icon-chevron-right'></i> Math</a></li>
+                        <li><a href='#Lua-code'><i class='icon-chevron-right'></i> Lua code</a></li>
+                        <li><a href='#Styles'><i class='icon-chevron-right'></i> Styles</a></li>
+                        <li><a href='#Lists'><i class='icon-chevron-right'></i> Lists</a></li>
+                        <li><a href='#Special-paragraphs'><i class='icon-chevron-right'></i> Special paragraphs</a></li>
+                        <li><a href='#Class-functions'><i class='icon-chevron-right'></i> Class functions</a></li>
+                        <li><a href='#Methods'><i class='icon-chevron-right'></i> Methods</a></li>
+                        <li><a href='#Table-of-contents'><i class='icon-chevron-right'></i> Table of contents</a></li>
+                      </ul>
+        </div>
+
+        <div class='main span7'>
+
+                    <section id='Doc'>
+          <h2 class='section'>Documentation extractor</h2>
+
+                    
+                    <p class='summary'>lub.Doc parses lua comments and extracts the documentation from these comments.</p>
+                    <p>It parses indifferently multiline comments like this:</p>
+                    <pre class='prettyprint lang-lua'>--[[ 
+Some text in comments.
+
+Some more text.
+--]]
+</pre>
+                    <p>and single line comments like this:</p>
+                    <pre class='prettyprint lang-lua'>-- Some text in comments.
+-- 
+-- Some more text.
+</pre>
+                              </section>
+                    <section id='Parsing-modes'>
+          <h2 class='section'>Parsing modes</h2>
+
+                    
+                    <p>By using the special comment <code>-- doc:[option]</code>, you can change how the parsing is done.</p>
+                    <h4 class='sub-title'>Literate programming</h4>
+                    <p>The parser can generate full script documentation with all lua code when set to "lit" (for literate). Turn this option off by setting "nolit".</p>
+                    <pre class='prettyprint lang-lua'>-- doc:lit
+-- This part is considered literate programming and all comments and lua
+-- code will be shown in the documentation.
+local x
+
+doSomething(x)
+
+-- doc:nolit
+-- End of literate part: only the library "lib" will be documented.
+</pre>
+                    <h4 class='sub-title'>Loose documentation</h4>
+                    <p>By setting <code>-- doc:loose</code>, the parser will generate a single TODO about missing documentation and will not generate any more TODO entries for each undocummented function or parameter.</p>
+                    <p>Even if the function names look obvious while writing the code and documentation seems superfluous, users will usually appreciate some real phrases describing what the function does. Using "loose" is not a good idea but can make the documentation more readable if most of the functions are not documented.</p>
+                              </section>
+                    <section id='Extraction'>
+          <h2 class='section'>Extraction</h2>
+
+                    
+                    <h4 class='sub-title'>Function extraction</h4>
+                    <p>All functions and methods defined against <code>lib</code> are extracted even if they are not yet documented. Example:</p>
+                    <pre class='prettyprint lang-lua'>function lib:foo(a, b)
+  -- Will generate a TODO with "MISSING DOCUMENTATION"
+end
+
+-- Documented function.
+function lib:bar()
+end
+
+-- Documented class function.
+function lib.boom()
+end
+</pre>
+                    <p>If a function definition does not follow this convention, it can be documented with a commented version of the function definition:</p>
+                    <pre class='prettyprint lang-lua'>-- Special function declaration.
+-- function lib:bing(a, b, c)
+lib.bing = <a href='lub.Doc.html#bang'>lub.Doc.bang</a>
+
+-- Out of file function definition (in C++ for example).
+-- function lib:connect(server)
+</pre>
+                    <p>To ignore functions, use <code>-- nodoc</code> as documentation:</p>
+                    <pre class='prettyprint lang-lua'>-- nodoc
+function lib:badOldLegacyFunction(x, y)
+end
+</pre>
+                    <h4 class='sub-title'>Table parameters</h4>
+                    <p>All parameters defined against <code>lib</code> are documented unless <code>-- nodoc</code> is used.</p>
+                    <pre class='prettyprint lang-lua'>lib.foo = 4
+lib.bar = 5
+
+-- nodoc
+lib.old_foo = 4
+</pre>
+                    <p>Since Lua is also used as a description language, it is often useful to document table keys. This is done by using <code>-- doc</code>. It is a good idea to create a new for each table in order to document the table itself.</p>
+                    <p>The parsed parameters for table 'key' is stored in <code>doc.params[key]</code> in parsing order. In the following example, this is <code>doc.params.ATTRIBS</code>.</p>
+                    <pre class='prettyprint lang-lua'>-- # Attributes (example)
+-- This is an example of attributes documentation.
+
+local ATTRIBS = { -- doc
+  -- Documentation on first key.
+  first_name = '',
+
+  -- Documentation on second key.
+  last_name = '',
+
+  -- ## Sub-title
+  -- Some text for this group of attributes.
+
+  phone = {default = '', format = '000 000 00 00'},
+}
+</pre>
+                    <p>Such a list will create the following documentation:</p>
+                              </section>
+                    <section id='Attributes-(example)'>
+          <h2 class='section'>Attributes (example)</h2>
+
+                    
+                    <p>This is an example of attributes documentation.</p>
+                    <h4 class='sub-title'>ATTRIBS = {</h4>
+                                        <h4 id='first_name' class='entry tparam'>first_name <code>= ''</code></h4>
+          
+                    <p>Documentation on first key.</p>
+                                        <h4 id='last_name' class='entry tparam'>last_name <code>= ''</code></h4>
+          
+                    <p>Documentation on second key.</p>
+                              
+                    <h4 class='sub-param'>Sub-title</h4>
+                                        <h4 id='phone' class='entry tparam'>phone <code>= {default = '', format = '000 000 00 00'}</code></h4>
+          
+                              
+                    <h4 class='sub-end'>}</h4>
+                              </section>
+                    <section id='Preamble'>
+          <h2 class='section'>Preamble</h2>
+
+                    
+                    <p>You must start your file with a preample containing a title for the class or module and some description.</p>
+                    <pre class='prettyprint lang-lua'>--[[---------------------------------------
+  
+  # Full title for the file/class
+
+  This first paragraph is the summary.
+
+  Some more description.
+
+--]]---------------------------------------
+</pre>
+                              </section>
+                    <section id='Math'>
+          <h2 class='section'>Math</h2>
+
+                    
+                    <p>The <code>[math]</code> tag can be used to generate mathematics from latex code. When outputing <strong>html</strong>, the page uses <a href='http://www.mathjax.org'>MathJax</a> when outputing html. Here is an example of mathematics inline and as standalone paragraph:</p>
+                    <pre class='prettyprint lang-lua'>-- Some documentation with inline
+-- [math]\gamma[/math] math. And now a
+-- standalone math paragraph:
+--
+-- [math]\frac{\partial}{\partial\theta_j}J(\theta) = \frac{1}{m}\sum_{i=1}^m(\theta^{T}x^{(i)}-y^{(i)})x_j^{(i)}[/math]
+</pre>
+                    <p>The result for the code above is:</p>
+                    <p>Some documentation with inline \(\gamma\) math. And now a standalone math paragraph:</p>
+                    <p>\(\frac{\partial}{\partial\theta_j}J(\theta) = \frac{1}{m}\sum_{i=1}^m(\theta^{T}x^{(i)}-y^{(i)})x_j^{(i)}\)</p>
+                    <p>If you <strong>hover</strong> with the mouse over the formula, it zooms.</p>
+                              </section>
+                    <section id='Lua-code'>
+          <h2 class='section'>Lua code</h2>
+
+                    
+                    <p>You can insert code snippets by indenting the code with two spaces. Here is an example of some normal text and some Lua and C++ code.</p>
+                    <pre class='prettyprint lang-lua'>--[[
+Some Lua code:
+
+  local foo = {}
+  -- print something
+  print 'Hello'
+
+And a cpp example:
+
+  #cpp
+  float x = 1.0;
+  printf("Result = %.2f\n", x);
+--]]
+</pre>
+                    <p>This results in:</p>
+                    <p>Some Lua code:</p>
+                    <pre class='prettyprint lang-lua'>local foo = {}
+-- print something
+print 'Hello'
+</pre>
+                    <p>And a cpp example:</p>
+                    <pre class='prettyprint lang-cpp'>float x = 1.0;
+printf("Result = %.2f\n", x);
+</pre>
+                    <p>As you can see, you have to declare other languages with <code>#name</code> if the code is not Lua.</p>
+                              </section>
+                    <section id='Styles'>
+          <h2 class='section'>Styles</h2>
+
+                    
+                    <p>You can enhance your comments with links, bold, italics and images.</p>
+                    <p>Some links are automatically created when the parser sees <code>module.Class</code> like this: <a href='lub.Doc.html'>lub.Doc</a>. A custom link is made with <code>[link title](http://example.com)</code>.</p>
+                    <p>Bold is done by using stars: <code>some text with *bold* emphasis</code>. Italics are inserted with underscores: <code>some text _with italic_ emphasis</code>.</p>
+                    <p>You can add images with <code>![alt text](/path/to/image.jpg)</code>.</p>
+                    <p>Inline code is inserted with backticks:</p>
+                    <pre class='prettyprint lang-lua'>-- This is `inline code`.
+</pre>
+                              </section>
+                    <section id='Lists'>
+          <h2 class='section'>Lists</h2>
+
+                    
+                    <p>There are two kinds of lists available. The first one is simply a bullet list:</p>
+                    <pre class='txt'>* First element
+* Second element with more text
+  that wraps around
+* Third
+</pre>
+                    <p>Which renders as:</p>
+                    <ul>
+<li>First element</li>
+<li>Second element with more text that wraps around</li>
+<li>Third</li>
+</ul>
+                    <p>The second style is for definitions:</p>
+                    <pre class='txt'>+ some key:       is used to do something.
++ other long key: is used with a very long definition that
+                  wraps around and even more text that goes
+                  beyond.
++ `last key`:     is a code key.
+</pre>
+                    <p>Renders as:</p>
+                    <table class='definition'>
+  <tr><td class='key'>some key</td><td>is used to do something.</td></tr>
+  <tr><td class='key'>other long key</td><td>is used with a very long definition that wraps around and even more text that goes beyond.</td></tr>
+  <tr><td class='key'><code>last key</code></td><td>is a code key.</td></tr>
+
+</table>
+                              </section>
+                    <section id='Special-paragraphs'>
+          <h2 class='section'>Special paragraphs</h2>
+
+                    
+                    <p>You can create special paragraphs by starting them with one of the special keywords in upercase:  <code>TODO, FIXME, WARN, NOTE</code>.</p>
+                    <pre class='prettyprint lang-lua'>TODO This is a todo definition
+
+FIXME This is a fixme
+
+NOTE This paragraph is a note.
+
+WARN This is a warning.
+
+</pre>
+                    <p>These end up like this (todo and fixme are repeated at the end of the file, but not for this example).</p>
+                    <p class='todo'><span>TODO</span> This is a todo definition</p>
+                    <p class='fixme'><span>FIXME</span> This is a fixme</p>
+                    <p class='note'><span>NOTE</span> This paragraph is a note.</p>
+                    <p class='warn'><span>WARN</span> This is a warning.</p>
+                              </section>
+                    <section id='Class-functions'>
+          <h2 class='section'>Class functions</h2>
+
+                    
+                                        <h4 id='new' class='entry function'><span>.</span>new <code>(path, def)</code></h4>
+          
+                    <p>Parse the content of a file given by <code>path</code> and return an <a href='lub.Doc.html'>lub.Doc</a> object  containing the documentation of the class.</p>
+                    <p>Usage example:</p>
+                    <pre class='prettyprint lang-lua'>require 'lubyk'
+local doc = <a href='lub.Doc.html'>lub.Doc</a>('path/to/File.lua', {target = 'doc'})
+lub.writeall('doc/File.html', doc:toHtml())
+</pre>
+                    <p>When documenting multiple files it is better to use <a href='#make'>make</a>.</p>
+                    <p>Possible keys in <code>def</code> (all are optional if <code>path</code> is given):</p>
+                    <table class='definition'>
+  <tr><td class='key'>code       </td><td>If <code>path</code> is nil, parse the given code.</td></tr>
+  <tr><td class='key'>name       </td><td>Used when no <code>path</code> is provided.</td></tr>
+  <tr><td class='key'>navigation </td><td>Navigation menu on the right.</td></tr>
+  <tr><td class='key'>children   </td><td>List of classes (in main content part).</td></tr>
+  <tr><td class='key'>header     </td><td>Html code to display in header.</td></tr>
+  <tr><td class='key'>footer     </td><td>Html code to display in footer.</td></tr>
+  <tr><td class='key'>target     </td><td>Target directory (only used when using PNG image generation for math code.</td></tr>
+
+</table>
+                                        <h4 id='make' class='entry function'><span>.</span>make <code>(def)</code></h4>
+          
+                    <p>Generate the documentation for multiple files.</p>
+                    <p>The <code>sources</code> parameter lists paths to Lua files or directories to parse and document.</p>
+                    <table class='definition'>
+  <tr><td class='key'>target</td><td>parameter is the path to the directory where all the output files will be written.</td></tr>
+  <tr><td class='key'>format</td><td>is the type of output desired. Only 'html' format is supported for now.</td></tr>
+  <tr><td class='key'>sources</td><td>lists path to glob for lua files. A source can also be a table with a <code>prepend</code> key used to change the location of the files in the documentation.</td></tr>
+  <tr><td class='key'>copy</td><td>lists the path to glob for static content to copy in <code>target</code>.</td></tr>
+  <tr><td class='key'>header</td><td>html code that will be inserted in every html page as header.</td></tr>
+  <tr><td class='key'>footer</td><td>html code that will be inserted in every html page as footer.</td></tr>
+
+</table>
+                    <p>Usage:</p>
+                    <pre class='prettyprint lang-lua'>require 'lubyk'
+<a href='lub.Doc.html#make'>lub.Doc.make</a> {
+  sources = {
+    'lib/doc/DocTest.lua',
+    'lib/doc/Other.lua',
+    {'doc', prepend = 'tutorial/foo'},
+  },
+  target = 'doc',
+  format = 'html',
+  header = [[
+    &lt;a href='http://lubyk.org'&gt;
+      &lt;img alt='lubyk logo' src='img/logo.png'/&gt;
+      &lt;h1&gt;Lubyk documentation&lt;/h1&gt;
+    &lt;/a&gt;
+  ]],
+  footer = [[ made with &lt;a href='<a href='lub.Doc.html#html'>lub.Doc.html</a>'&gt;lub.Doc&lt;/a&gt; ]],
+}</pre>
+                              </section>
+                    <section id='Methods'>
+          <h2 class='section'>Methods</h2>
+
+                    
+                                        <h4 id='toHtml' class='entry method'><span>:</span>toHtml <code>(template)</code></h4>
+          
+                    <p>Render the documentation as html. If a <code>template</code> is provided, it is used instead of the default one. This is mainly used for testing since you usually want to have some navigation menus which are extracted by creating the documentation in batch mode with <a href='#make'>make</a>.</p>
+                              </section>
+                    <section id='Table-of-contents'>
+          <h2 class='section'>Table of contents</h2>
+
+                    
+                              </section>
+                  </div>
+
+        <div class='span2 global-nav'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='lub.html'>lub</a></li>
+            
+                        <li class=''><a href='lub.Autoload.html'>Autoload</a></li>
+                        <li class=''><a href='lub.Dir.html'>Dir</a></li>
+                        <li class='active'><a href='lub.Doc.html'>Doc</a></li>
+                        <li class=''><a href='lub.Template.html'>Template</a></li>
+                      </ul>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+    <div class="container">
+       made with <a href='http://doc.lubyk.org/lub.Doc.html'>lub.Doc</a> 
+    </div>
+    </footer>
+
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        displayAlign: "left",
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
+    <script src='http://code.jquery.com/jquery.js'></script>
+    <script src='js/bootstrap.min.js'></script>
+  </body>
+</html>
+

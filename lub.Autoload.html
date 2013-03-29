@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Autoload</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+
+
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/docs.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class='row'>
+          <div class='span12'>
+             <a href='http://lubyk.org'><img alt='lubyk logo' src='img/lubyk.png'/></a> <h1><a href='http://doc.lubyk.org'>Lubyk documentation</a></h1></a> 
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="row">
+
+        <div class='span3 local-nav'>
+          <ul class='nav nav-tabs nav-stacked affix'>
+                        <li><a href='#Autoload'><i class='icon-chevron-right'></i> lub.Autoload</a></li>
+                        <li><a href='#Global'><i class='icon-chevron-right'></i> Global</a></li>
+                      </ul>
+        </div>
+
+        <div class='main span7'>
+
+                    <section id='Autoload'>
+          <h2 class='section'>Autoload</h2>
+
+                    
+                    <p class='summary'>This class creates a module table that will automatically call require to find new keys. This enables "load as needed" code. If the required code cannot be found, generates an error.</p>
+                                        <h4 id='new' class='entry function'><span>.</span>new <code>(prefix, tbl)</code></h4>
+          
+                    <p>Declare a new table with autoloading feature. The <code>prefix</code> should reflect the path used to call require for missing elements. If the optional <code>tbl</code> is provided, this table will be used as starting content.</p>
+                              </section>
+                    <section id='Global'>
+          <h2 class='section'>Global</h2>
+
+                    
+                    <p>You can enable autoload on the global namespace <code>_G</code> to require modules.</p>
+                    <p class='warn'><span>WARN</span> You should not disable <a href='#strict'>strict</a> or <code>nil</code> values in global namespace will have a <strong>huge</strong> overhead (try to require code on every access).</p>
+                                        <h4 id='global' class='entry function'><span>.</span>global <code>()</code></h4>
+          
+                    <p>Activate autoloading for global environment <code>_G</code> (this method is slightly different then <a href='#new'>new</a> and adapted for the global environment). By default, this uses <a href='#strict'>strict</a> (forbids using global nil values).</p>
+                                        <h4 id='strict' class='entry function'><span>.</span>strict <code>(x)</code></h4>
+          
+                    <p>This can be used to disable strict mode when autoload is enabled for global environment.</p>
+                              </section>
+                  </div>
+
+        <div class='span2 global-nav'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='lub.html'>lub</a></li>
+            
+                        <li class='active'><a href='lub.Autoload.html'>Autoload</a></li>
+                        <li class=''><a href='lub.Dir.html'>Dir</a></li>
+                        <li class=''><a href='lub.Doc.html'>Doc</a></li>
+                        <li class=''><a href='lub.Template.html'>Template</a></li>
+                      </ul>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+    <div class="container">
+       made with <a href='http://doc.lubyk.org/lub.Doc.html'>lub.Doc</a> 
+    </div>
+    </footer>
+
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        displayAlign: "left",
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
+    <script src='http://code.jquery.com/jquery.js'></script>
+    <script src='js/bootstrap.min.js'></script>
+  </body>
+</html>
+

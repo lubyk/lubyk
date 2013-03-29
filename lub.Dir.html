@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Directory helper</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+
+
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/docs.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class='row'>
+          <div class='span12'>
+             <a href='http://lubyk.org'><img alt='lubyk logo' src='img/lubyk.png'/></a> <h1><a href='http://doc.lubyk.org'>Lubyk documentation</a></h1></a> 
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="row">
+
+        <div class='span3 local-nav'>
+          <ul class='nav nav-tabs nav-stacked affix'>
+                        <li><a href='#Dir'><i class='icon-chevron-right'></i> lub.Dir</a></li>
+                        <li><a href='#Class-functions'><i class='icon-chevron-right'></i> Class functions</a></li>
+                        <li><a href='#Methods'><i class='icon-chevron-right'></i> Methods</a></li>
+                      </ul>
+        </div>
+
+        <div class='main span7'>
+
+                    <section id='Dir'>
+          <h2 class='section'>Directory helper</h2>
+
+                    
+                    <p class='summary'>This is a helper to access/glob directory trees. It requires 'lfs' (lua filesystem).</p>
+                              
+                    <h4 class='sub-title'>Dependencies</h4>
+                    <ul>
+<li>lfs</li>
+</ul>
+                              </section>
+                    <section id='Class-functions'>
+          <h2 class='section'>Class functions</h2>
+
+                    
+                                        <h4 id='new' class='entry function'><span>.</span>new <code>(path)</code></h4>
+          
+                    <p>Create a new directory helper pointing at @path.</p>
+                              </section>
+                    <section id='Methods'>
+          <h2 class='section'>Methods</h2>
+
+                    
+                                        <h4 id='glob' class='entry method'><span>:</span>glob <code>(pattern)</code></h4>
+          
+                    <p>Return an iterator to recursively find files matching @pattern@ in the directory. The pattern syntax is the same as string.match.</p>
+                    <pre class='prettyprint lang-lua'>-- Find files ending in ".lua".
+for file in <a href='lk.Dir.html'>lk.Dir</a>('lib'):glob '%.lua$' do
+  print(file)
+end
+--&gt; lib/lk/Dir.lua
+--&gt; lib/lk/Doc.lua
+--&gt; ...</pre>
+                                        <h4 id='list' class='entry method'><span>:</span>list <code>()</code></h4>
+          
+                    <p>Return an iterator over the paths in the directory. The returned values are paths, not just filenames.</p>
+                    <pre class='prettyprint lang-lua'>for file in <a href='lk.Dir.html'>lk.Dir</a>('lib'):list() do
+  print(file)
+end
+--&gt; lib/lk
+--&gt; lib/lk.lua</pre>
+                                        <h4 id='contains' class='entry method'><span>:</span>contains <code>(pattern)</code></h4>
+          
+                    <p>Return true if there is at least one child in the directory that matches @pattern@.</p>
+                              </section>
+                  </div>
+
+        <div class='span2 global-nav'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='lub.html'>lub</a></li>
+            
+                        <li class=''><a href='lub.Autoload.html'>Autoload</a></li>
+                        <li class='active'><a href='lub.Dir.html'>Dir</a></li>
+                        <li class=''><a href='lub.Doc.html'>Doc</a></li>
+                        <li class=''><a href='lub.Template.html'>Template</a></li>
+                      </ul>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+    <div class="container">
+       made with <a href='http://doc.lubyk.org/lub.Doc.html'>lub.Doc</a> 
+    </div>
+    </footer>
+
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        displayAlign: "left",
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
+    <script src='http://code.jquery.com/jquery.js'></script>
+    <script src='js/bootstrap.min.js'></script>
+  </body>
+</html>
+
