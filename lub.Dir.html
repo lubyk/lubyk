@@ -56,7 +56,7 @@
                     
                                         <h4 id='new' class='entry function'><span>.</span>new <code>(path)</code></h4>
           
-                    <p>Create a new directory helper pointing at @path.</p>
+                    <p>Create a new directory helper pointing at <code>path</code>.</p>
                               </section>
                     <section id='Methods'>
           <h2 class='section'>Methods</h2>
@@ -64,7 +64,7 @@
                     
                                         <h4 id='glob' class='entry method'><span>:</span>glob <code>(pattern)</code></h4>
           
-                    <p>Return an iterator to recursively find files matching @pattern@ in the directory. The pattern syntax is the same as string.match.</p>
+                    <p>Return an iterator to recursively find files matching <code>pattern</code> in the directory. The pattern syntax is the same as string.match.</p>
                     <pre class='prettyprint lang-lua'>-- Find files ending in ".lua".
 for file in <a href='lk.Dir.html'>lk.Dir</a>('lib'):glob '%.lua$' do
   print(file)
@@ -82,7 +82,7 @@ end
 --&gt; lib/lk.lua</pre>
                                         <h4 id='contains' class='entry method'><span>:</span>contains <code>(pattern)</code></h4>
           
-                    <p>Return true if there is at least one child in the directory that matches @pattern@.</p>
+                    <p>Return true if there is at least one child in the directory that matches <code>pattern</code>.</p>
                               </section>
                   </div>
 
@@ -101,7 +101,7 @@ end
 
     <footer class="footer">
     <div class="container">
-       made with <a title='last change: 362fc5d 2013-03-22 15:06:31 +0100' href='http://doc.lubyk.org/lub.Doc.html'>lub.Doc</a> 
+       made with <a title='last change: ddbaf22 2013-03-30 10:57:40 +0100' href='http://doc.lubyk.org/lub.Doc.html'>lub.Doc</a> 
 <script type="text/javascript">
 
   var _gaq = _gaq || [];
