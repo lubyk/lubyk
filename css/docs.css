@@ -19,7 +19,7 @@ table.definition {margin-left:60px;}
 table.definition td {vertical-align:top; padding-top:10px}
 table.definition tr:first-child td {padding-top:0}
 
-p.summary { font-style:italic; margin-bottom:2em;}
+p.summary { border:1px dashed #aaa; background:#f4f4f4; padding:10px; border-radius:8px; margin-bottom:2em;}
 .container .main pre.prettyprint,
 .container .main pre {border:1px solid #bbb; padding:5px; border-radius:1px; font-size:12px;}
 .container .main pre a span {color:#046;}
