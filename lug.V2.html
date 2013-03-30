@@ -48,8 +48,7 @@
           <h2 class='section'>2D vector</h2>
 
                     
-                    <p class='summary'>Immutable 2D vector class.</p>
-                    <p>The vectors are immutable when used through this API and it is highly discouraged to change a vector in place as this may break future code.</p>
+                    <p class='summary'>The vector is immutable when used through this API. It is highly discouraged to change a vector in place as this may break future code.</p>
                     <p>Simple usage example:</p>
                     <pre class='prettyprint lang-lua'>local v = <a href='lug.V2.html'>lug.V2</a>(3, 4)
 print(v:norm())
@@ -264,9 +263,10 @@ end</pre>
 
         <div class='span2 global-nav'>
           <ul class='nav nav-tabs nav-stacked'>
-                        <li class='module'><a href='lug.html'><span></span>lug</a></li>
+                        <li class='module'><a href='lug.html'>lug</a></li>
             
                         <li class='active'><a href='lug.V2.html'>V2</a></li>
+                        <li class=''><a href='lug.makedoc.html'>makedoc</a></li>
                       </ul>
         </div>
       </div>
@@ -274,7 +274,21 @@ end</pre>
 
     <footer class="footer">
     <div class="container">
-       made with <a href='http://doc.lubyk.org/lk.Doc.html'>lk.Doc</a> 
+       made with <a title='last change: 362fc5d 2013-03-22 15:06:31 +0100' href='http://doc.lubyk.org/lub.Doc.html'>lub.Doc</a> 
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-39725130-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
     </div>
     </footer>
 

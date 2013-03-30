@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Simple templating</title>
+    <title>V2 test</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -31,56 +31,32 @@
 
         <div class='span3 local-nav'>
           <ul class='nav nav-tabs nav-stacked affix'>
-                        <li><a href='#Template'><i class='icon-chevron-right'></i> lub.Template</a></li>
+                        <li><a href='#V2_test'><i class='icon-chevron-right'></i> test.V2_test</a></li>
+                        <li><a href='#TODO'><i class='icon-chevron-right'></i> TODO</a></li>
                       </ul>
         </div>
 
         <div class='main span7'>
 
-                    <section id='Template'>
-          <h2 class='section'>Simple templating</h2>
+                    <section id='V2_test'>
+          <h2 class='section'>V2 test</h2>
 
                     
-                    <p class='summary'>Simplistic templating system inspired by Zed A. Shaw's minimal template for <a href='http://mongrel2.org/'>Tir</a>.</p>
-                    <p>Template features:</p>
-                    <table class='definition'>
-  <tr><td class='key'><code>{{ code }}</code>  </td><td>Replaced with the string provided by 'code'.</td></tr>
-  <tr><td class='key'><code>{% code %}</code>  </td><td>Execute code but do not output (used for loops, if, etc).</td></tr>
-  <tr><td class='key'><code>{| code |}</code>  </td><td>Output code and preserve indentation.</td></tr>
+                              </section>
+                    <section id='TODO'>
+          <h2 class='section'>TODO</h2>
 
-</table>
-                    <p>Usage:</p>
-                    <pre class='prettyprint lang-lua'>local tmplt = <a href='lub.Template.html'>lub.Template</a> [[
-Hello {{name}}.
-{% if parent then %}
-Your parent is {{parent.name}}.
-{% end %}
-]]
-
-tmplt:run {
-  name = 'Joe',
-  parent = {name = 'Eve'},
-}
---&gt; Hello Joe.
---&gt; Your parent is Eve.</pre>
-                                        <h4 id='new' class='entry function'><span>.</span>new <code>(source)</code></h4>
-          
-                    <p>Create a new template object ready to produce output by calling <a href='#run'>run</a>. The <code>source</code> parameters should be a string or a table with a <code>path</code> key.</p>
-                                        <h4 id='run' class='entry method'><span>:</span>run <code>(env)</code></h4>
-          
-                    <p>Returns resulting text by runngint the template with an environment table <code>env</code>.</p>
+                    
+                    <p class='todo'><span class='ref'><a href='#V2_test'>V2_test</a></span><span>TODO</span> </p>
                               </section>
                   </div>
 
         <div class='span2 global-nav'>
           <ul class='nav nav-tabs nav-stacked'>
-                        <li class='module'><a href='lub.html'>lub</a></li>
+                        <li class='module'><a href='test.html'>test</a></li>
             
-                        <li class=''><a href='lub.Autoload.html'>Autoload</a></li>
-                        <li class=''><a href='lub.Dir.html'>Dir</a></li>
-                        <li class=''><a href='lub.Doc.html'>Doc</a></li>
-                        <li class='active'><a href='lub.Template.html'>Template</a></li>
-                        <li class=''><a href='lub.makedoc.html'>makedoc</a></li>
+                        <li class='active'><a href='test.V2_test.html'>V2_test</a></li>
+                        <li class=''><a href='test.all.html'>all</a></li>
                       </ul>
         </div>
       </div>
