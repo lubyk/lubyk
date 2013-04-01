@@ -60,33 +60,32 @@
           <h2 class='section'>Script</h2>
 
                     
-                                        <h4 id='scriptSource' class='entry function'><span>.</span>scriptSource <code>(level)</code></h4>
+                                        <h4 id='path' class='entry function'><span>.</span>path <code>(path)</code></h4>
           
-                    <p>Find the source of the current file or the file up x levels in the call chain (-1 = up one level).</p>
-                                        <h4 id='scriptPath' class='entry function'><span>.</span>scriptPath <code>(level)</code></h4>
-          
-                    <p>Find the path of the current script or the script up x levels in the call chain (-1 = up one level). The path is relative to the current directory.</p>
-                    <pre class='prettyprint lang-lua'>-- get path of running script
-local my_path = lun.scriptPath()
---&gt; 'test/lk_test.lua'
+                    <p>Return a path by resolving special initial characters:</p>
+                    <table class='definition'>
+  <tr><td class='key'><code>/</code>   </td><td>absolute path, resolves '..' in path.</td></tr>
+  <tr><td class='key'><code>|</code>   </td><td>path relative to script directory, resolves '..' in path.</td></tr>
+  <tr><td class='key'><code>&</code>   </td><td>returns current script path.</td></tr>
+
+</table>
+                    <p>For example:</p>
+                    <pre class='prettyprint lang-lua'>print(lub.path '|')
+--&gt; current script directory
+
+print(lub.path '|..')
+--&gt; parent of script directory
 </pre>
-                    <p>If you need an absolute path, use <a href='#absolutizePath'>absolutizePath</a>.</p>
-                                        <h4 id='scriptDir' class='entry function'><span>.</span>scriptDir <code>(level)</code></h4>
-          
-                    <p>Find the directory of the current script or the directory of the script up x levels in the call chain (-1 = up one level). This is the same as <a href='#scriptPath'>scriptPath</a> but it returns the parent directory.</p>
-                                        <h4 id='relPath' class='entry function'><span>.</span>relPath <code>(path)</code></h4>
-          
-                    <p>Return a file path relative to the running script.</p>
                                         <h4 id='deprecation' class='entry function'><span>.</span>deprecation <code>(lib_name, old, new, ...)</code></h4>
           
                     <p>Declare a method as being deprecated. This should be used when method names are changed to avoid breaking code without warnings. The syntax is:</p>
                     <pre class='prettyprint lang-lua'>function lib.badName(...)
-  return lib.deprecation('lun', 'badName', 'betterName', ...)
+  return lib.deprecation('lub', 'badName', 'betterName', ...)
 end
 </pre>
                     <p>When someone uses the "badName" method, a deprecation warning is printed:</p>
                     <pre class='prettyprint lang-lua'>[DEPRECATION] {traceback}
-    'lun.badName' is deprecated. Please use 'lun.betterName' instead.</pre>
+    'lub.badName' is deprecated. Please use 'lub.betterName' instead.</pre>
                               </section>
                     <section id='Filesystem'>
           <h2 class='section'>Filesystem</h2>
@@ -238,7 +237,7 @@ lub.deepMerge(base, 'a', { c = 6 })
 
     <footer class="footer">
     <div class="container">
-       made with <a title='last change: 2d81b32 2013-04-01 17:36:40 +0200' href='http://doc.lubyk.org/lub.Doc.html'>lub.Doc</a> 
+       made with <a title='last change: 216f04b 2013-04-01 20:52:59 +0200' href='http://doc.lubyk.org/lub.Doc.html'>lub.Doc</a> 
 <script type="text/javascript">
 
   var _gaq = _gaq || [];
