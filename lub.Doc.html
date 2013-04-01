@@ -11,7 +11,8 @@
 
     <link href="css/bootstrap.css" rel="stylesheet">
     <link href="css/bootstrap-responsive.css" rel="stylesheet">
-    <link href="css/docs.css" rel="stylesheet">
+        <link href="css/docs.css" rel="stylesheet">
+        
   </head>
 
   <body>
@@ -311,8 +312,11 @@ lub.writeall('doc/File.html', doc:toHtml())
   <tr><td class='key'>name       </td><td>Used when no <code>path</code> is provided.</td></tr>
   <tr><td class='key'>navigation </td><td>Navigation menu on the right.</td></tr>
   <tr><td class='key'>children   </td><td>List of classes (in main content part).</td></tr>
-  <tr><td class='key'>header     </td><td>Html code to display in header.</td></tr>
-  <tr><td class='key'>footer     </td><td>Html code to display in footer.</td></tr>
+  <tr><td class='key'>head       </td><td>HTML content to insert in <code>&lt;head&gt;</code> tag.</td></tr>
+  <tr><td class='key'>index_head </td><td>HTML content to insert in <code>&lt;head&gt;</code> tag of index file.</td></tr>
+  <tr><td class='key'>css        </td><td>Path to a CSS file to use instead of <code>css/docs.css</code>.</td></tr>
+  <tr><td class='key'>header     </td><td>HTML code to display in header.</td></tr>
+  <tr><td class='key'>footer     </td><td>HTML code to display in footer.</td></tr>
   <tr><td class='key'>target     </td><td>Target directory (only used when using PNG image generation for math code.</td></tr>
 
 </table>
@@ -371,6 +375,7 @@ lub.writeall('doc/File.html', doc:toHtml())
                         <li class=''><a href='lub.Dir.html'>Dir</a></li>
                         <li class='active'><a href='lub.Doc.html'>Doc</a></li>
                         <li class=''><a href='lub.Template.html'>Template</a></li>
+                        <li class=''><a href='lub.Test.html'>Test</a></li>
                       </ul>
         </div>
       </div>
@@ -378,7 +383,7 @@ lub.writeall('doc/File.html', doc:toHtml())
 
     <footer class="footer">
     <div class="container">
-       made with <a title='last change: 03f8fc4 2013-03-30 11:06:17 +0100' href='http://doc.lubyk.org/lub.Doc.html'>lub.Doc</a> 
+       made with <a title='last change: 2d81b32 2013-04-01 17:36:40 +0200' href='http://doc.lubyk.org/lub.Doc.html'>lub.Doc</a> 
 <script type="text/javascript">
 
   var _gaq = _gaq || [];

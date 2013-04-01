@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Test Suite</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+
+
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+        <link href="css/docs.css" rel="stylesheet">
+        
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class='row'>
+          <div class='span12'>
+             <a href='http://lubyk.org'><img alt='lubyk logo' src='img/lubyk.png'/></a> <h1><a href='http://doc.lubyk.org'>Lubyk documentation</a></h1></a> 
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="row">
+
+        <div class='span3 local-nav'>
+          <ul class='nav nav-tabs nav-stacked affix'>
+                        <li><a href='#Test'><i class='icon-chevron-right'></i> lub.Test</a></li>
+                        <li><a href='#Global-settings'><i class='icon-chevron-right'></i> Global settings</a></li>
+                        <li><a href='#Setup,-teardown'><i class='icon-chevron-right'></i> Setup, teardown</a></li>
+                        <li><a href='#Declare-tests'><i class='icon-chevron-right'></i> Declare tests</a></li>
+                        <li><a href='#Run-tests'><i class='icon-chevron-right'></i> Run tests</a></li>
+                        <li><a href='#Batch-testing'><i class='icon-chevron-right'></i> Batch testing</a></li>
+                        <li><a href='#Assertions'><i class='icon-chevron-right'></i> Assertions</a></li>
+                      </ul>
+        </div>
+
+        <div class='main span7'>
+
+                    <section id='Test'>
+          <h2 class='section'>Test Suite</h2>
+
+                    
+                    <p class='summary'>The test suite is used to declare tests and group them by class or module.</p>
+                                        <h4 id='new' class='entry function'><span>.</span>new <code>(name, options)</code></h4>
+          
+                    <p>Create a new test suite. It is good practice to use 'should' as local name for this suite since it makes tests more readable. The <code>name</code> should be the exact name of the class or module being tested in case the coverage option is activated in test (it is ON by default).</p>
+                    <p>Usage example:</p>
+                    <pre class='prettyprint lang-lua'>local should = <a href='lub.Test.html'>lub.Test</a> 'lub.Dir'
+
+function should.listFilesInDirectory()
+  -- ...
+end
+</pre>
+                    <p>The optional <code>options</code> table can contain the following keys to alter testing behavior:</p>
+                    <table class='definition'>
+  <tr><td class='key'><code>coverage</code></td><td>if set to false, untested functions will not be reported. If <code>lub.Test.mock</code> contains a string, this will be used as the body of missing tests and outputed.</td></tr>
+
+</table>
+                                        <h4 id='testWithUser' class='entry method'><span>:</span>testWithUser <code>()</code></h4>
+          
+                    <p>Return tests to only run in single mode (not in batch) because they require user interaction. Usage:</p>
+                    <pre class='prettyprint lang-lua'>local should   = <a href='lub.Test.html'>lub.Test</a> 'lub.Dir'
+local withUser = should:testWithUser()
+
+function withUser.should.displayTable()
+end
+</pre>
+                              </section>
+                    <section id='Global-settings'>
+          <h2 class='section'>Global settings</h2>
+
+                    
+                                        <h4 id='TIMEOUT' class='entry param'><span>.</span>TIMEOUT <code>= 5</code></h4>
+          
+                    <p>Default timeout value for <a href='#timeout'>timeout</a> function.</p>
+                                        <h4 id='only' class='entry param'><span>.</span>only <code>= false</code></h4>
+          
+                    <p>To only test a single method.</p>
+                                        <h4 id='verbose' class='entry param'><span>.</span>verbose <code>= false</code></h4>
+          
+                    <p>Set to <code>true</code> to enable verbose mode (display each test title).</p>
+                                        <h4 id='abort' class='entry param'><span>.</span>abort <code>= false</code></h4>
+          
+                    <p>Abort batch mode (can be set in a test).</p>
+                                        <h4 id='mock' class='entry param'><span>.</span>mock <code>= false</code></h4>
+          
+                    <p>Untested functions are listed. If mock contains a string, it is used as body to generate mockups of untested functions.</p>
+                              </section>
+                    <section id='Setup,-teardown'>
+          <h2 class='section'>Setup, teardown</h2>
+
+                    
+                    <p>If you need to run some code before or after every test, you can define the <code>setup</code> (executed before each test) and/or <code>teardown</code> (executed after each test independantly of success or failure) functions:</p>
+                    <pre class='prettyprint lang-lua'>local should = <a href='lub.Test.html'>lub.Test</a> 'lub.Dir'
+
+function should.teardown()
+  -- cleanup
+end</pre>
+                                        <h4 id='setup' class='entry function'><span>.</span>setup <code>()</code></h4>
+          
+                    <p>Dummy setup function (does nothing).</p>
+                                        <h4 id='teardown' class='entry function'><span>.</span>teardown <code>()</code></h4>
+          
+                    <p>Dummy teardown function (does nothing).</p>
+                              </section>
+                    <section id='Declare-tests'>
+          <h2 class='section'>Declare tests</h2>
+
+                    
+                                        <h4 id='__newindex' class='entry method'><span>:</span>__newindex <code>(key, value)</code></h4>
+          
+                    <p>Tests are declared by adding functions to the test suite. Note that these functions do not have access to 'self'.</p>
+                    <p>Example test declaration:</p>
+                    <pre class='prettyprint lang-lua'>functions should.beHappy()
+  assertTrue(true)
+end</pre>
+                              </section>
+                    <section id='Run-tests'>
+          <h2 class='section'>Run tests</h2>
+
+                    
+                    <p>Use <code>should:test()</code> to run the tests in all suites at once. You can append this call at the end of the file to run the test when running the file:</p>
+                    <pre class='prettyprint lang-lua'>function should.testLast()
+end
+
+-- Run all tests now.
+should:test()</pre>
+                              </section>
+                    <section id='Batch-testing'>
+          <h2 class='section'>Batch testing</h2>
+
+                    
+                                        <h4 id='files' class='entry function'><span>.</span>files <code>(list_or_path, pattern, reject)</code></h4>
+          
+                    <p>Test all files in <code>list_or_path</code> matching <code>pattern</code>. Typical usage is to create an <code>all.lua</code> file in the tests folder with:</p>
+                    <pre class='prettyprint lang-lua'>local lub = require 'lub'
+<a href='lub.Test.html#files'>lub.Test.files</a>(lub.scriptDir())
+</pre>
+                    <p>This will run tests for all files matching the default pattern <code>%_test.lua$</code>. If the optional <code>reject</code> pattern is provided, paths matching this pattern will be, well, rejected.</p>
+                              </section>
+                    <section id='Assertions'>
+          <h2 class='section'>Assertions</h2>
+
+                    
+                                        <h4 id='fail' class='entry function'>fail <code>(msg)</code></h4>
+          
+                    <p>Force a test to fail with a given <code>msg</code>.</p>
+                                        <h4 id='assertFalse' class='entry function'>assertFalse <code>(val)</code></h4>
+          
+                    <p>Assert that <code>val</code> is false.</p>
+                                        <h4 id='assertTrue' class='entry function'>assertTrue <code>(ok, msg)</code></h4>
+          
+                    <p>Assert that <code>ok</code> is true. If <code>msg</code> exists, it is used in case of failure in place of the default fail message.</p>
+                                        <h4 id='assertEqual' class='entry function'>assertEqual <code>(expected, value, resolution, up_count)</code></h4>
+          
+                    <p>Assert that <code>value</code> is equal to <code>expected</code>. If <code>expected</code> is a number, the <code>resolution</code> parameter can be used to cope with numerical errors. The actual test for numbers is:</p>
+                    <pre class='prettyprint lang-lua'>local ok = (value &gt;= expected - resolution) and (value &lt;= expected + resolution)
+</pre>
+                    <p>For other types, this tests raw equality (same object). To compare table contents, use <a href='#assertValueEqual'>assertValueEqual</a>.</p>
+                                        <h4 id='assertValueEqual' class='entry function'>assertValueEqual <code>(expected, value, resolution, up_count)</code></h4>
+          
+                    <p>For tables, recursively test that all keys contain the same values.</p>
+                                        <h4 id='assertTableEqual' class='entry function'>assertTableEqual <code>(expected, value, resolution, up_count)</code></h4>
+          
+                    <p>This is like <a href='#assertValueEqual'>assertValueEqual</a> but does not check for table type.</p>
+                                        <h4 id='assertNotEqual' class='entry function'>assertNotEqual <code>(unexpected, value)</code></h4>
+          
+                    <p>Asserts that <code>value</code> is not equal to <code>unexpected</code>.</p>
+                                        <h4 id='assertMatch' class='entry function'>assertMatch <code>(pattern, value)</code></h4>
+          
+                    <p>Assert that <code>value</code> matches <code>pattern</code> using <code>string.match</code>.</p>
+                                        <h4 id='assertNotMatch' class='entry function'>assertNotMatch <code>(pattern, value, msg)</code></h4>
+          
+                    <p>Assert that <code>value</code> does not match <code>pattern</code>. If <code>msg</code> is provided, use this in case of failure.</p>
+                                        <h4 id='assertError' class='entry function'>assertError <code>(pattern, func)</code></h4>
+          
+                    <p>Assert that calling <code>func</code> generates an error message that matches <code>pattern</code>.</p>
+                                        <h4 id='assertPass' class='entry function'>assertPass <code>(func, teardown)</code></h4>
+          
+                    <p>Assert that calling <code>func</code> passes without errors. The optional <code>teardown</code>  function can be used to cleanup after the function call whether it passes or fails.</p>
+                                        <h4 id='assertLessThen' class='entry function'>assertLessThen <code>(expected, value)</code></h4>
+          
+                    <p>Assert that <code>value</code> is less then <code>expected</code>.</p>
+                                        <h4 id='assertType' class='entry function'>assertType <code>(expected, value)</code></h4>
+          
+                    <p>Assert that the Lua type of <code>value</code> is <code>expected</code> ('number', 'table', 'function', etc).</p>
+                                        <h4 id='assertNil' class='entry function'>assertNil <code>(value)</code></h4>
+          
+                    <p>Assert that <code>value</code> is nil.</p>
+                                        <h4 id='assertInRange' class='entry function'>assertInRange <code>(t1, t2, value)</code></h4>
+          
+                    <p>Assert that <code>value</code> is in the range defined by [<code>t1</code>, <code>t2</code>[.</p>
+                                        <h4 id='assertPassWithTimeout' class='entry function'>assertPassWithTimeout <code>(func, msg, timeout)</code></h4>
+          
+                    <p>Execute <code>func</code> every 0.3 s for <code>timeout</code> seconds or until the callback function returns true. The callback is passed the elapsed time as parameter. If no <code>timeout</code> value is passed, the default <a href='#TIMEOUT'>TIMEOUT</a> is used (5 seconds).</p>
+                    <p>If the timeout is reached, an error with <code>msg</code> (or a default text) is displayed.</p>
+                    <pre class='prettyprint lang-lua'>function should.browseNetwork()
+  local found_remote = false
+  -- ...
+  assertPassWithTimeout(function()
+    return found_remote
+  end, 'Could not find remote device')
+end</pre>
+                              </section>
+                  </div>
+
+        <div class='span2 global-nav'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='lub.html'>lub</a></li>
+            
+                        <li class=''><a href='lub.Autoload.html'>Autoload</a></li>
+                        <li class=''><a href='lub.Dir.html'>Dir</a></li>
+                        <li class=''><a href='lub.Doc.html'>Doc</a></li>
+                        <li class=''><a href='lub.Template.html'>Template</a></li>
+                        <li class='active'><a href='lub.Test.html'>Test</a></li>
+                      </ul>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+    <div class="container">
+       made with <a title='last change: 2d81b32 2013-04-01 17:36:40 +0200' href='http://doc.lubyk.org/lub.Doc.html'>lub.Doc</a> 
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-39725130-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+    </div>
+    </footer>
+
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        displayAlign: "left",
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
+    <script src='http://code.jquery.com/jquery.js'></script>
+    <script src='js/bootstrap.min.js'></script>
+  </body>
+</html>
+

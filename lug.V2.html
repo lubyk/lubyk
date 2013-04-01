@@ -11,7 +11,8 @@
 
     <link href="css/bootstrap.css" rel="stylesheet">
     <link href="css/bootstrap-responsive.css" rel="stylesheet">
-    <link href="css/docs.css" rel="stylesheet">
+        <link href="css/docs.css" rel="stylesheet">
+        
   </head>
 
   <body>
@@ -214,7 +215,7 @@ end</pre>
                     <p>If <code>eq</code> function is provided, it is used to evaluate equality.</p>
                                         <h4 id='lt' class='entry function'><span>.</span>lt <code>(u, v, lt)</code></h4>
           
-                    <p>True if <code>u</code> is lower then <code>v</code> component wise: \(\mathbf{u}_x < \mathbf{v}_x \land \mathbf{u}_y < \mathbf{v}_y\)</p>
+                    <p>True if <code>u</code> is lower then <code>v</code> component wise: \(\mathbf{u}_x &lt; \mathbf{v}_x \land \mathbf{u}_y &lt; \mathbf{v}_y\)</p>
                     <p>If <code>lt</code> function is provided, it is used as comparison function.</p>
                                         <h4 id='le' class='entry function'><span>.</span>le <code>(u, v, le)</code></h4>
           
@@ -224,9 +225,9 @@ end</pre>
           
                     <p>Compare two vectors and return:</p>
                     <table class='definition'>
-  <tr><td class='key'><code>-1</code></td><td>if \(\mathbf{u}_x < \mathbf{v}_x \lor (\mathbf{u}_x = \mathbf{v}_x \land \mathbf{u}_y < \mathbf{v}_y)\)</td></tr>
+  <tr><td class='key'><code>-1</code></td><td>if \(\mathbf{u}_x &lt; \mathbf{v}_x \lor (\mathbf{u}_x = \mathbf{v}_x \land \mathbf{u}_y &lt; \mathbf{v}_y)\)</td></tr>
   <tr><td class='key'><code>0</code></td><td>if \(\mathbf{u}_x = \mathbf{v}_x \land \mathbf{u}_y = \mathbf{v}_y\)</td></tr>
-  <tr><td class='key'><code>1</code></td><td>if \(\mathbf{u}_x > \mathbf{v}_x \lor (\mathbf{u}_x = \mathbf{v}_x \land \mathbf{u}_y > \mathbf{v}_y)\)</td></tr>
+  <tr><td class='key'><code>1</code></td><td>if \(\mathbf{u}_x &gt; \mathbf{v}_x \lor (\mathbf{u}_x = \mathbf{v}_x \land \mathbf{u}_y &gt; \mathbf{v}_y)\)</td></tr>
 
 </table>
                     <p>If <code>cmp</code> function is provided, it is used as comparison function (should return -1, 0, 1).</p>
@@ -274,7 +275,7 @@ end</pre>
 
     <footer class="footer">
     <div class="container">
-       made with <a title='last change: 03f8fc4 2013-03-30 11:06:17 +0100' href='http://doc.lubyk.org/lub.Doc.html'>lub.Doc</a> 
+       made with <a title='last change: 2d81b32 2013-04-01 17:36:40 +0200' href='http://doc.lubyk.org/lub.Doc.html'>lub.Doc</a> 
 <script type="text/javascript">
 
   var _gaq = _gaq || [];
