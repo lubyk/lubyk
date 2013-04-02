@@ -32,7 +32,7 @@
 
         <div class='span3 local-nav'>
           <ul class='nav nav-tabs nav-stacked affix'>
-                        <li><a href='#Doc'><i class='icon-chevron-right'></i> lub.Doc</a></li>
+                        <li><a href='#Doc'><i class='icon-chevron-right'></i> lut.Doc</a></li>
                         <li><a href='#Parsing-modes'><i class='icon-chevron-right'></i> Parsing modes</a></li>
                         <li><a href='#Extraction'><i class='icon-chevron-right'></i> Extraction</a></li>
                         <li><a href='#Attributes-(example)'><i class='icon-chevron-right'></i> Attributes (example)</a></li>
@@ -54,7 +54,7 @@
           <h2 class='section'>Documentation extractor</h2>
 
                     
-                    <p class='summary'>lub.Doc parses lua comments and extracts the documentation from these comments.</p>
+                    <p class='summary'>lut.Doc parses lua comments and extracts the documentation from these comments.</p>
                     <p>It parses indifferently multiline comments like this:</p>
                     <pre class='prettyprint lang-lua'>--[[ 
 Some text in comments.
@@ -110,7 +110,7 @@ end
                     <p>If a function definition does not follow this convention, it can be documented with a commented version of the function definition:</p>
                     <pre class='prettyprint lang-lua'>-- Special function declaration.
 -- function lib:bing(a, b, c)
-lib.bing = <a href='lub.Doc.html#bang'>lub.Doc.bang</a>
+lib.bing = <a href='lut.Doc.html#bang'>lut.Doc.bang</a>
 
 -- Out of file function definition (in C++ for example).
 -- function lib:connect(server)
@@ -235,7 +235,7 @@ printf("Result = %.2f\n", x);
 
                     
                     <p>You can enhance your comments with links, bold, italics and images.</p>
-                    <p>Some links are automatically created when the parser sees <code>module.Class</code> like this: <a href='lub.Doc.html'>lub.Doc</a>. A custom link is made with <code>[link title](http://example.com)</code>.</p>
+                    <p>Some links are automatically created when the parser sees <code>module.Class</code> like this: <a href='lut.Doc.html'>lut.Doc</a>. A custom link is made with <code>[link title](http://example.com)</code>.</p>
                     <p>Bold is done by using stars: <code>some text with *bold* emphasis</code>. Italics are inserted with underscores: <code>some text _with italic_ emphasis</code>.</p>
                     <p>You can add images with <code>![alt text](/path/to/image.jpg)</code>.</p>
                     <p>Inline code is inserted with backticks:</p>
@@ -299,10 +299,10 @@ WARN This is a warning.
                     
                                         <h4 id='new' class='entry function'><span>.</span>new <code>(path, def)</code></h4>
           
-                    <p>Parse the content of a file given by <code>path</code> and return an <a href='lub.Doc.html'>lub.Doc</a> object  containing the documentation of the class.</p>
+                    <p>Parse the content of a file given by <code>path</code> and return an <a href='lut.Doc.html'>lut.Doc</a> object  containing the documentation of the class.</p>
                     <p>Usage example:</p>
-                    <pre class='prettyprint lang-lua'>require 'lubyk'
-local doc = <a href='lub.Doc.html'>lub.Doc</a>('path/to/File.lua', {target = 'doc'})
+                    <pre class='prettyprint lang-lua'>require 'lut'
+local doc = <a href='lut.Doc.html'>lut.Doc</a>('path/to/File.lua', {target = 'doc'})
 lub.writeall('doc/File.html', doc:toHtml())
 </pre>
                     <p>When documenting multiple files it is better to use <a href='#make'>make</a>.</p>
@@ -334,8 +334,8 @@ lub.writeall('doc/File.html', doc:toHtml())
 
 </table>
                     <p>Usage:</p>
-                    <pre class='prettyprint lang-lua'>require 'lubyk'
-<a href='lub.Doc.html#make'>lub.Doc.make</a> {
+                    <pre class='prettyprint lang-lua'>require 'lut'
+<a href='lut.Doc.html#make'>lut.Doc.make</a> {
   sources = {
     'lib/doc/DocTest.lua',
     'lib/doc/Other.lua',
@@ -349,7 +349,7 @@ lub.writeall('doc/File.html', doc:toHtml())
       &lt;h1&gt;Lubyk documentation&lt;/h1&gt;
     &lt;/a&gt;
   ]],
-  footer = [[ made with &lt;a href='<a href='lub.Doc.html#html'>lub.Doc.html</a>'&gt;lub.Doc&lt;/a&gt; ]],
+  footer = [[ made with &lt;a href='<a href='lut.Doc.html#html'>lut.Doc.html</a>'&gt;lut.Doc&lt;/a&gt; ]],
 }</pre>
                               </section>
                     <section id='Methods'>
@@ -369,13 +369,10 @@ lub.writeall('doc/File.html', doc:toHtml())
 
         <div class='span2 global-nav'>
           <ul class='nav nav-tabs nav-stacked'>
-                        <li class='module'><a href='lub.html'>lub</a></li>
+                        <li class='module'><a href='lut.html'>lut</a></li>
             
-                        <li class=''><a href='lub.Autoload.html'>Autoload</a></li>
-                        <li class=''><a href='lub.Dir.html'>Dir</a></li>
-                        <li class='active'><a href='lub.Doc.html'>Doc</a></li>
-                        <li class=''><a href='lub.Template.html'>Template</a></li>
-                        <li class=''><a href='lub.Test.html'>Test</a></li>
+                        <li class='active'><a href='lut.Doc.html'>Doc</a></li>
+                        <li class=''><a href='lut.Test.html'>Test</a></li>
                       </ul>
         </div>
       </div>

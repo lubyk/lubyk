@@ -32,7 +32,7 @@
 
         <div class='span3 local-nav'>
           <ul class='nav nav-tabs nav-stacked affix'>
-                        <li><a href='#Test'><i class='icon-chevron-right'></i> lub.Test</a></li>
+                        <li><a href='#Test'><i class='icon-chevron-right'></i> lut.Test</a></li>
                         <li><a href='#Global-settings'><i class='icon-chevron-right'></i> Global settings</a></li>
                         <li><a href='#Setup,-teardown'><i class='icon-chevron-right'></i> Setup, teardown</a></li>
                         <li><a href='#Declare-tests'><i class='icon-chevron-right'></i> Declare tests</a></li>
@@ -53,8 +53,8 @@
           
                     <p>Create a new test suite. It is good practice to use 'should' as local name for this suite since it makes tests more readable. The <code>name</code> should be the exact name of the class or module being tested in case the coverage option is activated in test (it is <strong>on</strong> by default).</p>
                     <p>Full test file example:</p>
-                    <pre class='prettyprint lang-lua'>require 'lub'
-local should = <a href='lub.Test.html'>lub.Test</a> 'animal.Dog'
+                    <pre class='prettyprint lang-lua'>require 'lut'
+local should = <a href='lut.Test.html'>lut.Test</a> 'animal.Dog'
 
 function should.bark()
   local medor = <a href='animal.Dog.html'>animal.Dog</a>('Medor')
@@ -66,7 +66,7 @@ should:test()
 </pre>
                     <p>The optional <code>options</code> table can contain the following keys to alter testing behavior:</p>
                     <table class='definition'>
-  <tr><td class='key'><code>coverage</code> </td><td>if set to false, untested functions will not be reported. If <code>lub.Test.mock</code> contains a string, this will be used as the body of missing tests and outputed.</td></tr>
+  <tr><td class='key'><code>coverage</code> </td><td>if set to false, untested functions will not be reported. If <code>lut.Test.mock</code> contains a string, this will be used as the body of missing tests and outputed.</td></tr>
   <tr><td class='key'><code>metatable</code></td><td>the metatable for the class being tested if it cannot be  found in global namespace.</td></tr>
 
 </table>
@@ -74,7 +74,7 @@ should:test()
                                         <h4 id='testWithUser' class='entry method'><span>:</span>testWithUser <code>()</code></h4>
           
                     <p>Return tests to only run in single mode (not in batch) because they require user interaction. Usage:</p>
-                    <pre class='prettyprint lang-lua'>local should   = <a href='lub.Test.html'>lub.Test</a> 'lub.Dir'
+                    <pre class='prettyprint lang-lua'>local should   = <a href='lut.Test.html'>lut.Test</a> 'lub.Dir'
 local withUser = should:testWithUser()
 
 function withUser.should.displayTable()
@@ -106,7 +106,7 @@ end
 
                     
                     <p>If you need to run some code before or after every test, you can define the <code>setup</code> (executed before each test) and/or <code>teardown</code> (executed after each test independantly of success or failure) functions:</p>
-                    <pre class='prettyprint lang-lua'>local should = <a href='lub.Test.html'>lub.Test</a> 'lub.Dir'
+                    <pre class='prettyprint lang-lua'>local should = <a href='lut.Test.html'>lut.Test</a> 'lub.Dir'
 
 function should.teardown()
   -- cleanup
@@ -148,8 +148,8 @@ should:test()</pre>
                                         <h4 id='files' class='entry function'><span>.</span>files <code>(list_or_path, pattern, reject)</code></h4>
           
                     <p>Test all files in <code>list_or_path</code> matching <code>pattern</code>. Typical usage is to create an <code>all.lua</code> file in the tests folder with:</p>
-                    <pre class='prettyprint lang-lua'>local lub = require 'lub'
-<a href='lub.Test.html#files'>lub.Test.files</a>(lub.path '|')
+                    <pre class='prettyprint lang-lua'>require 'lut'
+<a href='lut.Test.html#files'>lut.Test.files</a>(lub.path '|')
 </pre>
                     <p>This will run tests for all files matching the default pattern <code>%_test.lua$</code>. If the optional <code>reject</code> pattern is provided, paths matching this pattern will be, well, rejected. See <a href='lub.html#path'>lub.path</a> for details on the pipe syntax.</p>
                               </section>
@@ -221,13 +221,10 @@ end</pre>
 
         <div class='span2 global-nav'>
           <ul class='nav nav-tabs nav-stacked'>
-                        <li class='module'><a href='lub.html'>lub</a></li>
+                        <li class='module'><a href='lut.html'>lut</a></li>
             
-                        <li class=''><a href='lub.Autoload.html'>Autoload</a></li>
-                        <li class=''><a href='lub.Dir.html'>Dir</a></li>
-                        <li class=''><a href='lub.Doc.html'>Doc</a></li>
-                        <li class=''><a href='lub.Template.html'>Template</a></li>
-                        <li class='active'><a href='lub.Test.html'>Test</a></li>
+                        <li class=''><a href='lut.Doc.html'>Doc</a></li>
+                        <li class='active'><a href='lut.Test.html'>Test</a></li>
                       </ul>
         </div>
       </div>
