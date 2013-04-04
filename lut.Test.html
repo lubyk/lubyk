@@ -53,7 +53,8 @@
           
                     <p>Create a new test suite. It is good practice to use 'should' as local name for this suite since it makes tests more readable. The <code>name</code> should be the exact name of the class or module being tested in case the coverage option is activated in test (it is <strong>on</strong> by default).</p>
                     <p>Full test file example:</p>
-                    <pre class='prettyprint lang-lua'>require 'lut'
+                    <pre class='prettyprint lang-lua'>local lub    = require 'lub'
+local lut    = require 'lut'
 local should = <a href='lut.Test.html'>lut.Test</a> 'animal.Dog'
 
 function should.bark()
@@ -139,7 +140,9 @@ end</pre>
 end
 
 -- Run all tests now.
-should:test()</pre>
+should:test()
+</pre>
+                    <p class='warn'><span>WARN</span> Once tests are run, this function calls <code>os.exit</code> with a return code of 0 (success) or -1 (failure).</p>
                               </section>
                     <section id='Batch-testing'>
           <h2 class='section'>Batch testing</h2>
@@ -148,10 +151,12 @@ should:test()</pre>
                                         <h4 id='files' class='entry function'><span>.</span>files <code>(list_or_path, pattern, reject)</code></h4>
           
                     <p>Test all files in <code>list_or_path</code> matching <code>pattern</code>. Typical usage is to create an <code>all.lua</code> file in the tests folder with:</p>
-                    <pre class='prettyprint lang-lua'>require 'lut'
+                    <pre class='prettyprint lang-lua'>local lub = require 'lub'
+local lut = require 'lut'
 <a href='lut.Test.html#files'>lut.Test.files</a>(lub.path '|')
 </pre>
                     <p>This will run tests for all files matching the default pattern <code>%_test.lua$</code>. If the optional <code>reject</code> pattern is provided, paths matching this pattern will be, well, rejected. See <a href='lub.html#path'>lub.path</a> for details on the pipe syntax.</p>
+                    <p class='warn'><span>WARN</span> Once tests are run, this function calls <code>os.exit</code> with a return code of 0 (success) or -1 (failure).</p>
                               </section>
                     <section id='Assertions'>
           <h2 class='section'>Assertions</h2>
@@ -232,7 +237,7 @@ end</pre>
 
     <footer class="footer">
     <div class="container">
-       made with <a title='last change: 472a50f 2013-04-03 03:20:53 +0200' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+       made with <a title='last change: 4782bdd 2013-04-04 12:14:31 +0200' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
 <script type="text/javascript">
 
   var _gaq = _gaq || [];
