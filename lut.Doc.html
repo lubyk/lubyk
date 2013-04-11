@@ -130,8 +130,7 @@ lib.old_foo = 4
 </pre>
                     <p>Since Lua is also used as a description language, it is often useful to document table keys. This is done by using <code>-- doc</code>. It is a good idea to create a new for each table in order to document the table itself.</p>
                     <p>The parsed parameters for table 'key' is stored in <code>doc.params[key]</code> in parsing order. In the following example, this is <code>doc.params.ATTRIBS</code>.</p>
-                    <pre class='prettyprint lang-lua'>-- # Attributes (example)
--- This is an example of attributes documentation.
+                    <pre class='prettyprint lang- attributes (example)'>-- This is an example of attributes documentation.
 
 local ATTRIBS = { -- doc
   -- Documentation on first key.
@@ -228,7 +227,13 @@ print 'Hello'
                     <pre class='prettyprint lang-cpp'>float x = 1.0;
 printf("Result = %.2f\n", x);
 </pre>
-                    <p>As you can see, you have to declare other languages with <code>#name</code> if the code is not Lua.</p>
+                    <p>As you can see, you have to declare other languages with <code>#name</code> if the code is not Lua. When using <code>#txt</code>, the code is not styled with prettyprint. The code lang can also contain multiple words. The first word is the language and the following are used for CSS class styling.</p>
+                    <p>Special ascii art code:</p>
+                    <pre class='txt ascii'>+--------+
+| a box  |
++--------+
+
+</pre>
                               </section>
                     <section id='Styles'>
           <h2 class='section'>Styles</h2>
@@ -380,7 +385,7 @@ lub.writeall('doc/File.html', doc:toHtml())
 
     <footer class="footer">
     <div class="container">
-       made with <a title='last change: 0771757 2013-04-10 16:03:26 +0200' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+       made with <a title='last change: e58b84a 2013-04-11 12:56:17 +0200' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
 <script type="text/javascript">
 
   var _gaq = _gaq || [];
