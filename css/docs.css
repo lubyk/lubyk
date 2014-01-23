@@ -11,7 +11,7 @@ h4.sub-param, p, ul, .container pre.prettyprint, .container pre, table.definitio
 h4.sub-title, h4.sub-end {margin-top:50px; color:#797}
 h4.sub-end {margin-top:0px;}
 h4.sub-param {margin-top:20px; color:#888; font-size:1.2em;}
-h4.tparam {margin-left:15px;}
+h4.tparam, h4.const {margin-left:15px;}
 h4.entry {margin-top:20px; font-size:15px}
 table.definition .key {min-width:100px; font-weight:bold; padding-right:12px}
 table.definition .key code {font-weight:normal}

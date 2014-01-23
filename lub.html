@@ -34,11 +34,13 @@
           <ul class='nav nav-tabs nav-stacked affix'>
                         <li><a href='#lub'><i class='icon-chevron-right'></i> lub</a></li>
                         <li><a href='#Class-management'><i class='icon-chevron-right'></i> Class management</a></li>
+                        <li><a href='#Algorithm'><i class='icon-chevron-right'></i> Algorithm</a></li>
                         <li><a href='#Filesystem'><i class='icon-chevron-right'></i> Filesystem</a></li>
                         <li><a href='#Strings,-Arrays'><i class='icon-chevron-right'></i> Strings, Arrays</a></li>
                         <li><a href='#Debugging'><i class='icon-chevron-right'></i> Debugging</a></li>
                         <li><a href='#Miscellanous'><i class='icon-chevron-right'></i> Miscellanous</a></li>
                         <li><a href='#Classes'><i class='icon-chevron-right'></i> Classes</a></li>
+                        <li><a href='#FIXME'><i class='icon-chevron-right'></i> FIXME</a></li>
                       </ul>
         </div>
 
@@ -49,8 +51,13 @@
 
                     
                     <p class='summary'>Currently, this module contains core functions (code loading, templates,  helpers).</p>
-                    <p>This module is part of <a href='http://lubyk.org'>lubyk</a> project.   Install with <a href='http://luarocks.org'>luarocks</a> or <a href='http://luadist.org'>luadist</a>.</p>
-                    <pre class='prettyprint lang-lua'>$ luarocks install lub    or    luadist install lub
+                    <p>This module is part of the <a href='http://lubyk.org'>lubyk</a> project. <strong>MIT license</strong> &copy; Gaspard Bucher 2014.</p>
+                    <h4 class='sub-title'>Installation</h4>
+                    <p>With <a href='http://luarocks.org'>luarocks</a>:</p>
+                    <pre class='prettyprint lang-lua'>$ luarocks install lub
+</pre>
+                    <p>With <a href='http://luadist.org'>luadist</a>:</p>
+                    <pre class='prettyprint lang-lua'>$ luadist install lub
 </pre>
                               
                     <h4 class='sub-title'>Dependencies</h4>
@@ -58,9 +65,11 @@
   <tr><td class='key'>lfs</td><td>luafilesystem</td></tr>
 
 </table>
-                                        <h4 id='VERSION' class='entry param'><span>.</span>VERSION <code>= '1.0.2'</code></h4>
+                                        <h4 id='VERSION' class='entry param'><span>.</span>VERSION <code>= '1.0.3 - pre'</code></h4>
           
-                    <p>Current version for 'lub' module. Odd minor version numbers are never released and are used during development.</p>
+                    <p>Current version respecting <a href='http://semver.org'>semantic versioning</a>.</p>
+                                        <h4 id='plat = core.plat()' class='entry const'>plat = core.plat()</h4>
+          
                               </section>
                     <section id='Class-management'>
           <h2 class='section'>Class management</h2>
@@ -78,6 +87,45 @@
 local lib = lub.class 'lub.Doc'
 -- ...
 return lib</pre>
+                              </section>
+                    <section id='Algorithm'>
+          <h2 class='section'>Algorithm</h2>
+
+                    
+                                        <h4 id='search' class='entry function'><span>.</span>search <code>(data, func, max_depth)</code></h4>
+          
+                    <p>Search a tree using lua function for node testing or collecting. This method is an alias for <a href='#BFS'>BFS</a>.</p>
+                    <p>Optional argument <code>max_depth</code> is to avoid hanging in case the data contains loops. The default value for <code>max_depth</code> is 3000.</p>
+                    <p>If the function <code>func</code> used for testing returns any value different from false or nil, the search is terminated and this value is returned.</p>
+                    <p>Example to find an element in an xml tree:</p>
+                    <pre class='prettyprint lang-lua'>local poor_guy = lub.search(data, function(node)
+  if node.xml == 'Person' and node.status == 'poor' then
+    return node
+  end
+end)
+</pre>
+                    <p>Example to collect elements:</p>
+                    <pre class='prettyprint lang-lua'>local list = {}
+lub.search(data, function(node)
+  if node.xml == 'Person' then
+    table.insert(list, node)
+  end
+end 
+</pre>
+                    <h4 class='sub-title'>Speed</h4>
+                    <p>The traversal speed depends on whether we are using Lua or LuaJIT. The tests below were done on a relatively large medical XML file without very deep nesting.</p>
+                    <pre class='txt ascii'>===== Lua
+IDDFS     5.10
+BFS       2.58
+===== LuaJIT
+IDDFS     0.30
+BFS       0.36</pre>
+                                        <h4 id='IDDFS' class='entry function'><span>.</span>IDDFS <code>(data, func, max_depth)</code></h4>
+          
+                    <p><a href='https://en.wikipedia.org/wiki/Iterative_deepening_depth-first_search'>Iterative deepening depth-first search</a> with max depth testing. See <a href='#search'>search</a> for usage.</p>
+                                        <h4 id='BFS' class='entry function'><span>.</span>BFS <code>(data, func, max_depth)</code></h4>
+          
+                    <p><a href='https://en.wikipedia.org/wiki/Breadth-first_search'>Breath-first search</a> with max depth testing. See <a href='#search'>search</a> for usage.</p>
                               </section>
                     <section id='Filesystem'>
           <h2 class='section'>Filesystem</h2>
@@ -230,6 +278,12 @@ end
           
                     <p class='summary'>Simplistic templating system inspired by Zed A. Shaw's minimal template for <a href='http://mongrel2.org/'>Tir</a>.</p>
                               </section>
+                    <section id='FIXME'>
+          <h2 class='section'>FIXME</h2>
+
+                    
+                    <p class='fixme'><span class='ref'><a href='#lub'>lub</a></span><span>FIXME</span> </p>
+                              </section>
                   </div>
 
         <div class='span2 global-nav'>
@@ -246,7 +300,7 @@ end
 
     <footer class="footer">
     <div class="container">
-       made with <a title='last change: e58b84a 2013-04-11 12:56:17 +0200' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+       made with <a title='last change: 150cb5c 2014-01-23 15:54:47 +0100' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
 <script type="text/javascript">
 
   var _gaq = _gaq || [];

@@ -114,6 +114,9 @@ lib.bing = <a href='lut.Doc.html#bang'>lut.Doc.bang</a>
 
 -- Out of file function definition (in C++ for example).
 -- function lib:connect(server)
+
+-- Out of file constant definition
+-- lib.Default
 </pre>
                     <p>To ignore functions, use <code>-- nodoc</code> as documentation:</p>
                     <pre class='prettyprint lang-lua'>-- nodoc
@@ -240,7 +243,7 @@ printf("Result = %.2f\n", x);
 
                     
                     <p>You can enhance your comments with links, bold, italics and images.</p>
-                    <p>Some links are automatically created when the parser sees <code>module.Class</code> like this: <a href='lut.Doc.html'>lut.Doc</a>. A custom link is made with <code>[link title](http://example.com)</code>.</p>
+                    <p>Some links are automatically created when the parser sees <code>module.Class</code> like this <a href='lut.Doc.html'>lut.Doc</a> or <code>#Some-local-id</code>. A custom link is made with <code>[link title](http://example.com)</code>.</p>
                     <p>Bold is done by using stars: <code>some text with *bold* emphasis</code>. Italics are inserted with underscores: <code>some text _with italic_ emphasis</code>.</p>
                     <p>You can add images with <code>![alt text](/path/to/image.jpg)</code>.</p>
                     <p>Inline code is inserted with backticks:</p>
@@ -385,7 +388,7 @@ lub.writeall('doc/File.html', doc:toHtml())
 
     <footer class="footer">
     <div class="container">
-       made with <a title='last change: e58b84a 2013-04-11 12:56:17 +0200' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+       made with <a title='last change: 150cb5c 2014-01-23 15:54:47 +0100' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
 <script type="text/javascript">
 
   var _gaq = _gaq || [];
