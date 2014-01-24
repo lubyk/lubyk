@@ -66,12 +66,12 @@
                                         <h4 id='glob' class='entry method'><span>:</span>glob <code>(pattern)</code></h4>
           
                     <p>Return an iterator to recursively find files matching <code>pattern</code> in the directory. The pattern syntax is the same as string.match.</p>
-                    <pre class='prettyprint lang-lua'>-- Find files ending in ".lua".
-for file in <a href='lk.Dir.html'>lk.Dir</a>('lib'):glob '%.lua$' do
-  print(file)
+                    <pre class='prettyprint lang-lua'>-- Find paths ending in ".lua".
+for path in <a href='lub.Dir.html'>lub.Dir</a>('lub'):glob '%.lua$' do
+  print(path)
 end
---&gt; lib/lk/Dir.lua
---&gt; lib/lk/Doc.lua
+--&gt; lub/Dir.lua
+--&gt; lub/Doc.lua
 --&gt; ...</pre>
                                         <h4 id='list' class='entry method'><span>:</span>list <code>()</code></h4>
           
@@ -101,7 +101,7 @@ end
 
     <footer class="footer">
     <div class="container">
-       made with <a title='last change: 150cb5c 2014-01-23 15:54:47 +0100' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+       made with <a title='last change: 2293703 2014-01-24 19:25:55 +0100' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
 <script type="text/javascript">
 
   var _gaq = _gaq || [];
