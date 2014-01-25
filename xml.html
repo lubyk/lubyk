@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Very fast xml parser for Lua</title>
+    <title>Very fast xml parser for Lua <a href="https://travis-ci.org/lubyk/xml"><img src="https://travis-ci.org/lubyk/xml.png" alt="Build Status"></a> </title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -43,10 +43,11 @@
         <div class='main span7'>
 
                     <section id='xml'>
-          <h2 class='section'>Very fast xml parser for Lua</h2>
+          <h2 class='section'>Very fast xml parser for Lua <a href="https://travis-ci.org/lubyk/xml"><img src="https://travis-ci.org/lubyk/xml.png" alt="Build Status"></a> </h2>
 
                     
                     <p class='summary'>This parser uses <a href='http://rapidxml.sourceforge.net/'>RapidXML</a> to parse XML content.</p>
+                    <a href="https://github.com/lubyk/xml"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub"></a>
                     <p>This module is part of the <a href='http://lubyk.org'>lubyk</a> project. <strong>MIT license</strong> &copy; Gaspard Bucher 2014.</p>
                     <h4 class='sub-title'>Installation</h4>
                     <p>With <a href='http://luarocks.org'>luarocks</a>:</p>
@@ -63,6 +64,17 @@
                                         <h4 id='VERSION' class='entry param'><span>.</span>VERSION <code>= '1.0.0'</code></h4>
           
                     <p>Current version respecting <a href='http://semver.org'>semantic versioning</a>.</p>
+                              
+                    <p>Library dependencies</p>
+                    <h4 id='DEPENDS' class='entry param'><span>.</span>DEPENDS = {</h4>
+                                        <h4 id='' class='entry lparam'><code>'lua >= 5.1, < 5.3'</code></h4>
+          
+                    <p>Compatible with Lua 5.1, 5.2 and LuaJIT</p>
+                                        <h4 id='' class='entry lparam'><code>'lub >= 1.0.3, < 1.1'</code></h4>
+          
+                    <p>Uses <a href='http://doc.lubyk.org/lub.html'>Lubyk base library</a></p>
+                              
+                    <h4 class='entry attrib'>}</h4>
                               </section>
                     <section id='Lua-table-format'>
           <h2 class='section'>Lua table format</h2>
@@ -162,7 +174,7 @@ print(xml.find(sect, 'title'))</pre>
 
     <footer class="footer">
     <div class="container">
-       made with <a title='last change: 03049f8 2014-01-25 18:14:46 +0100' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+       made with <a title='last change: a8f318c 2014-01-25 18:18:37 +0100' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
 <script type="text/javascript">
 
   var _gaq = _gaq || [];
