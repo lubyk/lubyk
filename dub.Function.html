@@ -2,16 +2,17 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>dub.Function</title>
+    <title>C++ Function definition.</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
 
 
 
-    <link href="css/bootstrap.css" rel="stylesheet">
-    <link href="css/bootstrap-responsive.css" rel="stylesheet">
-    <link href="css/docs.css" rel="stylesheet">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
+        <link href="css/docs.css" rel="stylesheet">
+        
   </head>
 
   <body>
@@ -32,42 +33,110 @@
         <div class='span3 local-nav'>
           <ul class='nav nav-tabs nav-stacked affix'>
                         <li><a href='#Function'><i class='icon-chevron-right'></i> dub.Function</a></li>
+                        <li><a href='#TODO'><i class='icon-chevron-right'></i> TODO</a></li>
                       </ul>
         </div>
 
         <div class='main span7'>
 
                     <section id='Function'>
-          <h2 class='section'>dub.Function</h2>
+          <h2 class='section'>C++ Function definition.</h2>
 
-                              <h4 id='setName' class='entry method'><span>:</span>setName <code>(name)</code></h4>
+                    
+                    <p class='summary'>(internal) A public C++ function or method definition.</p>
+                                        <h4 id='' class='entry lparam'><code>['+']  = 'add'</code></h4>
           
-                    <p class='summary'></p>
-                    <p>local lib     = { type = 'dub.Function', -- C function names to use for the binding function. OP_TO_NAME = { ['+']  = 'add', ['-']  = 'sub', ['- '] = 'unm', ['<strong>']  = 'mul', ['/']  = 'div', ['=='] = 'eq', ['<']  = 'lt', ['<='] = 'le', ['()'] = 'call', ['[]'] = 'index', -- set with equal ['=']  = 'sete', -- add equal ['+='] = 'adde', -- sub equal ['-='] = 'sube', -- mul equal ['</strong>='] = 'mule', -- div equal ['/='] = 'dive', } } local private = {} lib.__index   = lib <a href='dub.Function.html'>dub.Function</a>  = lib</p>
-                    <p>--=============================================== <a href='dub.Function.html'>dub.Function</a>() setmetatable(lib, { __call = function(lib, self) self.dub = self.dub or {} self.member = self.parent.is_class and not (self.static or self.ctor) self.has_defaults = self.params_list.first_default and true self.header = self.header or self.parent.header if self.has_defaults then self.first_default = self.params_list.first_default -- minimal number of arguments self.min_arg_size = self.first_default - 1 else self.min_arg_size = <a href='#self'>self</a>.params_list end setmetatable(self, lib) if not self:setName(self.name) then -- invalid name (usually an unknown operator) return nil end</p>
-                    <pre class='prettyprint lang-lua'>if self.db:ignored(self:fullname()) or
-   self.dub.ignore == true or
-   (self.parent.is_class and self.parent:ignoreFunc(self.name)) then
-  return nil
-end
+                    <p>Function names to use when binding C++ operators.</p>
+                    <h4 id='OP_TO_NAME' class='entry param'><span>.</span>OP_TO_NAME = {</h4>
+                                        <h4 id='' class='entry lparam'><code>['-']  = 'sub'</code></h4>
+          
+                                        <h4 id='' class='entry lparam'><code>['- '] = 'unm'</code></h4>
+          
+                                        <h4 id='' class='entry lparam'><code>['*']  = 'mul'</code></h4>
+          
+                                        <h4 id='' class='entry lparam'><code>['/']  = 'div'</code></h4>
+          
+                                        <h4 id='' class='entry lparam'><code>['=='] = 'eq'</code></h4>
+          
+                                        <h4 id='' class='entry lparam'><code>['<']  = 'lt'</code></h4>
+          
+                                        <h4 id='' class='entry lparam'><code>['<='] = 'le'</code></h4>
+          
+                                        <h4 id='' class='entry lparam'><code>['()'] = 'call'</code></h4>
+          
+                                        <h4 id='' class='entry lparam'><code>['[]'] = 'index'</code></h4>
+          
+                                        <h4 id='' class='entry lparam'><code>['=']  = 'sete'</code></h4>
+          
+                    <p>set with equal</p>
+                                        <h4 id='' class='entry lparam'><code>['+='] = 'adde'</code></h4>
+          
+                    <p>add equal</p>
+                                        <h4 id='' class='entry lparam'><code>['-='] = 'sube'</code></h4>
+          
+                    <p>sub equal</p>
+                                        <h4 id='' class='entry lparam'><code>['*='] = 'mule'</code></h4>
+          
+                    <p>mul equal</p>
+                                        <h4 id='' class='entry lparam'><code>['/='] = 'dive'</code></h4>
+          
+                    <p>div equal</p>
+                              
+                    <h4 class='entry attrib'>}</h4>
+                                        <h4 id='new' class='entry function'><span>.</span>new <code>(def)</code></h4>
+          
+                    <p>Create a new function object with <code>def</code> settings. Some important fields in <code>def</code>:</p>
+                    <table class='definition'>
+  <tr><td class='key'>name          </td><td>Function name.</td></tr>
+  <tr><td class='key'>db            </td><td>Storage engine (dub.MemoryStorage).</td></tr>
+  <tr><td class='key'>parent        </td><td>Parent or storage engine if the function is defined in root.</td></tr>
+  <tr><td class='key'>header        </td><td>Path to C++ header file where this function is declared.</td></tr>
+  <tr><td class='key'>params_list   </td><td>List of <a href='dub.Param.html'>dub.Param</a> definitions for the function arguments.</td></tr>
+  <tr><td class='key'>return_value  </td><td>Return type definition (see <a href='dub.MemoryStorage.html#makeType'>dub.MemoryStorage.makeType</a>).</td></tr>
+  <tr><td class='key'>definition    </td><td>Full function name as defined (used in comment).</td></tr>
+  <tr><td class='key'>argsstring    </td><td>Arguments as a single string (used in comment).</td></tr>
+  <tr><td class='key'>location      </td><td>A String representing the function source file and line.</td></tr>
+  <tr><td class='key'>desc          </td><td>String description (will be used in a C++ comment in bindings).</td></tr>
+  <tr><td class='key'>static        </td><td>True if the function is static (static class function or C function).</td></tr>
+  <tr><td class='key'>xml           </td><td>An xml object representing the function definition.</td></tr>
+  <tr><td class='key'>member        </td><td>True if the function is a member function (static or not).</td></tr>
+  <tr><td class='key'>dtor          </td><td>True if the function is the destructor.</td></tr>
+  <tr><td class='key'>ctor          </td><td>True if the function is a constructor.</td></tr>
+  <tr><td class='key'>dub           </td><td>"dub" options as parsed from the "dub" C++ comment.</td></tr>
+  <tr><td class='key'>pure_virtual  </td><td>True if the function is a pure virtual.</td></tr>
 
-self.sign = private.makeSignature(self)
-return self</pre>
-                    <p>end })</p>
-                    <p>--=============================================== PUBLIC METHODS</p>
-                    <p>--- Return an iterator over the params of this function. local co = coroutine.create(private.paramsIterator) return function() local ok, value = coroutine.resume(co, self) if ok then return value end end end</p>
-                    <p>return self.definition .. self.argsstring end</p>
-                    <p>-- Full name for function. lib.fullname = <a href='dub.Class.html#fullname'>dub.Class.fullname</a></p>
-                    <p>-- Full C name for function. if self.parent and self.parent.name then return self.parent:fullname() .. '::' .. self.cname else return self.cname end end</p>
-                    <p>-- TODO: inspect xml return self.is_set_attr or self.is_get_attr or self.is_cast end</p>
-                    <p>self.name = name if string.match(self.name, '^~') then self.destructor = true self.cname = string.gsub(self.name, '~', '_') elseif string.match(name, '^operator') then local n = string.match(name, '^operator(.+)$') local op = self.OP_TO_NAME[n] if op then self.cname = 'operator_' .. op else return false end else self.cname = self.name end return true end --=============================================== PRIVATE</p>
-                    <p>function private:paramsIterator() for _, param in ipairs(self.params_list) do coroutine.yield(param) end end</p>
+</table>
+                                        <h4 id='params' class='entry method'><span>:</span>params <code>()</code></h4>
+          
+                    <p>Return an iterator over the params of this function.</p>
+                                        <h4 id='nameWithArgs' class='entry method'><span>:</span>nameWithArgs <code>()</code></h4>
+          
+                    <p>String representation of the function name with arguments (used in comments). Example: <code>drawLine(int x, int y, int x2, int y2, const foo.Pen &pen)</code></p>
+                                        <h4 id='fullname' class='entry method'><span>:</span>fullname <code>()</code></h4>
+          
+                    <p>Return the full name of the function (with enclosing namespaces separated by '::'. Example: <code>foo::Bar::drawLine</code>.</p>
+                                        <h4 id='fullcname' class='entry method'><span>:</span>fullcname <code>()</code></h4>
+          
+                    <p>Full C name for function. This is like <a href='#fullname'>fullname</a> but with the C names in case binding names are different.</p>
+                                        <h4 id='neverThrows' class='entry method'><span>:</span>neverThrows <code>()</code></h4>
+          
+                    <p>Returns true if the function does not throw any C++ exception.</p>
+                    <p class='todo'><span>TODO</span> inspect xml</p>
+                                        <h4 id='setName' class='entry method'><span>:</span>setName <code>(name)</code></h4>
+          
+                    <p>Set function name and C name.</p>
+                              </section>
+                    <section id='TODO'>
+          <h2 class='section'>TODO</h2>
+
+                    
+                    <p class='todo'><span class='ref'><a href='#neverThrows'>#neverThrows</a></span><span>TODO</span> inspect xml</p>
                               </section>
                   </div>
 
         <div class='span2 global-nav'>
           <ul class='nav nav-tabs nav-stacked'>
-                        <li class='module'><a href='dub.html'><span></span>dub</a></li>
+                        <li class='module'><a href='dub.html'>dub</a></li>
             
                         <li class=''><a href='dub.CTemplate.html'>CTemplate</a></li>
                         <li class=''><a href='dub.Class.html'>Class</a></li>
@@ -77,7 +146,6 @@ return self</pre>
                         <li class=''><a href='dub.MemoryStorage.html'>MemoryStorage</a></li>
                         <li class=''><a href='dub.Namespace.html'>Namespace</a></li>
                         <li class=''><a href='dub.OptParser.html'>OptParser</a></li>
-                        <li class=''><a href='dub.Template.html'>Template</a></li>
                       </ul>
         </div>
       </div>
@@ -85,7 +153,21 @@ return self</pre>
 
     <footer class="footer">
     <div class="container">
-       made with <a href='http://doc.lubyk.org/lk.Doc.html'>lk.Doc</a> 
+       made with <a title='last change: 2838fef 2014-01-25 15:25:07 +0100' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-39725130-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
     </div>
     </footer>
 
@@ -108,7 +190,7 @@ return self</pre>
     </script>
     <script type="text/javascript"
       src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
-    <script src='http://code.jquery.com/jquery.js'></script>
+    <script src='http://code.jquery.com/jquery.min.js'></script>
     <script src='js/bootstrap.min.js'></script>
   </body>
 </html>

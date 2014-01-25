@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Very fast xml parser for Lua</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
+        <link href="css/docs.css" rel="stylesheet">
+        
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class='row'>
+          <div class='span12'>
+             <a href='http://lubyk.org'><img alt='lubyk logo' src='img/lubyk.png'/></a> <h1><a href='http://doc.lubyk.org'>Lubyk documentation</a></h1></a> 
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="row">
+
+        <div class='span3 local-nav'>
+          <ul class='nav nav-tabs nav-stacked affix'>
+                        <li><a href='#xml'><i class='icon-chevron-right'></i> xml</a></li>
+                        <li><a href='#Lua-table-format'><i class='icon-chevron-right'></i> Lua table format</a></li>
+                        <li><a href='#Notes-on-speed'><i class='icon-chevron-right'></i> Notes on speed</a></li>
+                        <li><a href='#Class-methods'><i class='icon-chevron-right'></i> Class methods</a></li>
+                        <li><a href='#Classes'><i class='icon-chevron-right'></i> Classes</a></li>
+                      </ul>
+        </div>
+
+        <div class='main span7'>
+
+                    <section id='xml'>
+          <h2 class='section'>Very fast xml parser for Lua</h2>
+
+                    
+                    <p class='summary'>This parser uses <a href='http://rapidxml.sourceforge.net/'>RapidXML</a> to parse XML content.</p>
+                    <p>This module is part of the <a href='http://lubyk.org'>lubyk</a> project. <strong>MIT license</strong> &copy; Gaspard Bucher 2014.</p>
+                    <h4 class='sub-title'>Installation</h4>
+                    <p>With <a href='http://luarocks.org'>luarocks</a>:</p>
+                    <pre class='prettyprint lang-lua'>$ luarocks install xml
+</pre>
+                    <p>With <a href='http://luadist.org'>luadist</a>:</p>
+                    <pre class='prettyprint lang-lua'>$ luadist install xml
+</pre>
+                    <h4 class='sub-title'>Dependencies</h4>
+                    <table class='definition'>
+  <tr><td class='key'>lub</td><td>lubyk base module</td></tr>
+
+</table>
+                                        <h4 id='VERSION' class='entry param'><span>.</span>VERSION <code>= '1.0.0'</code></h4>
+          
+                    <p>Current version respecting <a href='http://semver.org'>semantic versioning</a>.</p>
+                              </section>
+                    <section id='Lua-table-format'>
+          <h2 class='section'>Lua table format</h2>
+
+                    
+                    <p>This xml library uses string keys in Lua tables to store attributes and numerical keys for sub-nodes. Since the 'xml' attribute is not allowed in XML, we use this key to store the tag. Here is an example of Lua content:</p>
+                    <h4 class='sub-title'>Lua</h4>
+                    <pre class='prettyprint lang-lua'>{xml='document',
+  {xml = 'article',
+    {xml = 'p', 'This is the first paragraph.'},
+    {xml = 'h2', class = 'opt', 'Title with opt style'},
+  },
+  {xml = 'article',
+    {xml = 'p', 'Some ', {xml = 'b', 'important'}, ' text.'},
+  },
+}
+</pre>
+                    <h4 class='sub-title'>XML</h4>
+                    <p>And the equivalent xml:</p>
+                    <pre class='txt'>&lt;document&gt;
+  &lt;article&gt;
+    &lt;p&gt;This is the first paragraph.&lt;/p&gt;
+    &lt;h2 class='opt'&gt;Title with opt style&lt;/h2&gt;
+  &lt;/article&gt;
+  &lt;article&gt;
+    &lt;p&gt;Some &lt;b&gt;important&lt;/b&gt; text.&lt;/p&gt;
+  &lt;/article&gt;
+&lt;/document&gt;
+</pre>
+                              </section>
+                    <section id='Notes-on-speed'>
+          <h2 class='section'>Notes on speed</h2>
+
+                    
+                    <p>RapidXML is a very fast parser that uses in-place modification of the input text. Since Lua strings are immutable, we have to make a copy except for the <a href='xml.Parser.html#NonDestructive'>xml.Parser.NonDestructive</a> and <a href='xml.Parser.html#Fastest'>xml.Parser.Fastest</a> settings. With these types some xml entities such as <code>&amp;lt;</code> are not translated.</p>
+                    <p>See <a href='http://rapidxml.sourceforge.net/'>RapidXML</a> for details.</p>
+                              </section>
+                    <section id='Class-methods'>
+          <h2 class='section'>Class methods</h2>
+
+                    
+                                        <h4 id='parse' class='entry function'><span>.</span>parse <code>(string)</code></h4>
+          
+                    <p>Parse a <code>string</code> containing xml content and return a table. Uses <a href='xml.Parser.html'>xml.Parser</a> with the <a href='xml.Parser.html#Default'>xml.Parser.Default</a> type.</p>
+                                        <h4 id='load' class='entry function'><span>.</span>load <code>(path)</code></h4>
+          
+                    <p>Parse the XML content of the file at <code>path</code> and return a lua table. Uses <a href='xml.Parser.html'>xml.Parser</a> with the <a href='xml.Parser.html#Default'>xml.Parser.Default</a> type.</p>
+                                        <h4 id='dump' class='entry function'><span>.</span>dump <code>(table, max_depth)</code></h4>
+          
+                    <p>Dump a lua table in the format described above and return an XML string. The <code>max_depth</code> parameter is used to avoid infinite recursion in case a table references one of its ancestors.</p>
+                    <p>Default maximal depth is 3000.</p>
+                                        <h4 id='removeNamespace' class='entry function'><span>.</span>removeNamespace <code>(data, key)</code></h4>
+          
+                    <p>This function finds the <code>xmlns:NAME='KEY'</code> declaration and removes <code>NAME:</code> from the tag names.</p>
+                    <p>Example:</p>
+                    <pre class='prettyprint lang-lua'>local data = xml.parse [[
+ &lt;foo:document xmlns:foo='bar'&gt;
+   &lt;foo:name&gt;Blah&lt;/foo:name&gt;
+ &lt;/foo:document&gt;
+]]
+
+xml.removeNamespace(data, 'bar')
+
+-- Result
+{xml = 'document', ['xmlns:foo'] = 'bar',
+  {xml = 'name', 'Blah'},
+}</pre>
+                                        <h4 id='find' class='entry function'><span>.</span>find <code>(data, tag, attr_key, attr_value)</code></h4>
+          
+                    <p>Recursively find the first table with a tag equal to <code>tag</code>. This search uses <a href='lub.html#search'>lub.search</a> to do an <a href='https://en.wikipedia.org/wiki/Iterative_deepening_depth-first_search'>Iterative deepening depth-first search</a> because we usually search for elements close to the surface.</p>
+                    <p>For more options, use <a href='lub.html#search'>lub.search</a> directly with a custom function.</p>
+                    <p>You can also pass an attribute key and attribute value to further filter the searched node. This gives this function the same arguments as LuaXML's find function.</p>
+                    <p>Usage examples:</p>
+                    <pre class='prettyprint lang-lua'>local sect = xml.find(elem, 'simplesect', 'kind', 'section')
+
+print(xml.find(sect, 'title'))</pre>
+                              </section>
+                    <section id='Classes'>
+          <h2 class='section'>Classes</h2>
+
+                    
+                                        <h4 id='----------' class='entry klass'><a href='xml.Parser.html'>Parser</a></h4>
+          
+                    <p class='summary'>The parser does not return information on comments, declarations, doctypes and pi nodes. These are validly parsed but not returned.</p>
+                              </section>
+                  </div>
+
+        <div class='span2 global-nav'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='index.html'><span></span>xml</a></li>
+            
+                        <li class=''><a href='xml.Parser.html'>Parser</a></li>
+                      </ul>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+    <div class="container">
+       made with <a title='last change: 2838fef 2014-01-25 15:25:07 +0100' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-39725130-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+    </div>
+    </footer>
+
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        displayAlign: "left",
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
+    <script src='http://code.jquery.com/jquery.min.js'></script>
+    <script src='js/bootstrap.min.js'></script>
+  </body>
+</html>
+

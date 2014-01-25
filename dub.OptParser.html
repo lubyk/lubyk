@@ -2,16 +2,17 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>dub.OptParser</title>
+    <title>"dub" options parser</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
 
 
 
-    <link href="css/bootstrap.css" rel="stylesheet">
-    <link href="css/bootstrap-responsive.css" rel="stylesheet">
-    <link href="css/docs.css" rel="stylesheet">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
+        <link href="css/docs.css" rel="stylesheet">
+        
   </head>
 
   <body>
@@ -32,29 +33,38 @@
         <div class='span3 local-nav'>
           <ul class='nav nav-tabs nav-stacked affix'>
                         <li><a href='#OptParser'><i class='icon-chevron-right'></i> dub.OptParser</a></li>
+                        <li><a href='#TODO'><i class='icon-chevron-right'></i> TODO</a></li>
                       </ul>
         </div>
 
         <div class='main span7'>
 
                     <section id='OptParser'>
-          <h2 class='section'>dub.OptParser</h2>
+          <h2 class='section'>"dub" options parser</h2>
 
-                              <h4 id='parse' class='entry function'><span>.</span>parse <code>(str)</code></h4>
+                    
+                    <p class='summary'>(internal) Simplified yaml parser to retrieve @dub inline options.</p>
+                    <p class='todo'><span>TODO</span> UPDATE FOR "lub"</p>
+                                        <h4 id='__index' class='entry param'><span>.</span>__index <code>= lib</code></h4>
           
-                    <p class='summary'></p>
-                    <p>local lib     = { type          = 'dub.OptParser', } local private = {} lib.__index   = lib <a href='dub.OptParser.html'>dub.OptParser</a> = lib</p>
-                    <p>--=============================================== <a href='dub.Class.html'>dub.Class</a>() setmetatable(lib, { __call = function(lib, str) return lib.parse(str) end })</p>
-                    <p>local res = {} for line in str:gmatch("[^\r\n]+") do local key, value = line:match(' <strong>([A-Za-z_]+): </strong>(.-) <strong>$') if not key then return nil end local str = value:match('^"(.</strong>)"$') or value:match("^'(.<strong>)'$") if str then -- string value = str elseif value == 'false' then value = false elseif value == 'true' then value = true elseif value:match('^[0-9.]+$') then value = value </strong> 1 elseif value:match(',') then local list = {} for elem in value:gmatch('[^,]+') do elem = private.strip(elem) table.insert(list, elem) list[elem] = true end value = list end</p>
-                    <pre class='prettyprint lang-lua'>res[key] = value</pre>
-                    <p>end return res end</p>
-                    <p>--=============================================== PRIVATE</p>
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <h4 id='parse' class='entry function'><span>.</span>parse <code>(str)</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                              </section>
+                    <section id='TODO'>
+          <h2 class='section'>TODO</h2>
+
+                    
+                    <p class='todo'><span class='ref'><a href='#OptParser'>OptParser</a></span><span>TODO</span> UPDATE FOR "lub"</p>
+                    <p class='todo'><span class='ref'><a href='#OptParser'>OptParser</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#OptParser'>OptParser</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
                               </section>
                   </div>
 
         <div class='span2 global-nav'>
           <ul class='nav nav-tabs nav-stacked'>
-                        <li class='module'><a href='dub.html'><span></span>dub</a></li>
+                        <li class='module'><a href='dub.html'>dub</a></li>
             
                         <li class=''><a href='dub.CTemplate.html'>CTemplate</a></li>
                         <li class=''><a href='dub.Class.html'>Class</a></li>
@@ -64,7 +74,6 @@
                         <li class=''><a href='dub.MemoryStorage.html'>MemoryStorage</a></li>
                         <li class=''><a href='dub.Namespace.html'>Namespace</a></li>
                         <li class='active'><a href='dub.OptParser.html'>OptParser</a></li>
-                        <li class=''><a href='dub.Template.html'>Template</a></li>
                       </ul>
         </div>
       </div>
@@ -72,7 +81,21 @@
 
     <footer class="footer">
     <div class="container">
-       made with <a href='http://doc.lubyk.org/lk.Doc.html'>lk.Doc</a> 
+       made with <a title='last change: 2838fef 2014-01-25 15:25:07 +0100' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-39725130-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
     </div>
     </footer>
 
@@ -95,7 +118,7 @@
     </script>
     <script type="text/javascript"
       src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
-    <script src='http://code.jquery.com/jquery.js'></script>
+    <script src='http://code.jquery.com/jquery.min.js'></script>
     <script src='js/bootstrap.min.js'></script>
   </body>
 </html>

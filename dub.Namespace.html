@@ -2,16 +2,17 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>dub.Namespace</title>
+    <title>C++ Namespace definition.</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
 
 
 
-    <link href="css/bootstrap.css" rel="stylesheet">
-    <link href="css/bootstrap-responsive.css" rel="stylesheet">
-    <link href="css/docs.css" rel="stylesheet">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
+        <link href="css/docs.css" rel="stylesheet">
+        
   </head>
 
   <body>
@@ -32,31 +33,58 @@
         <div class='span3 local-nav'>
           <ul class='nav nav-tabs nav-stacked affix'>
                         <li><a href='#Namespace'><i class='icon-chevron-right'></i> dub.Namespace</a></li>
+                        <li><a href='#TODO'><i class='icon-chevron-right'></i> TODO</a></li>
                       </ul>
         </div>
 
         <div class='main span7'>
 
                     <section id='Namespace'>
-          <h2 class='section'>dub.Namespace</h2>
+          <h2 class='section'>C++ Namespace definition.</h2>
 
-                              <h4 id='children' class='entry method'><span>:</span>children <code>()</code></h4>
+                    
+                    <p class='summary'>(internal) A C++ namespace definition with nested classes, enums and functions.</p>
+                    <p class='todo'><span>TODO</span> UPDATE FOR "lub"</p>
+                                        <h4 id='__index' class='entry param'><span>.</span>__index <code>= lib</code></h4>
           
-                    <p class='summary'></p>
-                    <p>local lib     = { type        = 'dub.Namespace', is_class    = false, } local private = {} lib.__index   = lib <a href='dub.Namespace.html'>dub.Namespace</a> = lib -- Behaves like a class by default setmetatable(lib, dub.Class)</p>
-                    <p>--=============================================== <a href='dub.Namespace.html'>dub.Namespace</a>()</p>
-                    <p>local name = self.name self.name = nil self.const_headers = {} self = <a href='dub.Class.html'>dub.Class</a>(self) setmetatable(self, lib) self:setName(name) return self end</p>
-                    <p>return self.db:namespaces() end</p>
-                    <p>return self.db:functions(self) end</p>
-                    <p>--=============================================== PUBLIC METHODS</p>
-                    <p>self.name = name end</p>
-                    <p>if self.parent and self.parent.type ~= 'dub.MemoryStorage' then return self.parent:fullname() .. '::' .. self.name else return self.name end end</p>
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <h4 id='new' class='entry function'><span>.</span>new <code>(self)</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <h4 id='namespaces' class='entry method'><span>:</span>namespaces <code>()</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <h4 id='functions' class='entry method'><span>:</span>functions <code>()</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <h4 id='setName' class='entry method'><span>:</span>setName <code>(name)</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <h4 id='fullname' class='entry method'><span>:</span>fullname <code>()</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <h4 id='children' class='entry method'><span>:</span>children <code>()</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                              </section>
+                    <section id='TODO'>
+          <h2 class='section'>TODO</h2>
+
+                    
+                    <p class='todo'><span class='ref'><a href='#Namespace'>Namespace</a></span><span>TODO</span> UPDATE FOR "lub"</p>
+                    <p class='todo'><span class='ref'><a href='#Namespace'>Namespace</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#Namespace'>Namespace</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#namespaces'>#namespaces</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#functions'>#functions</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#setName'>#setName</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#fullname'>#fullname</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#children'>#children</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
                               </section>
                   </div>
 
         <div class='span2 global-nav'>
           <ul class='nav nav-tabs nav-stacked'>
-                        <li class='module'><a href='dub.html'><span></span>dub</a></li>
+                        <li class='module'><a href='dub.html'>dub</a></li>
             
                         <li class=''><a href='dub.CTemplate.html'>CTemplate</a></li>
                         <li class=''><a href='dub.Class.html'>Class</a></li>
@@ -66,7 +94,6 @@
                         <li class=''><a href='dub.MemoryStorage.html'>MemoryStorage</a></li>
                         <li class='active'><a href='dub.Namespace.html'>Namespace</a></li>
                         <li class=''><a href='dub.OptParser.html'>OptParser</a></li>
-                        <li class=''><a href='dub.Template.html'>Template</a></li>
                       </ul>
         </div>
       </div>
@@ -74,7 +101,21 @@
 
     <footer class="footer">
     <div class="container">
-       made with <a href='http://doc.lubyk.org/lk.Doc.html'>lk.Doc</a> 
+       made with <a title='last change: 2838fef 2014-01-25 15:25:07 +0100' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-39725130-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
     </div>
     </footer>
 
@@ -97,7 +138,7 @@
     </script>
     <script type="text/javascript"
       src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
-    <script src='http://code.jquery.com/jquery.js'></script>
+    <script src='http://code.jquery.com/jquery.min.js'></script>
     <script src='js/bootstrap.min.js'></script>
   </body>
 </html>

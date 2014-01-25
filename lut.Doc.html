@@ -39,7 +39,7 @@
                         <li><a href='#Preamble'><i class='icon-chevron-right'></i> Preamble</a></li>
                         <li><a href='#Math'><i class='icon-chevron-right'></i> Math</a></li>
                         <li><a href='#Lua-code'><i class='icon-chevron-right'></i> Lua code</a></li>
-                        <li><a href='#Styles'><i class='icon-chevron-right'></i> Styles</a></li>
+                        <li><a href='#Styles,-links'><i class='icon-chevron-right'></i> Styles, links</a></li>
                         <li><a href='#Lists'><i class='icon-chevron-right'></i> Lists</a></li>
                         <li><a href='#Special-paragraphs'><i class='icon-chevron-right'></i> Special paragraphs</a></li>
                         <li><a href='#Class-functions'><i class='icon-chevron-right'></i> Class functions</a></li>
@@ -146,6 +146,12 @@ local ATTRIBS = { -- doc
   -- Some text for this group of attributes.
 
   phone = {default = '', format = '000 000 00 00'},
+
+  -- Documentation of element in list
+  'lua ~&gt; 5.1',
+
+  -- Other element
+  'lub ~&gt; 1.0',
 }
 </pre>
                     <p>Such a list will create the following documentation:</p>
@@ -155,7 +161,7 @@ local ATTRIBS = { -- doc
 
                     
                     <p>This is an example of attributes documentation.</p>
-                    <h4 class='sub-title'>ATTRIBS = {</h4>
+                    <h4 id='ATTRIBS' class='entry param'>ATTRIBS = {</h4>
                                         <h4 id='first_name' class='entry tparam'>first_name <code>= ''</code></h4>
           
                     <p>Documentation on first key.</p>
@@ -166,8 +172,14 @@ local ATTRIBS = { -- doc
                     <h4 class='sub-param'>Sub-title</h4>
                                         <h4 id='phone' class='entry tparam'>phone <code>= {default = '', format = '000 000 00 00'}</code></h4>
           
+                                        <h4 id='' class='entry lparam'><code>'lua ~> 5.1'</code></h4>
+          
+                    <p>Documentation of element in list</p>
+                                        <h4 id='' class='entry lparam'><code>'lub ~> 1.0'</code></h4>
+          
+                    <p>Other element</p>
                               
-                    <h4 class='sub-end'>}</h4>
+                    <h4 class='entry attrib'>}</h4>
                               </section>
                     <section id='Preamble'>
           <h2 class='section'>Preamble</h2>
@@ -238,8 +250,8 @@ printf("Result = %.2f\n", x);
 
 </pre>
                               </section>
-                    <section id='Styles'>
-          <h2 class='section'>Styles</h2>
+                    <section id='Styles,-links'>
+          <h2 class='section'>Styles, links</h2>
 
                     
                     <p>You can enhance your comments with links, bold, italics and images.</p>
@@ -388,7 +400,7 @@ lub.writeall('doc/File.html', doc:toHtml())
 
     <footer class="footer">
     <div class="container">
-       made with <a title='last change: 2293703 2014-01-24 19:25:55 +0100' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+       made with <a title='last change: 2838fef 2014-01-25 15:25:07 +0100' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
 <script type="text/javascript">
 
   var _gaq = _gaq || [];

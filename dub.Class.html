@@ -2,16 +2,17 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Class</title>
+    <title>C++ Class definition.</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
 
 
 
-    <link href="css/bootstrap.css" rel="stylesheet">
-    <link href="css/bootstrap-responsive.css" rel="stylesheet">
-    <link href="css/docs.css" rel="stylesheet">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
+        <link href="css/docs.css" rel="stylesheet">
+        
   </head>
 
   <body>
@@ -39,16 +40,16 @@
         <div class='main span7'>
 
                     <section id='Class'>
-          <h2 class='section'>Class</h2>
+          <h2 class='section'>C++ Class definition.</h2>
 
                     
-                    <p class='summary'>A class/struct definition.</p>
+                    <p class='summary'>(internal) A C++ class/struct definition.</p>
                                         <h4 id='__call' class='entry function'><span>.</span>__call <code>(lib, self)</code></h4>
           
                     <p>This lets sub-classes of <a href='dub.Class.html'>dub.Class</a> like <a href='dub.Namespace.html'>dub.Namespace</a> or <a href='dub.CTemplate.html'>dub.CTemplate</a> use the same call convention to create new objects.</p>
-                                        <h4 id='new' class='entry function'><span>.</span>new <code>(self)</code></h4>
+                                        <h4 id='new' class='entry function'><span>.</span>new <code>(def)</code></h4>
           
-                    <p>Create a new class definition. Most of the attributes are passed with @self@. Usage example:</p>
+                    <p>Create a new class definition. Most of the attributes are passed with <code>def</code>. Usage example:</p>
                     <pre class='prettyprint lang-lua'>local class = <a href='dub.Class.html'>dub.Class</a> {
   -- self can be a class or db (root)
   db      = self.db or self,
@@ -56,17 +57,19 @@
   name    = name,
   xml     = elem,
   xml_headers  = {
-    {path = header.dir .. <a href='lk.Dir.html#sep'>lk.Dir.sep</a> .. elem.refid .. '.xml', dir = header.dir}
+    {path = header.dir .. <a href='lub.Dir.html#sep'>lub.Dir.sep</a> .. elem.refid .. '.xml', dir = header.dir}
   },
 }</pre>
                               
                     <h4 class='sub-title'>Public methods</h4>
                                         <h4 id='findChild' class='entry method'><span>:</span>findChild <code>(name)</code></h4>
           
-                    <p>Return a child element from @name@ or nil if nothing is found. Uses the database internally.</p>
-                                        <h4 id='method' class='entry method'><span>:</span>method <code>lib.findChild</code></h4>
+                    <p>Return a child element from <code>name</code> or nil if nothing is found. Uses the database internally.</p>
+                                        <h4 id='method' class='entry method'><span>:</span>method <code>(name)</code></h4>
           
                     <p>Return a method from a given @name@.</p>
+                                        <h4 id='method' class='entry param'><span>.</span>method <code>= lib.findChild</code></h4>
+          
                     <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
                                         <h4 id='methods' class='entry method'><span>:</span>methods <code>()</code></h4>
           
@@ -91,31 +94,28 @@
                     <p>Return true if the class needs a cast method (it has known superclasses).</p>
                                         <h4 id='setName' class='entry method'><span>:</span>setName <code>(name)</code></h4>
           
-                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p>Set the class name and C++ object creation type.</p>
                                         <h4 id='setOpt' class='entry method'><span>:</span>setOpt <code>(opt)</code></h4>
           
-                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p>Set options (usually from parsed C++ class comment).</p>
                                         <h4 id='namespace' class='entry method'><span>:</span>namespace <code>()</code></h4>
           
                     <p>Return the enclosing namespace or nil if none found.</p>
                                         <h4 id='ignoreFunc' class='entry method'><span>:</span>ignoreFunc <code>(name)</code></h4>
           
-                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p>Return true if the given function name should be ignored (do not create bindings).</p>
                               </section>
                     <section id='TODO'>
           <h2 class='section'>TODO</h2>
 
                     
                     <p class='todo'><span class='ref'><a href='#method'>#method</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
-                    <p class='todo'><span class='ref'><a href='#setName'>#setName</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
-                    <p class='todo'><span class='ref'><a href='#setOpt'>#setOpt</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
-                    <p class='todo'><span class='ref'><a href='#ignoreFunc'>#ignoreFunc</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
                               </section>
                   </div>
 
         <div class='span2 global-nav'>
           <ul class='nav nav-tabs nav-stacked'>
-                        <li class='module'><a href='dub.html'><span></span>dub</a></li>
+                        <li class='module'><a href='dub.html'>dub</a></li>
             
                         <li class=''><a href='dub.CTemplate.html'>CTemplate</a></li>
                         <li class='active'><a href='dub.Class.html'>Class</a></li>
@@ -125,7 +125,6 @@
                         <li class=''><a href='dub.MemoryStorage.html'>MemoryStorage</a></li>
                         <li class=''><a href='dub.Namespace.html'>Namespace</a></li>
                         <li class=''><a href='dub.OptParser.html'>OptParser</a></li>
-                        <li class=''><a href='dub.Template.html'>Template</a></li>
                       </ul>
         </div>
       </div>
@@ -133,7 +132,21 @@
 
     <footer class="footer">
     <div class="container">
-       made with <a href='http://doc.lubyk.org/lk.Doc.html'>lk.Doc</a> 
+       made with <a title='last change: 2838fef 2014-01-25 15:25:07 +0100' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-39725130-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
     </div>
     </footer>
 
@@ -156,7 +169,7 @@
     </script>
     <script type="text/javascript"
       src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
-    <script src='http://code.jquery.com/jquery.js'></script>
+    <script src='http://code.jquery.com/jquery.min.js'></script>
     <script src='js/bootstrap.min.js'></script>
   </body>
 </html>

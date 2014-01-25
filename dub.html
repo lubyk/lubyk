@@ -2,16 +2,17 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>dub</title>
+    <title>Lua C++ binding generator</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
 
 
 
-    <link href="css/bootstrap.css" rel="stylesheet">
-    <link href="css/bootstrap-responsive.css" rel="stylesheet">
-    <link href="css/docs.css" rel="stylesheet">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
+        <link href="css/docs.css" rel="stylesheet">
+        
   </head>
 
   <body>
@@ -38,63 +39,104 @@
         <div class='main span7'>
 
                     <section id='dub'>
-          <h2 class='section'>dub</h2>
+          <h2 class='section'>Lua C++ binding generator</h2>
 
                     
-                    <p class='summary'></p>
-                    <p>dub = Autoload('dub') dub.VERSION = '2.1.~'</p>
-                    <p>local DUB_MAX_IN_SHIFT = 4294967296</p>
-                    <p>local function shiftleft(v, nb) local r = v * (2^nb) -- simulate overflow with 32 bits r = r % DUB_MAX_IN_SHIFT return r end</p>
-                    <p>function dub.hash(str, sz) local h = 0 for i=1,string.len(str) do local c = string.byte(str,i) h = c + shiftleft(h, 6) + shiftleft(h, 16) - h h = h % DUB_MAX_IN_SHIFT end return h % sz end</p>
-                    <p>-- Find the minimal modulo value for the list of keys to -- avoid collisions. function dub.minHash(list_or_obj, func) local list = {} if not func then for _, name in ipairs(list_or_obj) do if not list[name] then list[name] = true table.insert(list, name) end end else list = {} for name in func(list_or_obj) do if not list[name] then list[name] = true table.insert(list, name) end end end local list_sz = <a href='#list'>list</a> if list_sz == 0 then -- This is an error. return nil end</p>
-                    <p>local sz = 1 while true do sz = sz + 1 local hashes = {} for i, key in ipairs(list) do local h = dub.hash(key, sz) if hashes[h] then break elseif i == list_sz then return sz else hashes[h] = key end end end end</p>
-                    <p>local shown_warnings = {} function dub.printWarn(level, fmt, ...) if level > dub.warn_level then return end local msg = string.format(fmt, ...) if not shown_warnings[msg] then print('warning:', msg) shown_warnings[msg] = true end end function dub.silentWarn(level, fmt, ...) local msg = string.format(fmt, ...) if not shown_warnings[msg] then shown_warnings[msg] = true end end dub.warn = dub.printWarn</p>
-                    <p>dub.warn_level = 5</p>
+                    <p class='summary'>Create lua bindings by parsing C++ header files using <a href='http://doxygen.org'>doxygen</a>.</p>
+                    <p>This module is part of <a href='http://lubyk.org'>lubyk</a> project.   Install with <a href='http://luarocks.org'>luarocks</a> or <a href='http://luadist.org'>luadist</a>.</p>
+                    <pre class='prettyprint lang-lua'>$ luarocks install dub    or    luadist install dub
+
+</pre>
+                                        <h4 id='VERSION' class='entry param'><span>.</span>VERSION <code>= '2.2.0'</code></h4>
+          
+                    <p>Current version of 'dub' respecting <a href='http://semver.org'>semantic versioning</a>.</p>
+                                        <h4 id='warn' class='entry function'><span>.</span>warn <code>(level, format, ...)</code></h4>
+          
+                    <p>Warning function. Can be overwriten. The <code>level</code> parameter is a value between 1 and 10 (the higher the level the less important the message).</p>
+                                        <h4 id='warn_level' class='entry param'><span>.</span>warn_level <code>= 5</code></h4>
+          
+                    <p>Default warning level (anything below or equal to this level will be notified).</p>
                                         <h4 id='-------------' class='entry klass'><a href='dub.CTemplate.html'>CTemplate</a></h4>
           
-                    <p class='summary'></p>
+                    <p class='summary'>(internal) C++ template definition. This is a sub-class of <a href='dub.Class.html'>dub.Class</a>.</p>
                                         <h4 id='---------' class='entry klass'><a href='dub.Class.html'>Class</a></h4>
           
-                    <p class='summary'>A class/struct definition.</p>
+                    <p class='summary'>(internal) A C++ class/struct definition.</p>
                     <p class='todo'><span class='ref'><a href='dub.Class.html#method'>#method</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
-                    <p class='todo'><span class='ref'><a href='dub.Class.html#setName'>#setName</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
-                    <p class='todo'><span class='ref'><a href='dub.Class.html#setOpt'>#setOpt</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
-                    <p class='todo'><span class='ref'><a href='dub.Class.html#ignoreFunc'>#ignoreFunc</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
                                         <h4 id='------------' class='entry klass'><a href='dub.Function.html'>Function</a></h4>
           
-                    <p class='summary'></p>
+                    <p class='summary'>(internal) A public C++ function or method definition.</p>
+                    <p class='todo'><span class='ref'><a href='dub.Function.html#neverThrows'>#neverThrows</a></span><span>TODO</span> inspect xml</p>
                                         <h4 id='-------------' class='entry klass'><a href='dub.Inspector.html'>Inspector</a></h4>
           
-                    <p class='summary'></p>
+                    <p class='summary'>The Inspector 'knows' about the functions and classes and can answer queries.</p>
                                         <h4 id='-------------' class='entry klass'><a href='dub.LuaBinder.html'>LuaBinder</a></h4>
           
-                    <p class='summary'></p>
+                    <p class='summary'>Use the <a href='dub.Inspector.html'>dub.Inspector</a> to create Lua bindings.</p>
+                    <p class='todo'><span class='ref'><a href='dub.LuaBinder.html#LuaBinder'>LuaBinder</a></span><span>TODO</span> UPDATE FOR "lub"</p>
+                    <p class='todo'><span class='ref'><a href='dub.LuaBinder.html#LuaBinder'>LuaBinder</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='dub.LuaBinder.html#build'>#build</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='dub.LuaBinder.html#bindClass'>#bindClass</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='dub.LuaBinder.html#addCustomTypes'>#addCustomTypes</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='dub.LuaBinder.html#parseCustomBindings'>#parseCustomBindings</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='dub.LuaBinder.html#functionBody'>#functionBody</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='dub.LuaBinder.html#bindName'>#bindName</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='dub.LuaBinder.html#customTypeAccessor'>#customTypeAccessor</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='dub.LuaBinder.html#libName'>#libName</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='dub.LuaBinder.html#luaType'>#luaType</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='dub.LuaBinder.html#toStringBody'>#toStringBody</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='dub.LuaBinder.html#resolveTypes'>#resolveTypes</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='dub.LuaBinder.html#LuaBinder'>LuaBinder</a></span><span>TODO</span> move this into getParam ?</p>
                                         <h4 id='-----------------' class='entry klass'><a href='dub.MemoryStorage.html'>MemoryStorage</a></h4>
           
-                    <p class='summary'></p>
+                    <p class='summary'>(internal) This is used to store all definitions in memory.</p>
+                    <p class='todo'><span class='ref'><a href='dub.MemoryStorage.html#MemoryStorage'>MemoryStorage</a></span><span>TODO</span> UPDATE FOR "lub"</p>
+                    <p class='todo'><span class='ref'><a href='dub.MemoryStorage.html#MemoryStorage'>MemoryStorage</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='dub.MemoryStorage.html#findByFullname'>#findByFullname</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='dub.MemoryStorage.html#findChild'>#findChild</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='dub.MemoryStorage.html#findChildFor'>#findChildFor</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='dub.MemoryStorage.html#functions'>#functions</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='dub.MemoryStorage.html#variables'>#variables</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='dub.MemoryStorage.html#headers'>#headers</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='dub.MemoryStorage.html#children'>#children</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='dub.MemoryStorage.html#superclasses'>#superclasses</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='dub.MemoryStorage.html#constants'>#constants</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='dub.MemoryStorage.html#namespaces'>#namespaces</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='dub.MemoryStorage.html#resolveType'>#resolveType</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='dub.MemoryStorage.html#fullname'>#fullname</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='dub.MemoryStorage.html#ignored'>#ignored</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
                                         <h4 id='-------------' class='entry klass'><a href='dub.Namespace.html'>Namespace</a></h4>
           
-                    <p class='summary'></p>
+                    <p class='summary'>(internal) A C++ namespace definition with nested classes, enums and functions.</p>
+                    <p class='todo'><span class='ref'><a href='dub.Namespace.html#Namespace'>Namespace</a></span><span>TODO</span> UPDATE FOR "lub"</p>
+                    <p class='todo'><span class='ref'><a href='dub.Namespace.html#Namespace'>Namespace</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='dub.Namespace.html#Namespace'>Namespace</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='dub.Namespace.html#namespaces'>#namespaces</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='dub.Namespace.html#functions'>#functions</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='dub.Namespace.html#setName'>#setName</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='dub.Namespace.html#fullname'>#fullname</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='dub.Namespace.html#children'>#children</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
                                         <h4 id='-------------' class='entry klass'><a href='dub.OptParser.html'>OptParser</a></h4>
           
-                    <p class='summary'></p>
-                                        <h4 id='------------' class='entry klass'><a href='dub.Template.html'>Template</a></h4>
-          
-                    <p class='summary'></p>
+                    <p class='summary'>(internal) Simplified yaml parser to retrieve @dub inline options.</p>
+                    <p class='todo'><span class='ref'><a href='dub.OptParser.html#OptParser'>OptParser</a></span><span>TODO</span> UPDATE FOR "lub"</p>
+                    <p class='todo'><span class='ref'><a href='dub.OptParser.html#OptParser'>OptParser</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='dub.OptParser.html#OptParser'>OptParser</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
                               </section>
                   </div>
 
         <div class='span2 global-nav'>
           <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='index.html'><span></span>dub</a></li>
             
-                        <li class=''><a href='_prototype.html'>_prototype</a></li>
-                        <li class='module'><a href='dub.html'>dub</a></li>
-                        <li class=''><a href='fixture.html'>fixture</a></li>
-                        <li class=''><a href='four.html'>four</a></li>
-                        <li class=''><a href='lk.html'>lk</a></li>
-                        <li class=''><a href='lug.html'>lug</a></li>
-                        <li class=''><a href='test.html'>test</a></li>
-                        <li class=''><a href='tutorial.html'>tutorial</a></li>
+                        <li class=''><a href='dub.CTemplate.html'>CTemplate</a></li>
+                        <li class=''><a href='dub.Class.html'>Class</a></li>
+                        <li class=''><a href='dub.Function.html'>Function</a></li>
+                        <li class=''><a href='dub.Inspector.html'>Inspector</a></li>
+                        <li class=''><a href='dub.LuaBinder.html'>LuaBinder</a></li>
+                        <li class=''><a href='dub.MemoryStorage.html'>MemoryStorage</a></li>
+                        <li class=''><a href='dub.Namespace.html'>Namespace</a></li>
+                        <li class=''><a href='dub.OptParser.html'>OptParser</a></li>
                       </ul>
         </div>
       </div>
@@ -102,7 +144,21 @@
 
     <footer class="footer">
     <div class="container">
-       made with <a href='http://doc.lubyk.org/lk.Doc.html'>lk.Doc</a> 
+       made with <a title='last change: 2838fef 2014-01-25 15:25:07 +0100' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-39725130-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
     </div>
     </footer>
 
@@ -125,7 +181,7 @@
     </script>
     <script type="text/javascript"
       src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
-    <script src='http://code.jquery.com/jquery.js'></script>
+    <script src='http://code.jquery.com/jquery.min.js'></script>
     <script src='js/bootstrap.min.js'></script>
   </body>
 </html>
