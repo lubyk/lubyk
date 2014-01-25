@@ -7,8 +7,8 @@ a:hover {text-decoration:none}
 h2.section {color:#777; border-top:1px solid #bbb; font-size:26px; margin:1em 0; padding-top:15px;}
 h4.sub-param, p, ul, .container pre.prettyprint, .container pre, table.definition { margin-left:30px;}
 .main ul li { margin-left:30px;}
-.main img {background:#444; padding:2px;}
-.main h2 img {background:none; float:right; padding:0;}
+.main p img {background:#444; padding:2px;}
+.main h2 img {float: right;}
 h4.sub-title, h4.sub-end {margin-top:50px; color:#797}
 h4.sub-end {margin-top:0px;}
 h4.sub-param {margin-top:20px; color:#888; font-size:1.2em;}
