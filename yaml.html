@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Lubyk utility module <a href="https://travis-ci.org/lubyk/lut"><img src="https://travis-ci.org/lubyk/lut.png" alt="Build Status"></a> </title>
+    <title>Very fast yaml parser for Lua <a href="https://travis-ci.org/lubyk/yaml"><img src="https://travis-ci.org/lubyk/yaml.png" alt="Build Status"></a> </title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -32,31 +32,34 @@
 
         <div class='span3 local-nav'>
           <ul class='nav nav-tabs nav-stacked affix'>
-                        <li><a href='#lut'><i class='icon-chevron-right'></i> lut</a></li>
+                        <li><a href='#yaml'><i class='icon-chevron-right'></i> yaml</a></li>
+                        <li><a href='#Lua-table'><i class='icon-chevron-right'></i> Lua table</a></li>
+                        <li><a href='#Class-methods'><i class='icon-chevron-right'></i> Class methods</a></li>
                       </ul>
         </div>
 
         <div class='main span7'>
 
-                    <section id='lut'>
-          <h2 class='section'>Lubyk utility module <a href="https://travis-ci.org/lubyk/lut"><img src="https://travis-ci.org/lubyk/lut.png" alt="Build Status"></a> </h2>
+                    <section id='yaml'>
+          <h2 class='section'>Very fast yaml parser for Lua <a href="https://travis-ci.org/lubyk/yaml"><img src="https://travis-ci.org/lubyk/yaml.png" alt="Build Status"></a> </h2>
 
                     
-                    <p class='summary'>Currently, this module contains a documentation generator and testing facilities.</p>
-                    <a href="https://github.com/lubyk/lut"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub"></a>
+                    <p class='summary'>This parser uses <a href='http://pyyaml.org/wiki/LibYAML'>libYAML</a> by Kirill Siminov with bindings by Andrew Danforth and some modifications by Gaspard Bucher. libYAML version 0.1.3.</p>
+                    <a href="https://github.com/lubyk/yaml"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub"></a>
                     <p>This module is part of the <a href='http://lubyk.org'>lubyk</a> project. <strong>MIT license</strong> &copy; Gaspard Bucher 2014.</p>
                     <h4 class='sub-title'>Installation</h4>
                     <p>With <a href='http://luarocks.org'>luarocks</a>:</p>
-                    <pre class='prettyprint lang-lua'>$ luarocks install lut
+                    <pre class='prettyprint lang-lua'>$ luarocks install yaml
 </pre>
-                    <p>With <a href='http://luadist.org'>luadist</a>:</p>
-                    <pre class='prettyprint lang-lua'>$ luadist install lut
+                    <h4 class='sub-title'>Usage example</h4>
+                    <pre class='prettyprint lang-lua'>local data = yaml.parse(some_yaml)
+
+local yaml_string = yaml.dump(some_table)
 </pre>
-                                        <h4 id='VERSION' class='entry param'><span>.</span>VERSION <code>= '1.0.3'</code></h4>
+                                        <h4 id='VERSION' class='entry param'><span>.</span>VERSION <code>= '1.0.0'</code></h4>
           
-                    <p>Current version of 'lut' respecting <a href='http://semver.org'>semantic versioning</a>.</p>
+                    <p>Current version respecting <a href='http://semver.org'>semantic versioning</a>.</p>
                               
-                    <p>Library dependencies</p>
                     <h4 id='DEPENDS' class='entry param'><span>.</span>DEPENDS = {</h4>
                                         <h4 id='' class='entry lparam'><code>'lua >= 5.1, < 5.3'</code></h4>
           
@@ -66,21 +69,44 @@
                     <p>Uses <a href='http://doc.lubyk.org/lub.html'>Lubyk base library</a></p>
                               
                     <h4 class='entry attrib'>}</h4>
-                                        <h4 id='-------' class='entry klass'><a href='lut.Doc.html'>Doc</a></h4>
+                              </section>
+                    <section id='Lua-table'>
+          <h2 class='section'>Lua table</h2>
+
+                    
+                    <p>Lua tables works as sets. In Lua, there is no distinction between an array and a dictionary whereas YAML makes this distinction. When dumping a table, the library has to choose between these two types. Here is the selection rule:</p>
+                    <table class='definition'>
+  <tr><td class='key'>array</td><td>The table contains an element in index position <code>1</code>.</td></tr>
+
+</table>
+                    <h4 class='sub-title'>Lua</h4>
+                    <pre class='prettyprint lang-lua'>TODO
+</pre>
+                    <h4 class='sub-title'>XML</h4>
+                    <p>And the equivalent yaml:</p>
+                    <pre class='txt'>TODO
+</pre>
+                              </section>
+                    <section id='Class-methods'>
+          <h2 class='section'>Class methods</h2>
+
+                    
+                                        <h4 id='parse' class='entry function'><span>.</span>parse <code>(string, safe)</code></h4>
           
-                    <p class='summary'>lut.Doc parses lua comments and extracts the documentation from these comments.</p>
-                                        <h4 id='--------' class='entry klass'><a href='lut.Test.html'>Test</a></h4>
+                    <p>Parse a <code>string</code> containing yaml content and return a table. Uses <a href='yaml.Parser.html'>yaml.Parser</a> internally. If the second argument <code>safe</code> is true, the library will not generate aliases in tables.</p>
+                                        <h4 id='load' class='entry function'><span>.</span>load <code>(path)</code></h4>
           
-                    <p class='summary'>The test suite is used to declare tests and group them by class or module.</p>
+                    <p>Parse the YAML content of the file at <code>path</code> and return a lua table. Uses <a href='yaml.Parser.html'>yaml.Parser</a> internally.</p>
+                                        <h4 id='dump' class='entry function'><span>.</span>dump <code>(data)</code></h4>
+          
+                    <p>Dump lua content as YAML.</p>
                               </section>
                   </div>
 
         <div class='span2 global-nav'>
           <ul class='nav nav-tabs nav-stacked'>
-                        <li class='module'><a href='index.html'><span></span>lut</a></li>
+                        <li class='module'><a href='index.html'><span></span>yaml</a></li>
             
-                        <li class=''><a href='lut.Doc.html'>Doc</a></li>
-                        <li class=''><a href='lut.Test.html'>Test</a></li>
                       </ul>
         </div>
       </div>
