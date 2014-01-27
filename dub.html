@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Lua C++ binding generator</title>
+    <title>Lua C++ binding generator <a href="https://travis-ci.org/lubyk/dub"><img src="https://travis-ci.org/lubyk/dub.png" alt="Build Status"></a> </title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -33,47 +33,392 @@
         <div class='span3 local-nav'>
           <ul class='nav nav-tabs nav-stacked affix'>
                         <li><a href='#dub'><i class='icon-chevron-right'></i> dub</a></li>
+                        <li><a href='#Usage-example'><i class='icon-chevron-right'></i> Usage example</a></li>
+                        <li><a href='#Compatibility'><i class='icon-chevron-right'></i> Compatibility</a></li>
+                        <li><a href='#Binding-style'><i class='icon-chevron-right'></i> Binding style</a></li>
+                        <li><a href='#Extra-features'><i class='icon-chevron-right'></i> Extra features</a></li>
+                        <li><a href='#public-class-methods'><i class='icon-chevron-right'></i> public class methods</a></li>
+                        <li><a href='#public-attributes-read/write'><i class='icon-chevron-right'></i> public attributes read/write</a></li>
+                        <li><a href='#Pointer-assignment'><i class='icon-chevron-right'></i> Pointer assignment</a></li>
+                        <li><a href='#Operator-overloading'><i class='icon-chevron-right'></i> Operator overloading</a></li>
+                        <li><a href='#Callbacks'><i class='icon-chevron-right'></i> Callbacks</a></li>
+                        <li><a href='#Other-features'><i class='icon-chevron-right'></i> Other features</a></li>
+                        <li><a href='#C++-exceptions'><i class='icon-chevron-right'></i> C++ exceptions</a></li>
+                        <li><a href='#Verbosity'><i class='icon-chevron-right'></i> Verbosity</a></li>
+                        <li><a href='#Classes'><i class='icon-chevron-right'></i> Classes</a></li>
                       </ul>
         </div>
 
         <div class='main span7'>
 
                     <section id='dub'>
-          <h2 class='section'>Lua C++ binding generator</h2>
+          <h2 class='section'>Lua C++ binding generator <a href="https://travis-ci.org/lubyk/dub"><img src="https://travis-ci.org/lubyk/dub.png" alt="Build Status"></a> </h2>
 
                     
                     <p class='summary'>Create lua bindings by parsing C++ header files using <a href='http://doxygen.org'>doxygen</a>.</p>
-                    <p>This module is part of <a href='http://lubyk.org'>lubyk</a> project.   Install with <a href='http://luarocks.org'>luarocks</a> or <a href='http://luadist.org'>luadist</a>.</p>
-                    <pre class='prettyprint lang-lua'>$ luarocks install dub    or    luadist install dub
+                    <p>Generated lua bindings do not contain any external dependencies. Dub C++ files are copied along with the generated C++ bindings.</p>
+                    <a href="https://github.com/lubyk/dub"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub"></a>
+                    <p>This module is part of the <a href='http://lubyk.org'>lubyk</a> project. <strong>MIT license</strong> &copy; Gaspard Bucher 2014.</p>
+                    <h4 class='sub-title'>Speed</h4>
+                    <p>We tried our best to make these bindings as safe and fast as possible, ensuring we do not break return value optimization and we execute as few lines of code between Lua and C++. Even if we did our best to keep the overhead between Lua and C++ as small as possible, calling between Lua and C++ prevents some of the optimizations LuaJIT is very good at.</p>
+                    <p>When needing very fast execution implying lots of Lua and C++ code, either push all data into C++ structures and work from there or push all data into Lua to avoid binding and function calls overhead.</p>
+                    <p>For example, it would be a bad idea to loop through all the pixels of an image using operator[](int i) to implement a filter in Lua. In such a case, use <a href='http://luajit.org/ext_ffi.html'>LuaJIT FFI</a> to build a buffer, copy content inside the buffer and work from there.</p>
+                    <h4 class='sub-title'>Use Case</h4>
+                    <p>Some of the main reasons for using this binding generator over other solutions such as 'LuaJIT FFI' are:</p>
+                    <table class='definition'>
+  <tr><td class='key'>memory</td><td>Some libraries put all the burden of memory management on the end-user. Using FFI bindings, you still have to handle memory management. By using 'dub', you get garbage collection protection for pointers. We used this in our bindings for <a href='http://bulletphysics.org/'>Bullet</a>.</td></tr>
+  <tr><td class='key'>abstraction</td><td>Sometime we want to write C++ wrapper code to keep an API as simple as possible. We did this for custom zmq bindings. See <a href='#Callbacks'>callbacks</a> for another example.</td></tr>
+  <tr><td class='key'>no magic</td><td>The generated bindings are easy to read C++ files without needing fancy runtime introspection or advanced C++ features.</td></tr>
+  <tr><td class='key'>customizable</td><td>Method bindings can be customized with custom definitions or even entire ".cpp" file templates.</td></tr>
 
+</table>
+                    <h4 class='sub-title'>Installation</h4>
+                    <p>Install with <a href='http://luarocks.org'>luarocks</a>:</p>
+                    <pre class='prettyprint lang-lua'>$ luarocks install dub
 </pre>
                                         <h4 id='VERSION' class='entry param'><span>.</span>VERSION <code>= '2.2.0'</code></h4>
           
                     <p>Current version of 'dub' respecting <a href='http://semver.org'>semantic versioning</a>.</p>
+                              
+                    <h4 id='DEPENDS' class='entry param'><span>.</span>DEPENDS = {</h4>
+                                        <h4 id='' class='entry lparam'><code>'lua >= 5.1, < 5.3'</code></h4>
+          
+                    <p>Compatible with Lua 5.1, 5.2 and LuaJIT</p>
+                                        <h4 id='' class='entry lparam'><code>'lub >= 1.0.3, < 1.1'</code></h4>
+          
+                    <p>Uses <a href='http://doc.lubyk.org/lub.html'>Lubyk base library</a></p>
+                                        <h4 id='' class='entry lparam'><code>'xml ~> 1.0'</code></h4>
+          
+                    <p>Uses <a href='http://doc.lubyk.org/xml.html'>Lubyk fast xml library</a></p>
+                              
+                    <h4 class='entry attrib'>}</h4>
+                              </section>
+                    <section id='Usage-example'>
+          <h2 class='section'>Usage example</h2>
+
+                    
+                    <p>The following code is used to generated bindings from all the headers located in <code>include/xml</code> and output generated files inside <code>src/bind</code>.</p>
+                    <p>First we must parse headers. To do this, we create a <a href='dub.Inspector.html'>dub.Inspector</a> which we could also use to query function names, classes and other information on the parsed C++ headers.</p>
+                    <pre class='prettyprint lang-lua'>local lub = require 'lub'
+local dub = require 'dub'
+
+local inspector = <a href='dub.Inspector.html'>dub.Inspector</a> {
+  INPUT    = {
+    lub.path '|include/xml',
+  },
+}
+</pre>
+                    <p>We can now generate Lua bindings with the <a href='dub.LuaBinder.html'>dub.LuaBinder</a>.</p>
+                    <pre class='prettyprint lang-lua'>local binder = <a href='dub.LuaBinder.html'>dub.LuaBinder</a>()
+
+binder:bind(inspector, {
+  -- Mandatory library name. This is used as prefix for class types.
+  lib_name = 'xml',
+
+  output_directory = lub.path '|src/bind',
+
+  -- Remove this part in included headers
+  header_base = lub.path '|include',
+
+  -- Open the library with require 'xml.core' (not 'xml') because
+  -- we want to add some more Lua methods inside 'xml.lua'.
+  luaopen    = 'xml_core',
+})
+</pre>
+                    <p>The code above generates files such as:</p>
+                    <table class='definition'>
+  <tr><td class='key'>xml_core.cpp</td><td>This contains bindings for methods in the 'xml' namespace, constants and also the main 'luaopen_xml_core' function.</td></tr>
+  <tr><td class='key'>xml_Parser.cpp</td><td>This contains bindings for xml::Parser class.</td></tr>
+  <tr><td class='key'>dub/...</td><td>Compile time dub C++ and header files.</td></tr>
+
+</table>
+                    <p>When building the library, make sure to include all C++ files (including those in the <code>dub</code> folder. You should also include the binding folder in the include path so that <code>#include "dub/dub.h"</code> is properly resolved.</p>
+                    <p>You can view the generated files on <a href='https://github.com/lubyk/xml/tree/master/src/bind'>xml lib on github</a>.</p>
+                              </section>
+                    <section id='Compatibility'>
+          <h2 class='section'>Compatibility</h2>
+
+                    
+                    <p>The bindings generated by dub are <a href='https://github.com/lubyk/dub/tree/master/test'>heavily tested</a> and are compatible with Lua 5.1, 5.2 and LuaJIT.</p>
+                    <p>There is no external library dependency.</p>
+                              </section>
+                    <section id='Binding-style'>
+          <h2 class='section'>Binding style</h2>
+
+                    
+                    <p>Dub generates bindings so that using the library/class from Lua looks as familiar as possible for those knowing C++ code. For example, here is some code based on HelloWorld.cpp from Box2D.</p>
+                    <p>In C++:</p>
+                    <pre class='prettyprint lang-c++'>// Define the dynamic body. We set its position and call the body factory.
+b2BodyDef bodyDef;
+bodyDef.type = b2_dynamicBody;
+bodyDef.position.Set(0.0f, 4.0f);
+b2Body* body = <a href='world.CreateBody.html'>world.CreateBody</a>(&bodyDef);
+
+// Define another box shape for our dynamic body.
+b2PolygonShape dynamicBox;
+dynamicBox.SetAsBox(1.0f, 1.0f);
+</pre>
+                    <p>In Lua:</p>
+                    <pre class='prettyprint lang-lua'>-- Define the dynamic body. We set its position and call the body factory.
+local bodyDef = b2.BodyDef()
+bodyDef.type = b2.dynamicBody
+bodyDef.position:Set(0.0, 4.0)
+local body = world:CreateBody(bodyDef)
+
+-- Define another box shape for our dynamic body.
+local dynamicBox = b2.PolygonShape()
+dynamicBox:SetAsBox(1.0, 1.0)
+</pre>
+                              </section>
+                    <section id='Extra-features'>
+          <h2 class='section'>Extra features</h2>
+
+                    
+                    <p>Apart from supporting many advanced and complicated C++ features (such as inheritance, type casting, overloaded operators, etc). Dub has some nice additions to make working with C++ objects easier.</p>
+                    <h4 class='sub-title'>super</h4>
+                    <p>All C++ objects in Lua can be wrapped in a table and behave like the original objects with all the advantages of Lua tables. Simply set 'super' to the userdata in the wrapping class:</p>
+                    <pre class='prettyprint lang-lua'>local p = <a href='xml.Parser.html'>xml.Parser</a>() --
+print(type(p))
+--&gt; userdata
+
+-- Wrap userdata in a Lua table
+local t = setmetatable({super = p}, xml.Parser)
+t.info = 'some attached information'
+-- Methods works just like t.super:parse(some_string)
+t:parse(some_string)
+</pre>
+                    <h4 class='sub-title'>automatic cast to parent class</h4>
+                    <pre class='prettyprint lang-lua'>local p = <a href='foo.SubClassOfBase.html'>foo.SubClassOfBase</a>()
+local b = <a href='foo.Base.html'>foo.Base</a>()
+</pre>
+                    <p>If we have a <code>setFriend</code> method which expects <code>Base*</code> type. The following code will automatically check if <code>p</code> is sub-type of Base and cast it. The Base class knows nothing of SubClassOfBase (which could be defined in another module):</p>
+                    <pre class='prettyprint lang-lua'>-- Cast 'p' to foo.Base
+b:setFriend(p)
+</pre>
+                              </section>
+                    <section id='public-class-methods'>
+          <h2 class='section'>public class methods</h2>
+
+                    
+                    <p>Example:</p>
+                    <pre class='prettyprint lang-c++'>class Foo {
+public:
+  static void sayHello() {
+    printf("Hello\n");
+  }
+};
+</pre>
+                    <p>Lua code</p>
+                    <pre class='prettyprint lang-lua'>Foo.sayHello()
+--&gt; Hello
+</pre>
+                              </section>
+                    <section id='public-attributes-read/write'>
+          <h2 class='section'>public attributes read/write</h2>
+
+                    
+                    <p>Example:</p>
+                    <pre class='prettyprint lang-c++'>class Foo {
+public:
+  std::string name;
+
+  void printName() {
+    printf("My name is '%s'\n", name.c_str());
+  }
+};
+</pre>
+                    <p>Lua code</p>
+                    <pre class='prettyprint lang-lua'>local foo = Foo()
+foo.name = 'Prometheus'
+foo:printName()
+--&gt; My name is 'Prometheus'
+</pre>
+                              </section>
+                    <section id='Pointer-assignment'>
+          <h2 class='section'>Pointer assignment</h2>
+
+                    
+                    <p>Pointer assignment is made possible because we use member pointer garbage collection protection. It is thus safer to use in Lua as it is in plain C++ !</p>
+                    <p>Example:</p>
+                    <pre class='prettyprint lang-c++'>class Foo {
+  std::string name;
+public:
+  Foo(const char *n) : name(n) {}
+  Foo *other;
+
+  void printOther() {
+    if (other) {
+      printf("Other name is '%s'\n", other-&gt;name.c_str());
+    } else {
+      printf("No other\n");
+    }
+  }
+};
+</pre>
+                    <p>Lua code</p>
+                    <pre class='prettyprint lang-lua'>local a = Foo 'Armand' 
+local b = Foo 'Bob'
+a.other = b
+a:printOther()
+--&gt; Other name is 'Bob'
+
+b = nil
+collectgarbage 'collect'
+--&gt; b is not destroyed because a references it
+a:printOther()
+--&gt; Other name is 'Bob'
+
+a.other = nil
+a:printOther()
+--&gt; No other
+
+collectgarbage 'collect'
+--&gt; b is destroyed
+</pre>
+                              </section>
+                    <section id='Operator-overloading'>
+          <h2 class='section'>Operator overloading</h2>
+
+                    
+                    <p>All <code>operator[xx]()</code> functions in C++ are translated to native Lua operators when possible. See <a href='dub.Function.html#Operator-overloading'>operators</a> for a complete list.</p>
+                    <p>C++:</p>
+                    <pre class='prettyprint lang-c++'>Foo x(4);
+Foo y(3);
+Foo z = x + y; // calls x.operator+(y)
+</pre>
+                    <p>In Lua:</p>
+                    <pre class='prettyprint lang-lua'>local x, y = Foo(4), Foo(3)
+local z = x + y -- calls x:__add(y) which calls operator+()
+</pre>
+                              </section>
+                    <section id='Callbacks'>
+          <h2 class='section'>Callbacks</h2>
+
+                    
+                    <p>Calling Lua from C++ is made easy by deriving a class from dub::Thread, this class can then be used to call Lua methods on 'self' in an efficient way. For example, let's say we have a native QWidget class and we want to implement the 'resized' callback:</p>
+                    <pre class='prettyprint lang-c++'>class Widget : public QWidget, public dub::Thread {
+  Q_OBJECT
+public:
+  Widget(int window_flags)
+  : QWidget(NULL, (Qt::WindowFlags)window_flags = 0) {}
+
+  ~Widget() {}
+  
+protected:
+  virtual void resizeEvent(QResizeEvent *event) {
+    // If your code is multi-threaded (i.e. no single event loop)
+    // you need to use a mutex here or better yet, use a FIFO queue
+    // and a pipe between threads.
+
+    // Get 'resized' callback on Lua object
+    if (!dub_pushcallback("resized")) return;
+    // dub_L is our object's current thread
+    lua_pushnumber(dub_L, width);
+    lua_pushnumber(dub_L, height);
+
+    // 3 arguments, no return value
+    dub_call(3, 0);
+  }    
+};
+</pre>
+                    <p>Usage in Lua:</p>
+                    <pre class='prettyprint lang-lua'>win = <a href='gui.Widget.html'>gui.Widget</a>()
+
+function win:resized(w, h)
+  print('Hey why did you resize my window ?')
+end
+</pre>
+                    <p>Note that the <code>resized</code> function defined on <code>win</code> object is a regular Lua function and this can be called from Lua as well:</p>
+                    <pre class='prettyprint lang-lua'>-- manual call to resized callback
+win:resized(win:width(), win:height())
+
+</pre>
+                    <h4 class='sub-title'>Errors in callbacks</h4>
+                    <p>If some error occurs during a callback, this error does not disappear in limbo between C++ and Lua (and does not cause the C++ code to crash). The error is captured during the call and either printed out or handled by a custom <code>error</code> function defined on the called object.</p>
+                    <p>Example:</p>
+                    <pre class='prettyprint lang-lua'>win = <a href='gui.Widget.html'>gui.Widget</a>()
+
+function win:error(msg)
+  print('Something went wrong in my window.', msg)
+end
+
+function win:resized(w, h)
+  if (w &gt; 300) then
+    error('Bird crash!')
+  end
+end
+</pre>
+                              </section>
+                    <section id='Other-features'>
+          <h2 class='section'>Other features</h2>
+
+                    
+                    <p>As time passes, the undocummented feature list below will shrink. Until then, it's better having an idea what Dub does.</p>
+                    <ul>
+<li>pseudo-attributes read/write by calling getter/setter methods.</li>
+<li>custom bindings (for methods and global functions).</li>
+<li>custom read/write attributes (with void *userdata helper, union handling)</li>
+<li>public static attributes read/write</li>
+<li>pointer to member (gc protected)</li>
+<li>cast(default)/copy/disable const attribute</li>
+<li>natural casting from std::string to string type (can include '\0')</li>
+<li>class instantiation from templates through typedefs</li>
+<li>class alias through typedefs</li>
+<li>bindings for superclass</li>
+<li>default argument values</li>
+<li>overloaded functions with optimized method selection from arguments</li>
+<li>return value optimization (no copy)</li>
+<li>simple type garbage collection optimization (no __gc method)</li>
+<li>namespace</li>
+<li>nested classes</li>
+<li>class enums</li>
+<li>global enums</li>
+<li>build system</li>
+<li>group multiple bindings in a single library</li>
+<li>rewrite class or library names</li>
+<li>native Lua table wrapping setmetatable({super = obj}, Vect)</li>
+<li>fully tested</li>
+<li>custom method binding name</li>
+<li>remove exception catching if never throws</li>
+</ul>
+                              </section>
+                    <section id='C++-exceptions'>
+          <h2 class='section'>C++ exceptions</h2>
+
+                    
+                    <p>The dub library catches all exceptions thrown during binding execution and passes the exceptions as lua errors. Internally, the library itself throws <code>dub::Exception</code> and <code>dub::TypeException</code>.</p>
+                              </section>
+                    <section id='Verbosity'>
+          <h2 class='section'>Verbosity</h2>
+
+                    
+                                        <h4 id='warn_level' class='entry param'><span>.</span>warn_level <code>= 5</code></h4>
+          
+                    <p>Default warning level (anything below or equal to this level will be notified). It is usually good to leave this warning level to 5 and fix individual warning messages by explicitely ignoring the problematic function during binding generation.</p>
                                         <h4 id='warn' class='entry function'><span>.</span>warn <code>(level, format, ...)</code></h4>
           
                     <p>Warning function. Can be overwriten. The <code>level</code> parameter is a value between 1 and 10 (the higher the level the less important the message).</p>
-                                        <h4 id='warn_level' class='entry param'><span>.</span>warn_level <code>= 5</code></h4>
-          
-                    <p>Default warning level (anything below or equal to this level will be notified).</p>
+                              </section>
+                    <section id='Classes'>
+          <h2 class='section'>Classes</h2>
+
+                    
                                         <h4 id='-------------' class='entry klass'><a href='dub.CTemplate.html'>CTemplate</a></h4>
           
                     <p class='summary'>(internal) C++ template definition. This is a sub-class of <a href='dub.Class.html'>dub.Class</a>.</p>
                                         <h4 id='---------' class='entry klass'><a href='dub.Class.html'>Class</a></h4>
           
                     <p class='summary'>(internal) A C++ class/struct definition.</p>
-                    <p class='todo'><span class='ref'><a href='dub.Class.html#method'>#method</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
                                         <h4 id='------------' class='entry klass'><a href='dub.Function.html'>Function</a></h4>
           
                     <p class='summary'>(internal) A public C++ function or method definition.</p>
-                    <p class='todo'><span class='ref'><a href='dub.Function.html#neverThrows'>#neverThrows</a></span><span>TODO</span> inspect xml</p>
                                         <h4 id='-------------' class='entry klass'><a href='dub.Inspector.html'>Inspector</a></h4>
           
                     <p class='summary'>The Inspector 'knows' about the functions and classes and can answer queries.</p>
                                         <h4 id='-------------' class='entry klass'><a href='dub.LuaBinder.html'>LuaBinder</a></h4>
           
                     <p class='summary'>Use the <a href='dub.Inspector.html'>dub.Inspector</a> to create Lua bindings.</p>
-                    <p class='todo'><span class='ref'><a href='dub.LuaBinder.html#LuaBinder'>LuaBinder</a></span><span>TODO</span> UPDATE FOR "lub"</p>
+                    <p class='fixme'><span class='ref'><a href='dub.LuaBinder.html#build'>#build</a></span><span>FIXME</span> </p>
                     <p class='todo'><span class='ref'><a href='dub.LuaBinder.html#LuaBinder'>LuaBinder</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
                     <p class='todo'><span class='ref'><a href='dub.LuaBinder.html#build'>#build</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
                     <p class='todo'><span class='ref'><a href='dub.LuaBinder.html#bindClass'>#bindClass</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
@@ -90,8 +435,6 @@
                                         <h4 id='-----------------' class='entry klass'><a href='dub.MemoryStorage.html'>MemoryStorage</a></h4>
           
                     <p class='summary'>(internal) This is used to store all definitions in memory.</p>
-                    <p class='todo'><span class='ref'><a href='dub.MemoryStorage.html#MemoryStorage'>MemoryStorage</a></span><span>TODO</span> UPDATE FOR "lub"</p>
-                    <p class='todo'><span class='ref'><a href='dub.MemoryStorage.html#MemoryStorage'>MemoryStorage</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
                     <p class='todo'><span class='ref'><a href='dub.MemoryStorage.html#findByFullname'>#findByFullname</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
                     <p class='todo'><span class='ref'><a href='dub.MemoryStorage.html#findChild'>#findChild</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
                     <p class='todo'><span class='ref'><a href='dub.MemoryStorage.html#findChildFor'>#findChildFor</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
@@ -108,8 +451,6 @@
                                         <h4 id='-------------' class='entry klass'><a href='dub.Namespace.html'>Namespace</a></h4>
           
                     <p class='summary'>(internal) A C++ namespace definition with nested classes, enums and functions.</p>
-                    <p class='todo'><span class='ref'><a href='dub.Namespace.html#Namespace'>Namespace</a></span><span>TODO</span> UPDATE FOR "lub"</p>
-                    <p class='todo'><span class='ref'><a href='dub.Namespace.html#Namespace'>Namespace</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
                     <p class='todo'><span class='ref'><a href='dub.Namespace.html#Namespace'>Namespace</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
                     <p class='todo'><span class='ref'><a href='dub.Namespace.html#namespaces'>#namespaces</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
                     <p class='todo'><span class='ref'><a href='dub.Namespace.html#functions'>#functions</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
@@ -119,7 +460,6 @@
                                         <h4 id='-------------' class='entry klass'><a href='dub.OptParser.html'>OptParser</a></h4>
           
                     <p class='summary'>(internal) Simplified yaml parser to retrieve @dub inline options.</p>
-                    <p class='todo'><span class='ref'><a href='dub.OptParser.html#OptParser'>OptParser</a></span><span>TODO</span> UPDATE FOR "lub"</p>
                     <p class='todo'><span class='ref'><a href='dub.OptParser.html#OptParser'>OptParser</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
                     <p class='todo'><span class='ref'><a href='dub.OptParser.html#OptParser'>OptParser</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
                               </section>
@@ -144,7 +484,7 @@
 
     <footer class="footer">
     <div class="container">
-       made with <a title='last change: f811f55 2014-01-26 21:50:03 +0100' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+       made with <a title='last change: 5703603 2014-01-27 15:56:49 +0100' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
 <script type="text/javascript">
 
   var _gaq = _gaq || [];

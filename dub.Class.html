@@ -33,7 +33,10 @@
         <div class='span3 local-nav'>
           <ul class='nav nav-tabs nav-stacked affix'>
                         <li><a href='#Class'><i class='icon-chevron-right'></i> dub.Class</a></li>
-                        <li><a href='#TODO'><i class='icon-chevron-right'></i> TODO</a></li>
+                        <li><a href='#Constructor'><i class='icon-chevron-right'></i> Constructor</a></li>
+                        <li><a href='#Accessors'><i class='icon-chevron-right'></i> Accessors</a></li>
+                        <li><a href='#Find'><i class='icon-chevron-right'></i> Find</a></li>
+                        <li><a href='#Iterators'><i class='icon-chevron-right'></i> Iterators</a></li>
                       </ul>
         </div>
 
@@ -44,9 +47,11 @@
 
                     
                     <p class='summary'>(internal) A C++ class/struct definition.</p>
-                                        <h4 id='__call' class='entry function'><span>.</span>__call <code>(lib, self)</code></h4>
-          
-                    <p>This lets sub-classes of <a href='dub.Class.html'>dub.Class</a> like <a href='dub.Namespace.html'>dub.Namespace</a> or <a href='dub.CTemplate.html'>dub.CTemplate</a> use the same call convention to create new objects.</p>
+                              </section>
+                    <section id='Constructor'>
+          <h2 class='section'>Constructor</h2>
+
+                    
                                         <h4 id='new' class='entry function'><span>.</span>new <code>(def)</code></h4>
           
                     <p>Create a new class definition. Most of the attributes are passed with <code>def</code>. Usage example:</p>
@@ -60,56 +65,60 @@
     {path = header.dir .. <a href='lub.Dir.html#sep'>lub.Dir.sep</a> .. elem.refid .. '.xml', dir = header.dir}
   },
 }</pre>
-                              
-                    <h4 class='sub-title'>Public methods</h4>
-                                        <h4 id='findChild' class='entry method'><span>:</span>findChild <code>(name)</code></h4>
-          
-                    <p>Return a child element from <code>name</code> or nil if nothing is found. Uses the database internally.</p>
-                                        <h4 id='method' class='entry method'><span>:</span>method <code>(name)</code></h4>
-          
-                    <p>Return a method from a given @name@.</p>
-                                        <h4 id='method' class='entry param'><span>.</span>method <code>= lib.findChild</code></h4>
-          
-                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
-                                        <h4 id='methods' class='entry method'><span>:</span>methods <code>()</code></h4>
-          
-                    <p>Return an iterator over the methods of this class.</p>
-                                        <h4 id='attributes' class='entry method'><span>:</span>attributes <code>()</code></h4>
-          
-                    <p>Return an iterator over the attributes of this class.</p>
-                                        <h4 id='superclasses' class='entry method'><span>:</span>superclasses <code>()</code></h4>
-          
-                    <p>Return an iterator over the superclasses of this class.</p>
-                                        <h4 id='hasVariables' class='entry method'><span>:</span>hasVariables <code>()</code></h4>
-          
-                    <p>Returns true if the class has variables (public C attributes).</p>
-                                        <h4 id='constants' class='entry method'><span>:</span>constants <code>()</code></h4>
-          
-                    <p>Return an iterator over the constants defined in this class.</p>
+                              </section>
+                    <section id='Accessors'>
+          <h2 class='section'>Accessors</h2>
+
+                    
                                         <h4 id='fullname' class='entry method'><span>:</span>fullname <code>()</code></h4>
           
                     <p>The fullname of the class in the form of @parent::ClassName@.</p>
+                                        <h4 id='hasVariables' class='entry method'><span>:</span>hasVariables <code>()</code></h4>
+          
+                    <p>Returns true if the class has variables (public C attributes).</p>
                                         <h4 id='needCast' class='entry method'><span>:</span>needCast <code>()</code></h4>
           
                     <p>Return true if the class needs a cast method (it has known superclasses).</p>
+                                        <h4 id='ignoreFunc' class='entry method'><span>:</span>ignoreFunc <code>(name)</code></h4>
+          
+                    <p>Return true if the given function name should be ignored (do not create bindings).</p>
                                         <h4 id='setName' class='entry method'><span>:</span>setName <code>(name)</code></h4>
           
                     <p>Set the class name and C++ object creation type.</p>
                                         <h4 id='setOpt' class='entry method'><span>:</span>setOpt <code>(opt)</code></h4>
           
                     <p>Set options (usually from parsed C++ class comment).</p>
+                              </section>
+                    <section id='Find'>
+          <h2 class='section'>Find</h2>
+
+                    
                                         <h4 id='namespace' class='entry method'><span>:</span>namespace <code>()</code></h4>
           
                     <p>Return the enclosing namespace or nil if none found.</p>
-                                        <h4 id='ignoreFunc' class='entry method'><span>:</span>ignoreFunc <code>(name)</code></h4>
+                                        <h4 id='findChild' class='entry method'><span>:</span>findChild <code>(name)</code></h4>
           
-                    <p>Return true if the given function name should be ignored (do not create bindings).</p>
+                    <p>Return a child element named <code>name</code> or nil if nothing is found. Uses the database internally.</p>
+                                        <h4 id='method' class='entry method'><span>:</span>method <code>(name)</code></h4>
+          
+                    <p>Return a method from a given @name@.</p>
                               </section>
-                    <section id='TODO'>
-          <h2 class='section'>TODO</h2>
+                    <section id='Iterators'>
+          <h2 class='section'>Iterators</h2>
 
                     
-                    <p class='todo'><span class='ref'><a href='#method'>#method</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <h4 id='superclasses' class='entry method'><span>:</span>superclasses <code>()</code></h4>
+          
+                    <p>Return an iterator over the superclasses of this class.</p>
+                                        <h4 id='constants' class='entry method'><span>:</span>constants <code>()</code></h4>
+          
+                    <p>Return an iterator over the constants defined in this class.</p>
+                                        <h4 id='methods' class='entry method'><span>:</span>methods <code>()</code></h4>
+          
+                    <p>Return an iterator over the methods of this class.</p>
+                                        <h4 id='attributes' class='entry method'><span>:</span>attributes <code>()</code></h4>
+          
+                    <p>Return an iterator over the attributes of this class.</p>
                               </section>
                   </div>
 
@@ -132,7 +141,7 @@
 
     <footer class="footer">
     <div class="container">
-       made with <a title='last change: f811f55 2014-01-26 21:50:03 +0100' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+       made with <a title='last change: 5703603 2014-01-27 15:56:49 +0100' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
 <script type="text/javascript">
 
   var _gaq = _gaq || [];

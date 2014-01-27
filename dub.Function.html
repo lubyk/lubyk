@@ -33,7 +33,9 @@
         <div class='span3 local-nav'>
           <ul class='nav nav-tabs nav-stacked affix'>
                         <li><a href='#Function'><i class='icon-chevron-right'></i> dub.Function</a></li>
-                        <li><a href='#TODO'><i class='icon-chevron-right'></i> TODO</a></li>
+                        <li><a href='#Operator-overloading'><i class='icon-chevron-right'></i> Operator overloading</a></li>
+                        <li><a href='#Accessors'><i class='icon-chevron-right'></i> Accessors</a></li>
+                        <li><a href='#Iterators'><i class='icon-chevron-right'></i> Iterators</a></li>
                       </ul>
         </div>
 
@@ -44,45 +46,6 @@
 
                     
                     <p class='summary'>(internal) A public C++ function or method definition.</p>
-                                        <h4 id='' class='entry lparam'><code>['+']  = 'add'</code></h4>
-          
-                    <p>Function names to use when binding C++ operators.</p>
-                    <h4 id='OP_TO_NAME' class='entry param'><span>.</span>OP_TO_NAME = {</h4>
-                                        <h4 id='' class='entry lparam'><code>['-']  = 'sub'</code></h4>
-          
-                                        <h4 id='' class='entry lparam'><code>['- '] = 'unm'</code></h4>
-          
-                                        <h4 id='' class='entry lparam'><code>['*']  = 'mul'</code></h4>
-          
-                                        <h4 id='' class='entry lparam'><code>['/']  = 'div'</code></h4>
-          
-                                        <h4 id='' class='entry lparam'><code>['=='] = 'eq'</code></h4>
-          
-                                        <h4 id='' class='entry lparam'><code>['<']  = 'lt'</code></h4>
-          
-                                        <h4 id='' class='entry lparam'><code>['<='] = 'le'</code></h4>
-          
-                                        <h4 id='' class='entry lparam'><code>['()'] = 'call'</code></h4>
-          
-                                        <h4 id='' class='entry lparam'><code>['[]'] = 'index'</code></h4>
-          
-                                        <h4 id='' class='entry lparam'><code>['=']  = 'sete'</code></h4>
-          
-                    <p>set with equal</p>
-                                        <h4 id='' class='entry lparam'><code>['+='] = 'adde'</code></h4>
-          
-                    <p>add equal</p>
-                                        <h4 id='' class='entry lparam'><code>['-='] = 'sube'</code></h4>
-          
-                    <p>sub equal</p>
-                                        <h4 id='' class='entry lparam'><code>['*='] = 'mule'</code></h4>
-          
-                    <p>mul equal</p>
-                                        <h4 id='' class='entry lparam'><code>['/='] = 'dive'</code></h4>
-          
-                    <p>div equal</p>
-                              
-                    <h4 class='entry attrib'>}</h4>
                                         <h4 id='new' class='entry function'><span>.</span>new <code>(def)</code></h4>
           
                     <p>Create a new function object with <code>def</code> settings. Some important fields in <code>def</code>:</p>
@@ -106,31 +69,106 @@
   <tr><td class='key'>pure_virtual  </td><td>True if the function is a pure virtual.</td></tr>
 
 </table>
-                                        <h4 id='params' class='entry method'><span>:</span>params <code>()</code></h4>
+                              </section>
+                    <section id='Operator-overloading'>
+          <h2 class='section'>Operator overloading</h2>
+
+                    
+                    <p>Read this table as 'operator[KEY]' translates into lua function '__[VALUE]'. For example <code>operator+</code> becomes <code>__add</code>. This works for most methods except for some operators which do not have a lua equivalent (+=, -=, etc).</p>
+                              
+                    <h4 id='OP_TO_NAME' class='entry param'><span>.</span>OP_TO_NAME = {</h4>
+                                        <h4 id='' class='entry lparam'><code>['+']  = 'add'</code></h4>
           
-                    <p>Return an iterator over the params of this function.</p>
-                                        <h4 id='nameWithArgs' class='entry method'><span>:</span>nameWithArgs <code>()</code></h4>
+                    <pre class='prettyprint lang-lua'>local v = foo + bar</pre>
+                                        <h4 id='' class='entry lparam'><code>['-']  = 'sub'</code></h4>
           
-                    <p>String representation of the function name with arguments (used in comments). Example: <code>drawLine(int x, int y, int x2, int y2, const foo.Pen &pen)</code></p>
+                    <pre class='prettyprint lang-lua'>local v = foo - bar</pre>
+                                        <h4 id='' class='entry lparam'><code>['- '] = 'unm'</code></h4>
+          
+                    <pre class='prettyprint lang-lua'>local bar = -foo</pre>
+                                        <h4 id='' class='entry lparam'><code>['*']  = 'mul'</code></h4>
+          
+                    <pre class='prettyprint lang-lua'>local v = foo * bar</pre>
+                                        <h4 id='' class='entry lparam'><code>['/']  = 'div'</code></h4>
+          
+                    <pre class='prettyprint lang-lua'>local v = foo / bar</pre>
+                                        <h4 id='' class='entry lparam'><code>['=='] = 'eq'</code></h4>
+          
+                    <pre class='prettyprint lang-lua'>if (foo == bar) ...</pre>
+                                        <h4 id='' class='entry lparam'><code>['<']  = 'lt'</code></h4>
+          
+                    <pre class='prettyprint lang-lua'>if (foo &lt; bar) ...</pre>
+                                        <h4 id='' class='entry lparam'><code>['<='] = 'le'</code></h4>
+          
+                    <pre class='prettyprint lang-lua'>if (foo &lt;= bar) ...</pre>
+                                        <h4 id='' class='entry lparam'><code>['()'] = 'call'</code></h4>
+          
+                    <p>This is the call on the object itself. Example:</p>
+                    <pre class='prettyprint lang-lua'>local foo = Foo()
+foo() --&gt; call</pre>
+                                        <h4 id='' class='entry lparam'><code>['[]'] = 'index'</code></h4>
+          
+                    <p>Table access. When binding this method, integer access is very fast but we must also hand-code metatable access (to get methods) and attribute access.</p>
+                    <p>It is thus better to avoid this operator for it has a non-negligible cost.</p>
+                    <pre class='prettyprint lang-lua'>local x = foo[4]</pre>
+                                        <h4 id='' class='entry lparam'><code>['=']  = 'sete'</code></h4>
+          
+                    <p>This is not supported in lua due to the fact that all variables are references to objects and the equal sign is used to assign reference. We must therefore use 'set':</p>
+                    <pre class='prettyprint lang-lua'>local foo, bar = Simple('I am foo'), Simple('I am bar')
+-- foo = bar would make 'foo' a pointer to bar, not assign
+-- values of bar into foo. We must use:
+foo:set(bar)
+--&gt; C++ foo.operator=(bar)</pre>
+                                        <h4 id='' class='entry lparam'><code>['+='] = 'adde'</code></h4>
+          
+                    <p>Mutable operator. No equivalent in Lua.</p>
+                    <pre class='prettyprint lang-lua'>-- Add 50 into foo, mutating foo.
+foo:adde(50)</pre>
+                                        <h4 id='' class='entry lparam'><code>['-='] = 'sube'</code></h4>
+          
+                    <p>Mutable operator. No equivalent in Lua.</p>
+                    <pre class='prettyprint lang-lua'>-- Remove 50 from foo, mutating foo.
+foo:sube(50)</pre>
+                                        <h4 id='' class='entry lparam'><code>['*='] = 'mule'</code></h4>
+          
+                    <p>Mutable operator. No equivalent in Lua.</p>
+                    <pre class='prettyprint lang-lua'>-- Scale foo by 50, mutating foo.
+foo:mule(50)</pre>
+                                        <h4 id='' class='entry lparam'><code>['/='] = 'dive'</code></h4>
+          
+                    <p>Mutable operator. No equivalent in Lua.</p>
+                    <pre class='prettyprint lang-lua'>-- Divide foo by 50, mutating foo.
+foo:dive(50)</pre>
+                              
+                    <h4 class='entry attrib'>}</h4>
+                              </section>
+                    <section id='Accessors'>
+          <h2 class='section'>Accessors</h2>
+
+                    
                                         <h4 id='fullname' class='entry method'><span>:</span>fullname <code>()</code></h4>
           
                     <p>Return the full name of the function (with enclosing namespaces separated by '::'. Example: <code>foo::Bar::drawLine</code>.</p>
                                         <h4 id='fullcname' class='entry method'><span>:</span>fullcname <code>()</code></h4>
           
                     <p>Full C name for function. This is like <a href='#fullname'>fullname</a> but with the C names in case binding names are different.</p>
+                                        <h4 id='nameWithArgs' class='entry method'><span>:</span>nameWithArgs <code>()</code></h4>
+          
+                    <p>String representation of the function name with arguments (used in comments). Example: <code>drawLine(int x, int y, int x2, int y2, const foo.Pen &pen)</code></p>
                                         <h4 id='neverThrows' class='entry method'><span>:</span>neverThrows <code>()</code></h4>
           
                     <p>Returns true if the function does not throw any C++ exception.</p>
-                    <p class='todo'><span>TODO</span> inspect xml</p>
                                         <h4 id='setName' class='entry method'><span>:</span>setName <code>(name)</code></h4>
           
                     <p>Set function name and C name.</p>
                               </section>
-                    <section id='TODO'>
-          <h2 class='section'>TODO</h2>
+                    <section id='Iterators'>
+          <h2 class='section'>Iterators</h2>
 
                     
-                    <p class='todo'><span class='ref'><a href='#neverThrows'>#neverThrows</a></span><span>TODO</span> inspect xml</p>
+                                        <h4 id='params' class='entry method'><span>:</span>params <code>()</code></h4>
+          
+                    <p>Return an iterator over the parameters of this function.</p>
                               </section>
                   </div>
 
@@ -153,7 +191,7 @@
 
     <footer class="footer">
     <div class="container">
-       made with <a title='last change: f811f55 2014-01-26 21:50:03 +0100' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+       made with <a title='last change: 5703603 2014-01-27 15:56:49 +0100' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
 <script type="text/javascript">
 
   var _gaq = _gaq || [];
