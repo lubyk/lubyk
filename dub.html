@@ -42,6 +42,7 @@
                         <li><a href='#Pointer-assignment'><i class='icon-chevron-right'></i> Pointer assignment</a></li>
                         <li><a href='#Operator-overloading'><i class='icon-chevron-right'></i> Operator overloading</a></li>
                         <li><a href='#Callbacks'><i class='icon-chevron-right'></i> Callbacks</a></li>
+                        <li><a href='#Custom-bindings'><i class='icon-chevron-right'></i> Custom bindings</a></li>
                         <li><a href='#Other-features'><i class='icon-chevron-right'></i> Other features</a></li>
                         <li><a href='#C++-exceptions'><i class='icon-chevron-right'></i> C++ exceptions</a></li>
                         <li><a href='#Verbosity'><i class='icon-chevron-right'></i> Verbosity</a></li>
@@ -352,6 +353,82 @@ function win:resized(w, h)
 end
 </pre>
                               </section>
+                    <section id='Custom-bindings'>
+          <h2 class='section'>Custom bindings</h2>
+
+                    
+                    <p>Sometimes we need to write custom code either because 'dub' is cannot guess the proper way to call a function or because we want to make it more Lua-like (allowing multiple return values for example). To use custom bindings, pass the path to a folder containing yaml files (one per class). The yaml file for global functions should be named after the namespace (if any) or '_global.yml' if there is no namespace.</p>
+                    <p>Things to note when writing the bindings:</p>
+                    <table class='definition'>
+  <tr><td class='key'>self</td><td>This variable is set before the custom binding code and corresponds to the C++ object the binding is called on. Static methods and plain functions do not have 'self' set.</td></tr>
+  <tr><td class='key'>arguments</td><td>Argument types and conversions are handled by dub. You can reference them by their names in the header declaration.</td></tr>
+  <tr><td class='key'>return</td><td>If you are returning a value, you must add the call to <code>return</code> with the number of values pushed on the stack.</td></tr>
+  <tr><td class='key'>arg count</td><td>If your method takes a varying number of arguments, you can use 'arg0', 'arg1' to set bindings for each case (see 'showFullScreen' example below).</td></tr>
+  <tr><td class='key'>file name</td><td>The name of the YAML file should reflect the namespace or class being bound. For global functions, use "_global.yaml".</td></tr>
+  <tr><td class='key'>inline</td><td>You can define the custom bindings by passing a lua table instead of a path to <a href='dub.LuaBinder.html#bind'>dub.LuaBinder.bind</a>. See below for the format.</td></tr>
+
+</table>
+                    <h4 class='sub-title'>YAML file format</h4>
+                    <p>For example, to define custom bindings for Rect::size, you need to create a 'Rect.yml' file like this:</p>
+                    <pre class='prettyprint lang-yaml'>lua:
+  methods:
+    size: |
+      Point sz = self-&gt;size();
+      lua_pushnumber(L, sz.x());
+      lua_pushstring(L, sz.y());
+      return 2;
+</pre>
+                    <p>You do not have to do the arguments type checking. This is done by dub. You <strong>do</strong> need to return the number of Lua return values if there are any.</p>
+                    <p>You can also define your own methods by using custom headers instead of the original ones. This is what we did for Qt bindings to whitelist the bindings we wanted. We also chose to declare inexistant methods and bind them by hand:</p>
+                    <pre class='prettyprint lang-yaml'>lua:
+  methods:
+    swapFullScreen: |
+      if (!self-&gt;isFullScreen()) {
+        self-&gt;showFullScreen();
+      } else {
+        self-&gt;showNormal();
+      }            
+    showFullScreen:
+      # Varying custom binding on arg count for overloaded-functions.
+      arg0: |
+        self-&gt;showFullScreen();
+      arg1: |
+        if (enable) {
+          self-&gt;showFullScreen();
+        } else {
+          self-&gt;showNormal();
+        }                  
+    globalMove: |
+      self-&gt;move(
+        self-&gt;mapToParent(
+          self-&gt;mapFromGlobal(QPoint(x, y))
+        )
+      );   
+</pre>
+                    <p>Note that we do not need to write the code testing argument.</p>
+                    <h4 class='sub-title'>Inline custom bindings</h4>
+                    <p>This is a quick and dirty solution when you only need to define a couple of custom bindings. In this case, you pass a table to the binder:</p>
+                    <pre class='prettyprint lang-lua'>local bind = <a href='dub.LuaBinder.html'>dub.LuaBinder</a>()
+
+binder:bind(inspector, {
+  lib_name         = 'foo',
+  output_directory = lub.path '|src/bind',
+  custom_bindings  = {
+    Rect = {
+      methods = {
+        size = [=[
+          Point sz = self-&gt;size();
+          lua_pushnumber(L, sz.x());
+          lua_pushstring(L, sz.y());
+          return 2; 
+        ]=],
+      },
+    },
+  },
+})
+</pre>
+                    <p>The table format is exactly the same as the yaml files except for the 'lua' root key which is not needed.</p>
+                              </section>
                     <section id='Other-features'>
           <h2 class='section'>Other features</h2>
 
@@ -359,7 +436,6 @@ end
                     <p>As time passes, the undocummented feature list below will shrink. Until then, it's better having an idea what Dub does.</p>
                     <ul>
 <li>pseudo-attributes read/write by calling getter/setter methods.</li>
-<li>custom bindings (for methods and global functions).</li>
 <li>custom read/write attributes (with void *userdata helper, union handling)</li>
 <li>public static attributes read/write</li>
 <li>pointer to member (gc protected)</li>
@@ -489,7 +565,7 @@ end
 
     <footer class="footer">
     <div class="container">
-       made with <a title='last change: 6e14d38 2014-01-28 11:40:42 +0100' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+       made with <a title='last change: e98a703 2014-01-28 20:14:02 +0100' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
 <script type="text/javascript">
 
   var _gaq = _gaq || [];
