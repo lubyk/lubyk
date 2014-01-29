@@ -59,7 +59,11 @@
                     <p class='summary'>Create lua bindings by parsing C++ header files using <a href='http://doxygen.org'>doxygen</a>.</p>
                     <p>Generated lua bindings do not contain any external dependencies. Dub C++ files are copied along with the generated C++ bindings.</p>
                     <a href="https://github.com/lubyk/dub"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub"></a>
-                    <p>This module is part of the <a href='http://lubyk.org'>lubyk</a> project. <strong>MIT license</strong> &copy; Gaspard Bucher 2014.</p>
+                    <p><strong>MIT license</strong> &copy Gaspard Bucher 2014.</p>
+                    <h4 class='sub-title'>Installation</h4>
+                    <p>With <a href='http://luarocks.org'>luarocks</a>:</p>
+                    <pre class='prettyprint lang-lua'>$ luarocks install dub
+</pre>
                     <h4 class='sub-title'>Speed</h4>
                     <p>We tried our best to make these bindings as safe and fast as possible, ensuring we do not break return value optimization and we execute as few lines of code between Lua and C++. Even if we did our best to keep the overhead between Lua and C++ as small as possible, calling between Lua and C++ prevents some of the optimizations LuaJIT is very good at.</p>
                     <p>When needing very fast execution implying lots of Lua and C++ code, either push all data into C++ structures and work from there or push all data into Lua to avoid binding and function calls overhead.</p>
@@ -565,7 +569,7 @@ binder:bind(inspector, {
 
     <footer class="footer">
     <div class="container">
-       made with <a title='last change: 1ec3b08 2014-01-29 13:12:48 +0100' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+       made with <a title='last change: 8f92126 2014-01-29 13:13:25 +0100' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
 <script type="text/javascript">
 
   var _gaq = _gaq || [];
