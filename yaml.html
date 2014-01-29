@@ -52,7 +52,7 @@
                     <pre class='prettyprint lang-lua'>$ luarocks install yaml
 </pre>
                     <h4 class='sub-title'>Usage example</h4>
-                    <pre class='prettyprint lang-lua'>local data = yaml.parse(some_yaml)
+                    <pre class='prettyprint lang-lua'>local data = yaml.load(some_yaml)
 
 local yaml_string = yaml.dump(some_table)
 </pre>
@@ -110,15 +110,37 @@ data[1].link = data
           <h2 class='section'>Class methods</h2>
 
                     
-                                        <h4 id='parse' class='entry function'><span>.</span>parse <code>(string, safe)</code></h4>
+                                        <h4 id='load' class='entry function'><span>.</span>load <code>(string, safe)</code></h4>
           
-                    <p>Parse a <code>string</code> containing yaml content and return a table. Uses <a href='yaml.Parser.html'>yaml.Parser</a> internally. If the second argument <code>safe</code> is true, the library will not generate aliases in tables.</p>
-                                        <h4 id='load' class='entry function'><span>.</span>load <code>(path)</code></h4>
+                    <p>Parse a <code>string</code> containing yaml content and return lua values. If the second argument <code>safe</code> is true, the library will not generate aliases in tables.</p>
+                    <p>Note that if there are more then on value in the YAML content, this function will return multiple values. Example:</p>
+                    <pre class='prettyprint lang-lua'>local a, b, c = yaml.load [[
+--- 3
+--- 4
+--- 5
+...
+]]
+--&gt; a = 3, b = 4, c = 5
+</pre>
+                                        <h4 id='loadpath' class='entry function'><span>.</span>loadpath <code>(path)</code></h4>
           
-                    <p>Parse the YAML content of the file at <code>path</code> and return a lua table. Uses <a href='yaml.Parser.html'>yaml.Parser</a> internally.</p>
-                                        <h4 id='dump' class='entry function'><span>.</span>dump <code>(data)</code></h4>
+                    <p>Parse the YAML content of the file at <code>path</code> and return lua values. Uses yaml.load internally.</p>
+                                        <h4 id='dump' class='entry function'><span>.</span>dump <code>(...)</code></h4>
           
-                    <p>Dump lua content as YAML.</p>
+                    <p>Dump all lua values in the vararg as YAML. Note that when using 'load' on the produced content, multiple values will be returned.</p>
+                                        <h4 id='configure' class='entry function'><span>.</span>configure <code>(options)</code></h4>
+          
+                    <p>Configure parser. Pass a table setting options to true or false. The default value is shown in parenthesis.</p>
+                    <p class='warn'><span>WARN</span> Please not that this configuration alters parsing globaly and should be avoided. If such configuration is often needed, please consult the maintainer so that we can move such configuration inside some Parser object.</p>
+                    <table class='definition'>
+  <tr><td class='key'>dump_auto_array</td><td>(true)</td></tr>
+  <tr><td class='key'>dump_error_on_unsupported</td><td>(false)</td></tr>
+  <tr><td class='key'>dump_check_metatables</td><td>(true)</td></tr>
+  <tr><td class='key'>load_set_metatables</td><td>(true)</td></tr>
+  <tr><td class='key'>load_numeric_scalars</td><td>(true)</td></tr>
+  <tr><td class='key'>load_nulls_as_nil</td><td>(false)</td></tr>
+
+</table>
                               </section>
                   </div>
 
@@ -133,7 +155,7 @@ data[1].link = data
 
     <footer class="footer">
     <div class="container">
-       made with <a title='last change: d615cd7 2014-01-29 11:27:30 +0100' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+       made with <a title='last change: b34fa67 2014-01-29 12:21:38 +0100' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
 <script type="text/javascript">
 
   var _gaq = _gaq || [];
