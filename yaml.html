@@ -80,11 +80,30 @@ local yaml_string = yaml.dump(some_table)
 
 </table>
                     <h4 class='sub-title'>Lua</h4>
-                    <pre class='prettyprint lang-lua'>TODO
+                    <p>Some lua code</p>
+                    <pre class='prettyprint lang-lua'>local data = {
+  { job = 'Car wash',
+    duration = 1.5,
+    comment = 'The car was really filthy.'
+  },
+  { job = 'Create website',
+    duration = 6.25,
+    comment = 'Using bootstrap template.'
+  }
+}
+-- Create a loop
+data[1].link = data
 </pre>
-                    <h4 class='sub-title'>XML</h4>
-                    <p>And the equivalent yaml:</p>
-                    <pre class='txt'>TODO
+                    <h4 class='sub-title'>YAML</h4>
+                    <p>And the equivalent yaml using <code>yaml.dump(data)</code>:</p>
+                    <pre class='prettyprint lang-yaml'>--- &0
+- link: *0
+  duration: 1.5
+  comment: The car was really filthy.
+  job: Car wash
+- duration: 6.25
+  comment: Using bootstrap template.
+  job: Create website
 </pre>
                               </section>
                     <section id='Class-methods'>
@@ -114,7 +133,7 @@ local yaml_string = yaml.dump(some_table)
 
     <footer class="footer">
     <div class="container">
-       made with <a title='last change: e98a703 2014-01-28 20:14:02 +0100' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+       made with <a title='last change: d615cd7 2014-01-29 11:27:30 +0100' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
 <script type="text/javascript">
 
   var _gaq = _gaq || [];
