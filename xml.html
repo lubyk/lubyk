@@ -48,19 +48,16 @@
                     
                     <p class='summary'>This parser uses <a href='http://rapidxml.sourceforge.net/'>RapidXML</a> to parse XML content.</p>
                     <a href="https://github.com/lubyk/xml"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub"></a>
-                    <p>This module is part of the <a href='http://lubyk.org'>lubyk</a> project. <strong>MIT license</strong> &copy; Gaspard Bucher 2014.</p>
+                    <p><strong>MIT license</strong> &copy Marcin Kalicinski 2006, 2009, Gaspard Bucher 2014.</p>
                     <h4 class='sub-title'>Installation</h4>
                     <p>With <a href='http://luarocks.org'>luarocks</a>:</p>
                     <pre class='prettyprint lang-lua'>$ luarocks install xml
 </pre>
-                    <p>With <a href='http://luadist.org'>luadist</a>:</p>
-                    <pre class='prettyprint lang-lua'>$ luadist install xml
-</pre>
-                    <h4 class='sub-title'>Dependencies</h4>
-                    <table class='definition'>
-  <tr><td class='key'>lub</td><td>lubyk base module</td></tr>
+                    <h4 class='sub-title'>Usage example</h4>
+                    <pre class='prettyprint lang-lua'>local data = xml.load(some_xml)
 
-</table>
+local xml_string = xml.dump(some_table)
+</pre>
                                         <h4 id='VERSION' class='entry param'><span>.</span>VERSION <code>= '1.0.0'</code></h4>
           
                     <p>Current version respecting <a href='http://semver.org'>semantic versioning</a>.</p>
@@ -115,10 +112,10 @@
           <h2 class='section'>Class methods</h2>
 
                     
-                                        <h4 id='parse' class='entry function'><span>.</span>parse <code>(string)</code></h4>
+                                        <h4 id='load' class='entry function'><span>.</span>load <code>(string)</code></h4>
           
                     <p>Parse a <code>string</code> containing xml content and return a table. Uses <a href='xml.Parser.html'>xml.Parser</a> with the <a href='xml.Parser.html#Default'>xml.Parser.Default</a> type.</p>
-                                        <h4 id='load' class='entry function'><span>.</span>load <code>(path)</code></h4>
+                                        <h4 id='loadpath' class='entry function'><span>.</span>loadpath <code>(path)</code></h4>
           
                     <p>Parse the XML content of the file at <code>path</code> and return a lua table. Uses <a href='xml.Parser.html'>xml.Parser</a> with the <a href='xml.Parser.html#Default'>xml.Parser.Default</a> type.</p>
                                         <h4 id='dump' class='entry function'><span>.</span>dump <code>(table, max_depth)</code></h4>
@@ -129,7 +126,7 @@
           
                     <p>This function finds the <code>xmlns:NAME='KEY'</code> declaration and removes <code>NAME:</code> from the tag names.</p>
                     <p>Example:</p>
-                    <pre class='prettyprint lang-lua'>local data = xml.parse [[
+                    <pre class='prettyprint lang-lua'>local data = xml.load [[
  &lt;foo:document xmlns:foo='bar'&gt;
    &lt;foo:name&gt;Blah&lt;/foo:name&gt;
  &lt;/foo:document&gt;
@@ -157,7 +154,7 @@ print(xml.find(sect, 'title'))</pre>
                     
                                         <h4 id='----------' class='entry klass'><a href='xml.Parser.html'>Parser</a></h4>
           
-                    <p class='summary'>The parser does not return information on comments, declarations, doctypes and pi nodes. These are validly parsed but not returned.</p>
+                    <p class='summary'>The parser class is used to encapsulate parsing and settings in an object. When using default settings, it is not necessary to create parser objects and one can simply use <a href='xml.html#load'>xml.load</a>.</p>
                               </section>
                   </div>
 
@@ -173,7 +170,7 @@ print(xml.find(sect, 'title'))</pre>
 
     <footer class="footer">
     <div class="container">
-       made with <a title='last change: 3b598b4 2014-01-29 13:00:48 +0100' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+       made with <a title='last change: d9d375a 2014-01-29 13:05:52 +0100' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
 <script type="text/javascript">
 
   var _gaq = _gaq || [];

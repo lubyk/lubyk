@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Very fast xml parser</title>
+    <title>Parser object</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -39,37 +39,39 @@
         <div class='main span7'>
 
                     <section id='Parser'>
-          <h2 class='section'>Very fast xml parser</h2>
+          <h2 class='section'>Parser object</h2>
 
                     
-                    <p class='summary'>The parser does not return information on comments, declarations, doctypes and pi nodes. These are validly parsed but not returned.</p>
-                    <p>This module is part of <a href='http://lubyk.org'>lubyk</a> project.   Install with <a href='http://luarocks.org'>luarocks</a> or <a href='http://luadist.org'>luadist</a>.</p>
-                    <pre class='prettyprint lang-lua'>$ luarocks install xml    or    luadist install xml
-</pre>
-                    <p>Dump a table to xml example:</p>
-                    <pre class='prettyprint lang-lua'>local xml = require 'xml'
-</pre>
+                    <p class='summary'>The parser class is used to encapsulate parsing and settings in an object. When using default settings, it is not necessary to create parser objects and one can simply use <a href='xml.html#load'>xml.load</a>.</p>
                               
                     <h4 class='sub-title'>Parser types</h4>
                     <p>The following constants can be used with <a href='#new'>new</a> when creating a parser. Depending on the type, the parser behavior is different. The default type is Default.</p>
                                         <h4 id='Default' class='entry const'>Default</h4>
           
-                    <p>Default parser type</p>
+                    <p>Default parser type. Translates xml entities (needs to make an internal copy of the lua string).</p>
+                                        <h4 id='TrimWhitespace' class='entry const'>TrimWhitespace</h4>
+          
+                    <p>Same as default but trims leading and trailing whitespace.</p>
                                         <h4 id='NonDestructive' class='entry const'>NonDestructive</h4>
           
-                    <p>Type of blah</p>
+                    <p>Faster then default, does not translate xml entities. Parses data nodes.</p>
                                         <h4 id='Fastest' class='entry const'>Fastest</h4>
           
-                    <p>xxx</p>
+                    <p>Like <a href='xml.NonDestructive.html'>xml.NonDestructive</a> but does not parse data nodes.</p>
                                         <h4 id='new' class='entry function'><span>.</span>new <code>(type)</code></h4>
           
-                    <p>Create a new parser. Type flag is optional. Usage example:</p>
+                    <p>Create a new parser. <code>type</code> flag is optional. If you are using the default parser, you can simply use <a href='xml.html#load'>xml.load</a>. Usage example:</p>
                     <pre class='prettyprint lang-lua'>local xml = require 'xml'
 local parser = <a href='xml.Parser.html'>xml.Parser</a>(<a href='xml.Parser.html#Fastest'>xml.Parser.Fastest</a>)</pre>
-                                        <h4 id='parse' class='entry method'><span>:</span>parse <code>(str)</code></h4>
+                                        <h4 id='load' class='entry method'><span>:</span>load <code>(str)</code></h4>
           
                     <p>Parse an xml string and return a Lua table. See <a href='xml.html'>lua/xml</a> for the format of the returned table. Usage:</p>
-                    <pre class='prettyprint lang-lua'>local data = parser:parse(some_xml_string)
+                    <pre class='prettyprint lang-lua'>local data = parser:load(some_xml_string)
+--&gt; lua table</pre>
+                                        <h4 id='loadpath' class='entry method'><span>:</span>loadpath <code>(path)</code></h4>
+          
+                    <p>Parse xml from file <code>path</code> and return a Lua table. See <a href='xml.html'>lua/xml</a> for the format of the returned table. Usage:</p>
+                    <pre class='prettyprint lang-lua'>local data = parser:loadpath(path_to_file)
 --&gt; lua table</pre>
                               </section>
                   </div>
@@ -86,7 +88,7 @@ local parser = <a href='xml.Parser.html'>xml.Parser</a>(<a href='xml.Parser.html
 
     <footer class="footer">
     <div class="container">
-       made with <a title='last change: 3b598b4 2014-01-29 13:00:48 +0100' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+       made with <a title='last change: d9d375a 2014-01-29 13:05:52 +0100' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
 <script type="text/javascript">
 
   var _gaq = _gaq || [];
