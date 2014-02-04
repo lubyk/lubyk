@@ -63,9 +63,9 @@
           <h2 class='section'>Methods</h2>
 
                     
-                                        <h4 id='glob' class='entry method'><span>:</span>glob <code>(pattern)</code></h4>
+                                        <h4 id='glob' class='entry method'><span>:</span>glob <code>(pattern, max_depth)</code></h4>
           
-                    <p>Return an iterator to recursively find files matching <code>pattern</code> in the directory. The pattern syntax is the same as string.match.</p>
+                    <p>Return an iterator to recursively find files matching <code>pattern</code> in the directory. The pattern syntax is the same as string.match. Recursivity can be altered by setting <code>max_depth</code> argument. 0 = do not enter sub-directories. Default value for max_depth is math.huge.</p>
                     <pre class='prettyprint lang-lua'>-- Find paths ending in ".lua".
 for path in <a href='lub.Dir.html'>lub.Dir</a>('lub'):glob '%.lua$' do
   print(path)
@@ -93,7 +93,12 @@ end
             
                         <li class=''><a href='lub.Autoload.html'>Autoload</a></li>
                         <li class='active'><a href='lub.Dir.html'>Dir</a></li>
+                        <li class=''><a href='lub.Finalizer.html'>Finalizer</a></li>
+                        <li class=''><a href='lub.Poller.html'>Poller</a></li>
+                        <li class=''><a href='lub.Scheduler.html'>Scheduler</a></li>
                         <li class=''><a href='lub.Template.html'>Template</a></li>
+                        <li class=''><a href='lub.Thread.html'>Thread</a></li>
+                        <li class=''><a href='lub.Timer.html'>Timer</a></li>
                       </ul>
         </div>
       </div>
@@ -101,7 +106,7 @@ end
 
     <footer class="footer">
     <div class="container">
-       made with <a title='last change: 830d6ec 2014-01-30 18:24:36 +0100' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+       made with <a title='last change: 82b069d 2014-02-04 18:46:42 +0100' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
 <script type="text/javascript">
 
   var _gaq = _gaq || [];

@@ -33,6 +33,8 @@
         <div class='span3 local-nav'>
           <ul class='nav nav-tabs nav-stacked affix'>
                         <li><a href='#lub'><i class='icon-chevron-right'></i> lub</a></li>
+                        <li><a href='#Scheduling'><i class='icon-chevron-right'></i> Scheduling</a></li>
+                        <li><a href='#Environment-information'><i class='icon-chevron-right'></i> Environment information</a></li>
                         <li><a href='#Class-management'><i class='icon-chevron-right'></i> Class management</a></li>
                         <li><a href='#Algorithm'><i class='icon-chevron-right'></i> Algorithm</a></li>
                         <li><a href='#Filesystem'><i class='icon-chevron-right'></i> Filesystem</a></li>
@@ -40,7 +42,6 @@
                         <li><a href='#Debugging'><i class='icon-chevron-right'></i> Debugging</a></li>
                         <li><a href='#Miscellanous'><i class='icon-chevron-right'></i> Miscellanous</a></li>
                         <li><a href='#Classes'><i class='icon-chevron-right'></i> Classes</a></li>
-                        <li><a href='#FIXME'><i class='icon-chevron-right'></i> FIXME</a></li>
                       </ul>
         </div>
 
@@ -59,10 +60,6 @@
 </pre>
                               
                     <h4 class='sub-title'>Dependencies</h4>
-                    <table class='definition'>
-  <tr><td class='key'>lfs</td><td>luafilesystem</td></tr>
-
-</table>
                                         <h4 id='VERSION' class='entry param'><span>.</span>VERSION <code>= '1.0.4'</code></h4>
           
                     <p>Current version respecting <a href='http://semver.org'>semantic versioning</a>.</p>
@@ -76,7 +73,43 @@
                     <p>Uses <a href='http://keplerproject.github.io/luafilesystem/'>Lua Filesystem</a></p>
                               
                     <h4 class='entry attrib'>}</h4>
-                    <p class='fixme'><span>FIXME</span> We need to have lub.plat contain current platform name such as 'macosx', 'linux' or 'win32'</p>
+                              </section>
+                    <section id='Scheduling'>
+          <h2 class='section'>Scheduling</h2>
+
+                    
+                                        <h4 id='sleep' class='entry function'><span>.</span>sleep <code>(sec)</code></h4>
+          
+                    <p>Sleep for <code>sec</code> seconds. note that this should not be used to create a precise timer: use lub.timer for non-drifting timers.</p>
+                    <p>this function simply does:</p>
+                    <pre class='prettyprint lang-lua'>lub.sleep(0.5)
+-- is the same as
+coroutine.yield('sleep', sec)</pre>
+                                        <h4 id='waitRead' class='entry function'><span>.</span>waitRead <code>(fd)</code></h4>
+          
+                    <p>Wait until the filedescriptor <code>fd</code> is ready for reading. Since some pollers are edge based, make sure that fd is <strong>not readable</strong> before calling this.</p>
+                    <p>this function simply does:</p>
+                    <pre class='prettyprint lang-lua'>lub.waitRead(fd)
+-- is the same as
+coroutine.yield('read', fd)</pre>
+                                        <h4 id='waitWrite' class='entry function'><span>.</span>waitWrite <code>(fd)</code></h4>
+          
+                    <p>Wait until the filedescriptor <code>fd</code> is ready for writing. Since some pollers are edge based, make sure that fd is <strong>not writeable</strong> before calling this.</p>
+                    <p>this function simply does:</p>
+                    <pre class='prettyprint lang-lua'>lub.waitWrite(fd)
+-- is the same as
+coroutine.yield('write', fd)</pre>
+                              </section>
+                    <section id='Environment-information'>
+          <h2 class='section'>Environment information</h2>
+
+                              <h4 id='plat' class='entry function'><span>.</span>plat <code>()</code></h4>
+          
+                    <p>Get name of currently running platform. Values are 'linux', 'macosx', 'unix' and 'win32'.</p>
+                                        <h4 id='elapsed' class='entry function'><span>.</span>elapsed <code>()</code></h4>
+          
+                    <p>Get <strong>monotonic</strong> elapsed time since some arbitrary point in time. This timer is as precise as the OS permits and does not jump forward or back. When a computer is connected to atomic clocks with ntp protocol, this clock is adjusted by altering it's speed and should be very precise but can have some jitter.</p>
+                    <p>Uses <code>mach_absolute_time</code> on macosx, <code>clock_gettime</code> (CLOCK_MONOTONIC) on linux and <code>QueryPerformanceCounter</code> on windows.</p>
                               </section>
                     <section id='Class-management'>
           <h2 class='section'>Class management</h2>
@@ -289,15 +322,26 @@ end
                                         <h4 id='-------' class='entry klass'><a href='lub.Dir.html'>Dir</a></h4>
           
                     <p class='summary'>This is a helper to access/glob directory trees. It requires 'lfs' (lua filesystem).</p>
+                                        <h4 id='-------------' class='entry klass'><a href='lub.Finalizer.html'>Finalizer</a></h4>
+          
+                    <p class='summary'>This object executes the provided method when it is garbage collected.</p>
+                                        <h4 id='----------' class='entry klass'><a href='lub.Poller.html'>Poller</a></h4>
+          
+                    <p class='summary'>Normally, end users do not interact directly with the poller. It is used internally by <a href='lub.Scheduler.html'>lub.Scheduler</a> to wait on file descriptors and sleep. This poller uses fast poll API and nanosleep for precise operation.</p>
+                                        <h4 id='-------------' class='entry klass'><a href='lub.Scheduler.html'>Scheduler</a></h4>
+          
+                    <p class='fixme'><span class='ref'><a href='lub.Scheduler.html#Scheduler'>Scheduler</a></span><span>FIXME</span> give some time to GUI ?</p>
+                    <p class='todo'><span class='ref'><a href='lub.Scheduler.html#loop'>#loop</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
                                         <h4 id='------------' class='entry klass'><a href='lub.Template.html'>Template</a></h4>
           
                     <p class='summary'>Simplistic templating system inspired by Zed A. Shaw's minimal template for <a href='http://mongrel2.org/'>Tir</a>.</p>
-                              </section>
-                    <section id='FIXME'>
-          <h2 class='section'>FIXME</h2>
-
-                    
-                    <p class='fixme'><span class='ref'><a href='#lub'>lub</a></span><span>FIXME</span> We need to have lub.plat contain current platform name such as 'macosx', 'linux' or 'win32'</p>
+                                        <h4 id='----------' class='entry klass'><a href='lub.Thread.html'>Thread</a></h4>
+          
+                    <h4 class='sub-title'>Thread garbage collection</h4>
+                    <p class='todo'><span class='ref'><a href='lub.Thread.html#kill'>#kill</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <h4 id='---------' class='entry klass'><a href='lub.Timer.html'>Timer</a></h4>
+          
+                    <p class='summary'></p>
                               </section>
                   </div>
 
@@ -307,7 +351,12 @@ end
             
                         <li class=''><a href='lub.Autoload.html'>Autoload</a></li>
                         <li class=''><a href='lub.Dir.html'>Dir</a></li>
+                        <li class=''><a href='lub.Finalizer.html'>Finalizer</a></li>
+                        <li class=''><a href='lub.Poller.html'>Poller</a></li>
+                        <li class=''><a href='lub.Scheduler.html'>Scheduler</a></li>
                         <li class=''><a href='lub.Template.html'>Template</a></li>
+                        <li class=''><a href='lub.Thread.html'>Thread</a></li>
+                        <li class=''><a href='lub.Timer.html'>Timer</a></li>
                       </ul>
         </div>
       </div>
@@ -315,7 +364,7 @@ end
 
     <footer class="footer">
     <div class="container">
-       made with <a title='last change: 830d6ec 2014-01-30 18:24:36 +0100' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+       made with <a title='last change: 82b069d 2014-02-04 18:46:42 +0100' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
 <script type="text/javascript">
 
   var _gaq = _gaq || [];
