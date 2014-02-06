@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Thread</title>
+    <title>Popen</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -32,47 +32,41 @@
 
         <div class='span3 local-nav'>
           <ul class='nav nav-tabs nav-stacked affix'>
-                        <li><a href='#Thread'><i class='icon-chevron-right'></i> lub.Thread</a></li>
+                        <li><a href='#Popen'><i class='icon-chevron-right'></i> lens.Popen</a></li>
                         <li><a href='#TODO'><i class='icon-chevron-right'></i> TODO</a></li>
                       </ul>
         </div>
 
         <div class='main span7'>
 
-                    <section id='Thread'>
-          <h2 class='section'>Thread</h2>
+                    <section id='Popen'>
+          <h2 class='section'>Popen</h2>
 
                     
-                    <h4 class='sub-title'>Thread garbage collection</h4>
-                    <p class='summary'>As long as a thread is scheduled to run (active loop, listening for, it will be kept in memory.</p>
-                                        <h4 id='new' class='entry function'><span>.</span>new <code>(func, at)</code></h4>
+                                        <h4 id='new' class='entry function'><span>.</span>new <code>(cmd, mode)</code></h4>
           
-                    <p>Create a new Thread object and insert it inside the currently running scheduler's event queue.</p>
-                                        <h4 id='kill' class='entry method'><span>:</span>kill <code>()</code></h4>
-          
-                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
-                    <p>-- PRIVATE</p>
+                    <p class='summary'>Create a new pipe with the given cmd executed in another process. Mode can be either 'r' (read) or 'w' (write). Default is 'r'.</p>
+                    <p class='todo'><span>TODO</span> implement bidirectional pipes.</p>
                               </section>
                     <section id='TODO'>
           <h2 class='section'>TODO</h2>
 
                     
-                    <p class='todo'><span class='ref'><a href='#kill'>#kill</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#Popen'>Popen</a></span><span>TODO</span> implement bidirectional pipes.</p>
                               </section>
                   </div>
 
         <div class='span2 global-nav'>
           <ul class='nav nav-tabs nav-stacked'>
-                        <li class='module'><a href='lub.html'>lub</a></li>
+                        <li class='module'><a href='lens.html'>lens</a></li>
             
-                        <li class=''><a href='lub.Autoload.html'>Autoload</a></li>
-                        <li class=''><a href='lub.Dir.html'>Dir</a></li>
-                        <li class=''><a href='lub.Finalizer.html'>Finalizer</a></li>
-                        <li class=''><a href='lub.Poller.html'>Poller</a></li>
-                        <li class=''><a href='lub.Scheduler.html'>Scheduler</a></li>
-                        <li class=''><a href='lub.Template.html'>Template</a></li>
-                        <li class='active'><a href='lub.Thread.html'>Thread</a></li>
-                        <li class=''><a href='lub.Timer.html'>Timer</a></li>
+                        <li class=''><a href='lens.File.html'>File</a></li>
+                        <li class=''><a href='lens.Finalizer.html'>Finalizer</a></li>
+                        <li class=''><a href='lens.Poller.html'>Poller</a></li>
+                        <li class='active'><a href='lens.Popen.html'>Popen</a></li>
+                        <li class=''><a href='lens.Scheduler.html'>Scheduler</a></li>
+                        <li class=''><a href='lens.Thread.html'>Thread</a></li>
+                        <li class=''><a href='lens.Timer.html'>Timer</a></li>
                       </ul>
         </div>
       </div>

@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>lub.Timer</title>
+    <title>lens.Timer</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -32,22 +32,23 @@
 
         <div class='span3 local-nav'>
           <ul class='nav nav-tabs nav-stacked affix'>
-                        <li><a href='#Timer'><i class='icon-chevron-right'></i> lub.Timer</a></li>
+                        <li><a href='#Timer'><i class='icon-chevron-right'></i> lens.Timer</a></li>
                       </ul>
         </div>
 
         <div class='main span7'>
 
                     <section id='Timer'>
-          <h2 class='section'>lub.Timer</h2>
+          <h2 class='section'>lens.Timer</h2>
 
                               <h4 id='stop' class='entry method'><span>:</span>stop <code>()</code></h4>
           
                     <p class='summary'></p>
-                    <p>local lub     = require 'lub' local lib     = lub.class 'lub.Timer' local assert, setmetatable, running,           yield,           floor,      elapsed   =  assert, setmetatable, coroutine.running, coroutine.yield, math.floor, lub.elapsed</p>
+                    <p>local lub     = require 'lub' local lens    = require 'lens' local lib     = lub.class 'lens.Timer' local assert, setmetatable, running,           yield,           floor,      elapsed   =  assert, setmetatable, coroutine.running, coroutine.yield, math.floor, lens.elapsed</p>
+                    <p>local Thread  = <a href='lens.Thread.html#new'>lens.Thread.new</a></p>
                     <p>if not running() then error('Cannot create timer outside of running scheduler.') end local self = { interval = interval, } self.cb = function() self:run() end if func then self.tick = func end return setmetatable(self, lib) end</p>
                     <p>-- The callback function. Note that first argument is the timer -- itself.</p>
-                    <p>-- Start timer. The <code>ref</code> parameter is the start phase of the timer related -- to lub.elapsed. This is used to keep multiple timers in sync. assert(self.interval &gt; 0, 'Cannot run timer with negative or zero interval.') local ref = ref or self.ref local now = elapsed() if not ref then self.thread = <a href='lub.Thread.html'>lub.Thread</a>(self.cb, now) self.ref = self.thread.at elseif ref &gt; now then self.ref = ref self.thread = <a href='lub.Thread.html'>lub.Thread</a>(self.cb, ref) else -- Compute next trigger from ref and interval local diff = now - ref local c = floor(diff / self.interval) + 1 self.ref = now + self.interval * c self.thread = <a href='lub.Thread.html'>lub.Thread</a>(self.cb, self.ref) end end</p>
+                    <p>-- Start timer. The <code>ref</code> parameter is the start phase of the timer related -- to lens.elapsed. This is used to keep multiple timers in sync. assert(self.interval &gt; 0, 'Cannot run timer with negative or zero interval.') local ref = ref or self.ref local now = elapsed() if not ref then self.thread = Thread(self.cb, now) self.ref = self.thread.at elseif ref &gt; now then self.ref = ref self.thread = Thread(self.cb, ref) else -- Compute next trigger from ref and interval local diff = now - ref local c = floor(diff / self.interval) + 1 self.ref = now + self.interval * c self.thread = Thread(self.cb, self.ref) end end</p>
                     <p>if self.interval &gt; 0 then while self.thread do local interval = self:tick() if interval then if interval &lt;= 0 then self:setInterval(0) break else self.interval = interval yield('wait', interval) end else yield('wait', self.interval) end end end end  </p>
                     <p>self.interval = interval</p>
                     <p>if self.thread then -- Running timer: remove from scheduler. self:stop() if interval == 0 then -- Stop. else -- Add back and compute reference position for next trigger. self:start() end else -- Not running. self.interval = interval end end</p>
@@ -58,16 +59,15 @@
 
         <div class='span2 global-nav'>
           <ul class='nav nav-tabs nav-stacked'>
-                        <li class='module'><a href='lub.html'>lub</a></li>
+                        <li class='module'><a href='lens.html'>lens</a></li>
             
-                        <li class=''><a href='lub.Autoload.html'>Autoload</a></li>
-                        <li class=''><a href='lub.Dir.html'>Dir</a></li>
-                        <li class=''><a href='lub.Finalizer.html'>Finalizer</a></li>
-                        <li class=''><a href='lub.Poller.html'>Poller</a></li>
-                        <li class=''><a href='lub.Scheduler.html'>Scheduler</a></li>
-                        <li class=''><a href='lub.Template.html'>Template</a></li>
-                        <li class=''><a href='lub.Thread.html'>Thread</a></li>
-                        <li class='active'><a href='lub.Timer.html'>Timer</a></li>
+                        <li class=''><a href='lens.File.html'>File</a></li>
+                        <li class=''><a href='lens.Finalizer.html'>Finalizer</a></li>
+                        <li class=''><a href='lens.Poller.html'>Poller</a></li>
+                        <li class=''><a href='lens.Popen.html'>Popen</a></li>
+                        <li class=''><a href='lens.Scheduler.html'>Scheduler</a></li>
+                        <li class=''><a href='lens.Thread.html'>Thread</a></li>
+                        <li class='active'><a href='lens.Timer.html'>Timer</a></li>
                       </ul>
         </div>
       </div>

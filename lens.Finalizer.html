@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Thread</title>
+    <title>Finalizer</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -32,47 +32,56 @@
 
         <div class='span3 local-nav'>
           <ul class='nav nav-tabs nav-stacked affix'>
-                        <li><a href='#Thread'><i class='icon-chevron-right'></i> lub.Thread</a></li>
-                        <li><a href='#TODO'><i class='icon-chevron-right'></i> TODO</a></li>
+                        <li><a href='#Finalizer'><i class='icon-chevron-right'></i> lens.Finalizer</a></li>
                       </ul>
         </div>
 
         <div class='main span7'>
 
-                    <section id='Thread'>
-          <h2 class='section'>Thread</h2>
+                    <section id='Finalizer'>
+          <h2 class='section'>Finalizer</h2>
 
                     
-                    <h4 class='sub-title'>Thread garbage collection</h4>
-                    <p class='summary'>As long as a thread is scheduled to run (active loop, listening for, it will be kept in memory.</p>
-                                        <h4 id='new' class='entry function'><span>.</span>new <code>(func, at)</code></h4>
-          
-                    <p>Create a new Thread object and insert it inside the currently running scheduler's event queue.</p>
-                                        <h4 id='kill' class='entry method'><span>:</span>kill <code>()</code></h4>
-          
-                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
-                    <p>-- PRIVATE</p>
-                              </section>
-                    <section id='TODO'>
-          <h2 class='section'>TODO</h2>
+                    <p class='summary'>This object executes the provided method when it is garbage collected.</p>
+                    <p class='warn'><span>WARN</span> Avoid using this as much as possible. Only use <strong>if you have no other way to do what you need</strong>. It is very easy to create complicated bugs when doing too much work in the finalize function.</p>
+                    <p>As a rule of thumb:</p>
+                    <ul>
+<li>Only call and use objects that would not die in the same garbage collection cycle.</li>
+<li>Never call C functions (would crash).</li>
+</ul>
+                    <p>Usage example:</p>
+                    <pre class='prettyprint lang-lua'>local fin = <a href='lens.Finalizer.html'>lens.Finalizer</a>(function(self)
+  print(self.name .. ' is dying')
+end)
 
-                    
-                    <p class='todo'><span class='ref'><a href='#kill'>#kill</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+fin.name = 'Old self'
+
+fin = nil
+
+garbagecollect('collect')
+
+--&gt; "Old self is dying"
+</pre>
+                                        <h4 id='new' class='entry function'><span>.</span>new <code>(func)</code></h4>
+          
+                    <p>Create a new finalizer object with the callback provided by <code>finalize</code> function. The callback can be changed later by assigning a new function to <code>self.finalize</code>. Created objects act like tables and all kinds of data can be linked to them. Please read warning about what can and cannot be done inside the finalize function.</p>
+                                        <h4 id='finalize' class='entry method'><span>:</span>finalize <code>()</code></h4>
+          
+                    <p>Method called on object garbage collection.</p>
                               </section>
                   </div>
 
         <div class='span2 global-nav'>
           <ul class='nav nav-tabs nav-stacked'>
-                        <li class='module'><a href='lub.html'>lub</a></li>
+                        <li class='module'><a href='lens.html'>lens</a></li>
             
-                        <li class=''><a href='lub.Autoload.html'>Autoload</a></li>
-                        <li class=''><a href='lub.Dir.html'>Dir</a></li>
-                        <li class=''><a href='lub.Finalizer.html'>Finalizer</a></li>
-                        <li class=''><a href='lub.Poller.html'>Poller</a></li>
-                        <li class=''><a href='lub.Scheduler.html'>Scheduler</a></li>
-                        <li class=''><a href='lub.Template.html'>Template</a></li>
-                        <li class='active'><a href='lub.Thread.html'>Thread</a></li>
-                        <li class=''><a href='lub.Timer.html'>Timer</a></li>
+                        <li class=''><a href='lens.File.html'>File</a></li>
+                        <li class='active'><a href='lens.Finalizer.html'>Finalizer</a></li>
+                        <li class=''><a href='lens.Poller.html'>Poller</a></li>
+                        <li class=''><a href='lens.Popen.html'>Popen</a></li>
+                        <li class=''><a href='lens.Scheduler.html'>Scheduler</a></li>
+                        <li class=''><a href='lens.Thread.html'>Thread</a></li>
+                        <li class=''><a href='lens.Timer.html'>Timer</a></li>
                       </ul>
         </div>
       </div>

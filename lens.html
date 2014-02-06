@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Lubyk networking and scheduling <a href="https://travis-ci.org/lubyk/lens"><img src="https://travis-ci.org/lubyk/lens.png" alt="Build Status"></a> </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
+        <link href="css/docs.css" rel="stylesheet">
+        
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class='row'>
+          <div class='span12'>
+             <a href='http://lubyk.org'><img alt='lubyk logo' src='img/lubyk.png'/></a> <h1><a href='http://lubyk.org'>Lubyk</a> documentation</h1> 
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="row">
+
+        <div class='span3 local-nav'>
+          <ul class='nav nav-tabs nav-stacked affix'>
+                        <li><a href='#lens'><i class='icon-chevron-right'></i> lens</a></li>
+                        <li><a href='#Scheduling'><i class='icon-chevron-right'></i> Scheduling</a></li>
+                        <li><a href='#Classes'><i class='icon-chevron-right'></i> Classes</a></li>
+                      </ul>
+        </div>
+
+        <div class='main span7'>
+
+                    <section id='lens'>
+          <h2 class='section'>Lubyk networking and scheduling <a href="https://travis-ci.org/lubyk/lens"><img src="https://travis-ci.org/lubyk/lens.png" alt="Build Status"></a> </h2>
+
+                    
+                    <p class='summary'>Single-threaded, fast and predictable scheduling with nanosecond precision.</p>
+                    <a href="https://github.com/lubyk/lens"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub"></a>
+                    <p><strong>MIT license</strong> &copy Gaspard Bucher 2014.</p>
+                    <h4 class='sub-title'>Installation</h4>
+                    <p>With <a href='http://luarocks.org'>luarocks</a>:</p>
+                    <pre class='prettyprint lang-lua'>$ luarocks install lens
+</pre>
+                              
+                    <h4 class='sub-title'>Dependencies</h4>
+                                        <h4 id='VERSION' class='entry param'><span>.</span>VERSION <code>= '1.0.0'</code></h4>
+          
+                    <p>Current version respecting <a href='http://semver.org'>semantic versioning</a>.</p>
+                              
+                    <h4 id='DEPENDS' class='entry param'><span>.</span>DEPENDS = {</h4>
+                                        <h4 id='' class='entry lparam'><code>"lua >= 5.1, < 5.3"</code></h4>
+          
+                    <p>Compatible with Lua 5.1, 5.2 and LuaJIT</p>
+                                        <h4 id='' class='entry lparam'><code>'lub >= 1.0.3, < 1.1'</code></h4>
+          
+                    <p>Uses <a href='http://doc.lubyk.org/lub.html'>Lubyk base library</a></p>
+                              
+                    <h4 class='entry attrib'>}</h4>
+                              </section>
+                    <section id='Scheduling'>
+          <h2 class='section'>Scheduling</h2>
+
+                    
+                    <p>Note that all scheduling functions operate by using <code>coroutine.yield</code> and it is possible to use these equivalent methods instead.</p>
+                                        <h4 id='sleep' class='entry function'><span>.</span>sleep <code>(sec)</code></h4>
+          
+                    <p>Sleep for <code>sec</code> seconds (precision depends on OS). Using nanosecond for precise sleep on linux and macosx. note that this should not be used to create a precise timer: use <a href='lens.Timer.html'>lens.Timer</a> for non-drifting timers.</p>
+                    <p>Usage:</p>
+                    <pre class='prettyprint lang-lua'>lub.sleep(0.5)
+-- is the same as
+coroutine.yield('sleep', sec)</pre>
+                                        <h4 id='waitRead' class='entry function'><span>.</span>waitRead <code>(fd)</code></h4>
+          
+                    <p>Wait until the filedescriptor <code>fd</code> is ready for reading. Since some pollers are edge based, make sure that fd is <strong>not readable</strong> before calling this.</p>
+                    <p>this function simply does:</p>
+                    <pre class='prettyprint lang-lua'>lub.waitRead(fd)
+-- is the same as
+coroutine.yield('read', fd)</pre>
+                                        <h4 id='waitWrite' class='entry function'><span>.</span>waitWrite <code>(fd)</code></h4>
+          
+                    <p>Wait until the filedescriptor <code>fd</code> is ready for writing. Since some pollers are edge based, make sure that fd is <strong>not writeable</strong> before calling this.</p>
+                    <p>this function simply does:</p>
+                    <pre class='prettyprint lang-lua'>lub.waitWrite(fd)
+-- is the same as
+coroutine.yield('write', fd)</pre>
+                                        <h4 id='elapsed' class='entry function'><span>.</span>elapsed <code>()</code></h4>
+          
+                    <p>Get <strong>monotonic</strong> elapsed time since some arbitrary point in time. This timer is as precise as the OS permits and does not jump forward or back. When a computer is connected to atomic clocks with ntp protocol, this clock is adjusted by altering it's speed and should be very precise but can have some jitter.</p>
+                    <p>Uses <code>mach_absolute_time</code> on macosx, <code>clock_gettime</code> (CLOCK_MONOTONIC) on linux and <code>QueryPerformanceCounter</code> on windows.</p>
+                              </section>
+                    <section id='Classes'>
+          <h2 class='section'>Classes</h2>
+
+                    
+                                        <h4 id='---------' class='entry klass'><a href='lens.File.html'>File</a></h4>
+          
+                                        <h4 id='--------------' class='entry klass'><a href='lens.Finalizer.html'>Finalizer</a></h4>
+          
+                    <p class='summary'>This object executes the provided method when it is garbage collected.</p>
+                                        <h4 id='-----------' class='entry klass'><a href='lens.Poller.html'>Poller</a></h4>
+          
+                    <p class='summary'>Normally, end users do not interact directly with the poller. It is used internally by <a href='lens.Scheduler.html'>lens.Scheduler</a> to wait on file descriptors and sleep. This poller uses fast poll API and nanosleep for precise operation.</p>
+                                        <h4 id='----------' class='entry klass'><a href='lens.Popen.html'>Popen</a></h4>
+          
+                    <p class='todo'><span class='ref'><a href='lens.Popen.html#Popen'>Popen</a></span><span>TODO</span> implement bidirectional pipes.</p>
+                                        <h4 id='--------------' class='entry klass'><a href='lens.Scheduler.html'>Scheduler</a></h4>
+          
+                    <p class='fixme'><span class='ref'><a href='lens.Scheduler.html#Scheduler'>Scheduler</a></span><span>FIXME</span> give some time to GUI ?</p>
+                    <p class='todo'><span class='ref'><a href='lens.Scheduler.html#loop'>#loop</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <h4 id='-----------' class='entry klass'><a href='lens.Thread.html'>Thread</a></h4>
+          
+                    <h4 class='sub-title'>Thread garbage collection</h4>
+                    <p class='todo'><span class='ref'><a href='lens.Thread.html#kill'>#kill</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <h4 id='----------' class='entry klass'><a href='lens.Timer.html'>Timer</a></h4>
+          
+                    <p class='summary'></p>
+                              </section>
+                  </div>
+
+        <div class='span2 global-nav'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='index.html'><span></span>lens</a></li>
+            
+                        <li class=''><a href='lens.File.html'>File</a></li>
+                        <li class=''><a href='lens.Finalizer.html'>Finalizer</a></li>
+                        <li class=''><a href='lens.Poller.html'>Poller</a></li>
+                        <li class=''><a href='lens.Popen.html'>Popen</a></li>
+                        <li class=''><a href='lens.Scheduler.html'>Scheduler</a></li>
+                        <li class=''><a href='lens.Thread.html'>Thread</a></li>
+                        <li class=''><a href='lens.Timer.html'>Timer</a></li>
+                      </ul>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+    <div class="container">
+       made with <a title='last change: 232daa9 2014-02-06 19:53:54 +0100' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-39725130-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+    </div>
+    </footer>
+
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        displayAlign: "left",
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
+    <script src='http://code.jquery.com/jquery.min.js'></script>
+    <script src='js/bootstrap.min.js'></script>
+  </body>
+</html>
+
