@@ -76,21 +76,21 @@
           
                     <p>Sleep for <code>sec</code> seconds (precision depends on OS). Using nanosecond for precise sleep on linux and macosx. note that this should not be used to create a precise timer: use <a href='lens.Timer.html'>lens.Timer</a> for non-drifting timers.</p>
                     <p>Usage:</p>
-                    <pre class='prettyprint lang-lua'>lub.sleep(0.5)
+                    <pre class='prettyprint lang-lua'>lens.sleep(0.5)
 -- is the same as
 coroutine.yield('sleep', sec)</pre>
                                         <h4 id='waitRead' class='entry function'><span>.</span>waitRead <code>(fd)</code></h4>
           
                     <p>Wait until the filedescriptor <code>fd</code> is ready for reading. Since some pollers are edge based, make sure that fd is <strong>not readable</strong> before calling this.</p>
                     <p>this function simply does:</p>
-                    <pre class='prettyprint lang-lua'>lub.waitRead(fd)
+                    <pre class='prettyprint lang-lua'>lens.waitRead(fd)
 -- is the same as
 coroutine.yield('read', fd)</pre>
                                         <h4 id='waitWrite' class='entry function'><span>.</span>waitWrite <code>(fd)</code></h4>
           
                     <p>Wait until the filedescriptor <code>fd</code> is ready for writing. Since some pollers are edge based, make sure that fd is <strong>not writeable</strong> before calling this.</p>
                     <p>this function simply does:</p>
-                    <pre class='prettyprint lang-lua'>lub.waitWrite(fd)
+                    <pre class='prettyprint lang-lua'>lens.waitWrite(fd)
 -- is the same as
 coroutine.yield('write', fd)</pre>
                                         <h4 id='elapsed' class='entry function'><span>.</span>elapsed <code>()</code></h4>
@@ -112,6 +112,8 @@ coroutine.yield('write', fd)</pre>
                     <p class='summary'>Normally, end users do not interact directly with the poller. It is used internally by <a href='lens.Scheduler.html'>lens.Scheduler</a> to wait on file descriptors and sleep. This poller uses fast poll API and nanosleep for precise operation.</p>
                                         <h4 id='----------' class='entry klass'><a href='lens.Popen.html'>Popen</a></h4>
           
+                    <p class='todo'><span class='ref'><a href='lens.Popen.html#Popen'>Popen</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='lens.Popen.html#Popen'>Popen</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
                     <p class='todo'><span class='ref'><a href='lens.Popen.html#Popen'>Popen</a></span><span>TODO</span> implement bidirectional pipes.</p>
                                         <h4 id='--------------' class='entry klass'><a href='lens.Scheduler.html'>Scheduler</a></h4>
           
@@ -145,7 +147,7 @@ coroutine.yield('write', fd)</pre>
 
     <footer class="footer">
     <div class="container">
-       made with <a title='last change: 232daa9 2014-02-06 19:53:54 +0100' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+       made with <a title='last change: cb14554 2014-02-06 23:57:08 +0100' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
 <script type="text/javascript">
 
   var _gaq = _gaq || [];
