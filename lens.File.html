@@ -33,6 +33,7 @@
         <div class='span3 local-nav'>
           <ul class='nav nav-tabs nav-stacked affix'>
                         <li><a href='#File'><i class='icon-chevron-right'></i> lens.File</a></li>
+                        <li><a href='#Events'><i class='icon-chevron-right'></i> Events</a></li>
                       </ul>
         </div>
 
@@ -42,12 +43,57 @@
           <h2 class='section'>File</h2>
 
                     
+                                        <h4 id='new' class='entry function'><span>.</span>new <code>(path, mode)</code></h4>
+          
+                    <p>Create a new file with the given mode. Mode values are:</p>
+                    <table class='definition'>
+  <tr><td class='key'>Read</td><td>prepare file for reading</td></tr>
+  <tr><td class='key'>Write</td><td>prepare file for writing</td></tr>
+  <tr><td class='key'>Events</td><td>listen to file changes</td></tr>
+
+</table>
                                         <h4 id='readLine' class='entry method'><span>:</span>readLine <code>()</code></h4>
           
                     <p>Read a line. Returns a string or nil on EOF.</p>
                                         <h4 id='write' class='entry method'><span>:</span>write <code>(str)</code></h4>
           
                     <p>Write a string to a file.</p>
+                              </section>
+                    <section id='Events'>
+          <h2 class='section'>Events</h2>
+
+                    
+                                        <h4 id='events' class='entry method'><span>:</span>events <code>(flags)</code></h4>
+          
+                    <p>Listen for OS notifications on file changes. The flags determine which notifications are watched. You can combine flags by adding them. The function returns the notified event as a number.</p>
+                    <table class='definition'>
+  <tr><td class='key'>DeleteEvent</td><td>Vnode was removed.</td></tr>
+  <tr><td class='key'>WriteEvent</td><td>Data contents changed.</td></tr>
+  <tr><td class='key'>ExtendEvent</td><td>Size increased.</td></tr>
+  <tr><td class='key'>AttribEvent</td><td>Attributes changed.</td></tr>
+  <tr><td class='key'>LinkEvent</td><td>Link count changed.</td></tr>
+  <tr><td class='key'>RenameEvent</td><td>Vnode was renamed.</td></tr>
+  <tr><td class='key'>RevokeEvent</td><td>Vnode access was revoked.</td></tr>
+  <tr><td class='key'>NoneEvent</td><td>No specific vnode event: to test for EVFILT_READ activation.</td></tr>
+
+</table>
+                    <p>Usage example:</p>
+                    <pre class='prettyprint lang-lua'>local lens = require 'lens'
+local File = lens.File
+local DELETE, WRITE = File.DeleteEvent, File.WriteEvent
+f = <a href='lens.File.html'>lens.File</a>('foo.lua', File.Events)
+while true do
+  local ev = f:events(DELETE + WRITE)
+  if ev == DELETE then
+    print(f.path, 'deleted')
+    break
+  else
+    print(f.path, File.EventName[ev])
+  end
+end</pre>
+                                        <h4 id='eventMap' class='entry function'><span>.</span>eventMap <code></code></h4>
+          
+                    <p>Translate an event number to a table with keys representing active flags.</p>
                               </section>
                   </div>
 
@@ -69,7 +115,7 @@
 
     <footer class="footer">
     <div class="container">
-       made with <a title='last change: ca9a56b 2014-05-08 19:42:28 +0200' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+       made with <a title='last change: d8ad927 2014-05-13 12:19:55 +0200' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
 <script type="text/javascript">
 
   var _gaq = _gaq || [];

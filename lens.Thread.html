@@ -47,7 +47,7 @@
                     <p class='summary'>As long as a thread is scheduled to run (active loop, listening for, it will be kept in memory.</p>
                                         <h4 id='new' class='entry function'><span>.</span>new <code>(func, at)</code></h4>
           
-                    <p>Create a new Thread object and insert it inside the currently running scheduler's event queue.</p>
+                    <p>Create a new Thread object and insert it inside the currently running scheduler's event queue. The thread is retained in the scheduler as long as it is alive (function has not reached the end).</p>
                                         <h4 id='kill' class='entry method'><span>:</span>kill <code>()</code></h4>
           
                     <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
@@ -79,7 +79,7 @@
 
     <footer class="footer">
     <div class="container">
-       made with <a title='last change: ca9a56b 2014-05-08 19:42:28 +0200' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+       made with <a title='last change: d8ad927 2014-05-13 12:19:55 +0200' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
 <script type="text/javascript">
 
   var _gaq = _gaq || [];

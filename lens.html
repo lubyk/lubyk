@@ -72,6 +72,9 @@
 
                     
                     <p>Note that all scheduling functions operate by using <code>coroutine.yield</code> and it is possible to use these equivalent methods instead.</p>
+                                        <h4 id='run' class='entry function'><span>.</span>run <code>(func)</code></h4>
+          
+                    <p>Enter event loop. This is equivalent to creating a <a href='lens.Scheduler.html'>lens.Scheduler</a> and calling run on it. If this function is called while the scheduler is already running, it does nothing.</p>
                                         <h4 id='sleep' class='entry function'><span>.</span>sleep <code>(sec)</code></h4>
           
                     <p>Sleep for <code>sec</code> seconds (precision depends on OS). Using nanosecond for precise sleep on linux and macosx. note that this should not be used to create a precise timer: use <a href='lens.Timer.html'>lens.Timer</a> for non-drifting timers.</p>
@@ -147,7 +150,7 @@ coroutine.yield('write', fd)</pre>
 
     <footer class="footer">
     <div class="container">
-       made with <a title='last change: ca9a56b 2014-05-08 19:42:28 +0200' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+       made with <a title='last change: d8ad927 2014-05-13 12:19:55 +0200' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
 <script type="text/javascript">
 
   var _gaq = _gaq || [];
