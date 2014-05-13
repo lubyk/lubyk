@@ -33,6 +33,10 @@
         <div class='span3 local-nav'>
           <ul class='nav nav-tabs nav-stacked affix'>
                         <li><a href='#Timer'><i class='icon-chevron-right'></i> lens.Timer</a></li>
+                        <li><a href='#Constructor'><i class='icon-chevron-right'></i> Constructor</a></li>
+                        <li><a href='#Start,-stop,-phase'><i class='icon-chevron-right'></i> Start, stop, phase</a></li>
+                        <li><a href='#Methods'><i class='icon-chevron-right'></i> Methods</a></li>
+                        <li><a href='#Callback'><i class='icon-chevron-right'></i> Callback</a></li>
                       </ul>
         </div>
 
@@ -41,20 +45,62 @@
                     <section id='Timer'>
           <h2 class='section'>lens.Timer</h2>
 
-                              <h4 id='stop' class='entry method'><span>:</span>stop <code>()</code></h4>
+                    
+                    <p class='summary'>The Timer contains a callback to execute a function at regular intervals. This timer does not drift (uses OS monotonic clock).</p>
+                    <p>Usage:</p>
+                    <pre class='prettyprint lang-lua'>local i = 0
+local tim = <a href='lens.Timer.html'>lens.Timer</a>(0.5, function()
+  print('Hello', lens.elapsed())
+  i = i + 1
+  if i == 10 then
+    -- Use return value to set new interval. A
+    -- return value of 0 stops the timer.
+    return 0
+  end
+end)
+</pre>
+                              </section>
+                    <section id='Constructor'>
+          <h2 class='section'>Constructor</h2>
+
+                    
+                                        <h4 id='new' class='entry function'><span>.</span>new <code>(interval, callback)</code></h4>
           
-                    <p class='summary'></p>
-                    <p>local lub     = require 'lub' local lens    = require 'lens' local lib     = lub.class 'lens.Timer' local assert, setmetatable, running,           yield,           floor,      elapsed   =  assert, setmetatable, coroutine.running, coroutine.yield, math.floor, lens.elapsed</p>
-                    <p>local Thread  = <a href='lens.Thread.html#new'>lens.Thread.new</a></p>
-                    <p>if not running() then error('Cannot create timer outside of running scheduler.') end local self = { interval = interval, } self.cb = function() self:run() end if func then self.timeout = func end return setmetatable(self, lib) end</p>
-                    <p>-- The callback function. Note that first argument is the timer -- itself.</p>
-                    <p>-- Start timer. The <code>start_in_seconds</code> parameter is the delay to start the -- timer. This delay can be used for precise phase synchronization with other -- timers or to use an irregular timer. assert(self.interval &gt; 0, 'Cannot run timer with negative or zero interval.') if self.thread then print('kill') -- reschedule self.thread:kill() self.thread = nil end print('starting again')</p>
-                    <p>if not start_in_seconds then -- start or reschedule right away self.thread = Thread(self.cb) else print('create new thread', start_in_seconds + elapsed()) self.thread = Thread(self.cb, start_in_seconds + elapsed()) end end</p>
-                    <p>if self.interval &gt; 0 then while self.thread do local interval = self:timeout() if interval then if interval &lt;= 0 then self:setInterval(0) break else self.interval = interval yield('wait', interval) end else yield('wait', self.interval) end end end end  </p>
-                    <p>self.interval = interval</p>
-                    <p>if self.thread then -- Running timer: remove from scheduler. local ref = self.thread.at if interval == 0 then -- Stop. self:stop() else -- Change interval and restart with same phase. local diff = elapsed() - ref local c = floor(diff / self.interval) + 1 -- FIXME: we should use 'wakeAt' so that we can specify absolute time and -- avoid drift by calls to elapsed(). -- self:wakeAt(ref + interval <strong> c) self:start(self.interval </strong> c) end else -- Not running. self.interval = interval end end</p>
-                    <p>if self.thread then self.thread:join() end end</p>
-                    <p>if self.thread then self.ref = self.thread.at self.thread:kill() self.thread = nil end end</p>
+                    <p>Create a new timer with a give <code>interval</code> in seconds and a callback function. The callback can also be set as <a href='#timeout'>timeout</a> method on the returned object.</p>
+                              </section>
+                    <section id='Start,-stop,-phase'>
+          <h2 class='section'>Start, stop, phase</h2>
+
+                    
+                                        <h4 id='start' class='entry method'><span>:</span>start <code>(start_in_seconds)</code></h4>
+          
+                    <p>Start timer. The <code>start_in_seconds</code> parameter is the delay to start the timer. For precise phase synchronization with other timers, use <a href='#startAt'>startAt</a>. For irregular timers, you should use <a href='#timeout'>timeout</a> return value instead.</p>
+                                        <h4 id='startAt' class='entry method'><span>:</span>startAt <code>(at)</code></h4>
+          
+                    <p>Start timer with a precise starting time. This can be used to set precision  phase between timers.</p>
+                                        <h4 id='stop' class='entry method'><span>:</span>stop <code>()</code></h4>
+          
+                    <p>Stop the timer.</p>
+                              </section>
+                    <section id='Methods'>
+          <h2 class='section'>Methods</h2>
+
+                    
+                                        <h4 id='running' class='entry method'><span>:</span>running <code>()</code></h4>
+          
+                    <p>Return true if the timmer is running.</p>
+                                        <h4 id='setInterval' class='entry method'><span>:</span>setInterval <code>(interval)</code></h4>
+          
+                    <p>Change interval but do not restart timer (effect on next trigger).</p>
+                              </section>
+                    <section id='Callback'>
+          <h2 class='section'>Callback</h2>
+
+                    
+                                        <h4 id='timeout' class='entry method'><span>:</span>timeout <code>()</code></h4>
+          
+                    <p>Method called when the timer fires. If you return a number from this method, it will be used as the next interval but it does not alter the timer interval.</p>
+                    <p>Returning a number can be used for irregular timers or to change phase. A returned value of <code>0</code> stops the timer.</p>
                               </section>
                   </div>
 
@@ -63,6 +109,7 @@
                         <li class='module'><a href='lens.html'>lens</a></li>
             
                         <li class=''><a href='lens.File.html'>File</a></li>
+                        <li class=''><a href='lens.FileWatch.html'>FileWatch</a></li>
                         <li class=''><a href='lens.Finalizer.html'>Finalizer</a></li>
                         <li class=''><a href='lens.Poller.html'>Poller</a></li>
                         <li class=''><a href='lens.Popen.html'>Popen</a></li>
@@ -76,7 +123,7 @@
 
     <footer class="footer">
     <div class="container">
-       made with <a title='last change: d8ad927 2014-05-13 12:19:55 +0200' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+       made with <a title='last change: 803287c 2014-05-13 15:56:47 +0200' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
 <script type="text/javascript">
 
   var _gaq = _gaq || [];

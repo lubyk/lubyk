@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Simple templating</title>
+    <title>FileWatch</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -32,54 +32,49 @@
 
         <div class='span3 local-nav'>
           <ul class='nav nav-tabs nav-stacked affix'>
-                        <li><a href='#Template'><i class='icon-chevron-right'></i> lub.Template</a></li>
+                        <li><a href='#FileWatch'><i class='icon-chevron-right'></i> lens.FileWatch</a></li>
+                        <li><a href='#Constructor'><i class='icon-chevron-right'></i> Constructor</a></li>
+                        <li><a href='#Callback'><i class='icon-chevron-right'></i> Callback</a></li>
                       </ul>
         </div>
 
         <div class='main span7'>
 
-                    <section id='Template'>
-          <h2 class='section'>Simple templating</h2>
+                    <section id='FileWatch'>
+          <h2 class='section'>FileWatch</h2>
 
                     
-                    <p class='summary'>Simplistic templating system inspired by Zed A. Shaw's minimal template for <a href='http://mongrel2.org/'>Tir</a>.</p>
-                    <p>Template features:</p>
-                    <table class='definition'>
-  <tr><td class='key'><code>{{ code }}</code>  </td><td>Replaced with the string provided by 'code'.</td></tr>
-  <tr><td class='key'><code>{% code %}</code>  </td><td>Execute code but do not output (used for loops, if, etc).</td></tr>
-  <tr><td class='key'><code>{| code |}</code>  </td><td>Output code and preserve indentation.</td></tr>
+                    <p class='summary'>Watches a file and executes the <a href='#changed'>changed</a> callback if the content changes. Uses kevent or other OS optimized notification so that listening to files takes as few resources as possible.</p>
+                    <p>See <a href='examples.lens.LiveCoding.html'>LiveCoding</a> example.</p>
+                              </section>
+                    <section id='Constructor'>
+          <h2 class='section'>Constructor</h2>
 
-</table>
-                    <p>Usage:</p>
-                    <pre class='prettyprint lang-lua'>local tmplt = <a href='lub.Template.html'>lub.Template</a> [[
-Hello {{name}}.
-{% if parent then %}
-Your parent is {{parent.name}}.
-{% end %}
-]]
+                              <h4 id='new' class='entry function'><span>.</span>new <code>(path, callback)</code></h4>
+          
+                    <p>Start listening to the file provided by <code>path</code>. If <code>path</code> is omitted, the default is the calling script's path. If <code>callback</code> is omitted, the default is to reload the script.</p>
+                              </section>
+                    <section id='Callback'>
+          <h2 class='section'>Callback</h2>
 
-tmplt:run {
-  name = 'Joe',
-  parent = {name = 'Eve'},
-}
---&gt; Hello Joe.
---&gt; Your parent is Eve.</pre>
-                                        <h4 id='new' class='entry function'><span>.</span>new <code>(source)</code></h4>
+                              <h4 id='changed' class='entry method'><span>:</span>changed <code>()</code></h4>
           
-                    <p>Create a new template object ready to produce output by calling <a href='#run'>run</a>. The <code>source</code> parameters should be a string or a table with a <code>path</code> key.</p>
-                                        <h4 id='run' class='entry method'><span>:</span>run <code>(env)</code></h4>
-          
-                    <p>Returns resulting text by runngint the template with an environment table <code>env</code>.</p>
+                    <p>The callback function is called when the watched file changes. The default implementation is to reload the file (execute a dofile).</p>
                               </section>
                   </div>
 
         <div class='span2 global-nav'>
           <ul class='nav nav-tabs nav-stacked'>
-                        <li class='module'><a href='lub.html'>lub</a></li>
+                        <li class='module'><a href='lens.html'>lens</a></li>
             
-                        <li class=''><a href='lub.Autoload.html'>Autoload</a></li>
-                        <li class=''><a href='lub.Dir.html'>Dir</a></li>
-                        <li class='active'><a href='lub.Template.html'>Template</a></li>
+                        <li class=''><a href='lens.File.html'>File</a></li>
+                        <li class='active'><a href='lens.FileWatch.html'>FileWatch</a></li>
+                        <li class=''><a href='lens.Finalizer.html'>Finalizer</a></li>
+                        <li class=''><a href='lens.Poller.html'>Poller</a></li>
+                        <li class=''><a href='lens.Popen.html'>Popen</a></li>
+                        <li class=''><a href='lens.Scheduler.html'>Scheduler</a></li>
+                        <li class=''><a href='lens.Thread.html'>Thread</a></li>
+                        <li class=''><a href='lens.Timer.html'>Timer</a></li>
                       </ul>
         </div>
       </div>
