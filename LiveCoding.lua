@@ -6,7 +6,7 @@
 
   ## Download source
 
-  [LiveCoding.lua](examples/lens/LiveCoding.lua)
+  [LiveCoding.lua](example/lens/LiveCoding.lua)
 
 --]]------------------------------------------------------
 -- doc:lit
@@ -57,4 +57,5 @@ if not tim:running() then
   tim:start()
 end
 
---coroutine.yield('halt')
+--coroutine.yield('gui')
+coroutine.yield('halt')
