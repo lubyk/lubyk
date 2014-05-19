@@ -58,4 +58,4 @@ if not tim:running() then
 end
 
 --coroutine.yield('gui')
-coroutine.yield('halt')
+-- coroutine.yield('halt')
