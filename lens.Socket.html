@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Thread</title>
+    <title>lens.Socket</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -32,34 +32,32 @@
 
         <div class='span3 local-nav'>
           <ul class='nav nav-tabs nav-stacked affix'>
-                        <li><a href='#Thread'><i class='icon-chevron-right'></i> lens.Thread</a></li>
-                        <li><a href='#TODO'><i class='icon-chevron-right'></i> TODO</a></li>
+                        <li><a href='#Socket'><i class='icon-chevron-right'></i> lens.Socket</a></li>
                       </ul>
         </div>
 
         <div class='main span7'>
 
-                    <section id='Thread'>
-          <h2 class='section'>Thread</h2>
+                    <section id='Socket'>
+          <h2 class='section'>lens.Socket</h2>
 
-                    
-                    <h4 class='sub-title'>Thread garbage collection</h4>
-                    <p class='summary'>As long as a thread is scheduled to run (active loop, listening for, it will be kept in memory.</p>
-                                        <h4 id='new' class='entry function'><span>.</span>new <code>(func, at, sched)</code></h4>
+                              <h4 id='join' class='entry method'><span>:</span>join <code>()</code></h4>
           
-                    <p>Create a new Thread object and insert it inside the currently running scheduler's event queue. The thread is retained in the scheduler as long as it is alive (function has not reached the end). If <code>sched</code> is provided, this scheduler will be used instead of using yield.</p>
-                                        <h4 id='kill' class='entry method'><span>:</span>kill <code>()</code></h4>
-          
-                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
-                                        <h4 id='join' class='entry method'><span>:</span>join <code>()</code></h4>
-          
-                    <p>Running thread will wait for this thread to finish.</p>
-                              </section>
-                    <section id='TODO'>
-          <h2 class='section'>TODO</h2>
-
-                    
-                    <p class='todo'><span class='ref'><a href='#kill'>#kill</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='summary'></p>
+                    <p>local lens = require 'lens' local core = require 'lens.core' local lib  = <a href='core.Socket.html'>core.Socket</a> local new  = lib.new</p>
+                    <p>local           yield,       slen,       ssub =  coroutine.yield, string.len, string.sub</p>
+                    <p>-- Rewrite new local self = new(lib.TCP) self.clients = {} if func then self.thread = <a href='lens.Thread.html'>lens.Thread</a>(function() func(self) end) end return self end</p>
+                    <p>local bind = lib.bind self.host    = host self.port    = bind(self.super, host, port) self.sock_fd = self:fd() return self.port end</p>
+                    <p>local connect = lib.connect local super = self.super local ok = connect(super, ...) self.sock_fd = super:fd() if not ok then yield('write', self.sock_fd) super:connectFinish() end end</p>
+                    <p>local recvBytes = lib.recvBytes local super  = self.super local buffer</p>
+                    <p>while true do local data, eagain, sz = recvBytes(super, len) if not data then -- closed error('Connection closed while reading.') elseif eagain then -- eagain contains the remaining size len = eagain if buffer then buffer = buffer .. data else buffer = data end else if buffer then return buffer .. data else return data end end yield('read', self.sock_fd) end end</p>
+                    <p>local recvLine = lib.recvLine local super  = self.super local buffer</p>
+                    <p>while true do local data, eagain = recvLine(super) if not data then -- closed error('Connection closed while reading.') elseif eagain then -- EAGAIN if buffer then buffer = buffer .. data else buffer = data end else if buffer then return buffer .. data else return data end end yield('read', self.sock_fd) end end</p>
+                    <p>local send = lib.send local buffer = data while true do local sent = send(self.super, data) if sent == slen(data) then break else data = ssub(data, sent + 1) end yield('write', self.sock_fd) end end</p>
+                    <p>local accept = lib.accept local cli = accept(self.super) while not cli do yield('read', self.sock_fd) cli = accept(self.super) end</p>
+                    <p>cli.sock_fd = cli:fd() if func then -- start new thread -- protect from GC self.clients[cli.sock_fd] = cli cli.thread = <a href='lens.Thread.html'>lens.Thread</a>(function() func(cli) -- forget about the client self.clients[cli.sock_fd] = nil end) end return cli end</p>
+                    <p>if self.thread then self.thread:kill() end end</p>
+                    <p>if self.thread then self.thread:join() end end</p>
                               </section>
                   </div>
 
@@ -73,8 +71,8 @@
                         <li class=''><a href='lens.Poller.html'>Poller</a></li>
                         <li class=''><a href='lens.Popen.html'>Popen</a></li>
                         <li class=''><a href='lens.Scheduler.html'>Scheduler</a></li>
-                        <li class=''><a href='lens.Socket.html'>Socket</a></li>
-                        <li class='active'><a href='lens.Thread.html'>Thread</a></li>
+                        <li class='active'><a href='lens.Socket.html'>Socket</a></li>
+                        <li class=''><a href='lens.Thread.html'>Thread</a></li>
                         <li class=''><a href='lens.Timer.html'>Timer</a></li>
                       </ul>
         </div>
