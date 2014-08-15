@@ -46,18 +46,21 @@
                     <p class='summary'></p>
                     <p>local lens = require 'lens' local core = require 'lens.core' local lib  = <a href='core.Socket.html'>core.Socket</a> local new  = lib.new</p>
                     <p>local           yield,       slen,       ssub =  coroutine.yield, string.len, string.sub</p>
-                    <p>-- Rewrite new local self = new(lib.TCP) self.clients = {} if func then self.thread = <a href='lens.Thread.html'>lens.Thread</a>(function() func(self) end) end return self end</p>
+                    <p>if type(sock_type) == 'function' then func = sock_type sock_type = lib.TCP end local self = new(sock_type or lib.TCP)</p>
+                    <p>if func then self.thread = <a href='lens.Thread.html'>lens.Thread</a>(function() func(self) end) end return self end</p>
                     <p>local bind = lib.bind self.host    = host self.port    = bind(self.super, host, port) self.sock_fd = self:fd() return self.port end</p>
                     <p>local connect = lib.connect local super = self.super local ok = connect(super, ...) self.sock_fd = super:fd() if not ok then yield('write', self.sock_fd) super:connectFinish() end end</p>
-                    <p>local recvBytes = lib.recvBytes local super  = self.super local buffer</p>
+                    <p>local recvMessage = lib.recvMessage -- Receive all there is to receive. This method yields if the data is not yet -- available. local super  = self.super</p>
+                    <p>while true do local data, eagain = recvMessage(super) if eagain then -- EAGAIN -- no data elseif not data then -- closed error('Connection closed while reading.') else return data end yield('read', self.sock_fd) end end</p>
+                    <p>local recvBytes = lib.recvBytes -- Receive <code>len</code> count of bytes. This method yields if the data is not yet -- available. local super  = self.super local buffer</p>
                     <p>while true do local data, eagain, sz = recvBytes(super, len) if not data then -- closed error('Connection closed while reading.') elseif eagain then -- eagain contains the remaining size len = eagain if buffer then buffer = buffer .. data else buffer = data end else if buffer then return buffer .. data else return data end end yield('read', self.sock_fd) end end</p>
                     <p>local recvLine = lib.recvLine local super  = self.super local buffer</p>
                     <p>while true do local data, eagain = recvLine(super) if not data then -- closed error('Connection closed while reading.') elseif eagain then -- EAGAIN if buffer then buffer = buffer .. data else buffer = data end else if buffer then return buffer .. data else return data end end yield('read', self.sock_fd) end end</p>
                     <p>local send = lib.send local buffer = data while true do local sent = send(self.super, data) if sent == slen(data) then break else data = ssub(data, sent + 1) end yield('write', self.sock_fd) end end</p>
                     <p>local accept = lib.accept local cli = accept(self.super) while not cli do yield('read', self.sock_fd) cli = accept(self.super) end</p>
-                    <p>cli.sock_fd = cli:fd() if func then -- start new thread -- protect from GC self.clients[cli.sock_fd] = cli cli.thread = <a href='lens.Thread.html'>lens.Thread</a>(function() func(cli) -- forget about the client self.clients[cli.sock_fd] = nil end) end return cli end</p>
+                    <p>cli.sock_fd = cli:fd() if func then -- start new thread cli.thread = <a href='lens.Thread.html'>lens.Thread</a>(function() func(cli) end) end return cli end</p>
                     <p>if self.thread then self.thread:kill() end end</p>
-                    <p>if self.thread then self.thread:join() end end</p>
+                    <p>if self.thread then self.thread:join() else error('no thread running. Cannot join.') end end</p>
                               </section>
                   </div>
 
@@ -81,7 +84,7 @@
 
     <footer class="footer">
     <div class="container">
-       made with <a title='last change: f1cb91e 2014-08-15 11:50:39 +0200' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+       made with <a title='last change: 951c489 2014-08-15 12:31:36 +0200' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
 <script type="text/javascript">
 
   var _gaq = _gaq || [];
