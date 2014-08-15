@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>OpenSoundControl for Lua <a href="https://travis-ci.org/lubyk/osc"><img src="https://travis-ci.org/lubyk/osc.png" alt="Build Status"></a> </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
+        <link href="css/docs.css" rel="stylesheet">
+        
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class='row'>
+          <div class='span12'>
+             <a href='http://lubyk.org'><img alt='lubyk logo' src='img/lubyk.png'/></a> <h1><a href='http://lubyk.org'>Lubyk</a> documentation</h1> 
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="row">
+
+        <div class='span3 local-nav'>
+          <ul class='nav nav-tabs nav-stacked affix'>
+                        <li><a href='#osc'><i class='icon-chevron-right'></i> osc</a></li>
+                        <li><a href='#Class-methods'><i class='icon-chevron-right'></i> Class methods</a></li>
+                      </ul>
+        </div>
+
+        <div class='main span7'>
+
+                    <section id='osc'>
+          <h2 class='section'>OpenSoundControl for Lua <a href="https://travis-ci.org/lubyk/osc"><img src="https://travis-ci.org/lubyk/osc.png" alt="Build Status"></a> </h2>
+
+                    
+                    <p class='summary'>OpenSoundControl pack and unpack for Lua.</p>
+                    <a href="https://github.com/lubyk/osc"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub"></a>
+                    <p><strong>MIT license</strong> &copy Ross Bencina 2013, Gaspard Bucher 2014.</p>
+                    <p>Web page for <a href='http://www.rossbencina.com/code/oscpack'>oscpack</a>.</p>
+                    <h4 class='sub-title'>Installation</h4>
+                    <p>With <a href='http://luarocks.org'>luarocks</a>:</p>
+                    <pre class='prettyprint lang-lua'>$ luarocks install osc
+</pre>
+                    <p>Supports sending basic Lua values and (nested) lua tables either as Array or Hash. A table with both numeric and string keys is treated as an array.</p>
+                    <p class='warn'><span>WARN</span> This implementation does not support sending binary data.</p>
+                    <h4 class='sub-title'>Usage example</h4>
+                    <pre class='prettyprint lang-lua'>local osc = require 'osc'
+local data = osc.pack('/some/url', true, 2, {foo = 'bar'})
+-- ... send ... receive
+local url, a, b, c = osc.unpack(data)
+</pre>
+                                        <h4 id='VERSION' class='entry param'><span>.</span>VERSION <code>= '1.0.0'</code></h4>
+          
+                    <p>Current version respecting <a href='http://semver.org'>semantic versioning</a>.</p>
+                              
+                    <h4 id='DEPENDS' class='entry param'><span>.</span>DEPENDS = {</h4>
+                                        <h4 id='' class='entry lparam'><code>"lua >= 5.1, < 5.3"</code></h4>
+          
+                    <p>Compatible with Lua 5.1, 5.2 and LuaJIT</p>
+                                        <h4 id='' class='entry lparam'><code>'lub >= 1.0.3, < 2.0'</code></h4>
+          
+                    <p>Uses <a href='http://doc.lubyk.org/lub.html'>Lubyk base library</a></p>
+                              
+                    <h4 class='entry attrib'>}</h4>
+                              </section>
+                    <section id='Class-methods'>
+          <h2 class='section'>Class methods</h2>
+
+                    
+                                        <h4 id='pack' class='entry function'><span>.</span>pack <code>(url, ...)</code></h4>
+          
+                    <p>Pack an url with values into a binary string ready to be transmitted.</p>
+                    <pre class='prettyprint lang-lua'>local data = osc.pack(url, value1, value2)
+</pre>
+                                        <h4 id='unpack' class='entry function'><span>.</span>unpack <code>(data)</code></h4>
+          
+                    <p>Unpack binary data into lua values. This is a multi value return function:</p>
+                    <pre class='prettyprint lang-lua'>local url, value1, value2 = osc.unpack(data)
+</pre>
+                                        <h4 id='----------' class='entry klass'><a href='osc.Client.html'>Client</a></h4>
+          
+                    <p class='summary'>This is a simple UDP client (based on lens.Socket) to send OSC messages.</p>
+                                        <h4 id='----------' class='entry klass'><a href='osc.Server.html'>Server</a></h4>
+          
+                    <p class='summary'>This is a simple UDP server (based on lens.Socket) to receive OSC messages.</p>
+                              </section>
+                  </div>
+
+        <div class='span2 global-nav'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='index.html'><span></span>osc</a></li>
+            
+                        <li class=''><a href='osc.Client.html'>Client</a></li>
+                        <li class=''><a href='osc.Server.html'>Server</a></li>
+                      </ul>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+    <div class="container">
+       made with <a title='last change: e7a738e 2014-08-15 14:39:22 +0200' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-39725130-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+    </div>
+    </footer>
+
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        displayAlign: "left",
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
+    <script src='http://code.jquery.com/jquery.min.js'></script>
+    <script src='js/bootstrap.min.js'></script>
+  </body>
+</html>
+

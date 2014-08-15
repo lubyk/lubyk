@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>default Poller</title>
+    <title>osc receive server</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -32,43 +32,71 @@
 
         <div class='span3 local-nav'>
           <ul class='nav nav-tabs nav-stacked affix'>
-                        <li><a href='#Poller'><i class='icon-chevron-right'></i> lens.Poller</a></li>
+                        <li><a href='#Server'><i class='icon-chevron-right'></i> osc.Server</a></li>
+                        <li><a href='#Callback'><i class='icon-chevron-right'></i> Callback</a></li>
                       </ul>
         </div>
 
         <div class='main span7'>
 
-                    <section id='Poller'>
-          <h2 class='section'>default Poller</h2>
+                    <section id='Server'>
+          <h2 class='section'>osc receive server</h2>
 
                     
-                    <p class='summary'>Normally, end users do not interact directly with the poller. It is used internally by <a href='lens.Scheduler.html'>lens.Scheduler</a> to wait on file descriptors and sleep. This poller uses fast poll API and nanosleep for precise operation.</p>
-                    <p>-- # Poller API -- TODO   --</p>
-                                        <h4 id='new' class='entry function'><span>.</span>new <code>(reserve)</code></h4>
+                    <p class='summary'>This is a simple UDP server (based on lens.Socket) to receive OSC messages.</p>
+                    <p>The server must be created and run inside <a href='lens.Scheduler.html'>lens.Scheduler</a> (see example below).</p>
+                    <h4 class='sub-title'>Usage example</h4>
+                    <pre class='prettyprint lang-lua'>local lens = require 'lens'
+-- Using live coding
+lens.run(function() <a href='lens.FileWatch.html'>lens.FileWatch</a>() end)
+
+local osc = require 'osc'
+
+server = server or <a href='osc.Server.html'>osc.Server</a>(11000)
+
+function server:receive(url, ...)
+  print(url, ...)
+end
+</pre>
+                                        <h4 id='new' class='entry function'><span>.</span>new <code>(port, map)</code></h4>
           
-                    <p>Create a new poller. Optional <code>reserve</code> argument is used to reserve slots in memory for items to poll on (default = 8).</p>
-                                        <h4 id='poll' class='entry function'><span>.</span>poll <code>(timeout)</code></h4>
+                    <p>Create a new server. If <code>port</code> is '0', a random available port will be chosen. If an optional <code>map</code> table is provided, it is used to trigger functions from message url (see <a href='#map'>map</a>).</p>
+                                        <h4 id='map' class='entry method'><span>:</span>map <code>(map)</code></h4>
           
-                    <p>Polls for new events with a maximal waiting time of <code>timeout</code>. Returns <code>true</code> on success and <code>false</code> on interruption.</p>
-                                        <h4 id='events' class='entry function'><span>.</span>events <code>()</code></h4>
+                    <p>Trigger functions from message urls. Calling this function overwrites the <a href='#receive'>receive</a> callback.</p>
+                    <p>Example:</p>
+                    <pre class='prettyprint lang-lua'>server:map {
+  ['/1/fader1'] = function(url, value)
+    print('HEY, fader 1 changed', value)
+  end,
+
+  ['/1/pad1'] = function(url, x, y)
+    box:move(x, y)
+  end,
+
+  unknown = function(url, ...)
+    print('Missing entry in map table', url, ...)
+  end,
+}
+</pre>
+                    <p>The 'unknown' entry is used to map all urls not present in the table.</p>
+                              </section>
+                    <section id='Callback'>
+          <h2 class='section'>Callback</h2>
+
+                    
+                                        <h4 id='receive' class='entry method'><span>:</span>receive <code>(url, ...)</code></h4>
           
-                    <p>Return a table with all event idx or nil. Used after a call to <a href='#poll'>poll</a>.</p>
+                    <p>This callback is called when osc messages arrive. If <a href='#map'>map</a> is used, this callback is changed.</p>
                               </section>
                   </div>
 
         <div class='span2 global-nav'>
           <ul class='nav nav-tabs nav-stacked'>
-                        <li class='module'><a href='lens.html'>lens</a></li>
+                        <li class='module'><a href='osc.html'>osc</a></li>
             
-                        <li class=''><a href='lens.File.html'>File</a></li>
-                        <li class=''><a href='lens.FileWatch.html'>FileWatch</a></li>
-                        <li class=''><a href='lens.Finalizer.html'>Finalizer</a></li>
-                        <li class='active'><a href='lens.Poller.html'>Poller</a></li>
-                        <li class=''><a href='lens.Popen.html'>Popen</a></li>
-                        <li class=''><a href='lens.Scheduler.html'>Scheduler</a></li>
-                        <li class=''><a href='lens.Socket.html'>Socket</a></li>
-                        <li class=''><a href='lens.Thread.html'>Thread</a></li>
-                        <li class=''><a href='lens.Timer.html'>Timer</a></li>
+                        <li class=''><a href='osc.Client.html'>Client</a></li>
+                        <li class='active'><a href='osc.Server.html'>Server</a></li>
                       </ul>
         </div>
       </div>

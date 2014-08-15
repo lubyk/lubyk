@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>default Poller</title>
+    <title>osc send client</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -32,43 +32,51 @@
 
         <div class='span3 local-nav'>
           <ul class='nav nav-tabs nav-stacked affix'>
-                        <li><a href='#Poller'><i class='icon-chevron-right'></i> lens.Poller</a></li>
+                        <li><a href='#Client'><i class='icon-chevron-right'></i> osc.Client</a></li>
+                        <li><a href='#Class-functions'><i class='icon-chevron-right'></i> Class functions</a></li>
+                        <li><a href='#Methods'><i class='icon-chevron-right'></i> Methods</a></li>
                       </ul>
         </div>
 
         <div class='main span7'>
 
-                    <section id='Poller'>
-          <h2 class='section'>default Poller</h2>
+                    <section id='Client'>
+          <h2 class='section'>osc send client</h2>
 
                     
-                    <p class='summary'>Normally, end users do not interact directly with the poller. It is used internally by <a href='lens.Scheduler.html'>lens.Scheduler</a> to wait on file descriptors and sleep. This poller uses fast poll API and nanosleep for precise operation.</p>
-                    <p>-- # Poller API -- TODO   --</p>
-                                        <h4 id='new' class='entry function'><span>.</span>new <code>(reserve)</code></h4>
+                    <p class='summary'>This is a simple UDP client (based on lens.Socket) to send OSC messages.</p>
+                    <h4 class='sub-title'>Usage example</h4>
+                    <pre class='prettyprint lang-lua'>local osc = require 'osc'
+
+client = <a href='osc.Client.html'>osc.Client</a>('127.0.0.1', 11000)
+
+client:send('/hello', 'lubyk', 2014)
+</pre>
+                              </section>
+                    <section id='Class-functions'>
+          <h2 class='section'>Class functions</h2>
+
+                    
+                                        <h4 id='new' class='entry function'><span>.</span>new <code>(host, port)</code></h4>
           
-                    <p>Create a new poller. Optional <code>reserve</code> argument is used to reserve slots in memory for items to poll on (default = 8).</p>
-                                        <h4 id='poll' class='entry function'><span>.</span>poll <code>(timeout)</code></h4>
+                    <p>Create a new client connected to a given <code>host</code> and <code>port</code>.</p>
+                              </section>
+                    <section id='Methods'>
+          <h2 class='section'>Methods</h2>
+
+                    
+                                        <h4 id='send' class='entry method'><span>:</span>send <code>(url, ...)</code></h4>
           
-                    <p>Polls for new events with a maximal waiting time of <code>timeout</code>. Returns <code>true</code> on success and <code>false</code> on interruption.</p>
-                                        <h4 id='events' class='entry function'><span>.</span>events <code>()</code></h4>
-          
-                    <p>Return a table with all event idx or nil. Used after a call to <a href='#poll'>poll</a>.</p>
+                    <p>Send osc message.</p>
                               </section>
                   </div>
 
         <div class='span2 global-nav'>
           <ul class='nav nav-tabs nav-stacked'>
-                        <li class='module'><a href='lens.html'>lens</a></li>
+                        <li class='module'><a href='osc.html'>osc</a></li>
             
-                        <li class=''><a href='lens.File.html'>File</a></li>
-                        <li class=''><a href='lens.FileWatch.html'>FileWatch</a></li>
-                        <li class=''><a href='lens.Finalizer.html'>Finalizer</a></li>
-                        <li class='active'><a href='lens.Poller.html'>Poller</a></li>
-                        <li class=''><a href='lens.Popen.html'>Popen</a></li>
-                        <li class=''><a href='lens.Scheduler.html'>Scheduler</a></li>
-                        <li class=''><a href='lens.Socket.html'>Socket</a></li>
-                        <li class=''><a href='lens.Thread.html'>Thread</a></li>
-                        <li class=''><a href='lens.Timer.html'>Timer</a></li>
+                        <li class='active'><a href='osc.Client.html'>Client</a></li>
+                        <li class=''><a href='osc.Server.html'>Server</a></li>
                       </ul>
         </div>
       </div>
