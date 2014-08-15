@@ -33,6 +33,7 @@
         <div class='span3 local-nav'>
           <ul class='nav nav-tabs nav-stacked affix'>
                         <li><a href='#Test'><i class='icon-chevron-right'></i> lut.Test</a></li>
+                        <li><a href='#Command-line-arguments'><i class='icon-chevron-right'></i> Command line arguments</a></li>
                         <li><a href='#Global-settings'><i class='icon-chevron-right'></i> Global settings</a></li>
                         <li><a href='#Setup,-teardown'><i class='icon-chevron-right'></i> Setup, teardown</a></li>
                         <li><a href='#Declare-tests'><i class='icon-chevron-right'></i> Declare tests</a></li>
@@ -82,13 +83,23 @@ function withUser.should.displayTable()
 end
 </pre>
                               </section>
+                    <section id='Command-line-arguments'>
+          <h2 class='section'>Command line arguments</h2>
+
+                    
+                    <p>When running tests from the command line, arguments are parsed by <a href='lut.Test.html'>lut.Test</a> for <code>--verbose</code> flag and <code>--only=someTestName</code>.</p>
+                    <p>Example:</p>
+                    <pre class='prettyprint lang-bash'>&gt; lua test/all.lua --only=someTest --verbose
+</pre>
+                              </section>
                     <section id='Global-settings'>
           <h2 class='section'>Global settings</h2>
 
                     
                     <p>Set these before running tests:</p>
                     <pre class='prettyprint lang-lua'><a href='lut.Test.html#verbose'>lut.Test.verbose</a> = true
-<a href='lut.Test.html#files'>lut.Test.files</a>(lub.path '|')</pre>
+<a href='lut.Test.html#files'>lut.Test.files</a>(lub.path '|')
+</pre>
                                         <h4 id='TIMEOUT' class='entry param'><span>.</span>TIMEOUT <code>= 5</code></h4>
           
                     <p>Default timeout value for <a href='#timeout'>timeout</a> function.</p>
@@ -231,6 +242,7 @@ end</pre>
           <ul class='nav nav-tabs nav-stacked'>
                         <li class='module'><a href='lut.html'>lut</a></li>
             
+                        <li class=''><a href='lut.Builder.html'>Builder</a></li>
                         <li class=''><a href='lut.Doc.html'>Doc</a></li>
                         <li class='active'><a href='lut.Test.html'>Test</a></li>
                       </ul>
@@ -240,7 +252,7 @@ end</pre>
 
     <footer class="footer">
     <div class="container">
-       made with <a title='last change: 7c8b97a 2014-08-14 17:37:24 +0200' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+       made with <a title='last change: 403568c 2014-08-15 09:03:25 +0200' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
 <script type="text/javascript">
 
   var _gaq = _gaq || [];

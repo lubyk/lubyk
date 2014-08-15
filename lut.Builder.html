@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Build configuration generator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
+        <link href="css/docs.css" rel="stylesheet">
+        
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class='row'>
+          <div class='span12'>
+             <a href='http://lubyk.org'><img alt='lubyk logo' src='img/lubyk.png'/></a> <h1><a href='http://lubyk.org'>Lubyk</a> documentation</h1> 
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="row">
+
+        <div class='span3 local-nav'>
+          <ul class='nav nav-tabs nav-stacked affix'>
+                        <li><a href='#Builder'><i class='icon-chevron-right'></i> lut.Builder</a></li>
+                        <li><a href='#Conventions'><i class='icon-chevron-right'></i> Conventions</a></li>
+                        <li><a href='#Configuration-format'><i class='icon-chevron-right'></i> Configuration format</a></li>
+                        <li><a href='#Example'><i class='icon-chevron-right'></i> Example</a></li>
+                        <li><a href='#TODO'><i class='icon-chevron-right'></i> TODO</a></li>
+                      </ul>
+        </div>
+
+        <div class='main span7'>
+
+                    <section id='Builder'>
+          <h2 class='section'>Build configuration generator</h2>
+
+                    
+                    <p class='summary'>This class helps setup CMake and luarocks configuration files from a single configuration table and some conventions regarding file location.</p>
+                              </section>
+                    <section id='Conventions'>
+          <h2 class='section'>Conventions</h2>
+
+                    
+                    <h4 class='sub-title'>Lua files</h4>
+                    <p>Lua files all live into a folder with the same name as the library's "require" name ('library type'). The library itself is named "init.lua":</p>
+                    <pre class='prettyprint lang-lua'>[library type]
+  + init.lua
+  + SomeClass.lua
+</pre>
+                    <h4 class='sub-title'>Assets</h4>
+                    <p>All assets files (css, templates, etc) that need to be installed along with lua files should live into "[library type]/assets":</p>
+                    <pre class='prettyprint lang-lua'>[library type]
+  + assets
+    + style.css
+    + etc
+</pre>
+                    <h4 class='sub-title'>C++ headers</h4>
+                    <p>C++ headers live inside the "include" folder. Vendor headers needed by the project can live in "src" folder.</p>
+                    <pre class='prettyprint lang-lua'>include
+  + [library type]
+    + SomeClass.h
+</pre>
+                    <h4 class='sub-title'>C++ source files</h4>
+                    <p>Source files live into "src". Generated bindings in "src/bind". Platform specific files in "src/[plat]".</p>
+                    <pre class='prettyprint lang-lua'>src
+  + bind
+    + dub
+    + [library type].cpp
+    + [library type]_SomeClass.cpp
+  + SomeClass.cpp
+  + macosx
+    + SomeClass.cpp  -- macosx specific code for the class
+  + linux
+    + SomeClass.cpp
+</pre>
+                              </section>
+                    <section id='Configuration-format'>
+          <h2 class='section'>Configuration format</h2>
+
+                    
+                    <p>All table fields have detailed descriptions below.</p>
+                    <table class='definition'>
+  <tr><td class='key'><code>type</code>       </td><td>the name of the library used with 'require'.</td></tr>
+  <tr><td class='key'><code>DESCRIPTION</code></td><td>a table with descriptive fields.</td></tr>
+  <tr><td class='key'><code>VERSION</code>    </td><td>version string respecting semantic versionning (ex. '2.3.1').</td></tr>
+  <tr><td class='key'><code>DEPENDS</code>    </td><td>a table with a list of dependency information.</td></tr>
+  <tr><td class='key'><code>BUILD</code>      </td><td>a table with build information.</td></tr>
+
+</table>
+                    <h4 class='sub-title'>DESCRIPTION</h4>
+                    <p>The description entry contains basic information on the library displayed in software distributions such as luarocks.</p>
+                    <table class='definition'>
+  <tr><td class='key'><code>summary</code>   </td><td>a short summary (think "long title").</td></tr>
+  <tr><td class='key'><code>detailed</code>  </td><td>a couple of phrases describing the library (not a full documentation)</td></tr>
+  <tr><td class='key'><code>homepage</code>  </td><td>the url where the full documentation is located (starts with 'http').</td></tr>
+  <tr><td class='key'><code>author</code>    </td><td>author name.</td></tr>
+  <tr><td class='key'><code>maintainer</code></td><td>optional maintainer name (author is used if this is not set).</td></tr>
+  <tr><td class='key'><code>license</code>   </td><td>license.</td></tr>
+
+</table>
+                    <h4 class='sub-title'>VERSION</h4>
+                    <p>A version string with <code>MAJOR.MINOR.PATCH</code> numbers. Major number changes can introduce backward incompatible changes. Minor changes add features without breaking compatibility and patch changes do not change the API (bug fixes, code improvements).</p>
+                    <p>Every released version must be tagged with 'REL-[Major.Minor.Patch]' tag.</p>
+                    <h4 class='sub-title'>DEPENDS</h4>
+                    <p>A list of strings defining dependency. The format of a dependency is:</p>
+                    <pre class='prettyprint lang-lua'>'[library type] &gt;= [min version number], &lt; [max version number]'
+</pre>
+                    <p>or</p>
+                    <pre class='prettyprint lang-lua'>'[library type] ~&gt; [major number]'
+</pre>
+                    <h4 class='sub-title'>BUILD</h4>
+                    <table class='definition'>
+  <tr><td class='key'><code>github</code>   </td><td>name of github account (for source url) (can be replaced by <code>source</code>)</td></tr>
+  <tr><td class='key'><code>url</code>      </td><td>full url to "tar.gz" file for this version. Not needed if github is used and version tagging is respected.</td></tr>
+  <tr><td class='key'><code>dir</code>      </td><td>name of extracted source directory. Only needed with <code>url</code>.</td></tr>
+  <tr><td class='key'><code>includes</code> </td><td>list of header include paths (relative to project root).</td></tr>
+  <tr><td class='key'><code>libraries</code></td><td>libraries common to all platforms.</td></tr>
+  <tr><td class='key'><code>platlibs</code> </td><td>platform specific library dependencies.</td></tr>
+  <tr><td class='key'><code>platdefs</code> </td><td>platform specific defines.</td></tr>
+  <tr><td class='key'><code>pure_lua</code> </td><td>set to <code>true</code> if the library does not contain any C/C++ code.</td></tr>
+
+</table>
+                              </section>
+                    <section id='Example'>
+          <h2 class='section'>Example</h2>
+
+                    
+                    <p>Here is a complete example taken from <a href='http://doc.lubyk.org/lens.html'>lens</a> scheduler library. Actually, for all lubyk libraries, the configuration table is the library itself (all fields exist in the library table).</p>
+                    <pre class='prettyprint lang-lua'>local builder = <a href='lut.Builder.html'>lut.Builder</a> {
+
+  type = 'lens',
+
+  DESCRIPTION = {
+    summary = "Lubyk networking and scheduling.",
+    detailed = [=[
+      lens.Scheduler: core scheduling class.
+
+      lens.Poller: fast poller with nanosecond precision.
+
+      lens.Thread: threading class to use with scheduler.
+
+      lens.Timer: precise non-drifting timer.
+
+      lens.Finalizer: run code on garbage collection.
+
+      lens.Popen: pipe working with scheduler (non-blocking).
+    ]=],
+    homepage = "http://doc.lubyk.org/lens.html",
+    author   = "Gaspard Bucher",
+    license  = "MIT",      
+  },
+
+  VERSION = '1.0.0',
+
+  DEPENDS = {
+    'lua &gt;= 5.1, &lt; 5.3',
+    'lub ~&gt; 1',
+  },
+
+  BUILD = {
+    includes  = {'include', 'src/bind'},
+    libraries = {'stdc++'},
+    platlibs = {
+      linux   = {'stdc++', 'rt'},
+      macosx  = {
+        'stdc++',
+        '-framework Foundation',
+        '-framework Cocoa',
+        'objc',
+      },
+    },                 
+  },
+  
+}
+</pre>
+                                        <h4 id='new' class='entry function'><span>.</span>new <code>(config)</code></h4>
+          
+                    <p>Create a new builder object from a configuration table (see above for config format and options).</p>
+                                        <h4 id='make' class='entry method'><span>:</span>make <code>()</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                              </section>
+                    <section id='TODO'>
+          <h2 class='section'>TODO</h2>
+
+                    
+                    <p class='todo'><span class='ref'><a href='#make'>#make</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                              </section>
+                  </div>
+
+        <div class='span2 global-nav'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='lut.html'>lut</a></li>
+            
+                        <li class='active'><a href='lut.Builder.html'>Builder</a></li>
+                        <li class=''><a href='lut.Doc.html'>Doc</a></li>
+                        <li class=''><a href='lut.Test.html'>Test</a></li>
+                      </ul>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+    <div class="container">
+       made with <a title='last change: 403568c 2014-08-15 09:03:25 +0200' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-39725130-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+    </div>
+    </footer>
+
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        displayAlign: "left",
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
+    <script src='http://code.jquery.com/jquery.min.js'></script>
+    <script src='js/bootstrap.min.js'></script>
+  </body>
+</html>
+
