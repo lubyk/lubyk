@@ -39,7 +39,7 @@ In order to build everything, you need to have Qt SDK 4.8 and CMake installed:
   ...> git submodule update
   ...> mkdir build
   ...> cd build
-  .../build> cmake ..
+  .../build> cmake .. -DQT_QMAKE_EXECUTABLE:PATH=/usr/local/Cellar/qt/4.8.6/bin/qmake -DQT_MOC_EXECUTABLE:PATH=/usr/local/Cellar/qt/4.8.6/bin/moc
   .../build> make -j4
   .../build> make install
 
