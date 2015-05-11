@@ -52,10 +52,7 @@ end
 
 -- You can play with the code by uncommenting this line or changing the timer's
 -- `timeout` function.
-tim:setInterval(0.5)
-if not tim:running() then
-  tim:start()
-end
+-- tim:setInterval(0.5)
 
 --coroutine.yield('gui')
 -- coroutine.yield('halt')

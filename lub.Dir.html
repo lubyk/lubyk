@@ -76,11 +76,11 @@ end
                                         <h4 id='list' class='entry method'><span>:</span>list <code>()</code></h4>
           
                     <p>Return an iterator over the paths in the directory. The returned values are paths, not just filenames.</p>
-                    <pre class='prettyprint lang-lua'>for file in <a href='lk.Dir.html'>lk.Dir</a>('lib'):list() do
+                    <pre class='prettyprint lang-lua'>for file in <a href='lub.Dir.html'>lub.Dir</a>('lib'):list() do
   print(file)
 end
---&gt; lib/lk
---&gt; lib/lk.lua</pre>
+--&gt; lib/foo
+--&gt; lib/foo.lua</pre>
                                         <h4 id='contains' class='entry method'><span>:</span>contains <code>(pattern)</code></h4>
           
                     <p>Return true if there is at least one child in the directory that matches <code>pattern</code>.</p>
@@ -93,6 +93,7 @@ end
             
                         <li class=''><a href='lub.Autoload.html'>Autoload</a></li>
                         <li class='active'><a href='lub.Dir.html'>Dir</a></li>
+                        <li class=''><a href='lub.Param.html'>Param</a></li>
                         <li class=''><a href='lub.Template.html'>Template</a></li>
                       </ul>
         </div>
@@ -101,7 +102,7 @@ end
 
     <footer class="footer">
     <div class="container">
-       made with <a title='last change: 9d29c0d 2014-08-15 16:17:16 +0200' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+       made with <a title='last change: 56ad9f1 2015-05-11 13:19:32 +0200' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
 <script type="text/javascript">
 
   var _gaq = _gaq || [];
@@ -119,7 +120,7 @@ end
     </div>
     </footer>
 
-    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua'></script>
     <script type="text/x-mathjax-config">
       MathJax.Hub.Config({
         config: ["MMLorHTML.js"],
@@ -137,7 +138,8 @@ end
       });
     </script>
     <script type="text/javascript"
-      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
+      src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
     <script src='http://code.jquery.com/jquery.min.js'></script>
     <script src='js/bootstrap.min.js'></script>
   </body>

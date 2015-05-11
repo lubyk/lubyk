@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>osc send client</title>
+    <title>{{type}} <a href="https://travis-ci.org/lubyk/{{type}}"><img src="https://travis-ci.org/lubyk/{{type}}.png" alt="Build Status"></a> </title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -32,52 +32,55 @@
 
         <div class='span3 local-nav'>
           <ul class='nav nav-tabs nav-stacked affix'>
-                        <li><a href='#Client'><i class='icon-chevron-right'></i> osc.Client</a></li>
-                        <li><a href='#Class-functions'><i class='icon-chevron-right'></i> Class functions</a></li>
-                        <li><a href='#Methods'><i class='icon-chevron-right'></i> Methods</a></li>
+                        <li><a href='#type'><i class='icon-chevron-right'></i> assets.project.type</a></li>
                       </ul>
         </div>
 
         <div class='main span7'>
 
-                    <section id='Client'>
-          <h2 class='section'>osc send client</h2>
+                    <section id='type'>
+          <h2 class='section'>{{type}} <a href="https://travis-ci.org/lubyk/{{type}}"><img src="https://travis-ci.org/lubyk/{{type}}.png" alt="Build Status"></a> </h2>
 
                     
-                    <p class='summary'>This is a simple UDP client (based on lens.Socket) to send OSC messages.</p>
-                    <p class='note'><span>NOTE</span> This class needs the <a href='http://doc.lubyk.org/lens.html'>lens</a> library.</p>
-                    <h4 class='sub-title'>Usage example</h4>
-                    <pre class='prettyprint lang-lua'>local osc = require 'osc'
-
-client = <a href='osc.Client.html'>osc.Client</a>('127.0.0.1', 11000)
-
-client:send('/hello', 'lubyk', 2014)
+                    <p class='summary'>Summary</p>
+                    <a href="https://github.com/lubyk/{{type}}"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub"></a>
+                    <p><strong>MIT license</strong> &copy [author] [year].</p>
+                    <h4 class='sub-title'>Installation</h4>
+                    <p>With <a href='http://luarocks.org'>luarocks</a>:</p>
+                    <pre class='prettyprint lang-lua'>$ luarocks install {{type}}
 </pre>
-                              </section>
-                    <section id='Class-functions'>
-          <h2 class='section'>Class functions</h2>
-
-                    
-                                        <h4 id='new' class='entry function'><span>.</span>new <code>(host, port)</code></h4>
+                    <p>Description</p>
+                    <h4 class='sub-title'>Usage example</h4>
+                    <pre class='prettyprint lang-lua'>local {{type}} = require '{{type}}'
+</pre>
+                                        <h4 id='VERSION' class='entry param'><span>.</span>VERSION <code>= '1.0.0'</code></h4>
           
-                    <p>Create a new client connected to a given <code>host</code> and <code>port</code>.</p>
-                              </section>
-                    <section id='Methods'>
-          <h2 class='section'>Methods</h2>
-
-                    
-                                        <h4 id='send' class='entry method'><span>:</span>send <code>(url, ...)</code></h4>
+                    <p>Current version respecting <a href='http://semver.org'>semantic versioning</a>.</p>
+                              
+                    <h4 id='DEPENDS' class='entry param'><span>.</span>DEPENDS = {</h4>
+                                        <h4 id='' class='entry lparam'><code>"lua >= 5.1, < 5.3"</code></h4>
           
-                    <p>Send osc message.</p>
+                    <p>Compatible with Lua 5.1, 5.2 and LuaJIT</p>
+                                        <h4 id='' class='entry lparam'><code>'lub >= 1.0.3, < 2.0'</code></h4>
+          
+                    <p>Uses <a href='http://doc.lubyk.org/lub.html'>Lubyk base library</a></p>
+                              
+                    <h4 class='entry attrib'>}</h4>
+                                        <h4 id='-----------------------' class='entry klass'><a href='assets.project.type.Foo.html'>Foo</a></h4>
+          
+                    <p class='todo'><span>TODO</span> DESCRIPTION</p>
+                    <p class='todo'><span class='ref'><a href='assets.project.type.Foo.html#Foo'>Foo</a></span><span>TODO</span> DESCRIPTION</p>
                               </section>
                   </div>
 
         <div class='span2 global-nav'>
           <ul class='nav nav-tabs nav-stacked'>
-                        <li class='module'><a href='osc.html'>osc</a></li>
+                        <li class='module'><a href='assets.project.html'>assets.project</a></li>
             
-                        <li class='active'><a href='osc.Client.html'>Client</a></li>
-                        <li class=''><a href='osc.Server.html'>Server</a></li>
+                        <li class=''><a href='assets.project.doc.html'>doc</a></li>
+                        <li class=''><a href='assets.project.scripts.html'>scripts</a></li>
+                        <li class=''><a href='assets.project.test.html'>test</a></li>
+                        <li class='active'><a href='assets.project.type.html'>type</a></li>
                       </ul>
         </div>
       </div>

@@ -59,26 +59,33 @@
 </pre>
                               
                     <h4 class='sub-title'>Dependencies</h4>
-                                        <h4 id='VERSION' class='entry param'><span>.</span>VERSION <code>= '1.0.5'</code></h4>
+                                        <h4 id='VERSION' class='entry param'><span>.</span>VERSION <code>= '1.1.0'</code></h4>
           
                     <p>Current version respecting <a href='http://semver.org'>semantic versioning</a>.</p>
                               
                     <h4 id='DEPENDS' class='entry param'><span>.</span>DEPENDS = {</h4>
-                                        <h4 id='' class='entry lparam'><code>"lua >= 5.1, < 5.3"</code></h4>
+                                        <h4 id='' class='entry lparam'><code>"lua >= 5.1, < 5.4"</code></h4>
           
-                    <p>Compatible with Lua 5.1, 5.2 and LuaJIT</p>
-                                        <h4 id='' class='entry lparam'><code>"luafilesystem >= 1.6.0"</code></h4>
+                    <p>Compatible with Lua 5.1 to 5.3 and LuaJIT</p>
+                                        <h4 id='' class='entry lparam'><code>"luafilesystem >= 1.4.0"</code></h4>
           
                     <p>Uses <a href='http://keplerproject.github.io/luafilesystem/'>Lua Filesystem</a></p>
                               
                     <h4 class='entry attrib'>}</h4>
+                                        <h4 id='DESCRIPTION' class='entry param'><span>.</span>DESCRIPTION <code>= {</code></h4>
+          
+                    <p>Basic description for luarocks.</p>
+                                        <h4 id='BUILD' class='entry param'><span>.</span>BUILD <code>= {</code></h4>
+          
+                    <p>Build settings for lut.Builder</p>
                               </section>
                     <section id='Environment-information'>
           <h2 class='section'>Environment information</h2>
 
                               <h4 id='plat' class='entry function'><span>.</span>plat <code>()</code></h4>
           
-                    <p>Get name of currently running platform. Values are 'linux', 'macosx', 'unix' and 'win32'.</p>
+                    <p>Get name of currently running platform. Values are 'linux', 'macosx', 'unix' and 'win32'. Returns "platform", "platform detail", "system"</p>
+                    <p>Platform detail is MinGW or Cygwin for example.</p>
                               </section>
                     <section id='Class-management'>
           <h2 class='section'>Class management</h2>
@@ -150,7 +157,7 @@ BFS       0.36</pre>
                     
                                         <h4 id='path' class='entry function'><span>.</span>path <code>(path, level)</code></h4>
           
-                    <p>Return a path by resolving special initial characters:</p>
+                    <p>Return a path by resolving special initial characters. The <code>level</code> argument can move further up the call hierarchy before resolving paths (use <code>1</code> to move up one call). Special initial characters are:</p>
                     <table class='definition'>
   <tr><td class='key'><code>/</code>   </td><td>absolute path, resolves '..' in path.</td></tr>
   <tr><td class='key'><code>|</code>   </td><td>path relative to script directory, resolves '..' in path.</td></tr>
@@ -257,7 +264,7 @@ lub.deepMerge(base, 'a', { c = 6 })
                     <pre class='prettyprint lang-lua'>lub.traceRequire(true)
 -- From now on, all require statements are printed.
 </pre>
-                    <p>If you simply want to make sure no require is not called to autoload code after some point, you should use <a href='Autoload.html#strict'>Autoload.strict</a>.</p>
+                    <p>If you simply want to make sure no <code>require</code> is called to autoload code after some point, you should use <a href='Autoload.html#strict'>Autoload.strict</a>.</p>
                                         <h4 id='log' class='entry function'><span>.</span>log <code>(...)</code></h4>
           
                     <p>Print a log message with the current file name and line. This is better then using "print" because it gives us some information on the context of the  print statement.</p>
@@ -293,6 +300,9 @@ end
                                         <h4 id='-------' class='entry klass'><a href='lub.Dir.html'>Dir</a></h4>
           
                     <p class='summary'>This is a helper to access/glob directory trees. It requires 'lfs' (lua filesystem).</p>
+                                        <h4 id='---------' class='entry klass'><a href='lub.Param.html'>Param</a></h4>
+          
+                    <p class='summary'>This class acts as a proxy around lua tables allowing paramter save and recall.</p>
                                         <h4 id='------------' class='entry klass'><a href='lub.Template.html'>Template</a></h4>
           
                     <p class='summary'>Simplistic templating system inspired by Zed A. Shaw's minimal template for <a href='http://mongrel2.org/'>Tir</a>.</p>
@@ -305,6 +315,7 @@ end
             
                         <li class=''><a href='lub.Autoload.html'>Autoload</a></li>
                         <li class=''><a href='lub.Dir.html'>Dir</a></li>
+                        <li class=''><a href='lub.Param.html'>Param</a></li>
                         <li class=''><a href='lub.Template.html'>Template</a></li>
                       </ul>
         </div>
@@ -313,7 +324,7 @@ end
 
     <footer class="footer">
     <div class="container">
-       made with <a title='last change: 9d29c0d 2014-08-15 16:17:16 +0200' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+       made with <a title='last change: 56ad9f1 2015-05-11 13:19:32 +0200' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
 <script type="text/javascript">
 
   var _gaq = _gaq || [];
@@ -331,7 +342,7 @@ end
     </div>
     </footer>
 
-    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua'></script>
     <script type="text/x-mathjax-config">
       MathJax.Hub.Config({
         config: ["MMLorHTML.js"],
@@ -349,7 +360,8 @@ end
       });
     </script>
     <script type="text/javascript"
-      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
+      src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
     <script src='http://code.jquery.com/jquery.min.js'></script>
     <script src='js/bootstrap.min.js'></script>
   </body>

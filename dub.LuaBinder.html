@@ -55,16 +55,33 @@
   <tr><td class='key'>(single_lib)</td><td>Name of library when wrapping all classes into a single table. This creates a single library instead of one for each class. This name will be used as prefix for class metatables.</td></tr>
   <tr><td class='key'>(namespace)</td><td>Only parse elements in the given namespace. If this is set <code>single_lib</code> can be ommited and the namespace will be used as prefix.</td></tr>
   <tr><td class='key'>(no_prefix)</td><td>When this is set to <code>true</code>, do not add any prefix to class names.</td></tr>
+  <tr><td class='key'>(header_base)</td><td>Part to remove in '#include' directives added to generated files. The default value is to remove the path to current directory.</td></tr>
   <tr><td class='key'>(extra_headers)</td><td>List of extra header includes to add in generated C++ files.</td></tr>
   <tr><td class='key'>(custom_bindings)</td><td>Path to a directory containing yaml files with custom bindings. Can also be a table. See <a href='dub.html#Custom-bindings'>Custom Bindings</a>.</td></tr>
 
 </table>
-                                        <h4 id='build' class='entry method'><span>:</span>build <code>(opts)</code></h4>
+                                        <h4 id='build' class='entry method'><span>:</span>build <code>(options)</code></h4>
           
-                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
-                                        <h4 id='bindClass' class='entry method'><span>:</span>bindClass <code>(class)</code></h4>
+                    <p>Simple build system (mostly used for testing). The <code>opttions</code> table contains the following entries:</p>
+                    <table class='definition'>
+  <tr><td class='key'>(work_dir)</td><td>Build working directory (default is current directory).</td></tr>
+  <tr><td class='key'>(inputs)</td><td>List of C++ input files.</td></tr>
+  <tr><td class='key'>(includes)</td><td>List of include paths.</td></tr>
+  <tr><td class='key'>(flags)</td><td>List of extra compiler flags.</td></tr>
+  <tr><td class='key'>(compiler)</td><td>List of compiler flags. Default is <code>self.COMPILER</code>.</td></tr>
+  <tr><td class='key'>(compiler_flags)</td><td>List of compiler flags. Default is <code>self.COMPILER_FLAGS[PLAT]</code></td></tr>
+  <tr><td class='key'>(verbose)</td><td>Print build commands if <code>true</code>.</td></tr>
+
+</table>
+                                        <h4 id='bindClass' class='entry method'><span>:</span>bindClass <code>(class, options)</code></h4>
           
-                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p>The optional <code>options</code> table can contain:</p>
+                    <table class='definition'>
+  <tr><td class='key'>(header_base)</td><td>Part to remove in '#include' directives added to generated files. The default value is to remove the path to current directory.</td></tr>
+  <tr><td class='key'>(extra_headers)</td><td>List of extra header includes to add in generated C++ files.</td></tr>
+  <tr><td class='key'>(custom_bindings)</td><td>Path to a directory containing yaml files with custom bindings. Can also be a table. See <a href='dub.html#Custom-bindings'>Custom Bindings</a>.</td></tr>
+
+</table>
                                         <h4 id='addCustomTypes' class='entry method'><span>:</span>addCustomTypes <code>(list)</code></h4>
           
                     <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
@@ -122,8 +139,6 @@
 
                     
                     <p class='todo'><span class='ref'><a href='#LuaBinder'>LuaBinder</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
-                    <p class='todo'><span class='ref'><a href='#build'>#build</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
-                    <p class='todo'><span class='ref'><a href='#bindClass'>#bindClass</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
                     <p class='todo'><span class='ref'><a href='#addCustomTypes'>#addCustomTypes</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
                     <p class='todo'><span class='ref'><a href='#parseCustomBindings'>#parseCustomBindings</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
                     <p class='todo'><span class='ref'><a href='#functionBody'>#functionBody</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
@@ -157,7 +172,7 @@
 
     <footer class="footer">
     <div class="container">
-       made with <a title='last change: 9d29c0d 2014-08-15 16:17:16 +0200' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+       made with <a title='last change: 56ad9f1 2015-05-11 13:19:32 +0200' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
 <script type="text/javascript">
 
   var _gaq = _gaq || [];
@@ -175,7 +190,7 @@
     </div>
     </footer>
 
-    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua'></script>
     <script type="text/x-mathjax-config">
       MathJax.Hub.Config({
         config: ["MMLorHTML.js"],
@@ -193,7 +208,8 @@
       });
     </script>
     <script type="text/javascript"
-      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
+      src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
     <script src='http://code.jquery.com/jquery.min.js'></script>
     <script src='js/bootstrap.min.js'></script>
   </body>

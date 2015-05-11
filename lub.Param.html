@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Parameter save and restore</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
+        <link href="css/docs.css" rel="stylesheet">
+        
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class='row'>
+          <div class='span12'>
+             <a href='http://lubyk.org'><img alt='lubyk logo' src='img/lubyk.png'/></a> <h1><a href='http://lubyk.org'>Lubyk</a> documentation</h1> 
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="row">
+
+        <div class='span3 local-nav'>
+          <ul class='nav nav-tabs nav-stacked affix'>
+                        <li><a href='#Param'><i class='icon-chevron-right'></i> lub.Param</a></li>
+                        <li><a href='#Class-functions'><i class='icon-chevron-right'></i> Class functions</a></li>
+                        <li><a href='#Methods'><i class='icon-chevron-right'></i> Methods</a></li>
+                        <li><a href='#Controller-methods'><i class='icon-chevron-right'></i> Controller methods</a></li>
+                      </ul>
+        </div>
+
+        <div class='main span7'>
+
+                    <section id='Param'>
+          <h2 class='section'>Parameter save and restore</h2>
+
+                    
+                    <p class='summary'>This class acts as a proxy around lua tables allowing paramter save and recall.</p>
+                              
+                    <h4 class='sub-title'>Dependencies</h4>
+                    <ul>
+<li>yaml</li>
+</ul>
+                              </section>
+                    <section id='Class-functions'>
+          <h2 class='section'>Class functions</h2>
+
+                    
+                                        <h4 id='new' class='entry function'><span>.</span>new <code>(filepath)</code></h4>
+          
+                    <p>Create a new parameter helper saving content to <code>filepath</code>. If the file path is not provided, the default is to use the current script name with ".yml" extension. For example "foo.lua" parameters would be saved to "foo.lua.yml".</p>
+                              </section>
+                    <section id='Methods'>
+          <h2 class='section'>Methods</h2>
+
+                    
+                                        <h4 id='proxy' class='entry method'><span>:</span>proxy <code>(original_table, proxy_name, settings)</code></h4>
+          
+                    <p>Create a proxy table to write to instead of the original. Writing to the proxy stores the parameter value and write the value into the original table. Since a single Param object can store values from different tables, the <code>proxy_name</code> string is used to separate values during save/restore. Default value for <code>proxy_name</code> is 'main'.</p>
+                                        <h4 id='control' class='entry method'><span>:</span>control <code>(ctrl, key, value)</code></h4>
+          
+                    <p>nodoc <code>value</code> is already mapped to [0,1].</p>
+                                        <h4 id='mapParameter' class='entry method'><span>:</span>mapParameter <code>(ctrl_name, ctrl_key, proxy_name, key)</code></h4>
+          
+                    <p>Map parameter. If <code>proxy_name</code> and <code>key</code> are omitted, the last changed parameter is used instead.</p>
+                                        <h4 id='dump' class='entry method'><span>:</span>dump <code>()</code></h4>
+          
+                    <p>Serialize all preset values to yaml.</p>
+                                        <h4 id='savePreset' class='entry method'><span>:</span>savePreset <code>()</code></h4>
+          
+                    <p>Save current table values in current preset.</p>
+                                        <h4 id='selectPreset' class='entry method'><span>:</span>selectPreset <code>(preset_name)</code></h4>
+          
+                    <p>Select preset named <code>preset_name</code> and load all values defined in preset into original tables. Values not defined in the preset are not removed and will be saved with preset.</p>
+                                        <h4 id='copyToPreset' class='entry method'><span>:</span>copyToPreset <code>(preset_name)</code></h4>
+          
+                    <p>Copy all currently defined values to <code>preset_name</code>. If the preset already exists, it is replaced.</p>
+                              </section>
+                    <section id='Controller-methods'>
+          <h2 class='section'>Controller methods</h2>
+
+                    
+                                        <h4 id='addController' class='entry method'><span>:</span>addController <code>(name, settings)</code></h4>
+          
+                    <p>Add a new controller. The optional settings table can contain the following keys:</p>
+                    <table class='definition'>
+  <tr><td class='key'>min</td><td>minimal value set by controller (0)</td></tr>
+  <tr><td class='key'>max</td><td>maximal value set by controller (1)</td></tr>
+
+</table>
+                              </section>
+                  </div>
+
+        <div class='span2 global-nav'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='lub.html'>lub</a></li>
+            
+                        <li class=''><a href='lub.Autoload.html'>Autoload</a></li>
+                        <li class=''><a href='lub.Dir.html'>Dir</a></li>
+                        <li class='active'><a href='lub.Param.html'>Param</a></li>
+                        <li class=''><a href='lub.Template.html'>Template</a></li>
+                      </ul>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+    <div class="container">
+       made with <a title='last change: 56ad9f1 2015-05-11 13:19:32 +0200' href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-39725130-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+    </div>
+    </footer>
+
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        displayAlign: "left",
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
+    <script src='http://code.jquery.com/jquery.min.js'></script>
+    <script src='js/bootstrap.min.js'></script>
+  </body>
+</html>
+

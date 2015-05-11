@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Simple templating</title>
+    <title>lmidi.Note</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -32,55 +32,33 @@
 
         <div class='span3 local-nav'>
           <ul class='nav nav-tabs nav-stacked affix'>
-                        <li><a href='#Template'><i class='icon-chevron-right'></i> lub.Template</a></li>
+                        <li><a href='#Note'><i class='icon-chevron-right'></i> lmidi.Note</a></li>
                       </ul>
         </div>
 
         <div class='main span7'>
 
-                    <section id='Template'>
-          <h2 class='section'>Simple templating</h2>
+                    <section id='Note'>
+          <h2 class='section'>lmidi.Note</h2>
 
-                    
-                    <p class='summary'>Simplistic templating system inspired by Zed A. Shaw's minimal template for <a href='http://mongrel2.org/'>Tir</a>.</p>
-                    <p>Template features:</p>
-                    <table class='definition'>
-  <tr><td class='key'><code>{{ code }}</code>  </td><td>Replaced with the string provided by 'code'.</td></tr>
-  <tr><td class='key'><code>{% code %}</code>  </td><td>Execute code but do not output (used for loops, if, etc).</td></tr>
-  <tr><td class='key'><code>{| code |}</code>  </td><td>Output code and preserve indentation.</td></tr>
-
-</table>
-                    <p>Usage:</p>
-                    <pre class='prettyprint lang-lua'>local tmplt = <a href='lub.Template.html'>lub.Template</a> [[
-Hello {{name}}.
-{% if parent then %}
-Your parent is {{parent.name}}.
-{% end %}
-]]
-
-tmplt:run {
-  name = 'Joe',
-  parent = {name = 'Eve'},
-}
---&gt; Hello Joe.
---&gt; Your parent is Eve.</pre>
-                                        <h4 id='new' class='entry function'><span>.</span>new <code>(source)</code></h4>
+                              <h4 id='name = reverse' class='entry const'>name = reverse</h4>
           
-                    <p>Create a new template object ready to produce output by calling <a href='#run'>run</a>. The <code>source</code> parameters should be a string or a table with a <code>path</code> key.</p>
-                                        <h4 id='run' class='entry method'><span>:</span>run <code>(env)</code></h4>
-          
-                    <p>Returns resulting text by runngint the template with an environment table <code>env</code>.</p>
+                    <p class='summary'></p>
+                    <p>local lib = {} local reverse = {}</p>
+                    <p>local OCTAVES = {[''] = 0} for i=-1,9 do OCTAVES[string.format('%i', i)] = i end</p>
+                    <p>local BASE_NOTES = { [ 'C'] = 12, ['C#'] = 13, ['Db'] = 13, [ 'D'] = 14, ['D#'] = 15, ['Eb'] = 15, [ 'E'] = 16, [ 'F'] = 17, ['F#'] = 18, ['Gb'] = 18, [ 'G'] = 19, ['G#'] = 20, ['Ab'] = 20, [ 'A'] = 21, ['A#'] = 22, ['Bb'] = 22, [ 'B'] = 23, }</p>
+                    <p>for oct_name, delta in pairs(OCTAVES) do for note, base_value in pairs(BASE_NOTES) do local value = base_value + 12 * delta local name  = string.format('%s%s', note, oct_name) lib[name] = value if oct_name ~= '' then reverse[value] = name end end end</p>
                               </section>
                   </div>
 
         <div class='span2 global-nav'>
           <ul class='nav nav-tabs nav-stacked'>
-                        <li class='module'><a href='lub.html'>lub</a></li>
+                        <li class='module'><a href='lmidi.html'>lmidi</a></li>
             
-                        <li class=''><a href='lub.Autoload.html'>Autoload</a></li>
-                        <li class=''><a href='lub.Dir.html'>Dir</a></li>
-                        <li class=''><a href='lub.Param.html'>Param</a></li>
-                        <li class='active'><a href='lub.Template.html'>Template</a></li>
+                        <li class=''><a href='lmidi.In.html'>In</a></li>
+                        <li class=''><a href='lmidi.Message.html'>Message</a></li>
+                        <li class='active'><a href='lmidi.Note.html'>Note</a></li>
+                        <li class=''><a href='lmidi.Out.html'>Out</a></li>
                       </ul>
         </div>
       </div>
